@@ -2,3 +2,4 @@ node_modules/
 .remotion/
 out/
 *.log
+ep02_in/
