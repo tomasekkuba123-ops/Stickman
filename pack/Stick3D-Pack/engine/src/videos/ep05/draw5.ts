@@ -12,7 +12,7 @@ const dens = (p: V2[], step = 14): V2[] => { const o: V2[] = []; for (let i = 0;
 const arc = (cx: number, cy: number, rx: number, ry: number, a0: number, a1: number, n = 24): V2[] => Array.from({ length: n + 1 }, (_, i) => { const a = lerp(a0, a1, i / n); return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry] as V2; });
 const S = (pts: V2[], w = 7, hatch = false): Stroke => ({ pts: dens(pts), w, hatch });
 
-export type GOpt = { prog?: number; melt?: number; alpha?: number; t?: number; baseY?: number; seed?: number };
+export type GOpt = { prog?: number; melt?: number; alpha?: number; t?: number; baseY?: number; seed?: number; jit?: number };
 // draws strokes; returns the pencil tip (end of the revealed part)
 export function gDraw(c: Ctx, strokes: Stroke[], o: GOpt = {}): V2 | null {
   const prog = clamp(o.prog ?? 1), melt = o.melt ?? 0, alpha = o.alpha ?? 1, seed = o.seed ?? 1, baseY = o.baseY ?? 99999;
@@ -25,7 +25,7 @@ export function gDraw(c: Ctx, strokes: Stroke[], o: GOpt = {}): V2 | null {
     pts.push(mp(s.pts[0], 0)); for (let i = 1; i < s.pts.length; i++) { const a = s.pts[i - 1], b = s.pts[i], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (r >= L) { pts.push(mp(b, i)); r -= L; } else { const k = r / L; pts.push(mp([lerp(a[0], b[0], k), lerp(a[1], b[1], k)], i)); r = 0; break; } }
     rem = r; tip = pts[pts.length - 1];
     for (const [dx, dy, w, col] of [[1.8, -1.2, (s.w ?? 7) * 0.6, "rgba(110,110,120,0.55)"], [0, 0, s.w ?? 7, "rgba(62,62,72,0.92)"]] as [number, number, number, string][]) {
-      c.beginPath(); pts.forEach((p, i) => { const j = Math.sin(i * 1.7 + si * 3 + seed) * 1.2; i ? c.lineTo(p[0] + dx + j, p[1] + dy - j) : c.moveTo(p[0] + dx, p[1] + dy); }); c.lineWidth = w; c.strokeStyle = col; c.stroke(); }
+      c.beginPath(); pts.forEach((p, i) => { const j = Math.sin(i * 1.7 + si * 3 + seed) * 1.2 * (o.jit ?? 1); i ? c.lineTo(p[0] + dx + j, p[1] + dy - j) : c.moveTo(p[0] + dx, p[1] + dy); }); c.lineWidth = w; c.strokeStyle = col; c.stroke(); }
     if (melt > 0.15) for (let k = 0; k < pts.length; k += 7) { const p = pts[k], dl = melt * (30 + 50 * rnd(k + si * 11)); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(p[0], Math.min(baseY, p[1] + dl)); c.lineWidth = 3 + melt * 3; c.strokeStyle = "rgba(80,80,90,0.7)"; c.stroke(); c.beginPath(); c.arc(p[0], Math.min(baseY, p[1] + dl), 3 + melt * 4, 0, TAU); c.fillStyle = "rgba(80,80,90,0.7)"; c.fill(); }
   }
   c.restore(); return tip;
@@ -41,10 +41,10 @@ export function gHatch(c: Ctx, poly: V2[], k: number, melt = 0, baseY = 99999, d
 }
 
 /* ---------- generators (world px) ---------- */
-export function cage(cx: number, baseY: number, w: number, h: number, missingBar = -1, smudge = 0): Stroke[] {
+export function cage(cx: number, baseY: number, w: number, h: number, missingBar = -1, smudge = 0, wob = 0, t = 0): Stroke[] {
   const st: Stroke[] = []; const n = 7;
   st.push(S([[cx - w / 2 - 10, baseY], [cx + w / 2 + 10, baseY]], 10));
-  for (let i = 0; i < n; i++) { if (i === missingBar && smudge >= 1) continue; const x = cx - w / 2 + (w * i) / (n - 1); const top = baseY - h + Math.pow(Math.abs(i - (n - 1) / 2) / ((n - 1) / 2), 2) * h * 0.25; st.push(S([[x, baseY], [x + Math.sin(i) * 3, (baseY + top) / 2], [x, top]], 9)); }
+  for (let i = 0; i < n; i++) { if (i === missingBar && smudge >= 1) continue; const x = cx - w / 2 + (w * i) / (n - 1); const top = baseY - h + Math.pow(Math.abs(i - (n - 1) / 2) / ((n - 1) / 2), 2) * h * 0.25; const wb = wob * Math.sin(t * 38 + i * 1.9) * 16; st.push(S([[x, baseY], [x + Math.sin(i) * 3 + wb, (baseY + top) / 2], [x + wb * 0.4, top]], 10)); }
   st.push(S(arc(cx, baseY - h * 0.75, w / 2, h * 0.25, Math.PI, TAU, 30), 10));
   st.push(S([[cx, baseY - h], [cx, baseY - h - 40]], 7)); st.push(S(arc(cx, baseY - h - 56, 16, 16, 0, TAU, 14), 6));
   st.push(S([[cx - w / 2, baseY - h * 0.4], [cx + w / 2, baseY - h * 0.4]], 7)); // cross bar
@@ -63,7 +63,7 @@ export function throne(cx: number, baseY: number, s: number): Stroke[] {
     S(arc(cx, baseY - 470 * s, 40 * s, 40 * s, 0, TAU, 16), 7), S([p(-100, -150), p(100, -150)], 6), S([p(-110, 0), p(-110, 30)], 9), S([p(110, 0), p(110, 30)], 9)];
 }
 export const thronePoly = (cx: number, baseY: number, s: number): V2[] => [[cx - 100 * s, baseY - 260 * s], [cx - 100 * s, baseY - 560 * s], [cx, baseY - 650 * s], [cx + 100 * s, baseY - 560 * s], [cx + 100 * s, baseY - 260 * s]];
-export function castle(cx: number, baseY: number, w: number, h: number): Stroke[] {
+export function castleOld(cx: number, baseY: number, w: number, h: number): Stroke[] {
   const st: Stroke[] = []; const x0 = cx - w / 2, x1 = cx + w / 2, wallTop = baseY - h * 0.55;
   const merlons = (a: number, b: number, y: number): V2[] => { const o: V2[] = [[a, y]]; const n = Math.round((b - a) / 50); for (let i = 0; i < n; i++) { const x = a + ((b - a) * i) / n, x2 = a + ((b - a) * (i + 0.5)) / n, x3 = a + ((b - a) * (i + 1)) / n; o.push([x, y - 30], [x2, y - 30], [x2, y], [x3, y]); } return o; };
   st.push(S(merlons(x0 + 120, x1 - 120, wallTop), 8));
@@ -72,16 +72,20 @@ export function castle(cx: number, baseY: number, w: number, h: number): Stroke[
   for (let i = 0; i < 6; i++) { const y = wallTop + 30 + i * ((baseY - wallTop - 30) / 6); st.push(S([[x0 + 130, y], [x0 + 300, y]], 4)); st.push(S([[x1 - 300, y + 20], [x1 - 130, y + 20]], 4)); } // brick hints
   return st;
 }
-// clumsy badly-drawn dog (side view). phase animates wobbly legs; yip 0..1 opens the mouth
+// clumsy badly-drawn dog (side view): lumpy body, uneven legs, googly eyes, floppy tongue. backwards = head drawn on the tail end
 export function dog(x: number, y: number, s: number, phase: number, yip = 0, flip = false): Stroke[] {
   const f = flip ? -1 : 1, p = (a: number, b: number): V2 => [x + a * s * f, y + b * s];
-  const lg = (lx: number, ph: number) => S([p(lx, -40), p(lx + Math.sin(phase + ph) * 10, -12), p(lx + 6 + Math.sin(phase + ph) * 14, 0)], 7);
-  return [S(arc(x, y - 70 * s, 90 * s, 42 * s, 0, TAU, 28), 8), // lumpy body
-    S([p(80, -90), p(130, -130), p(175, -110), p(170, -70 + yip * 12), p(120, -62)], 8), // head (wonky)
-    S([p(130, -128), p(118, -175), p(150, -138)], 7), S([p(160, -122), p(172, -160), p(178, -116)], 7), // ears uneven
-    S([p(150, -100), p(152, -96)], 9), S([p(170, -72 + yip * 12), p(185, -60 + yip * 20)], 6), // dot eye + mouth
-    S([p(-88, -88), p(-130, -130 + Math.sin(phase * 2) * 18), p(-140, -150)], 7), // tail
-    lg(-60, 0), lg(-30, 2), lg(40, 1), lg(70, 3)];
+  const lg = (lx: number, ph: number, len: number) => S([p(lx, -40), p(lx + Math.sin(phase + ph) * 14, -12 - len * 0.3), p(lx + 8 + Math.sin(phase + ph) * 20, len - 10)], 8);
+  const body = arc(x, y - 72 * s, 96 * s, 46 * s, 0, TAU, 30).map(([a, b], i) => [a + Math.sin(i * 2.3) * 6 * s, b + Math.cos(i * 1.7) * 5 * s] as V2);
+  return [S(body, 9),
+    S([p(84, -96), p(140, -142), p(196, -118), p(190, -72 + yip * 14), p(126, -64)], 9), // wonky head
+    S([p(136, -140), p(110, -200), p(150, -146)], 8), S([p(170, -134), p(198, -186), p(184, -126)], 8), // mismatched ears
+    S(arc(x + 152 * s * f, y - 112 * s, 15 * s, 15 * s, 0, TAU, 12), 6), S(arc(x + 178 * s * f, y - 108 * s, 11 * s, 11 * s, 0, TAU, 10), 6), // googly eyes
+    S([p(154 + Math.sin(phase * 3) * 4, -110), p(156 + Math.sin(phase * 3) * 4, -108)], 10), S([p(178 - Math.sin(phase * 2) * 3, -106), p(179, -105)], 9),
+    S([p(186, -78 + yip * 14), p(200 + yip * 10, -50 + yip * 26), p(186, -40 + yip * 26), p(176, -62)], 6), // floppy tongue
+    S([p(-96, -90), p(-140, -140 + Math.sin(phase * 2.5) * 22), p(-150, -168)], 8), // tail
+    S([p(-30, -100), p(-10, -110)], 4), S([p(20, -60), p(40, -66)], 4), // fur scribbles
+    lg(-64, 0, 40), lg(-30, 2, 28), lg(40, 1, 46), lg(74, 3, 34)];
 }
 export function signBoard(x: number, y: number, w: number, h: number): Stroke[] { return [S([[x - w / 2, y - h / 2], [x + w / 2, y - h / 2], [x + w / 2, y + h / 2], [x - w / 2, y + h / 2], [x - w / 2, y - h / 2]], 8), S([[x - w * 0.3, y - h / 2], [x - w * 0.36, y - h / 2 - 90]], 6), S([[x + w * 0.3, y - h / 2], [x + w * 0.36, y - h / 2 - 90]], 6), S(arc(x - w * 0.36, y - h / 2 - 96, 8, 8, 0, TAU, 8), 5), S(arc(x + w * 0.36, y - h / 2 - 96, 8, 8, 0, TAU, 8), 5)]; }
 // handwritten graphite text revealed left->right; returns tip
@@ -96,4 +100,45 @@ export function gPuddle(c: Ctx, x: number, y: number, rx: number, ry: number, k:
   if (k <= 0) return; c.save(); c.beginPath(); for (let i = 0; i <= 40; i++) { const a = i / 40 * TAU, w = 1 + 0.12 * Math.sin(a * 3 + 1) + 0.06 * Math.sin(a * 7); c.lineTo(x + Math.cos(a) * rx * k * w, y + Math.sin(a) * ry * k * w); } c.closePath();
   const g = c.createRadialGradient(x - rx * 0.2, y - ry * 0.3, 2, x, y, rx * k); g.addColorStop(0, "#9a9aa6"); g.addColorStop(1, "#5a5a66"); c.fillStyle = g; c.fill(); c.lineWidth = 5; c.strokeStyle = "rgba(40,40,50,0.8)"; c.stroke();
   c.fillStyle = "rgba(255,255,255,0.45)"; c.beginPath(); c.ellipse(x - rx * 0.3 * k, y - ry * 0.35 * k, rx * 0.25 * k, ry * 0.12 * k, -0.2, 0, TAU); c.fill(); void t; c.restore();
+}
+
+/* detailed graphite castle: 3 towers with cone roofs + waving flags, bricks, arched windows, gate, portcullis, lowered drawbridge with chains */
+export function castle(cx: number, baseY: number, w: number, h: number, t = 0): Stroke[] {
+  const st: Stroke[] = []; const x0 = cx - w / 2, x1 = cx + w / 2, wallTop = baseY - h * 0.5;
+  const merl = (a: number, b: number, y: number): V2[] => { const o: V2[] = [[a, y]]; const n = Math.round((b - a) / 46); for (let i = 0; i < n; i++) { const xa = a + ((b - a) * i) / n, xm = a + ((b - a) * (i + 0.5)) / n, xb = a + ((b - a) * (i + 1)) / n; o.push([xa, y - 28], [xm, y - 28], [xm, y], [xb, y]); } return o; };
+  const tower = (tx: number, tw: number, th: number) => {
+    st.push(S([[tx - tw / 2, baseY], [tx - tw / 2, baseY - th], [tx + tw / 2, baseY - th], [tx + tw / 2, baseY]], 9));
+    st.push(S(merl(tx - tw / 2 - 10, tx + tw / 2 + 10, baseY - th), 7));
+    st.push(S([[tx - tw / 2 - 16, baseY - th - 28], [tx, baseY - th - tw * 1.3], [tx + tw / 2 + 16, baseY - th - 28]], 9));
+    const fy = baseY - th - tw * 1.3; st.push(S([[tx, fy], [tx, fy - 110]], 6));
+    const wv = (k: number) => Math.sin(t * 6 + k + tx * 0.01) * 10; st.push(S([[tx, fy - 110], [tx + 40, fy - 104 + wv(0)], [tx + 80, fy - 96 + wv(1)], [tx + 46, fy - 80 + wv(2)], [tx + 84, fy - 64 + wv(3)], [tx, fy - 70]], 6));
+    for (const wy of [baseY - th * 0.72, baseY - th * 0.42]) { st.push(S([[tx - 18, wy + 40], [tx - 18, wy], ...arc(tx, wy, 18, 20, Math.PI, TAU, 8), [tx + 18, wy + 40], [tx - 18, wy + 40]], 6)); st.push(S([[tx, wy - 18], [tx, wy + 40]], 4)); }
+    for (let r = 0; r < 7; r++) { const by = baseY - 30 - r * 46; if (by < baseY - th + 20) break; for (let k = 0; k < 2; k++) { const bx = tx - tw / 2 + 12 + ((k * tw * 0.5 + (r % 2) * 24) % (tw - 40)); st.push(S([[bx, by], [bx + 30, by]], 4)); } } };
+  // curtain wall between towers with bricks
+  st.push(S(merl(x0 + 110, x1 - 110, wallTop), 8)); st.push(S([[x0 + 110, wallTop], [x0 + 110, baseY]], 8)); st.push(S([[x1 - 110, wallTop], [x1 - 110, baseY]], 8));
+  for (let r = 0; r < 7; r++) { const y = wallTop + 34 + r * ((baseY - wallTop - 40) / 7); for (let k = 0; k < 7; k++) { const bx = x0 + 140 + k * 100 + (r % 2) * 50; if (bx > cx - 110 && bx < cx + 110) continue; if (bx > x1 - 150) continue; st.push(S([[bx, y], [bx + 46, y]], 4)); } }
+  tower(x0 + 60, 120, h * 0.95); tower(x1 - 60, 120, h * 0.95); tower(cx, 150, h * 1.25);
+  // gate arch, portcullis, drawbridge + chains
+  const gw = 150, gTop = baseY - 190;
+  st.push(S([[cx - gw / 2, baseY], [cx - gw / 2, gTop + 60], ...arc(cx, gTop + 60, gw / 2, 70, Math.PI, TAU, 14), [cx + gw / 2, baseY]], 9));
+  for (let k = 1; k < 5; k++) st.push(S([[cx - gw / 2 + k * gw / 5, gTop + 20], [cx - gw / 2 + k * gw / 5, baseY - 40]], 4));
+  for (let k = 1; k < 4; k++) st.push(S([[cx - gw / 2 + 6, gTop + 40 + k * 34], [cx + gw / 2 - 6, gTop + 40 + k * 34]], 4));
+  st.push(S([[cx - gw / 2 - 10, baseY], [cx + gw / 2 + 10, baseY], [cx + gw / 2 + 40, baseY + 70], [cx - gw / 2 - 40, baseY + 70], [cx - gw / 2 - 10, baseY]], 8));
+  for (let k = 1; k < 6; k++) st.push(S([[cx - gw / 2 - 10 - k * 5, baseY + k * 12], [cx + gw / 2 + 10 + k * 5, baseY + k * 12]], 3));
+  st.push(S([[cx - gw / 2, gTop + 40], [cx - gw / 2 - 36, baseY + 66]], 4)); st.push(S([[cx + gw / 2, gTop + 40], [cx + gw / 2 + 36, baseY + 66]], 4));
+  return st;
+}
+/* throne room set dressing around the throne: carpet, two banners, two columns, torches */
+export function throneRoom(tx: number, baseY: number, t = 0): Stroke[] {
+  const st: Stroke[] = [];
+  st.push(S([[tx - 110, baseY + 10], [tx + 110, baseY + 10], [tx + 240, baseY + 420], [tx - 240, baseY + 420], [tx - 110, baseY + 10]], 7));
+  for (let k = 1; k < 6; k++) { const y = baseY + 10 + k * 70, wv = 110 + 130 * (k * 70) / 410; st.push(S([[tx - wv + 14, y], [tx + wv - 14, y]], 3)); }
+  for (const sx of [-1, 1]) { const bx = tx + sx * 250, sw = Math.sin(t * 2 + sx) * 6;
+    st.push(S([[bx, baseY + 20], [bx, baseY - 560]], 7)); st.push(S([[bx - 60, baseY - 540], [bx + 60, baseY - 540]], 6));
+    st.push(S([[bx - 50, baseY - 540], [bx - 50 + sw, baseY - 300], [bx + sw * 0.5, baseY - 340], [bx + 50 + sw, baseY - 300], [bx + 50, baseY - 540]], 6));
+    st.push(S([[bx - 24 + sw * 0.6, baseY - 430], [bx - 30 + sw * 0.6, baseY - 470], [bx - 12 + sw * 0.6, baseY - 452], [bx + sw * 0.6, baseY - 478], [bx + 12 + sw * 0.6, baseY - 452], [bx + 30 + sw * 0.6, baseY - 470], [bx + 24 + sw * 0.6, baseY - 430], [bx - 24 + sw * 0.6, baseY - 430]], 4));
+    const cxl = tx + sx * 400; st.push(S([[cxl - 34, baseY + 20], [cxl - 34, baseY - 620]], 7)); st.push(S([[cxl + 34, baseY + 20], [cxl + 34, baseY - 620]], 7)); st.push(S([[cxl - 50, baseY - 620], [cxl + 50, baseY - 620], [cxl + 50, baseY - 650], [cxl - 50, baseY - 650], [cxl - 50, baseY - 620]], 6)); st.push(S([[cxl - 50, baseY + 20], [cxl + 50, baseY + 20]], 6));
+    for (let k = 0; k < 5; k++) st.push(S([[cxl - 16 + k * 8, baseY - 600], [cxl - 16 + k * 8, baseY]], 2));
+    const fl = Math.sin(t * 12 + sx) * 6; st.push(S([[cxl - 14, baseY - 400], [cxl + 14, baseY - 400], [cxl + 8, baseY - 370], [cxl - 8, baseY - 370], [cxl - 14, baseY - 400]], 5)); st.push(S([[cxl - 10, baseY - 404], [cxl + fl * 0.4, baseY - 450 + fl], [cxl + 10, baseY - 404]], 5)); }
+  return st;
 }

@@ -10,11 +10,11 @@ const loadImages = () => Promise.resolve(); const imagesReady = () => true;
 type Tr = "cut" | "whip" | "whipL" | "flash" | "dissolve" | "zoom" | "swoosh";
 type Sc = { a: number; fn: (c: CanvasRenderingContext2D, t: number) => void; tr: Tr; cap?: "low" | "high" };
 export const SCENES: Sc[] = [
-  { a: 0, fn: S.S1, tr: "cut" , cap: "high" }, { a: 3.85, fn: S.S2, tr: "swoosh", cap: "high" }, { a: 10.3, fn: S.S3, tr: "zoom" }, { a: 12.9, fn: S.S4, tr: "cut" },
+  { a: 0, fn: S.S1, tr: "cut" }, { a: 3.85, fn: S.S2, tr: "swoosh", cap: "high" }, { a: 10.3, fn: S.S3, tr: "zoom" }, { a: 12.9, fn: S.S4, tr: "cut" },
   { a: 20.6, fn: S.S5, tr: "zoom" }, { a: 23.2, fn: S.S6, tr: "whip" , cap: "high" }, { a: 29.0, fn: S.S7, tr: "cut" , cap: "high" }, { a: 36.9, fn: S.S8, tr: "zoom" , cap: "high" },
   { a: 39.4, fn: S.S9, tr: "cut" , cap: "high" }, { a: 43.7, fn: S.S10, tr: "cut" , cap: "high" }, { a: 46.9, fn: S.S11, tr: "zoom" , cap: "high" }, { a: 49.9, fn: S.S12, tr: "cut" , cap: "high" },
   { a: 57.0, fn: S.S13, tr: "cut" , cap: "high" }, { a: 62.0, fn: S.S14, tr: "cut" }, { a: 65.1, fn: S.S15, tr: "cut" , cap: "high" }, { a: 68.6, fn: S.S16, tr: "cut" , cap: "high" },
-  { a: 74.3, fn: S.S17, tr: "zoom" , cap: "high" }, { a: 79.4, fn: S.S18, tr: "cut" , cap: "high" }, { a: 86.4, fn: S.S19, tr: "dissolve" }, { a: 90.4, fn: S.S20, tr: "cut" },
+  { a: 74.3, fn: S.S17, tr: "zoom" , cap: "high" }, { a: 79.4, fn: S.S18, tr: "cut" , cap: "high" }, { a: 86.4, fn: S.S19, tr: "swoosh" }, { a: 90.4, fn: S.S20, tr: "cut" },
   { a: 95.9, fn: S.S21, tr: "cut" },
 ];
 const TR = 0.28;

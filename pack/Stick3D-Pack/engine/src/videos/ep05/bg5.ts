@@ -117,31 +117,46 @@ export function deskBG(morning: boolean): HTMLCanvasElement {
   cache[key] = cv; return cv;
 }
 
-/* ---------- sketchbook paper world ---------- */
-export const HORIZON = 760;
+/* ---------- sketchbook paper world (fully drawn: warm paper, sketched landscape, doodles, stains) ---------- */
+export const HORIZON = 1180; // sketched hill line; characters stand at ~1520-1650
+import { gDraw, Stroke } from "./draw5";
+const sk = (pts: [number, number][], w = 6): Stroke => ({ pts: dense(pts), w });
+const dense = (p: [number, number][], step = 12): [number, number][] => { const o: [number, number][] = []; for (let i = 0; i < p.length - 1; i++) { const [a, b] = [p[i], p[i + 1]]; const n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / step)); for (let k = 0; k < n; k++) o.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); } o.push(p[p.length - 1]); return o; };
+const circ = (cx: number, cy: number, rx: number, ry: number, a0 = 0, a1 = TAU, n = 28): [number, number][] => Array.from({ length: n + 1 }, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry] as [number, number]; });
+export const sketchCloud = (x: number, y: number, s: number): Stroke[] => [sk([...circ(x - 60 * s, y, 50 * s, 38 * s, Math.PI * 0.5, Math.PI * 1.5, 12), ...circ(x, y - 30 * s, 60 * s, 48 * s, Math.PI, TAU, 14), ...circ(x + 70 * s, y, 52 * s, 40 * s, Math.PI * 1.5, Math.PI * 2.5, 12)], 5), sk([[x - 60 * s, y + 38 * s], [x + 70 * s, y + 40 * s]], 5)];
+export const sketchTree = (x: number, y: number, s: number): Stroke[] => [sk([[x - 14 * s, y], [x - 10 * s, y - 120 * s]], 7), sk([[x + 14 * s, y], [x + 10 * s, y - 120 * s]], 7), sk([[x, y - 90 * s], [x - 40 * s, y - 140 * s]], 5),
+  sk([...circ(x, y - 190 * s, 90 * s, 80 * s, 0, TAU, 30).map(([a, b], i) => [a + Math.sin(i * 1.7) * 10 * s, b + Math.cos(i * 2.1) * 8 * s] as [number, number])], 6), sk(circ(x - 30 * s, y - 210 * s, 26 * s, 20 * s, 0, TAU, 12), 4), sk(circ(x + 34 * s, y - 170 * s, 22 * s, 18 * s, 0, TAU, 12), 4)];
+const flowerSk = (x: number, y: number, s: number): Stroke[] => [sk([[x, y], [x + 4 * s, y - 50 * s]], 4), ...[0, 1, 2, 3, 4].map((k) => sk(circ(x + 4 * s + Math.cos(k * 1.26) * 12 * s, y - 56 * s + Math.sin(k * 1.26) * 12 * s, 9 * s, 9 * s, 0, TAU, 8), 3)), sk([[x + 2 * s, y - 20 * s], [x + 18 * s, y - 30 * s]], 3)];
+const grass = (x: number, y: number, s: number): Stroke[] => [sk([[x - 16 * s, y], [x - 20 * s, y - 30 * s]], 4), sk([[x, y], [x + 2 * s, y - 40 * s]], 4), sk([[x + 16 * s, y], [x + 24 * s, y - 28 * s]], 4)];
+const star = (x: number, y: number, r: number): Stroke => sk(Array.from({ length: 11 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, rr2 = i % 2 ? r * 0.45 : r; return [x + Math.cos(a) * rr2, y + Math.sin(a) * rr2] as [number, number]; }), 4);
 export function paperBG(): HTMLCanvasElement {
   if (cache.paper) return cache.paper;
   const cv = document.createElement("canvas"); cv.width = WW; cv.height = WH; const c = cv.getContext("2d")!; c.lineJoin = "round"; c.lineCap = "round";
-  // far: the giant evening desk, blurred
-  c.save(); c.filter = "blur(9px)"; c.drawImage(deskBG(false), -900, -2300, WW * 2.7, WH * 2.7); c.restore();
-  c.fillStyle = "rgba(40,20,70,0.15)"; c.fillRect(0, 0, WW, HORIZON);
-  // giant objects at the page edge (depth layer)
-  c.save(); c.filter = "blur(2px)";
-  c.save(); c.translate(120, HORIZON + 10); c.rotate(-0.05); rr(c, -160, -150, 330, 150, 26); c.fillStyle = "#ff9fb8"; c.fill(); ink(c, 8); c.fillStyle = "#4a7ad8"; c.fillRect(-160, -150, 120, 150); c.restore(); // giant eraser
-  c.save(); c.translate(980, HORIZON - 10); c.rotate(0.08); drawPencil(c, -40, 0, 900, -Math.PI / 2 - 0.02); c.restore(); // giant pencil lying
-  c.restore();
-  // paper ground
-  c.fillStyle = lg(c, 0, HORIZON, 0, WH, [[0, "#ecebe6"], [0.25, "#f7f6f1"], [1, "#fffefb"]]); c.fillRect(0, HORIZON, WW, WH - HORIZON);
-  c.lineWidth = 3; c.strokeStyle = "rgba(90,140,220,0.4)"; for (let i = 1; i < 26; i++) { const y = HORIZON + (WH - HORIZON) * (i / 26) ** 1.7; c.beginPath(); c.moveTo(0, y); c.lineTo(WW, y); c.lineWidth = 1 + (i / 26) * 3; c.stroke(); } // ruled lines in perspective
-  c.lineWidth = 4; c.strokeStyle = "rgba(230,70,90,0.45)"; c.beginPath(); c.moveTo(250, HORIZON); c.lineTo(-200, WH); c.stroke(); // margin
-  for (let i = 0; i < 260; i++) { c.fillStyle = `rgba(120,110,100,${0.04 + rnd(i) * 0.05})`; c.fillRect(rnd(i * 3) * WW, HORIZON + rnd(i * 7) * (WH - HORIZON), 2 + rnd(i) * 3, 2); } // paper tooth
-  // faint old doodles + eraser smudges
-  c.lineWidth = 3; c.strokeStyle = "rgba(120,120,130,0.22)"; c.beginPath(); for (let k = 0; k < 40; k++) { const a = k * 0.5, r = 6 + k * 1.6; c.lineTo(160 + Math.cos(a) * r, 1760 + Math.sin(a) * r * 0.4); } c.stroke();
-  c.beginPath(); for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * 4 * Math.PI / 5; c.lineTo(960 + Math.cos(a) * 50, 1800 + Math.sin(a) * 22); } c.closePath(); c.stroke();
-  for (const [x, y] of [[820, 1000], [200, 1180]]) { const g = c.createRadialGradient(x, y, 4, x, y, 90); g.addColorStop(0, "rgba(150,150,160,0.18)"); g.addColorStop(1, "rgba(150,150,160,0)"); c.fillStyle = g; c.fillRect(x - 90, y - 40, 180, 80); }
-  // page edge at the horizon (slight curl + shadow)
-  c.fillStyle = "rgba(60,40,60,0.25)"; c.fillRect(0, HORIZON - 6, WW, 10); c.beginPath(); c.moveTo(0, HORIZON); c.quadraticCurveTo(WW / 2, HORIZON - 16, WW, HORIZON); c.lineWidth = 5; c.strokeStyle = "#c8c4bc"; c.stroke();
-  // pencil shavings (foreground)
-  for (const [x, y, s] of [[90, 1840, 1.3], [1000, 1700, 1.0], [960, 1880, 1.5]] as [number, number, number][]) { c.save(); c.translate(x, y); c.scale(s, s); c.beginPath(); for (let k = 0; k <= 30; k++) { const a = k / 30 * TAU * 1.5, r = 10 + k * 1.3; c.lineTo(Math.cos(a) * r, Math.sin(a) * r * 0.5); } c.lineWidth = 9; c.strokeStyle = "#f0c890"; c.stroke(); c.lineWidth = 3; c.strokeStyle = "#e5483f"; c.stroke(); c.restore(); }
+  // warm paper + fibres + subtle ruled lines + margin
+  c.fillStyle = lg(c, 0, 0, 0, WH, [[0, "#f3e9d4"], [0.5, "#f8f0de"], [1, "#f1e4c8"]]); c.fillRect(0, 0, WW, WH);
+  for (let i = 0; i < 1400; i++) { c.fillStyle = `rgba(${140 + rnd(i) * 40},${110 + rnd(i) * 30},80,${0.04 + rnd(i + 1) * 0.05})`; c.fillRect(rnd(i * 3) * WW, rnd(i * 7) * WH, 1 + rnd(i) * 4, 1); }
+  c.strokeStyle = "rgba(90,140,220,0.16)"; c.lineWidth = 2.5; for (let y = 60; y < WH; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(WW, y); c.stroke(); }
+  c.strokeStyle = "rgba(230,70,90,0.25)"; c.lineWidth = 3; c.beginPath(); c.moveTo(96, 0); c.lineTo(96, WH); c.stroke();
+  // coffee stains + eraser smudges
+  for (const [x, y, r] of [[930, 330, 120], [180, 1880, 90]] as [number, number, number][]) { c.save(); c.beginPath(); c.arc(x, y, r, 0, TAU); c.lineWidth = 14; c.strokeStyle = "rgba(150,95,40,0.22)"; c.stroke(); c.beginPath(); c.arc(x + 6, y - 4, r - 10, 0.3, 4.6); c.lineWidth = 5; c.strokeStyle = "rgba(130,80,30,0.25)"; c.stroke(); const g = c.createRadialGradient(x, y, 2, x, y, r); g.addColorStop(0, "rgba(180,120,60,0.06)"); g.addColorStop(1, "rgba(180,120,60,0.12)"); c.fillStyle = g; c.fill(); c.restore(); }
+  for (const [x, y, w] of [[620, 1000, 160], [300, 1320, 140], [880, 1700, 150], [520, 1820, 120]] as [number, number, number][]) { const g = c.createRadialGradient(x, y, 4, x, y, w); g.addColorStop(0, "rgba(130,130,140,0.16)"); g.addColorStop(1, "rgba(130,130,140,0)"); c.fillStyle = g; c.save(); c.translate(x, y); c.scale(1, 0.45); c.beginPath(); c.arc(0, 0, w, 0, TAU); c.restore(); c.fill(); for (let k = 0; k < 6; k++) { c.strokeStyle = "rgba(120,120,130,0.12)"; c.lineWidth = 3; c.beginPath(); c.moveTo(x - w * 0.6, y - 20 + k * 8); c.lineTo(x + w * 0.6, y - 26 + k * 8); c.stroke(); } }
+  // sketched sky: sun, clouds, birds
+  const st: Stroke[] = [sk(circ(250, 260, 70, 70, 0, TAU, 30), 6), ...Array.from({ length: 10 }, (_, k) => { const a = k * TAU / 10; return sk([[250 + Math.cos(a) * 95, 260 + Math.sin(a) * 95], [250 + Math.cos(a) * 140, 260 + Math.sin(a) * 140]], 5); }),
+    ...sketchCloud(640, 330, 1.1), ...sketchCloud(860, 620, 0.9), ...sketchCloud(330, 640, 0.8), ...sketchCloud(760, 140, 0.6),
+    ...[[480, 480], [540, 450], [600, 500]].map(([x, y]) => sk([[x - 20, y - 8], [x, y], [x + 20, y - 8]], 4)),
+    // hills + far trees + ground line
+    sk([[0, 1180], [140, 1120], [300, 1150], [460, 1090], [640, 1140], [820, 1080], [1080, 1150]], 6), sk([[0, 1250], [200, 1230], [520, 1260], [800, 1240], [1080, 1260]], 5),
+    ...sketchTree(120, 1230, 0.9), ...sketchTree(980, 1240, 1.0), ...sketchTree(860, 1130, 0.5), ...sketchTree(230, 1150, 0.45),
+    // foreground: flowers, grass, pebbles, mushrooms, signpost
+    ...flowerSk(160, 1760, 1.2), ...flowerSk(960, 1800, 1.1), ...flowerSk(620, 1880, 1.0), ...grass(420, 1700, 1.2), ...grass(880, 1600, 1.1), ...grass(220, 1560, 1), ...grass(680, 1760, 1),
+    sk(circ(360, 1860, 28, 14), 4), sk(circ(820, 1880, 22, 11), 4), sk([[1000, 1560], [1000, 1460]], 6), sk([[960, 1470], [1060, 1470], [1074, 1490], [1060, 1510], [960, 1510], [960, 1470]], 5),
+    sk([...circ(150, 1450, 40, 30, Math.PI, TAU, 12), [190, 1450], [110, 1450]], 4), sk([[140, 1450], [140, 1490], [160, 1490], [160, 1450]], 4),
+    // margin doodles
+    star(48, 260, 26), star(52, 900, 20), sk(Array.from({ length: 30 }, (_, k) => { const a = k * 0.55, r = 3 + k * 1.1; return [48 + Math.cos(a) * r, 560 + Math.sin(a) * r] as [number, number]; }), 3),
+    sk([[30, 1300], [70, 1300], [60, 1288], [70, 1300], [60, 1312]], 4), sk([[48, 1600], [30, 1580], [48, 1560], [66, 1580], [48, 1600]], 4), star(48, 1780, 18)];
+  gDraw(c, st, { seed: 41 });
+  c.save(); c.font = "900 30px Comic Sans MS, Inter"; c.fillStyle = "rgba(70,70,80,0.8)"; c.textAlign = "center"; c.fillText("KINGDOM", 1010, 1500); c.restore();
+  // soft warm vignette
+  const v = c.createRadialGradient(WW / 2, WH * 0.55, WH * 0.3, WW / 2, WH * 0.55, WH * 0.85); v.addColorStop(0, "rgba(120,80,30,0)"); v.addColorStop(1, "rgba(120,80,30,0.28)"); c.fillStyle = v; c.fillRect(0, 0, WW, WH);
   cache.paper = cv; return cv;
 }
