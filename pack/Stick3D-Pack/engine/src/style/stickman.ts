@@ -62,31 +62,51 @@ function ik(s: P, t: P, l1: number, l2: number, side: number): [P, P] {
   return [e, [s[0] + dx, s[1] + dy]];
 }
 
-/* ---------- gloves (local frame: wrist at origin, +y along the forearm) ---------- */
-function finger(c: CanvasRenderingContext2D, x: number, y: number, ang: number, len: number, w: number) {
-  c.save(); c.translate(x, y); c.rotate(ang); c.beginPath(); c.roundRect(-w / 2, -w / 2, w, len + w / 2, w / 2); c.fillStyle = GLOVE; c.fill(); stroke(c, 6); c.restore();
+/* ---------- gloves (local frame: wrist at origin, +y along the forearm toward the fingertips) ----------
+   Every pose = puffy rolled cuff + palm + 4 visible fingers (outlined, with seams) + thumb. */
+function sausage(c: CanvasRenderingContext2D, x: number, y: number, ang: number, len: number, w: number, crease = true) {
+  c.save(); c.translate(x, y); c.rotate(ang);
+  c.beginPath(); c.roundRect(-w / 2, -w * 0.3, w, len + w * 0.3, w / 2); c.fillStyle = GLOVE; c.fill(); stroke(c, 6);
+  if (crease && len > 22) { c.beginPath(); c.moveTo(-w * 0.28, len * 0.45); c.quadraticCurveTo(0, len * 0.52, w * 0.28, len * 0.45); stroke(c, 2.5, GLOVE_S); }
+  c.restore();
+}
+function knuckles(c: CanvasRenderingContext2D, n: number, x0: number, y: number, dx = 15, r = 11) {
+  // curled fingers seen from the front: a row of rounded finger tips with seams
+  for (let i = 0; i < n; i++) { c.beginPath(); c.ellipse(x0 + i * dx, y + Math.abs(i - (n - 1) / 2) * 2.5, r * 0.82, r, 0, 0, Math.PI * 2); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); }
+  c.beginPath(); for (let i = 0; i < n; i++) { c.moveTo(x0 + i * dx - 4, y + 3); c.quadraticCurveTo(x0 + i * dx, y + 7, x0 + i * dx + 4, y + 3); } stroke(c, 2.5, GLOVE_S);
+}
+function cuff(c: CanvasRenderingContext2D) {
+  c.beginPath(); c.moveTo(-28, -8); c.quadraticCurveTo(0, -14, 28, -8); c.quadraticCurveTo(36, 8, 30, 24); c.quadraticCurveTo(0, 30, -30, 24); c.quadraticCurveTo(-36, 8, -28, -8); c.closePath(); fillStroke(c, GLOVE, 7);
+  c.beginPath(); c.moveTo(-28, 6); c.quadraticCurveTo(0, 12, 28, 6); stroke(c, 3, GLOVE_S); c.beginPath(); c.moveTo(-26, 15); c.quadraticCurveTo(0, 21, 26, 15); stroke(c, 3, GLOVE_S);
+}
+function palmBall(c: CanvasRenderingContext2D, rx = 36, ry = 33, cy = 52) {
+  c.beginPath(); c.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2); const g = c.createRadialGradient(-10, cy - 14, 4, 0, cy, rx * 1.2); g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#dfe5f5"); fillStroke(c, g, 7);
 }
 export function drawGlove(c: CanvasRenderingContext2D, x: number, y: number, ang: number, pose: HandPose, mirror: boolean, s = 1.28) {
   c.save(); c.translate(x, y); c.rotate(ang); c.scale(mirror ? -s : s, s);
-  // cuff
-  c.beginPath(); c.roundRect(-30, -6, 60, 26, 10); fillStroke(c, GLOVE, 7);
-  c.beginPath(); c.moveTo(-24, 13); c.lineTo(24, 13); stroke(c, 3, GLOVE_S);
-  const palm = () => { c.beginPath(); c.ellipse(0, 50, 36, 34, 0, 0, Math.PI * 2); fillStroke(c, GLOVE, 7); };
+  cuff(c);
   if (pose === "open" || pose === "relaxed") {
-    const spread = pose === "open" ? 1 : 0.35;
-    finger(c, 24, 36, rad(-70 * spread - 10), 30, 20); // thumb
-    for (let i = 0; i < 4; i++) finger(c, -18 + i * 12, 70, rad((-24 + i * 16) * spread), 34 + (i === 1 || i === 2 ? 6 : 0), 17);
-    palm(); c.beginPath(); c.arc(0, 44, 18, 0.3, 2.4); stroke(c, 3, GLOVE_S);
+    const k = pose === "open" ? 1 : 0.25;
+    palmBall(c, 38, 34, 50);
+    // 4 fingers fanning out from the far edge of the palm (pinky side = -x)
+    const F: [number, number, number, number][] = [[-24, 66, 22, 34], [-8, 72, 7, 42], [8, 72, -7, 42], [24, 66, -22, 36]];
+    for (const [fx, fy, fa, fl] of F) sausage(c, fx * (0.85 + 0.15 * k), fy, rad(fa * k), fl * (pose === "relaxed" ? 0.85 : 1), 20);
+    sausage(c, 32, 36, rad(-58 * k - 30), 32, 22); // thumb
+    c.beginPath(); c.arc(-2, 40, 16, rad(30), rad(150)); stroke(c, 3, GLOVE_S);
   } else if (pose === "hold") {
-    palm(); c.beginPath(); c.arc(4, 64, 26, rad(-20), rad(200)); stroke(c, 16, INK); c.beginPath(); c.arc(4, 64, 26, rad(-20), rad(200)); stroke(c, 8, GLOVE);
-    finger(c, 26, 40, rad(-40), 22, 18);
+    palmBall(c, 36, 34, 48);
+    for (let i = 0; i < 4; i++) { c.save(); c.translate(-18, 30 + i * 15); c.beginPath(); c.roundRect(-14, -8, 44, 17, 8.5); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); } // 4 curled fingers wrapping
+    sausage(c, 30, 30, rad(-40), 30, 21); // thumb
+  } else if (pose === "thumb") {
+    palmBall(c, 36, 36, 46);
+    for (let i = 0; i < 4; i++) { c.save(); c.translate(-6, 20 + i * 15); c.beginPath(); c.roundRect(-26, -8, 50, 17, 8.5); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); } // 4 curled fingers stacked
+    sausage(c, 14, 74, rad(-4), 44, 24); // thumb up
   } else {
-    if (pose === "point") finger(c, -8, 66, 0, 58, 18);
-    if (pose === "thumb") finger(c, 14, 72, rad(-8), 50, 23);
-    c.beginPath(); c.ellipse(0, 50, 38, 36, 0, 0, Math.PI * 2); fillStroke(c, GLOVE, 7);
-    c.lineWidth = 4; c.strokeStyle = GLOVE_S; for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(-26 + i * 14, 70 - Math.abs(i - 1) * 2); c.lineTo(-22 + i * 14, 80); c.stroke(); }
-    c.beginPath(); c.arc(-4, 44, 20, rad(200), rad(320)); stroke(c, 4, GLOVE_S);
-    if (pose !== "thumb") { c.beginPath(); c.moveTo(24, 34); c.quadraticCurveTo(10, 52, -6, 50); stroke(c, 6); }
+    palmBall(c, 38, 36, 48);
+    if (pose === "point") sausage(c, -16, 66, rad(4), 58, 20);
+    const n = pose === "point" ? 3 : 4, x0 = pose === "point" ? 2 : -24;
+    for (let i = 0; i < n; i++) { c.beginPath(); c.ellipse(x0 + i * 16, 74 + Math.abs(i - (n - 1) / 2) * 3, 10, 13, 0, 0, Math.PI * 2); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); } // curled finger tips
+    c.save(); c.translate(26, 34); c.rotate(rad(56)); c.beginPath(); c.roundRect(-10, -6, 20, 46, 10); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); // thumb folded across
   }
   c.restore();
 }
@@ -105,15 +125,25 @@ function shoeSide(c: CanvasRenderingContext2D, dark: boolean) {
   c.beginPath(); c.moveTo(46, 6); c.lineTo(60, 14); c.moveTo(56, 2); c.lineTo(70, 12); stroke(c, 4, "#ffffff"); // laces
 }
 // front 3/4 view, ankle at origin, toe points down-outward (+x), sole bottom y = +98
+// 3/4 view (front/back views): ankle at origin, toe points toward the viewer and outward (+x); sole bottom at y = +98.
 function shoeFront(c: CanvasRenderingContext2D) {
-  c.beginPath(); c.roundRect(-64, 62, 162, 36, 16); fillStroke(c, SOLE, 8);
-  c.beginPath(); c.moveTo(-52, 84); c.lineTo(86, 84); stroke(c, 3, "#b8c0d8");
-  c.beginPath(); c.moveTo(-38, -14); c.quadraticCurveTo(-68, 24, -58, 68); c.lineTo(92, 68); c.quadraticCurveTo(102, 26, 60, 8); c.quadraticCurveTo(26, -6, 24, -16); c.quadraticCurveTo(-6, -24, -38, -14); c.closePath();
-  const g = c.createLinearGradient(0, -10, 0, 70); g.addColorStop(0, RED_L); g.addColorStop(1, RED); fillStroke(c, g, 8);
-  c.beginPath(); c.moveTo(18, 68); c.lineTo(88, 68); c.quadraticCurveTo(92, 40, 62, 30); c.quadraticCurveTo(26, 34, 18, 68); c.closePath(); fillStroke(c, SOLE, 6);
-  for (const x of [-40, -18]) { c.beginPath(); c.moveTo(x, 58); c.lineTo(x + 13, 58); c.lineTo(x + 26, 22); c.lineTo(x + 14, 20); c.closePath(); fillStroke(c, SOLE, 5); }
-  c.beginPath(); c.moveTo(-30, -4); c.quadraticCurveTo(-4, -12, 20, -6); stroke(c, 10, "#ffffff"); c.beginPath(); c.moveTo(-30, -4); c.quadraticCurveTo(-4, -12, 20, -6); stroke(c, 3);
+  // thick white sole (side band + visible toe front)
+  c.beginPath(); c.moveTo(-58, 58); c.quadraticCurveTo(-68, 86, -48, 94); c.lineTo(70, 98); c.quadraticCurveTo(110, 98, 112, 78); c.quadraticCurveTo(112, 62, 98, 58); c.closePath(); fillStroke(c, SOLE, 8);
+  c.beginPath(); c.moveTo(-56, 78); c.lineTo(68, 84); c.quadraticCurveTo(100, 84, 108, 74); stroke(c, 3, "#b8c0d8");
+  // red upper: heel/collar at back, instep sloping down to a big rounded toe
+  c.beginPath(); c.moveTo(-44, -14); c.quadraticCurveTo(-70, 20, -60, 62); c.lineTo(100, 62); c.quadraticCurveTo(116, 40, 92, 22); c.quadraticCurveTo(58, 8, 30, -10); c.quadraticCurveTo(-6, -24, -44, -14); c.closePath();
+  const g = c.createLinearGradient(-60, -10, 100, 60); g.addColorStop(0, RED_L); g.addColorStop(0.6, RED); g.addColorStop(1, RED_D); fillStroke(c, g, 8);
+  // white toe cap
+  c.beginPath(); c.moveTo(56, 62); c.lineTo(100, 62); c.quadraticCurveTo(116, 42, 94, 26); c.quadraticCurveTo(64, 26, 56, 62); c.closePath(); fillStroke(c, SOLE, 6);
+  // two white side stripes on the outer flank
+  for (const x of [-46, -22]) { c.beginPath(); c.moveTo(x, 56); c.lineTo(x + 14, 56); c.lineTo(x + 32, 14); c.lineTo(x + 19, 10); c.closePath(); fillStroke(c, SOLE, 5); }
+  // tongue + laces on the instep
+  c.beginPath(); c.moveTo(-6, -16); c.quadraticCurveTo(10, -26, 28, -12); c.lineTo(36, 4); c.quadraticCurveTo(14, 2, -6, -16); c.closePath(); fillStroke(c, RED_D, 5);
+  for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(8 + i * 12, -8 + i * 8); c.lineTo(28 + i * 12, 2 + i * 8); stroke(c, 9); c.beginPath(); c.moveTo(8 + i * 12, -8 + i * 8); c.lineTo(28 + i * 12, 2 + i * 8); stroke(c, 4, "#ffffff"); }
+  // padded white collar
+  c.beginPath(); c.moveTo(-42, -10); c.quadraticCurveTo(-20, -24, -4, -16); stroke(c, 12); c.beginPath(); c.moveTo(-42, -10); c.quadraticCurveTo(-20, -24, -4, -16); stroke(c, 6, "#ffffff");
 }
+
 
 /* ---------- head + face ---------- */
 const HR = 150;
@@ -225,11 +255,15 @@ function sleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean, fo
   tube(c, [s, e, cuffStart], [76, 64, 58]);
   const g = c.createLinearGradient(s[0] - 40, s[1], s[0] + 40, s[1]); g.addColorStop(0, dark ? RED_D : RED_L); g.addColorStop(1, dark ? RED_DD : RED);
   fillStroke(c, g, 8);
+  c.save(); tube(c, [s, e, cuffStart], [70, 58, 52]); c.clip();
   // folds near the elbow + shading stripe
   const ex = e[0], ey = e[1], ang = Math.atan2(w[1] - e[1], w[0] - e[0]);
   c.save(); c.translate(ex, ey); c.rotate(ang);
   c.beginPath(); c.moveTo(-6, -22 * foldSide); c.quadraticCurveTo(8, -8 * foldSide, 4, 10 * foldSide); stroke(c, 4, dark ? RED_DD : RED_D);
   c.beginPath(); c.moveTo(-34, 24 * foldSide); c.quadraticCurveTo(-22, 14 * foldSide, -14, 22 * foldSide); stroke(c, 4, dark ? RED_DD : RED_D);
+  c.restore();
+  { const sa = Math.atan2(e[1] - s[1], e[0] - s[0]); c.save(); c.translate(s[0] + (e[0] - s[0]) * 0.45, s[1] + (e[1] - s[1]) * 0.45); c.rotate(sa);
+    c.beginPath(); c.moveTo(-10, 22 * foldSide); c.quadraticCurveTo(4, 10 * foldSide, 14, 20 * foldSide); stroke(c, 3.5, dark ? RED_DD : RED_D); c.restore(); }
   c.restore();
   // ribbed cuff
   const ca = Math.atan2(w[1] - cuffStart[1], w[0] - cuffStart[0]);
@@ -255,12 +289,20 @@ function hoodieFront(c: CanvasRenderingContext2D, T: (p: P) => P, back: boolean,
   // folds
   for (const [p0, p1, p2] of [[[-140, -170], [-110, -120], [-122, -70]], [[132, -180], [104, -130], [118, -84]], [[-60, -64], [-40, -50], [-20, -60]]] as [P, P, P][]) { const q0 = T(p0), q1 = T(p1), q2 = T(p2); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0], q1[1], q2[0], q2[1]); stroke(c, 4.5, RED_DD); }
   if (!back) {
-    // kangaroo pocket
-    const p = pts([[-88, -160], [88, -160], [112, -46], [-112, -46]]);
-    c.beginPath(); c.moveTo(p[0][0], p[0][1]); c.lineTo(p[1][0], p[1][1]); c.quadraticCurveTo(p[2][0] - 4, p[2][1] - 40, p[2][0], p[2][1]); c.lineTo(p[3][0], p[3][1]); c.quadraticCurveTo(p[3][0] + 4, p[3][1] - 40, p[0][0], p[0][1]); c.closePath();
-    c.fillStyle = "rgba(255,90,90,0.25)"; c.fill(); stroke(c, 6);
-    const s0 = T([-80, -150]), s1 = T([80, -150]); c.beginPath(); c.moveTo(s0[0], s0[1]); c.lineTo(s1[0], s1[1]); c.setLineDash([10, 9]); stroke(c, 3, RED_DD); c.setLineDash([]);
-    for (const sx of [-1, 1]) { const q0 = T([sx * 88, -156]), q1 = T([sx * 100, -100]), q2 = T([sx * 108, -52]); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0] - sx * 18, q1[1], q2[0], q2[1]); stroke(c, 5, RED_DD); }
+    // kangaroo pocket: patch with stitched top + bottom seams, curved side openings with a dark inner edge
+    const p = pts([[-86, -166], [86, -166], [116, -46], [-116, -46]]);
+    const pocket = () => { c.beginPath(); c.moveTo(p[0][0], p[0][1]); c.lineTo(p[1][0], p[1][1]); c.quadraticCurveTo(p[2][0] - 2, p[2][1] - 46, p[2][0], p[2][1]); c.lineTo(p[3][0], p[3][1]); c.quadraticCurveTo(p[3][0] + 2, p[3][1] - 46, p[0][0], p[0][1]); c.closePath(); };
+    pocket(); const pg = c.createLinearGradient(0, p[0][1], 0, p[2][1]); pg.addColorStop(0, "#ee3c3e"); pg.addColorStop(1, "#d42228"); c.fillStyle = pg; c.fill(); stroke(c, 6);
+    for (const sx of [-1, 1]) { // side openings (hand slots)
+      const q0 = T([sx * 86, -166]), q1 = T([sx * 92, -104]), q2 = T([sx * 116, -50]);
+      c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0] - sx * 22, q1[1], q2[0], q2[1]); c.quadraticCurveTo(q1[0] + sx * 2, q1[1] + 6, q0[0], q0[1]); c.fillStyle = RED_DD; c.fill(); stroke(c, 5);
+    }
+    c.setLineDash([9, 8]);
+    const s0 = T([-78, -154]), s1 = T([78, -154]); c.beginPath(); c.moveTo(s0[0], s0[1]); c.lineTo(s1[0], s1[1]); stroke(c, 3, RED_DD);
+    const b0 = T([-100, -58]), b1 = T([100, -58]); c.beginPath(); c.moveTo(b0[0], b0[1]); c.lineTo(b1[0], b1[1]); stroke(c, 3, RED_DD);
+    for (const sx of [-1, 1]) { const q0 = T([sx * 92, -150]), q1 = T([sx * 108, -60]); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q0[0] + sx * 2, (q0[1] + q1[1]) / 2, q1[0], q1[1]); stroke(c, 3, RED_DD); }
+    c.setLineDash([]);
+    const fo = T([0, -110]); c.beginPath(); c.moveTo(fo[0] - 30, fo[1] + 30); c.quadraticCurveTo(fo[0] - 6, fo[1] + 18, fo[0] + 20, fo[1] + 34); stroke(c, 3.5, RED_DD); // pocket fold
   }
   c.restore();
   c.beginPath(); c.moveTo(a1[0], a1[1]); c.quadraticCurveTo(a2[0] - 6, a2[1] - 30, a2[0], a2[1]); c.lineTo(a3[0], a3[1]); c.quadraticCurveTo(a4[0], a4[1] - 6, a4[0] + 10, a4[1]); c.lineTo(a5[0] - 10, a5[1]); c.quadraticCurveTo(a5[0], a5[1] - 6, a6[0], a6[1]); c.lineTo(a7[0], a7[1]); c.quadraticCurveTo(a7[0] + 6, a7[1] - 30, a8[0], a8[1]); c.quadraticCurveTo(top[0], top[1] - 6, a1[0], a1[1]); c.closePath(); stroke(c, LW);
@@ -292,7 +334,7 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   if (showBag && !back) backpackFront(c, T);
   // legs + shoes
   for (const [h, k, a, mir] of [[g.hipL, g.kneeL, g.ankL, true], [g.hipR, g.kneeR, g.ankR, false]] as [P, P, P, boolean][]) {
-    legLine(c, h, k, a, false); c.save(); c.translate(a[0], a[1]); if (mir) c.scale(-1, 1); c.translate(14, 0); shoeFront(c); c.restore();
+    legLine(c, h, k, a, false); c.save(); c.translate(a[0], a[1]); if (mir) c.scale(-1, 1); c.translate(8, 0); shoeFront(c); c.restore();
   }
   hoodFront(c, T, back);
   hoodieFront(c, T, back, breath);
