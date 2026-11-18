@@ -309,7 +309,7 @@ export function S17(c: Ctx, t: number) {
     paperProps(c, t, { castle: 1, throne: 1 });
     const out = copyKing(c, t, { face: "scared", turn: 1 - seg(t, 76, 76.5) }); crownOnCopy(c, t, out, 1);
     for (let i = 0; i < 5; i++) { const u = ((t * 0.8 + rnd(i)) % 1); c.fillStyle = "rgba(90,180,250,0.8)"; c.beginPath(); c.ellipse(out.head[0] + (rnd(i * 3) - 0.5) * out.headR * 2, out.head[1] + u * HP * 0.9, 6, 9, 0, 0, TAU); c.fill(); }
-    const hx = lerp(TH[0] + 90, TH[0] + 300, hop), hy = lerp(TH[1] - 520, TH[1] + 80, hop) - Math.sin(hop * Math.PI) * 120;
+    const hx = lerp(TH[0] + 90, TH[0] + 210, hop), hy = lerp(TH[1] - 520, TH[1] + 80, hop) - Math.sin(hop * Math.PI) * 120;
     const ho = hero(c, hop < 1 ? base(t, "grin", { legL: { a: 30, b: 0, lift: 200 * (1 - hop) }, legR: { a: 30, b: 0, lift: 200 * (1 - hop) }, armR: { a: 40, b: 60 }, handR: "hold", lookX: -0.6, lookY: 0.5, grounded: hop >= 1 }) : stance(t, "laugh", { armR: { a: 40, b: 60 }, handR: "hold", lookX: -0.8 }), hx, hy, HP * lerp(0.95, 1, hop));
     drawGlass(c, ho.gloveR[0] + 10, ho.gloveR[1] + 60, 0.55, 0, -0.3, t);
   });
@@ -322,7 +322,7 @@ export function S18(c: Ctx, t: number) {
     const out = copyKing(c, t, { face: hands ? "surprised" : shrug > 0 ? "neutral" : "worried", hands, shrug }); crownOnCopy(c, t, out, 1);
     if (hands) for (const g of [out.gloveL, out.gloveR]) for (let i = 0; i < 3; i++) { const u = ((t * 1.5 + i / 3) % 1); c.fillStyle = "rgba(100,100,110,0.75)"; c.beginPath(); c.ellipse(g[0] + (i - 1) * 8, g[1] + 20 + u * 120, 5, 8, 0, 0, TAU); c.fill(); }
     gPuddle(c, TH[0], TH[1] + 30, 300, 70, clamp(meltThrone(t) + meltCopy(t) * 0.4), t);
-    const ho = hero(c, stance(t, t < 82.5 ? "surprised" : "smile", { armR: { a: 30, b: 50 }, handR: "relaxed", lookX: -0.9, lookY: t > 82.5 ? 0.5 : 0 }), TH[0] + 300, TH[1] + 80, HP); void ho;
+    const ho = hero(c, stance(t, t < 82.5 ? "surprised" : "smile", { armR: { a: 30, b: 50 }, handR: "relaxed", lookX: -0.9, lookY: t > 82.5 ? 0.5 : 0 }), TH[0] + 200, TH[1] + 80, HP); void ho;
     if (t > 83.5) sparkles(c, TH[0], TH[1] + 10, t, 8, 160, 14, "#ffffff", 12, 0.6);
   });
 }

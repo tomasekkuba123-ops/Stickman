@@ -1,0 +1,8 @@
+[{"t":0.3,"sfx":"sparkle","db":-6},{"t":3.85,"sfx":"whoosh","db":-7},{"t":4.3,"sfx":"scratch","db":-4},{"t":6.2,"sfx":"scratch","db":-5},{"t":7.3,"sfx":"scratch","db":-5},
+ {"t":11.06,"sfx":"pop","db":-8},{"t":13.3,"sfx":"whoosh","db":-8},{"t":15.4,"sfx":"swing","db":-4},{"t":21.15,"sfx":"glass","db":-10},
+ {"t":23.2,"sfx":"whoosh","db":-7},{"t":23.9,"sfx":"scratch","db":-3},{"t":25.39,"sfx":"click","db":0},{"t":25.4,"sfx":"impact","db":-8},
+ {"t":29.5,"sfx":"scratch","db":-5},{"t":31.2,"sfx":"scratch","db":-5},{"t":32.5,"sfx":"scratch","db":-4},{"t":36.94,"sfx":"chime","db":-6},
+ {"t":39.9,"sfx":"roll","db":-6},{"t":48.4,"sfx":"ding","db":-6},{"t":50.4,"sfx":"pop","db":-9},{"t":51.3,"sfx":"sand","db":-6},{"t":53.3,"sfx":"sparkle","db":-6},
+ {"t":60.4,"sfx":"yip","db":-3},{"t":62.3,"sfx":"tick","db":-9},{"t":65.5,"sfx":"whoosh","db":-8},{"t":69.5,"sfx":"splash","db":-4},{"t":71.04,"sfx":"splash","db":0},{"t":71.05,"sfx":"impact","db":-8},
+ {"t":74.8,"sfx":"drip","db":-3},{"t":75.4,"sfx":"drip","db":-5},{"t":76.1,"sfx":"drip","db":-4},{"t":77.0,"sfx":"drip","db":-6},{"t":82.2,"sfx":"drip","db":-4},{"t":83.4,"sfx":"sparkle","db":-7},
+ {"t":86.4,"sfx":"whoosh","db":-8},{"t":87.9,"sfx":"sand","db":-7},{"t":90.7,"sfx":"scratch","db":-4},{"t":93.1,"sfx":"scratch","db":-4},{"t":97.5,"sfx":"success","db":-6}]
