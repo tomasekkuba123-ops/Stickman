@@ -1,0 +1,776 @@
+[
+ {
+  "word": "Stickman",
+  "start": 0.28,
+  "end": 0.74,
+  "line": 1
+ },
+ {
+  "word": "typed",
+  "start": 0.74,
+  "end": 1.08,
+  "line": 1
+ },
+ {
+  "word": "in",
+  "start": 1.08,
+  "end": 1.18,
+  "line": 1
+ },
+ {
+  "word": "the",
+  "start": 1.18,
+  "end": 1.27,
+  "line": 1
+ },
+ {
+  "word": "year",
+  "start": 1.27,
+  "end": 1.52,
+  "line": 1
+ },
+ {
+  "word": "2026",
+  "start": 1.52,
+  "end": 2.69,
+  "line": 1
+ },
+ {
+  "word": "but",
+  "start": 3.27,
+  "end": 3.37,
+  "line": 1
+ },
+ {
+  "word": "his",
+  "start": 3.37,
+  "end": 3.55,
+  "line": 1
+ },
+ {
+  "word": "finger",
+  "start": 3.55,
+  "end": 3.89,
+  "line": 1
+ },
+ {
+  "word": "slipped",
+  "start": 3.89,
+  "end": 4.41,
+  "line": 1
+ },
+ {
+  "word": "Two",
+  "start": 5.07,
+  "end": 5.31,
+  "line": 2
+ },
+ {
+  "word": "zero",
+  "start": 5.31,
+  "end": 5.61,
+  "line": 2
+ },
+ {
+  "word": "two",
+  "start": 5.61,
+  "end": 5.85,
+  "line": 2
+ },
+ {
+  "word": "six",
+  "start": 5.85,
+  "end": 6.31,
+  "line": 2
+ },
+ {
+  "word": "became",
+  "start": 6.31,
+  "end": 6.8,
+  "line": 2
+ },
+ {
+  "word": "two",
+  "start": 6.8,
+  "end": 7.08,
+  "line": 2
+ },
+ {
+  "word": "zero",
+  "start": 7.08,
+  "end": 7.4,
+  "line": 2
+ },
+ {
+  "word": "two",
+  "start": 7.4,
+  "end": 7.86,
+  "line": 2
+ },
+ {
+  "word": "SIX",
+  "start": 8.29,
+  "end": 8.73,
+  "line": 2
+ },
+ {
+  "word": "MILLION",
+  "start": 8.73,
+  "end": 9.24,
+  "line": 2
+ },
+ {
+  "word": "The",
+  "start": 10.301,
+  "end": 10.371,
+  "line": 3
+ },
+ {
+  "word": "time",
+  "start": 10.371,
+  "end": 10.661,
+  "line": 3
+ },
+ {
+  "word": "machine",
+  "start": 10.661,
+  "end": 11.051,
+  "line": 3
+ },
+ {
+  "word": "shook",
+  "start": 11.051,
+  "end": 11.711,
+  "line": 3
+ },
+ {
+  "word": "sparked",
+  "start": 11.711,
+  "end": 12.511,
+  "line": 3
+ },
+ {
+  "word": "and",
+  "start": 12.511,
+  "end": 12.661,
+  "line": 3
+ },
+ {
+  "word": "vanished",
+  "start": 12.661,
+  "end": 13.221,
+  "line": 3
+ },
+ {
+  "word": "When",
+  "start": 14.818,
+  "end": 14.918,
+  "line": 4
+ },
+ {
+  "word": "the",
+  "start": 14.918,
+  "end": 14.978,
+  "line": 4
+ },
+ {
+  "word": "smoke",
+  "start": 14.978,
+  "end": 15.318,
+  "line": 4
+ },
+ {
+  "word": "cleared",
+  "start": 15.318,
+  "end": 15.868,
+  "line": 4
+ },
+ {
+  "word": "there",
+  "start": 15.868,
+  "end": 16.198,
+  "line": 4
+ },
+ {
+  "word": "was",
+  "start": 16.198,
+  "end": 16.348,
+  "line": 4
+ },
+ {
+  "word": "no",
+  "start": 16.348,
+  "end": 16.488,
+  "line": 4
+ },
+ {
+  "word": "city",
+  "start": 16.488,
+  "end": 16.928,
+  "line": 4
+ },
+ {
+  "word": "No",
+  "start": 17.458,
+  "end": 17.618,
+  "line": 4
+ },
+ {
+  "word": "trees",
+  "start": 17.618,
+  "end": 18.238,
+  "line": 4
+ },
+ {
+  "word": "No",
+  "start": 18.468,
+  "end": 18.638,
+  "line": 4
+ },
+ {
+  "word": "people",
+  "start": 18.638,
+  "end": 19.138,
+  "line": 4
+ },
+ {
+  "word": "Just",
+  "start": 19.758,
+  "end": 20.048,
+  "line": 5
+ },
+ {
+  "word": "giant",
+  "start": 20.048,
+  "end": 20.608,
+  "line": 5
+ },
+ {
+  "word": "glowing",
+  "start": 20.608,
+  "end": 21.048,
+  "line": 5
+ },
+ {
+  "word": "jellyfish",
+  "start": 21.048,
+  "end": 21.658,
+  "line": 5
+ },
+ {
+  "word": "floating",
+  "start": 21.658,
+  "end": 22.048,
+  "line": 5
+ },
+ {
+  "word": "over",
+  "start": 22.048,
+  "end": 22.308,
+  "line": 5
+ },
+ {
+  "word": "a",
+  "start": 22.308,
+  "end": 22.338,
+  "line": 5
+ },
+ {
+  "word": "purple",
+  "start": 22.338,
+  "end": 22.698,
+  "line": 5
+ },
+ {
+  "word": "ocean",
+  "start": 22.698,
+  "end": 23.078,
+  "line": 5
+ },
+ {
+  "word": "One",
+  "start": 23.849,
+  "end": 23.979,
+  "line": 6
+ },
+ {
+  "word": "of",
+  "start": 23.979,
+  "end": 24.049,
+  "line": 6
+ },
+ {
+  "word": "them",
+  "start": 24.049,
+  "end": 24.169,
+  "line": 6
+ },
+ {
+  "word": "looked",
+  "start": 24.169,
+  "end": 24.409,
+  "line": 6
+ },
+ {
+  "word": "at",
+  "start": 24.409,
+  "end": 24.489,
+  "line": 6
+ },
+ {
+  "word": "Stickman",
+  "start": 24.489,
+  "end": 25.169,
+  "line": 6
+ },
+ {
+  "word": "and",
+  "start": 25.419,
+  "end": 25.519,
+  "line": 6
+ },
+ {
+  "word": "waved",
+  "start": 25.519,
+  "end": 26.029,
+  "line": 6
+ },
+ {
+  "word": "It",
+  "start": 26.584,
+  "end": 26.674,
+  "line": 7
+ },
+ {
+  "word": "spoke",
+  "start": 26.674,
+  "end": 26.934,
+  "line": 7
+ },
+ {
+  "word": "in",
+  "start": 26.934,
+  "end": 27.044,
+  "line": 7
+ },
+ {
+  "word": "bubbles",
+  "start": 27.044,
+  "end": 27.494,
+  "line": 7
+ },
+ {
+  "word": "Blub",
+  "start": 27.894,
+  "end": 28.204,
+  "line": 7
+ },
+ {
+  "word": "Blub-blub",
+  "start": 28.204,
+  "end": 28.854,
+  "line": 7
+ },
+ {
+  "word": "Stickman",
+  "start": 29.445,
+  "end": 29.905,
+  "line": 8
+ },
+ {
+  "word": "waved",
+  "start": 29.905,
+  "end": 30.175,
+  "line": 8
+ },
+ {
+  "word": "back",
+  "start": 30.175,
+  "end": 30.555,
+  "line": 8
+ },
+ {
+  "word": "Big",
+  "start": 30.785,
+  "end": 30.945,
+  "line": 8
+ },
+ {
+  "word": "mistake",
+  "start": 30.945,
+  "end": 31.455,
+  "line": 8
+ },
+ {
+  "word": "In",
+  "start": 32.326,
+  "end": 32.416,
+  "line": 9
+ },
+ {
+  "word": "this",
+  "start": 32.416,
+  "end": 32.586,
+  "line": 9
+ },
+ {
+  "word": "future",
+  "start": 32.586,
+  "end": 33.266,
+  "line": 9
+ },
+ {
+  "word": "waving",
+  "start": 33.266,
+  "end": 33.656,
+  "line": 9
+ },
+ {
+  "word": "meant",
+  "start": 33.656,
+  "end": 34.126,
+  "line": 9
+ },
+ {
+  "word": "I",
+  "start": 34.486,
+  "end": 34.586,
+  "line": 9
+ },
+ {
+  "word": "challenge",
+  "start": 34.586,
+  "end": 34.996,
+  "line": 9
+ },
+ {
+  "word": "you",
+  "start": 34.996,
+  "end": 35.206,
+  "line": 9
+ },
+ {
+  "word": "A",
+  "start": 35.981,
+  "end": 36.041,
+  "line": 10
+ },
+ {
+  "word": "thousand",
+  "start": 36.041,
+  "end": 36.611,
+  "line": 10
+ },
+ {
+  "word": "jellyfish",
+  "start": 36.611,
+  "end": 37.151,
+  "line": 10
+ },
+ {
+  "word": "lit",
+  "start": 37.151,
+  "end": 37.321,
+  "line": 10
+ },
+ {
+  "word": "up",
+  "start": 37.321,
+  "end": 37.441,
+  "line": 10
+ },
+ {
+  "word": "at",
+  "start": 37.441,
+  "end": 37.531,
+  "line": 10
+ },
+ {
+  "word": "once",
+  "start": 37.531,
+  "end": 37.951,
+  "line": 10
+ },
+ {
+  "word": "Stickman",
+  "start": 39.553,
+  "end": 40.013,
+  "line": 11
+ },
+ {
+  "word": "jumped",
+  "start": 40.013,
+  "end": 40.343,
+  "line": 11
+ },
+ {
+  "word": "back",
+  "start": 40.343,
+  "end": 40.583,
+  "line": 11
+ },
+ {
+  "word": "into",
+  "start": 40.583,
+  "end": 40.743,
+  "line": 11
+ },
+ {
+  "word": "the",
+  "start": 40.743,
+  "end": 40.803,
+  "line": 11
+ },
+ {
+  "word": "machine",
+  "start": 40.803,
+  "end": 41.243,
+  "line": 11
+ },
+ {
+  "word": "and",
+  "start": 41.243,
+  "end": 41.343,
+  "line": 11
+ },
+ {
+  "word": "smashed",
+  "start": 41.343,
+  "end": 41.933,
+  "line": 11
+ },
+ {
+  "word": "every",
+  "start": 41.933,
+  "end": 42.173,
+  "line": 11
+ },
+ {
+  "word": "button",
+  "start": 42.173,
+  "end": 42.563,
+  "line": 11
+ },
+ {
+  "word": "Wrong",
+  "start": 43.063,
+  "end": 43.313,
+  "line": 12
+ },
+ {
+  "word": "button",
+  "start": 43.313,
+  "end": 43.663,
+  "line": 12
+ },
+ {
+  "word": "Wrong",
+  "start": 43.803,
+  "end": 44.093,
+  "line": 12
+ },
+ {
+  "word": "button",
+  "start": 44.093,
+  "end": 44.443,
+  "line": 12
+ },
+ {
+  "word": "Right",
+  "start": 44.683,
+  "end": 44.903,
+  "line": 12
+ },
+ {
+  "word": "button",
+  "start": 44.903,
+  "end": 45.203,
+  "line": 12
+ },
+ {
+  "word": "Whoosh",
+  "start": 45.628,
+  "end": 46.178,
+  "line": 13
+ },
+ {
+  "word": "He",
+  "start": 46.788,
+  "end": 46.868,
+  "line": 13
+ },
+ {
+  "word": "landed",
+  "start": 46.868,
+  "end": 47.238,
+  "line": 13
+ },
+ {
+  "word": "in",
+  "start": 47.238,
+  "end": 47.338,
+  "line": 13
+ },
+ {
+  "word": "his",
+  "start": 47.338,
+  "end": 47.498,
+  "line": 13
+ },
+ {
+  "word": "room",
+  "start": 47.498,
+  "end": 48.068,
+  "line": 13
+ },
+ {
+  "word": "breathing",
+  "start": 48.068,
+  "end": 48.468,
+  "line": 13
+ },
+ {
+  "word": "hard",
+  "start": 48.468,
+  "end": 48.988,
+  "line": 13
+ },
+ {
+  "word": "He",
+  "start": 49.999,
+  "end": 50.079,
+  "line": 14
+ },
+ {
+  "word": "wiped",
+  "start": 50.079,
+  "end": 50.389,
+  "line": 14
+ },
+ {
+  "word": "his",
+  "start": 50.389,
+  "end": 50.559,
+  "line": 14
+ },
+ {
+  "word": "forehead",
+  "start": 50.559,
+  "end": 51.099,
+  "line": 14
+ },
+ {
+  "word": "sat",
+  "start": 51.289,
+  "end": 51.579,
+  "line": 14
+ },
+ {
+  "word": "down",
+  "start": 51.579,
+  "end": 52.039,
+  "line": 14
+ },
+ {
+  "word": "and",
+  "start": 52.509,
+  "end": 52.649,
+  "line": 14
+ },
+ {
+  "word": "typed",
+  "start": 52.649,
+  "end": 52.989,
+  "line": 14
+ },
+ {
+  "word": "in",
+  "start": 52.989,
+  "end": 53.129,
+  "line": 14
+ },
+ {
+  "word": "the",
+  "start": 53.129,
+  "end": 53.219,
+  "line": 14
+ },
+ {
+  "word": "year",
+  "start": 53.219,
+  "end": 53.429,
+  "line": 14
+ },
+ {
+  "word": "2026",
+  "start": 53.429,
+  "end": 54.479,
+  "line": 14
+ },
+ {
+  "word": "But",
+  "start": 55.155,
+  "end": 55.265,
+  "line": 15
+ },
+ {
+  "word": "his",
+  "start": 55.265,
+  "end": 55.435,
+  "line": 15
+ },
+ {
+  "word": "finger",
+  "start": 55.435,
+  "end": 55.725,
+  "line": 15
+ },
+ {
+  "word": "slipped",
+  "start": 55.725,
+  "end": 56.265,
+  "line": 15
+ },
+ {
+  "word": "Future",
+  "start": 56.96,
+  "end": 57.58,
+  "line": 16
+ },
+ {
+  "word": "or",
+  "start": 57.58,
+  "end": 57.68,
+  "line": 16
+ },
+ {
+  "word": "past",
+  "start": 57.68,
+  "end": 58.24,
+  "line": 16
+ },
+ {
+  "word": "Where",
+  "start": 58.41,
+  "end": 58.54,
+  "line": 16
+ },
+ {
+  "word": "would",
+  "start": 58.54,
+  "end": 58.64,
+  "line": 16
+ },
+ {
+  "word": "you",
+  "start": 58.64,
+  "end": 58.73,
+  "line": 16
+ },
+ {
+  "word": "go",
+  "start": 58.73,
+  "end": 59.3,
+  "line": 16
+ }
+]
