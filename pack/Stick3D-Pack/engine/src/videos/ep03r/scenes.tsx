@@ -372,7 +372,7 @@ const K17: [number, Key[]][] = [
   [68.6, [K(68.6, [-0.4, 1.8, 7.8], [-0.9, 1.7, 0.6], 54), K(69.4, [-0.1, 1.8, 7.4], [-0.6, 1.6, 0.4], 54)]],
   [69.4, [K(69.4, SIDE(-1, -9, 1.8), SIDE(1, 0, 1.4), 54), K(71.0, SIDE(5, -9, 2.2), SIDE(7, 0, 1.0), 54)]],
   [71.0, [K(71.0, behind(5.5, -1.5, 2.0), add(RIM, [0, 2.0, 0]), 44), K(73.0, behind(6.5, -2.0, 2.2), add(RIM, [0, 2.4, 0]), 48)]],
-  [73.0, [K(73.0, behind(4.4, 1.2, 0.8), [lerp(RIM[0], CRATER[0], 0.4), 3.5, lerp(RIM[2], CRATER[2], 0.4)], 62), K(76.6, behind(5.2, 1.8, 0.7), [lerp(RIM[0], CRATER[0], 0.45), 6.5, lerp(RIM[2], CRATER[2], 0.45)], 64)]],
+  [73.0, [K(73.0, behind(4.4, 1.2, 0.6), [lerp(RIM[0], CRATER[0], 0.4), 3.0, lerp(RIM[2], CRATER[2], 0.4)], 64), K(76.6, behind(5.6, 2.0, 0.5), [lerp(RIM[0], CRATER[0], 0.5), 8.5, lerp(RIM[2], CRATER[2], 0.5)], 68)]],
 ];
 export const S17 = ({ t }: Ctx) => { const c = coinAt(t), chase = seg(t, 69.3, 71.0, ease.sin);
   const rumble = seg(t, 70.9, 71.4) * (t < 73 ? 1 : 1), rise = seg(t, 73.0, 76.5, ease.io);
@@ -381,7 +381,7 @@ export const S17 = ({ t }: Ctx) => { const c = coinAt(t), chase = seg(t, 69.3, 7
     : t < 71.0 ? run(t, true, "scared", { lookX: -1 })
     : t < 73.0 ? stand(t, "scared", { squash: -0.06 + Math.sin(t * 40) * 0.015, ikR: [160, 760], ikL: [-160, 760], handR: "open", handL: "open", lookY: 0.4, lookX: 0.3, lean: -6 })
     : stand(t, "scared", { ikR: [200, 980], ikL: [-200, 980], handR: "open", handL: "open", lookY: -1, lookX: 0.2, lean: -10, squash: -0.04 });
-  const wp: V3 = [CRATER[0], lerp(-10, 0.5, rise), CRATER[2]];
+  const wp: V3 = [CRATER[0], lerp(-9, 3.5, rise), CRATER[2]];
   return (<>
     <Cam t={t} keys={shot(t, K17)} impacts={[[69.15, 0.03], [70.9, 0.06], [72.7, 0.08]]} quake={t > 70.9 ? 0.02 + 0.03 * rise : 0} />
     <MoonSet t={t} />
@@ -393,6 +393,8 @@ export const S17 = ({ t }: Ctx) => { const c = coinAt(t), chase = seg(t, 69.3, 7
     {/* dust under the crater: rumbling plumes, then the whale rising with rocks falling off */}
     {t > 70.9 ? <Smoke src={add(CRATER, [0, 0, 0])} t={t} t0={70.9} rate={14} vel={[0, 1.6, 0]} spread={4} size={1.3} life={2.6} color="#bdb8d0" seed={12} max={40} /> : null}
     <PuffBurst c={CRATER} t={t} t0={72.7} n={24} r={9} size={1.7} color="#c8c4dc" up={2.5} life={2.4} />
+    <PuffBurst c={CRATER} t={t} t0={73.3} n={28} r={12} size={1.5} color="#d4d0e4" up={4} life={3.0} />
+    {t > 73 ? <Smoke src={add(CRATER, [0, 0.5, 0])} t={t} t0={73} rate={12} vel={[0, 2.4, 0]} spread={7} size={1.2} life={2.2} color="#cfcae0" seed={31} max={30} /> : null}
     {t > 73 ? <Whale3D p={wp} s={1.8} t={t} eyes={0} rotY={WROT} /> : null}
     {t > 73 ? Array.from({ length: 12 }, (_, i) => { const t0 = 73.4 + (i % 6) * 0.45, u = Math.max(0, t - t0); const a = (i / 12) * TAU; return <Ball key={i} p={[CRATER[0] + Math.cos(a) * (6 + u * 1.5), wp[1] + 6 - 4 * u * u + (i % 3), CRATER[2] + Math.sin(a) * (6 + u * 1.5)]} r={0.4 + (i % 3) * 0.25} color="#a8a2c0" ink={0.04} />; }) : null}
     <HeroV2 p={heroP} h={H} rig={heroRig} rim="200,190,255" />
@@ -410,7 +412,7 @@ export const S18 = ({ t }: Ctx) => { const eyes = seg(t, 77.5, 77.9, ease.back);
     <Cam t={t} keys={shot(t, K18)} impacts={[[77.57, 0.025]]} />
     <MoonSet t={t} />
     <Smoke src={CRATER} t={t} t0={74} rate={6} vel={[0, 1.0, 0]} spread={4} size={1.2} life={3} color="#bdb8d0" seed={13} max={16} />
-    <Whale3D p={[WHALE_UP[0], lerp(0.5, WHALE_UP[1], seg(t, 76.5, 79.8, ease.o)), WHALE_UP[2]]} s={1.8} t={t} eyes={eyes} rotY={WROT} />
+    <Whale3D p={[WHALE_UP[0], lerp(3.5, WHALE_UP[1], seg(t, 76.5, 79.8, ease.o)), WHALE_UP[2]]} s={1.8} t={t} eyes={eyes} rotY={WROT} />
     <HeroV2 p={RIM} h={H} rig={stand(t, "scared", { ikR: [160, 820], ikL: [-160, 820], handR: "open", handL: "open", lookY: -1, lookX: t > 78.2 ? -0.2 : 0.3, squash: -0.04 - 0.06 * seg(t, 77.6, 77.9) })} rim="255,220,120"
       extra={t > 78.2 ? (c, o, W, Hh) => { c.save(); c.globalCompositeOperation = "source-atop"; c.fillStyle = "rgba(255,210,90,0.18)"; c.fillRect(0, 0, W, Hh); c.restore(); void o; } : undefined} />
   </>);
