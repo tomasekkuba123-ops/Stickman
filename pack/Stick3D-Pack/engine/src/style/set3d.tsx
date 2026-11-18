@@ -89,8 +89,8 @@ export const RopeLadder: React.FC<{ top: V3; L: number; sway: number; n?: number
 /* ---------------- sky + space ---------------- */
 export const GradientDome: React.FC<{ stops: [number, string][]; r?: number; stars?: number; t?: number }> = ({ stops, r = 300, stars = 0 }) => {
   const key = "dome|" + stops.map((s) => s.join(":")).join("|") + "|" + stars.toFixed(2);
-  const tex = canvasTex(key, 512, 512, (c) => { const g = c.createLinearGradient(0, 0, 0, 512); for (const [k, col] of stops) g.addColorStop(k, col); c.fillStyle = g; c.fillRect(0, 0, 512, 512);
-    if (stars > 0) for (let i = 0; i < 600; i++) { c.globalAlpha = stars * (0.35 + rnd(i) * 0.65); c.fillStyle = rnd(i + 3) > 0.85 ? "#ffd6f0" : "#ffffff"; c.beginPath(); c.arc(rnd(i * 3) * 512, rnd(i * 7) * 400, 0.6 + rnd(i + 9) * 1.6, 0, TAU); c.fill(); } c.globalAlpha = 1; });
+  const tex = canvasTex(key, 4096, 2048, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); for (const [k, col] of stops) g.addColorStop(k, col); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    if (stars > 0) for (let i = 0; i < 3000; i++) { c.globalAlpha = stars * (0.35 + rnd(i) * 0.65); c.fillStyle = rnd(i + 3) > 0.85 ? "#ffd6f0" : "#ffffff"; c.beginPath(); c.arc(rnd(i * 3) * W, rnd(i * 7) * H * 0.8, 1.2 + rnd(i + 9) * 2.2, 0, TAU); c.fill(); } c.globalAlpha = 1; });
   return <mesh><sphereGeometry args={[r, 48, 32]} /><meshBasicMaterial map={tex} side={THREE.BackSide} depthWrite={false} fog={false} /></mesh>;
 };
 const mixC = (a: string, b: string, k: number) => "#" + new THREE.Color(a).lerp(new THREE.Color(b), clamp(k)).getHexString();
@@ -98,13 +98,13 @@ const mixC = (a: string, b: string, k: number) => "#" + new THREE.Color(a).lerp(
 export const AltDome: React.FC<{ alt: number }> = ({ alt }) => {
   const q = Math.round(alt * 12) / 12, A = ["#2f7ff0", "#8ccaff", "#e6f6ff"], B = ["#06124a", "#183c9a", "#4a78d8"], C = ["#010108", "#05051a", "#0c0a2c"];
   const col = (i: number) => q <= 1 ? mixC(A[i], B[i], q) : mixC(B[i], C[i], q - 1);
-  return <GradientDome stops={[[0, col(0)], [0.55, col(1)], [1, col(2)]]} stars={clamp(q - 1.1) * 1.1} />;
+  return <GradientDome r={150} stops={[[0, col(0)], [0.55, col(1)], [1, col(2)]]} stars={clamp(q - 1.1) * 1.1} />;
 };
 // fluffy 3D cloud (soft white puffs, slightly lit underneath)
 export const Cloud3D: React.FC<{ p: V3; s?: number; seed?: number; tint?: string; o?: number }> = ({ p, s = 1, seed = 1, tint = "#ffffff", o = 1 }) => (
   <group position={p} scale={s}>{Array.from({ length: 9 }, (_, i) => { const a = rnd(i + seed) * TAU, d = rnd(i * 3 + seed) * 1.6; return <mesh key={i} position={[Math.cos(a) * d * 1.5, rnd(i * 5 + seed) * 0.8 - (i % 3) * 0.1, Math.sin(a) * d * 0.7]}><sphereGeometry args={[0.8 + rnd(i * 7 + seed) * 0.8, 16, 12]} /><meshToonMaterial color={new THREE.Color(tint).lerp(new THREE.Color("#c8c8f0"), i % 3 === 2 ? 0.35 : 0)} gradientMap={ramp} transparent={o < 1} opacity={o} /></mesh>; })}</group>
 );
-export const Earth: React.FC<{ p: V3; r: number; rotY?: number }> = ({ p, r, rotY = 0 }) => (<><Globe p={p} r={r} rotY={rotY} tilt={0.2} /><SGlow p={[p[0], p[1], p[2] + r * 0.2]} r={r * 1.6} color="#7ac8ff" o={0.35} /></>);
+export const Earth: React.FC<{ p: V3; r: number; rotY?: number; glow?: number }> = ({ p, r, rotY = 0, glow = 0.35 }) => (<><Globe p={p} r={r} rotY={rotY} tilt={0.2} /><SGlow p={[p[0], p[1], p[2] + r * 0.2]} r={r * 1.6} color="#7ac8ff" o={glow} /></>);
 
 /* ---------------- bedroom at sunset ---------------- */
 export const PAPER: V3 = [-0.6, 1.53, -2.85]; // centre of the drawing paper on the desk

@@ -28,24 +28,24 @@ const walk = (t: number, flip: boolean, face: Rig["face"] = "smile", ex: Partial
 /* ---------- rocket + ladder + hanging hero ---------- */
 const ladderTop = (rp: V3, s: number): V3 => [rp[0] + 1.05 * s, rp[1] - 0.25 * s, rp[2] + 0.25 * s];
 type RocketRigProps = { t: number; rp: V3; s?: number; flame?: number; rig?: Rig | null; L?: number; k?: number; sway?: number; gauge?: number; face?: number; faceMood?: "scared" | "smile" | "wow"; extra?: Extra2D; rim?: string; tilt?: number; smoke?: boolean; smokeVel?: V3; lit?: number };
-export const RocketRig: React.FC<RocketRigProps> = ({ t, rp, s = 1.5, flame = 1, rig, L = 3.6, k = 0.82, sway, gauge, face, faceMood, extra, rim = "255,190,120", tilt = 0, smoke = true, smokeVel = [0, -5, 0], lit = 1 }) => {
+export const RocketRig: React.FC<RocketRigProps> = ({ t, rp, s = 1.5, flame = 1, rig, L = 3.6, k = 0.82, sway, gauge, face, faceMood, extra, rim = "255,190,120", tilt = 0, smoke = true, smokeVel = [-1.6, -5, -1.8], lit = 1 }) => {
   const sw = sway ?? Math.sin(t * 2.3) * 0.12; const top = ladderTop(rp, s), rung = ladderPts(top, L, sw, k);
   const gy = rig ? gloveOffset(rig, H)[1] : 0;
   return (<>
     <Rocket3D p={rp} s={s} t={t} flame={flame} gauge={gauge} face={face} faceMood={faceMood} rot={[0, 0.35, tilt]} />
     <RopeLadder top={top} L={L} sway={sw} n={8} />
     {rig ? <HeroV2 p={[rung[0], rung[1] - gy, rung[2] + 0.3]} h={H} rig={rig} rim={rim} extra={extra} shadow={false} /> : null}
-    {smoke && flame > 0.05 ? <Smoke src={add(rp, [0, -1.0 * s, 0])} t={t} t0={t - 3} rate={9} vel={smokeVel} spread={0.9} size={0.75 * s} life={1.6} lit={lit} seed={3} max={16} /> : null}
+    {smoke && flame > 0.05 ? <Smoke src={add(rp, [0, -1.0 * s, 0])} t={t} t0={t - 3} rate={9} vel={smokeVel} spread={0.7} size={0.6 * s} life={1.6} lit={lit} seed={3} max={16} /> : null}
   </>);
 };
 
 /* ---------- sky world: rocket fixed at origin, clouds stream downward ---------- */
-const SkyWorld: React.FC<{ t: number; alt: number; speed?: number; clouds?: number; earth?: number; lateral?: number }> = ({ t, alt, speed = 9, clouds = 1, earth = 0, lateral = 0 }) => (<>
+const SkyWorld: React.FC<{ t: number; alt: number; speed?: number; clouds?: number; earth?: number; lateral?: number; glow?: number }> = ({ t, alt, speed = 9, clouds = 1, earth = 0, lateral = 0, glow = 0.35 }) => (<>
   <ambientLight intensity={1.05} /><directionalLight position={[6, 8, 8]} intensity={1.3} color={alt < 0.5 ? "#fff0d8" : "#d8e4ff"} /><directionalLight position={[-6, -2, 4]} intensity={0.5} color="#ffb070" />
   <AltDome alt={alt} />
   {clouds > 0 ? Array.from({ length: 16 }, (_, i) => { const span = 60, y = ((((i * 7.3 + 20) - t * speed) % span) + span) % span - span / 2; const x = (i % 2 ? 1 : -1) * (2.5 + (i * 2.7) % 9) + Math.sin(i) * 2 - lateral * ((t * speed * 0.6 + i * 5) % 30 - 15);
-    return <Cloud3D key={i} p={[x, y, -2 - (i * 3.1) % 16]} s={0.9 + (i % 4) * 0.35} seed={i + 2} o={clouds} tint={alt > 0.6 ? "#c8d0ff" : "#ffffff"} />; }) : null}
-  {earth > 0 ? <Earth p={[0, -95 + (1 - earth) * -40, -40]} r={70} rotY={t * 0.04} /> : null}
+    return <Cloud3D key={i} p={[x, y, -5.5 - (i * 3.1) % 14]} s={0.9 + (i % 4) * 0.35} seed={i + 2} o={clouds} tint={alt > 0.6 ? "#c8d0ff" : "#ffffff"} />; }) : null}
+  {earth > 0 ? <Earth p={[0, -95 + (1 - earth) * -40, -40]} r={70} rotY={t * 0.04} glow={glow} /> : null}
 </>);
 
 /* ===================== S1 HOOK 0–2.45 : rocket bursting up through clouds, Stickman clinging (big word LIFTOFF!) ===================== */
@@ -144,12 +144,12 @@ export const S6 = ({ t }: Ctx) => { const grow = seg(t, 19.6, 20.5, ease.back), 
 };
 
 /* ===================== S7 23.4–26.1 : out of the house, over the sunset city ===================== */
-const K7: Key[] = [K(23.4, [7.5, 3.5, 11], [1.5, 6.5, 0], 52), K(26.2, [6.5, 9.0, 10], [1.5, 12.5, 0], 52)];
-export const S7 = ({ t }: Ctx) => { const u = t - 23.4, rp: V3 = [0, 6 + u * 3.6, 0];
+const K7: Key[] = [K(23.4, [7.5, 4.5, 11], [1.2, 7.5, 0], 54), K(26.2, [6.5, 10.0, 10], [1.2, 13.5, 0], 54)];
+export const S7 = ({ t }: Ctx) => { const u = t - 23.4, rp: V3 = [0, 10 + u * 3.6, 0];
   return (<>
     <Cam t={t} keys={K7} />
     <ambientLight intensity={1.0} /><directionalLight position={[-6, 6, 8]} intensity={1.2} color="#ffd0a0" />
-    <GradientDome stops={[[0, "#5a3a9a"], [0.45, "#ff7a5a"], [0.7, "#ffc07a"], [1, "#ffe0b0"]]} />
+    <GradientDome r={150} stops={[[0, "#5a3a9a"], [0.45, "#ff7a5a"], [0.7, "#ffc07a"], [1, "#ffe0b0"]]} />
     <SGlow p={[-30, 8, -80]} r={22} color="#fff0b0" o={0.6} />
     {/* Stickman's house with a hole in the roof */}
     <group position={[0, 0, 0]}><Box p={[0, 2.2, 0]} s={[6, 4.4, 5]} color="#f6c08a" /><Extrude3 /><Box p={[1.4, 2.4, 2.52]} s={[1.6, 1.4, 0.05]} color="#ffd890" line={3} /><Box p={[-1.6, 1.0, 2.52]} s={[1.0, 2.0, 0.05]} color="#8a4a2a" line={3} /></group>
@@ -167,7 +167,7 @@ const Extrude3: React.FC = () => (<><mesh position={[0, 5.4, 0]} rotation={[0, M
 /* ===================== S8 26.1–35.8 : ascent in 5 shots ===================== */
 const K8: [number, Key[]][] = [
   // a: low angle bursting through clouds
-  [26.1, [K(26.1, [1.8, -11, 6], [0, 0.5, 0], 52, -0.06), K(28.2, [2.6, -9, 7.5], [0, 1.0, 0], 56, -0.02)]],
+  [26.1, [K(26.1, [6.5, -8.5, 6.5], [0.9, -2.6, 0], 56, -0.06), K(28.2, [6.0, -7.5, 7.5], [0.9, -2.2, 0], 58, -0.02)]],
   // b: close-up on Stickman clinging, hoodie whipping
   [28.2, [K(28.2, [3.8, -3.6, 5.4], [1.9, -4.5, 0.3], 42), K(30.4, [3.4, -3.5, 4.9], [1.9, -4.4, 0.3], 40)]],
   // c: side tracking, clouds whoosh past
@@ -182,9 +182,9 @@ export const S8 = ({ t }: Ctx) => { const alt = t < 29.2 ? 0.25 : t < 30.9 ? ler
   const extra: Extra2D = t >= 28.2 && t < 30.4 ? (c, o, W, H) => { c.strokeStyle = "rgba(255,255,255,0.8)"; c.lineWidth = 5; for (let i = 0; i < 9; i++) { const x = (i * 97 + t * 900) % W, y = ((i * 211) % H); c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + 90); c.stroke(); } void o; } : (() => {});
   return (<>
     <Cam t={t} keys={shot(t, K8)} />
-    <SkyWorld t={t} alt={alt} speed={t < 30.4 ? 12 : 9} clouds={t < 32.4 ? 1 - seg(t, 31.6, 32.4) : 0} earth={t > 32.4 ? 1 : 0} lateral={0} />
-    {t >= 26.1 && t < 28.2 ? <><Cloud3D p={[-1.2, 1 - (t - 26.1) * 9, 0.6]} s={2.0} seed={51} /><Cloud3D p={[2.2, 3 - (t - 26.1) * 9, -0.8]} s={1.6} seed={52} /></> : null}
-    {t >= 30.4 && t < 32.4 ? [0, 1, 2, 3].map((i) => <Cloud3D key={i} p={[-10 + ((t - 30.4) * 16 + i * 7) % 28 - 4, -4 + i * 1.6, 3.5 + (i % 2) * 2]} s={1.0 + (i % 2) * 0.5} seed={60 + i} o={clamp(1 - seg(t, 31.6, 32.4))} />) : null}
+    <SkyWorld t={t} alt={alt} speed={t < 30.4 ? 12 : 9} clouds={t < 32.4 ? 1 - seg(t, 31.6, 32.4) : 0} earth={t > 32.4 ? 1 : 0} lateral={0} glow={0.12} />
+    {t >= 26.1 && t < 28.2 ? <><Cloud3D p={[-2.6, 1 - (t - 26.1) * 9, -2.5]} s={2.0} seed={51} /><Cloud3D p={[4.2, 3 - (t - 26.1) * 9, -3.0]} s={1.6} seed={52} /></> : null}
+    {t >= 30.4 && t < 32.4 ? [0, 1, 2, 3].map((i) => <Cloud3D key={i} p={[-10 + ((t - 30.4) * 16 + i * 7) % 28 - 4, -4 + i * 1.6, -3 - (i % 2) * 2.5]} s={1.0 + (i % 2) * 0.5} seed={60 + i} o={clamp(1 - seg(t, 31.6, 32.4))} />) : null}
     {t >= 34.2 ? Array.from({ length: 30 }, (_, i) => <SGlow key={i} p={[(i * 7.7) % 30 - 15, (i * 5.3) % 20 - 4, -20 - (i % 5) * 6]} r={0.35 + (i % 3) * 0.2} color="#ffffff" o={clamp((t - 34.2 - (i % 6) * 0.15) * 2) * (0.6 + 0.4 * Math.sin(t * 6 + i))} />) : null}
     <RocketRig t={t} rp={[0, 0, 0]} s={1.5} flame={1.2} rig={hang(t, t >= 28.2 && t < 30.4 ? "grin" : face, { zeroG: t >= 28.2 && t < 30.4 ? 0.9 : 0.4, lookY: t > 34.2 ? -0.6 : 0, lookX: t > 34.2 ? 0.4 : 0 })} sway={Math.sin(t * 2.6) * 0.16} extra={extra} />
   </>);
@@ -193,7 +193,8 @@ export const S8 = ({ t }: Ctx) => { const alt = t < 29.2 ? 0.25 : t < 30.9 ? ler
 /* ===================== S9 35.8–39.8 : the engine coughed — Fuel: empty ===================== */
 const K9: [number, Key[]][] = [
   [35.8, [K(35.8, [5.0, -2.6, 7.6], [1.0, -2.6, 0], 50), K(37.6, [4.4, -2.4, 6.8], [1.0, -2.6, 0], 48)]],
-  [37.6, [K(37.6, [1.2, 1.4, 4.2], [0.3, 0.9, 0.5], 40), K(39.9, [1.0, 1.2, 3.6], [0.3, 0.9, 0.5], 36)]],
+  [37.6, [K(37.6, [1.2, 1.4, 4.2], [0.3, 0.9, 0.5], 40), K(38.8, [1.1, 1.3, 3.8], [0.3, 0.9, 0.5], 38)]],
+  [38.8, [K(38.8, [3.6, -3.4, 5.6], [1.9, -4.3, 0.3], 42), K(39.9, [3.3, -3.3, 5.0], [1.9, -4.2, 0.3], 40)]],
 ];
 export const S9 = ({ t }: Ctx) => { const cough = (k: number) => Math.exp(-Math.max(0, t - k) * 6) * (t > k ? 1 : 0);
   const flame = t < 36.15 ? 1 : t < 37.0 ? 0.2 + 0.8 * Math.max(cough(36.2), cough(36.55)) * (Math.sin(t * 60) > 0 ? 1 : 0.4) : 0.05;
@@ -209,7 +210,7 @@ export const S9 = ({ t }: Ctx) => { const cough = (k: number) => Math.exp(-Math.
 /* ===================== S10 39.8–44.4 : panicked, then remembered the pencil in his pocket ===================== */
 const K10: [number, Key[]][] = [
   [39.8, [K(39.8, [3.6, -3.6, 6.6], [1.8, -4.2, 0.3], 46, 0.08), K(41.3, [3.2, -3.4, 7.0], [1.8, -4.3, 0.3], 48, -0.06)]],
-  [41.3, [K(41.3, [3.6, -3.4, 5.4], [1.9, -4.2, 0.3], 42), K(44.5, [3.1, -3.3, 4.6], [1.9, -4.1, 0.3], 38)]],
+  [41.3, [K(41.3, [3.4, -3.4, 5.6], [1.5, -4.2, 0.3], 44), K(44.5, [2.9, -3.3, 4.8], [1.5, -4.1, 0.3], 40)]],
 ];
 export const S10 = ({ t }: Ctx) => { const panic = t < 41.25; const pull = seg(t, 41.75, 42.3, ease.back), show = seg(t, 42.3, 42.7, ease.back);
   const rig: Rig = panic ? hang(t, "scared", { legL: { a: 30 * Math.sin(t * 14), b: 40, lift: 60 }, legR: { a: -30 * Math.sin(t * 14), b: 40, lift: 60 }, lookX: Math.sin(t * 7), zeroG: 0.8, headTilt: Math.sin(t * 9) * 8 })
@@ -234,7 +235,7 @@ export const S11 = ({ t }: Ctx) => { const prog = seg(t, 44.5, 45.9);
       <Cam t={t} keys={shot(t, K11)} />
       <SkyWorld t={t} alt={2} clouds={0} earth={1} />
       <mesh position={[-6, 6, -30]}><sphereGeometry args={[5, 32, 24]} /><meshToonMaterial color="#d8d4e8" /></mesh>
-      <ChalkDraw p={[-1.0, -1.6, 1.4]} s={[2.4, 2.4]} paths={STATION_PATH} prog={prog} color="rgba(255,236,120,1)" width={12} t={t} face />
+      <ChalkDraw p={[-0.2, -1.9, 1.6]} s={[2.0, 2.0]} paths={STATION_PATH} prog={prog} color="rgba(255,236,120,1)" width={12} t={t} face />
       <RocketRig t={t} rp={[0, 0, 0]} s={1.5} flame={0.04} smoke={false} rig={hang(t, "determined", { armR: undefined, ikR: tipR, ikKR: 1, handR: "hold", lookX: -0.6, lookY: 0.2, zeroG: 0.6 })} extra={pencil2D(-0.5, 0.15, 0.6, false)} />
     </>);
   }
@@ -252,7 +253,7 @@ export const S11 = ({ t }: Ctx) => { const prog = seg(t, 44.5, 45.9);
     <PuffBurst c={PAD} t={t} t0={49.15} n={16} r={3.4} size={0.7} color="#c8c4d8" up={0.6} life={1.6} />
     <Shadow p={[rp[0], 0.26, rp[2]]} r={1.4 + land} o={0.4 * land} />
     {off ? <><HeroV2 p={jp} h={H} sy={0} rig={jk < 1 ? stand(t, "grin", { ikR: [220, 1000], ikL: [-220, 1000], handR: "open", handL: "open", legL: { a: 20, b: 50 }, legR: { a: -10, b: 40 }, grounded: false, zeroG: 0.5 }) : stand(t, "laugh", { squash: landSq, ikR: [260, 900], ikL: [-260, 900], handR: "open", handL: "open", lookX: 0.4 })} /><PuffBurst c={HP} t={t} t0={48.75} n={8} r={1.2} size={0.4} color="#c8c4d8" /></> : null}
-    <RocketRig t={t} rp={rp} s={1.5} flame={t < 49.2 ? 0.6 : 0.02} rig={off ? null : hang(t, "surprised", { zeroG: 0.4 })} L={3.0} sway={Math.sin(t * 3) * 0.12} smokeVel={[0, -2, 0]} />
+    <RocketRig t={t} rp={rp} s={1.5} flame={t < 49.2 ? 0.6 : 0.02} rig={off ? null : hang(t, "surprised", { zeroG: 0.4 })} L={3.0} sway={Math.sin(t * 3) * 0.12} smoke={false} />
   </>);
 };
 
