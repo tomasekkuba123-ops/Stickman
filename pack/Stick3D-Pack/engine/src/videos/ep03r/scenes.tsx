@@ -485,7 +485,7 @@ export const S21 = ({ t }: Ctx) => { const pick = seg(t, 93.5, 94.0, ease.io), u
 };
 
 /* ===================== S22 95.7–100 : "What would you draw to get out?" — he starts drawing a rocket (loops to the hook) ===================== */
-const K22: Key[] = [K(95.7, [2.2, 2.6, 1.4], [-0.6, 2.6, -4.6], 46), K(100, [0.6, 2.9, -1.2], [-0.4, 3.1, -4.6], 38)];
+const K22: Key[] = [K(95.7, [2.4, 2.4, 2.0], [-0.5, 1.9, -4.6], 50), K(100, [1.6, 2.4, 0.6], [-0.4, 1.8, -4.6], 46)];
 export const S22 = ({ t }: Ctx) => { const pr = seg(t, 95.9, 98.6);
   const tip: [number, number] = [260 + Math.sin(pr * 22) * 80, 860 + Math.cos(pr * 17) * 120];
   return (<>
