@@ -5,7 +5,7 @@ export const VW = 1080, VH = 1920, FPS = 30;
 export type V2 = [number, number];
 type Spr = { file: string; x: number; y: number; w: number; h: number; kind: string; bg: string };
 const SPR = MAN as unknown as Record<string, Spr>;
-const BGS: Record<string, string> = { bg1: "ep04/BG_01_STREET.png", bg2: "ep04/BG_02_STREET_ZERO_GRAVITY.png", bg3: "ep04/BG_03_HIGH_SKY.png", bg4: "ep04/BG_04_AFTER_ROOF.png", bg2p: "ep04/sprites/bg2_plate.png", bg3p: "ep04/sprites/bg3_plate.png", bg4p: "ep04/sprites/bg4_plate.png" };
+const BGS: Record<string, string> = { bg1: "ep04/BG_01_STREET.png", bg2: "ep04/BG_02_STREET_ZERO_GRAVITY.png", bg3: "ep04/BG_03_HIGH_SKY.png", bg4: "ep04/BG_04_AFTER_ROOF.png", bg2p: "ep04/sprites/bg2_plate.png", bg3p: "ep04/sprites/bg3_plate.png", bg4p: "ep04/sprites/bg4_plate.png", cowk: "ep04/sprites/cow_keyed.png" };
 export const IMG: Record<string, HTMLImageElement> = {};
 let promise: Promise<void> | null = null;
 export function loadAll(): Promise<void> {
@@ -41,8 +41,10 @@ export function sprite(c: CanvasRenderingContext2D, name: string, t: number, o: 
 export const spritesOf = (bg: string) => Object.keys(SPR).filter((k) => SPR[k].bg === bg);
 export const sprInfo = (name: string) => SPR[name];
 // whole floating world: plate + every sprite of that background
+export let afterPlate: ((c: CanvasRenderingContext2D, bg: string, t: number) => void) | null = null;
+export const setAfterPlate = (f: typeof afterPlate) => { afterPlate = f; };
 export function floatWorld(c: CanvasRenderingContext2D, bg: "bg2" | "bg3", t: number, fx: (name: string) => SprFx = () => ({}), skip: string[] = []) {
-  drawImg(c, bg + "p", bg);
+  drawImg(c, bg + "p", bg); if (afterPlate) afterPlate(c, bg, t);
   for (const n of spritesOf(bg)) if (!skip.includes(n)) sprite(c, n, t, fx(n));
 }
 export const shake = (t: number, amp: number, freq = 37): V2 => [Math.sin(t * freq) * amp, Math.cos(t * freq * 1.13) * amp];

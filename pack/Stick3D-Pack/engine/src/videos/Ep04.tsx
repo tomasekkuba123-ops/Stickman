@@ -12,8 +12,8 @@ export const SCENES: Sc[] = [
   { a: 0, fn: S.A, tr: "cut" }, { a: 3.85, fn: S.B, tr: "swoosh" }, { a: 12.7, fn: S.C, tr: "cut" }, { a: 16.4, fn: S.D, tr: "zoom" },
   { a: 20.3, fn: S.E, tr: "zoom" }, { a: 22.85, fn: S.F, tr: "cut" }, { a: 28.3, fn: S.G, tr: "whip" }, { a: 33.6, fn: S.H, tr: "zoom" },
   { a: 39.4, fn: S.I, tr: "cut" }, { a: 45.6, fn: S.J, tr: "dissolve" }, { a: 48.9, fn: S.K, tr: "cut" }, { a: 56.7, fn: S.L, tr: "whip", cap: "high" },
-  { a: 62.6, fn: S.M, tr: "cut" }, { a: 67.2, fn: S.N, tr: "cut" }, { a: 71.0, fn: S.O, tr: "whip" }, { a: 75.0, fn: S.Pq, tr: "cut" },
-  { a: 81.4, fn: S.Q, tr: "cut" }, { a: 85.9, fn: S.R, tr: "cut" }, { a: 90.4, fn: S.S, tr: "dissolve", cap: "high" }, { a: 96.5, fn: S.T, tr: "zoom" },
+  { a: 62.6, fn: S.M, tr: "cut" }, { a: 67.2, fn: S.N, tr: "cut" }, { a: 71.0, fn: S.O, tr: "whip", cap: "high" }, { a: 75.0, fn: S.Pq, tr: "cut" },
+  { a: 81.4, fn: S.Q, tr: "cut", cap: "high" }, { a: 85.9, fn: S.R, tr: "cut", cap: "high" }, { a: 90.4, fn: S.S, tr: "dissolve", cap: "high" }, { a: 96.5, fn: S.T, tr: "zoom" },
 ];
 const TR = 0.28;
 // shots inside scenes where the action sits in the lower half -> caption goes high

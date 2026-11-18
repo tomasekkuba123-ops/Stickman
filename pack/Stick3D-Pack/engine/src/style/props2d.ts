@@ -245,25 +245,31 @@ export function drawCow(c: CanvasRenderingContext2D, x: number, y: number, h: nu
 }
 const lg2 = (c: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, a: string, b: string) => { const g = c.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
 
-/* SHARK (side view facing left, friendly). (x,y) centre, len = length; mood smile|surprised; look 0..1 turns the eye toward camera */
+/* SHARK (painted style, facing left). (x,y) centre, len = length; mood smile|surprised (wide eyes, raised fins, open mouth); look turns the eye to camera */
 export function drawShark(c: CanvasRenderingContext2D, x: number, y: number, len: number, o: { t?: number; mood?: "smile" | "surprised"; flip?: boolean; rot?: number; look?: number } = {}) {
-  const s = len / 500, t = o.t ?? 0; c.save(); c.translate(x, y); if (o.flip) c.scale(-1, 1); c.rotate(o.rot ?? 0); c.scale(s, s); c.lineJoin = "round"; c.lineCap = "round";
-  const tw = Math.sin(t * 5) * 0.15;
-  c.save(); c.translate(210, 0); c.rotate(tw); c.beginPath(); c.moveTo(0, 0); c.lineTo(90, -90); c.quadraticCurveTo(70, 0, 90, 80); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 9); c.restore(); // tail
-  c.beginPath(); c.moveTo(-40, -70); c.lineTo(10, -160); c.quadraticCurveTo(30, -100, 60, -70); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 9); // dorsal fin
-  const body = () => { c.beginPath(); c.moveTo(-250, 10); c.bezierCurveTo(-240, -80, -100, -95, 60, -75); c.bezierCurveTo(160, -60, 220, -20, 225, 0); c.bezierCurveTo(220, 30, 150, 60, 40, 70); c.bezierCurveTo(-100, 85, -240, 70, -250, 10); c.closePath(); };
-  body(); c.fillStyle = lg2(c, 0, -95, 0, 85, "#7fa6e0", "#4a6aa8"); c.fill();
-  c.save(); body(); c.clip(); c.beginPath(); c.moveTo(-250, 20); c.bezierCurveTo(-150, 50, 0, 40, 220, 10); c.lineTo(220, 100); c.lineTo(-250, 100); c.closePath(); c.fillStyle = "#f2f4fb"; c.fill(); c.restore(); body(); ink(c, 10);
-  c.beginPath(); c.moveTo(-20, 40); c.quadraticCurveTo(10, 110, 60, 120); c.quadraticCurveTo(40, 70, 40, 40); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 8); // pectoral fin
-  for (const gx of [-110, -95, -80]) { c.beginPath(); c.moveTo(gx, -20); c.quadraticCurveTo(gx - 6, 0, gx, 20); c.lineWidth = 5; c.strokeStyle = "rgba(16,16,24,0.6)"; c.stroke(); } // gills
-  // eye (turns toward camera with look)
-  const lk = o.look ?? 0, ex = -170 + lk * 10, ey = -30;
-  if (o.mood === "surprised") { c.beginPath(); c.arc(ex, ey, 24, 0, TAU); c.fillStyle = "#fff"; c.fill(); ink(c, 6); c.beginPath(); c.arc(ex + 4 * lk - 2, ey, 10, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.moveTo(ex - 22, ey - 36); c.quadraticCurveTo(ex, ey - 50, ex + 22, ey - 38); ink(c, 6); }
-  else { c.beginPath(); c.ellipse(ex, ey, 13, 18, 0, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.arc(ex - 4, ey - 6, 4, 0, TAU); c.fillStyle = "#fff"; c.fill(); }
-  // mouth: grin with teeth / surprised O
-  if (o.mood === "surprised") { c.beginPath(); c.ellipse(-205, 30, 22, 26, 0, 0, TAU); c.fillStyle = "#3a1222"; c.fill(); ink(c, 7); }
-  else { c.beginPath(); c.moveTo(-235, 20); c.quadraticCurveTo(-170, 60, -100, 28); c.quadraticCurveTo(-170, 40, -235, 20); c.closePath(); c.fillStyle = "#3a1222"; c.fill(); ink(c, 7);
-    c.fillStyle = "#fff"; for (let i = 0; i < 6; i++) { const tx = -225 + i * 21; c.beginPath(); c.moveTo(tx, 24 + i * 1.5); c.lineTo(tx + 8, 38 + i); c.lineTo(tx + 16, 26 + i * 1.5); c.closePath(); c.fill(); } }
+  const s = len / 500, t = o.t ?? 0, sur = o.mood === "surprised"; c.save(); c.translate(x, y); if (o.flip) c.scale(-1, 1); c.rotate(o.rot ?? 0); c.scale(s, s); c.lineJoin = "round"; c.lineCap = "round";
+  const BLUE = "#4f78c8", BLUE_D = "#34539a", BLUE_L = "#8fb4ec", BELLY = "#f4f1ea";
+  const tw = Math.sin(t * 5) * (sur ? 0.08 : 0.15);
+  c.save(); c.translate(205, -5); c.rotate(tw); c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(40, -40, 100, -100); c.quadraticCurveTo(76, -10, 96, 84); c.quadraticCurveTo(40, 30, 0, 18); c.closePath(); c.fillStyle = lg2(c, 0, -100, 90, 80, BLUE, BLUE_D); c.fill(); ink(c, 10); c.restore();
+  c.beginPath(); c.moveTo(-50, -68); c.quadraticCurveTo(-10, -120, 10, (sur ? -190 : -160)); c.quadraticCurveTo(30, -110, 70, -66); c.closePath(); c.fillStyle = lg2(c, 0, -160, 0, -60, BLUE_L, BLUE); c.fill(); ink(c, 10);
+  const body = () => { c.beginPath(); c.moveTo(-255, 10); c.bezierCurveTo(-245, -85, -100, -100, 60, -78); c.bezierCurveTo(165, -62, 222, -22, 228, 0); c.bezierCurveTo(222, 32, 152, 62, 40, 74); c.bezierCurveTo(-100, 88, -245, 72, -255, 10); c.closePath(); };
+  body(); c.fillStyle = lg2(c, 0, -100, 0, 90, BLUE_L, BLUE_D); c.fill();
+  c.save(); body(); c.clip();
+  c.beginPath(); c.moveTo(-255, 22); c.bezierCurveTo(-150, 56, 0, 46, 228, 12); c.lineTo(228, 110); c.lineTo(-255, 110); c.closePath(); c.fillStyle = lg2(c, 0, 20, 0, 90, BELLY, "#d9dce8"); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.35)"; c.beginPath(); c.ellipse(-60, -60, 150, 14, -0.06, 0, TAU); c.fill(); // glossy highlight
+  for (let i = 0; i < 18; i++) { c.fillStyle = "rgba(40,60,120,0.12)"; c.beginPath(); c.arc(-180 + rnd(i) * 380, -70 + rnd(i + 5) * 60, 3 + rnd(i + 9) * 5, 0, TAU); c.fill(); } // painterly speckles
+  c.restore(); body(); ink(c, 11);
+  // pectoral fin: raised high when surprised
+  c.save(); c.translate(-10, 40); c.rotate(sur ? -1.9 + Math.sin(t * 8) * 0.08 : 0.15); c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(40, 70, 80, 90); c.quadraticCurveTo(40, 40, 46, 0); c.closePath(); c.fillStyle = lg2(c, 0, 0, 80, 90, BLUE, BLUE_D); c.fill(); ink(c, 9); c.restore();
+  for (const gx of [-115, -98, -81]) { c.beginPath(); c.moveTo(gx, -22); c.quadraticCurveTo(gx - 7, 0, gx, 22); c.lineWidth = 5; c.strokeStyle = "rgba(16,16,24,0.55)"; c.stroke(); }
+  const lk = o.look ?? 0, ex = -172 + lk * 8, ey = -30;
+  if (sur) { c.beginPath(); c.ellipse(ex, ey, 30, 36, 0, 0, TAU); c.fillStyle = "#fff"; c.fill(); ink(c, 7); c.beginPath(); c.arc(ex - 3 + 6 * lk, ey + 2, 11, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.arc(ex - 7 + 6 * lk, ey - 3, 4, 0, TAU); c.fillStyle = "#fff"; c.fill();
+    c.beginPath(); c.moveTo(ex - 30, ey - 50); c.quadraticCurveTo(ex, ey - 70, ex + 30, ey - 52); ink(c, 7);
+    c.beginPath(); c.ellipse(-210, 34, 26, 30, 0.1, 0, TAU); c.fillStyle = "#3a1222"; c.fill(); ink(c, 8); c.fillStyle = "#fff"; for (let i = 0; i < 4; i++) { const tx = -226 + i * 10; c.beginPath(); c.moveTo(tx, 8 + i); c.lineTo(tx + 5, 18 + i); c.lineTo(tx + 10, 8 + i); c.fill(); }
+    c.save(); c.beginPath(); c.ellipse(-210, 34, 26, 30, 0.1, 0, TAU); c.clip(); c.fillStyle = "#ff7d8e"; c.beginPath(); c.ellipse(-206, 58, 18, 12, 0, 0, TAU); c.fill(); c.restore(); }
+  else { c.beginPath(); c.ellipse(ex, ey, 14, 19, 0, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.arc(ex - 4, ey - 7, 4.5, 0, TAU); c.fillStyle = "#fff"; c.fill();
+    c.beginPath(); c.moveTo(-238, 20); c.quadraticCurveTo(-170, 62, -100, 28); c.quadraticCurveTo(-170, 42, -238, 20); c.closePath(); c.fillStyle = "#3a1222"; c.fill(); ink(c, 7);
+    c.fillStyle = "#fff"; for (let i = 0; i < 6; i++) { const tx = -228 + i * 21; c.beginPath(); c.moveTo(tx, 24 + i * 1.5); c.lineTo(tx + 8, 38 + i); c.lineTo(tx + 16, 26 + i * 1.5); c.closePath(); c.fill(); } }
   c.restore();
 }
 /* small fish (side view, facing left); confused adds a "?" */
@@ -303,4 +309,30 @@ export function drawMoon(c: CanvasRenderingContext2D, x: number, y: number, r: n
   c.save(); c.beginPath(); c.arc(x, y, r, 0, TAU); const g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r); g.addColorStop(0, "#fffbe8"); g.addColorStop(1, "#c9c4d8"); c.fillStyle = g; c.fill(); c.lineWidth = Math.max(6, r * 0.012); c.strokeStyle = INK; c.stroke();
   c.clip(); for (let i = 0; i < 14; i++) { const cx = x + (rnd(i) - 0.5) * r * 1.6, cy = y + (rnd(i + 7) - 0.5) * r * 1.6, cr = r * (0.05 + rnd(i + 3) * 0.12); c.beginPath(); c.arc(cx, cy, cr, 0, TAU); c.fillStyle = "rgba(150,140,175,0.55)"; c.fill(); c.lineWidth = Math.max(2, r * 0.006); c.strokeStyle = "rgba(90,80,120,0.6)"; c.stroke(); }
   c.restore(); glow(c, x, y, r * 1.25, "rgba(255,250,220,1)", 0.18 + 0.03 * Math.sin(t * 2));
+}
+
+/* painted-style Moon matching the EP04 backgrounds (cream/lavender-blue maria, soft craters, glow). Cached bitmap. */
+let moonCache: HTMLCanvasElement | null = null;
+function moonBitmap() {
+  if (moonCache) return moonCache; const S = 1024, R = 480, cv = document.createElement("canvas"); cv.width = cv.height = S; const c = cv.getContext("2d")!; const C = S / 2;
+  c.save(); c.beginPath(); c.arc(C, C, R, 0, TAU); c.clip();
+  const g = c.createRadialGradient(C - R * 0.35, C - R * 0.4, R * 0.1, C, C, R); g.addColorStop(0, "#fffaf0"); g.addColorStop(0.55, "#eef0fb"); g.addColorStop(1, "#b9c3e8"); c.fillStyle = g; c.fillRect(0, 0, S, S);
+  // maria: irregular soft blobs
+  const blob = (x: number, y: number, rr: number, seed: number, col: string) => { c.beginPath(); for (let i = 0; i <= 40; i++) { const a = (i / 40) * TAU, w = 1 + 0.22 * Math.sin(a * 3 + seed) + 0.12 * Math.sin(a * 7 + seed * 2); const px = x + Math.cos(a) * rr * w, py = y + Math.sin(a) * rr * w * 0.85; i ? c.lineTo(px, py) : c.moveTo(px, py); } c.closePath(); c.fillStyle = col; c.fill(); };
+  for (const [x, y, rr, sd] of [[-0.15, -0.3, 0.26, 1], [0.25, -0.12, 0.2, 2], [-0.3, 0.12, 0.22, 3], [0.1, 0.3, 0.18, 4], [0.35, 0.28, 0.12, 5], [-0.05, 0.02, 0.14, 6]]) { blob(C + x * R, C + y * R, rr * R, sd, "rgba(150,165,220,0.55)"); blob(C + x * R + 8, C + y * R + 6, rr * R * 0.7, sd + 9, "rgba(125,140,205,0.45)"); }
+  // craters with rim highlight + inner shadow
+  for (let i = 0; i < 26; i++) { const a = rnd(i) * TAU, d = Math.sqrt(rnd(i + 40)) * R * 0.88, x = C + Math.cos(a) * d, y = C + Math.sin(a) * d, cr = R * (0.025 + rnd(i + 9) * 0.07);
+    c.beginPath(); c.ellipse(x, y, cr, cr * 0.9, 0, 0, TAU); c.fillStyle = "rgba(140,150,205,0.55)"; c.fill(); c.beginPath(); c.ellipse(x - cr * 0.2, y - cr * 0.2, cr * 0.75, cr * 0.65, 0, 0, TAU); c.fillStyle = "rgba(115,125,190,0.5)"; c.fill();
+    c.beginPath(); c.arc(x, y, cr, Math.PI * 0.15, Math.PI * 0.95); c.lineWidth = Math.max(2, cr * 0.18); c.strokeStyle = "rgba(255,252,240,0.85)"; c.stroke(); }
+  // painterly speckles + terminator shading
+  for (let i = 0; i < 400; i++) { c.fillStyle = `rgba(${rnd(i) > 0.5 ? "255,255,255" : "120,130,190"},${0.08 + rnd(i + 3) * 0.12})`; c.beginPath(); c.arc(C + (rnd(i * 3) - 0.5) * 2 * R, C + (rnd(i * 7) - 0.5) * 2 * R, 2 + rnd(i * 5) * 6, 0, TAU); c.fill(); }
+  const sh = c.createRadialGradient(C - R * 0.5, C - R * 0.55, R * 0.6, C - R * 0.2, C - R * 0.2, R * 1.45); sh.addColorStop(0, "rgba(60,50,120,0)"); sh.addColorStop(1, "rgba(60,50,120,0.45)"); c.fillStyle = sh; c.fillRect(0, 0, S, S);
+  c.restore();
+  c.beginPath(); c.arc(C, C, R, 0, TAU); c.lineWidth = 10; c.strokeStyle = "#2a2440"; c.stroke();
+  c.beginPath(); c.arc(C, C, R - 22, Math.PI * 1.05, Math.PI * 1.45); c.lineWidth = 12; c.strokeStyle = "rgba(255,255,255,0.7)"; c.stroke();
+  moonCache = cv; return cv;
+}
+export function drawPaintedMoon(c: CanvasRenderingContext2D, x: number, y: number, r: number, t = 0) {
+  glow(c, x, y, r * 1.6, "rgba(220,225,255,1)", 0.35 + 0.04 * Math.sin(t * 2));
+  const b = moonBitmap(), k = r / 480; c.drawImage(b, x - 512 * k, y - 512 * k, 1024 * k, 1024 * k);
 }
