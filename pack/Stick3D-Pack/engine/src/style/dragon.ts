@@ -13,7 +13,7 @@ const LW = 11;
 
 export function drawDragon(c: CanvasRenderingContext2D, W: number, H: number, d: DragonPose) {
   c.clearRect(0, 0, W, H); c.save();
-  const S = W / 512; c.scale(S, S);
+  const S = W / 512; c.scale(S, S); c.translate(256, 500); c.scale(0.9, 0.9); c.translate(-256, -500);
   const sq = d.squash ?? 0, fly = d.fly ?? 0;
   if (d.flip) { c.translate(512, 0); c.scale(-1, 1); }
   c.translate(256, 496); c.rotate((d.tilt ?? 0) + fly * 0.12); c.scale(1 - sq * 0.5, 1 + sq); c.translate(-256, -496);
@@ -80,13 +80,13 @@ export function drawDragon(c: CanvasRenderingContext2D, W: number, H: number, d:
 
   // ---- head ----
   const rec = d.headRecoil ?? 0;
-  c.save(); c.translate(285, 260); c.rotate(-rec * 0.25); c.translate(-285 + rec * 10, -260 - Math.abs(rec) * 4);
+  // short neck with belly plates
+  c.beginPath(); c.moveTo(222, 300); c.quadraticCurveTo(220, 230, 262, 190); c.lineTo(338, 196); c.quadraticCurveTo(318, 250, 322, 300); c.closePath(); c.fillStyle = lin(220, 190, 330, 300, RED_L, RED); c.fill(); ink(9);
+  c.beginPath(); c.moveTo(286, 300); c.quadraticCurveTo(286, 246, 312, 206); c.lineTo(334, 210); c.quadraticCurveTo(318, 256, 320, 300); c.closePath(); c.fillStyle = BELLY; c.fill(); ink(5);
+  c.strokeStyle = BELLY_D; c.lineWidth = 4; for (const y of [228, 252, 276]) { c.beginPath(); c.moveTo(296 - (y - 228) * 0.1, y); c.lineTo(326 - (y - 228) * 0.05, y + 2); c.stroke(); }
+  c.save(); c.translate(296, 236); c.rotate(-rec * 0.25); c.translate(-285 + rec * 10, -260 - Math.abs(rec) * 4); c.translate(0, -12);
   // back spikes
   for (const [x, y, a] of [[192, 172, -1.3], [180, 216, -1.6], [184, 258, -1.9], [196, 296, -2.2]] as [number, number, number][]) { c.save(); c.translate(x, y); c.rotate(a); c.beginPath(); c.moveTo(-13, 0); c.quadraticCurveTo(-4, -16, 0, -28); c.quadraticCurveTo(4, -16, 13, 0); c.closePath(); c.fillStyle = lin(0, -28, 0, 0, "#ffe27a", BELLY_D); c.fill(); ink(6); c.restore(); }
-  // horns with ridges
-  for (const [x, y, a] of [[236, 112, -0.5], [318, 102, 0.25]] as [number, number, number][]) { c.save(); c.translate(x, y); c.rotate(a);
-    c.beginPath(); c.moveTo(-16, 8); c.quadraticCurveTo(-16, -32, -4, -54); c.quadraticCurveTo(12, -28, 16, 8); c.closePath(); c.fillStyle = lin(-16, -54, 16, 8, "#fff4d0", HORN_D); c.fill(); ink(7);
-    c.strokeStyle = "rgba(150,110,40,.7)"; c.lineWidth = 3.5; for (const yy of [-8, -24, -38]) { c.beginPath(); c.moveTo(-12 + (yy + 54) * 0.05, yy); c.quadraticCurveTo(0, yy - 4, 11 - (yy + 54) * 0.05, yy - 2); c.stroke(); } c.restore(); }
   // ear fins
   c.beginPath(); c.moveTo(198, 158); c.quadraticCurveTo(160, 122, 146, 124); c.quadraticCurveTo(160, 170, 180, 194); c.closePath(); c.fillStyle = lin(146, 124, 198, 190, WING, WING_D); c.fill(); ink(7);
   // head ball
@@ -95,9 +95,16 @@ export function drawDragon(c: CanvasRenderingContext2D, W: number, H: number, d:
   c.save(); hb(); c.clip(); c.fillStyle = "rgba(140,10,10,0.22)"; c.beginPath(); c.ellipse(220, 250, 60, 46, 0.4, 0, Math.PI * 2); c.fill(); c.restore();
   hb(); ink();
   c.beginPath(); c.ellipse(244, 128, 26, 13, -0.5, 0, Math.PI * 2); c.fillStyle = "rgba(255,235,220,0.75)"; c.fill(); // gloss highlight
-  // snout
-  c.beginPath(); c.ellipse(354, 228, 58, 42, -0.1, 0, Math.PI * 2); c.fillStyle = lin(300, 190, 410, 270, "#ff7a62", RED); c.fill(); ink(9);
-  c.fillStyle = INK; for (const [x, y] of [[374, 214], [398, 222]] as [number, number][]) { c.beginPath(); c.ellipse(x, y, 5.5, 7.5, 0.3, 0, Math.PI * 2); c.fill(); }
+  // big horns sweeping backwards
+  for (const [x, y, sc] of [[238, 108, 1.0], [280, 94, 1.2]] as [number, number, number][]) { c.save(); c.translate(x, y); c.scale(sc, sc);
+    c.beginPath(); c.moveTo(-28, 12); c.bezierCurveTo(-42, -40, -66, -70, -94, -80); c.bezierCurveTo(-56, -62, -14, -34, 28, 10); c.closePath();
+    c.fillStyle = lin(-104, -70, 30, 12, "#fbe8b8", "#c98f45"); c.fill(); ink(8);
+    c.strokeStyle = "rgba(150,110,40,.7)"; c.lineWidth = 3.5; for (const k of [0.25, 0.5, 0.72]) { const hx = -18 + (-96 + 18) * k * 0.9, hy = 8 - 62 * k; c.beginPath(); c.moveTo(hx - 6, hy - 10 + k * 8); c.lineTo(hx + 10, hy + 6); c.stroke(); } c.restore(); }
+  // long rounded muzzle with two small nostrils
+  c.beginPath(); c.moveTo(314, 176); c.bezierCurveTo(372, 164, 424, 184, 428, 224); c.bezierCurveTo(432, 264, 396, 284, 352, 280); c.bezierCurveTo(322, 278, 304, 262, 298, 242); c.closePath();
+  c.fillStyle = lin(310, 180, 440, 270, "#ff7a62", RED); c.fill(); ink(9);
+  c.beginPath(); c.moveTo(332, 196); c.quadraticCurveTo(384, 188, 418, 204); c.lineWidth = 6; c.strokeStyle = "rgba(255,220,200,0.6)"; c.stroke(); // muzzle highlight
+  c.fillStyle = INK; for (const [x, y] of [[396, 204], [418, 214]] as [number, number][]) { c.beginPath(); c.ellipse(x, y, 4.5, 6.5, 0.4, 0, Math.PI * 2); c.fill(); }
   // eyes (big, glossy)
   const lx = (d.lookX ?? 0) * 6;
   const eye = (x: number, y: number) => {
@@ -117,9 +124,9 @@ export function drawDragon(c: CanvasRenderingContext2D, W: number, H: number, d:
   ink(6);
   // mouth
   c.beginPath();
-  if (m === "scared") { c.ellipse(340, 258, 12, 10 + Math.sin(t * 1.3) * 2, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
-  else if (m === "sneeze" || m === "wow") { c.ellipse(346, 256, 17, 15, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
-  else { c.moveTo(318, 248); c.quadraticCurveTo(343, 272, 370, 250); ink(6); c.fillStyle = "#fff"; c.beginPath(); c.moveTo(331, 257); c.lineTo(337, 268); c.lineTo(343, 259); c.closePath(); c.fill(); ink(3); }
+  if (m === "scared") { c.ellipse(392, 252, 13, 9 + Math.sin(t * 1.3) * 2, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
+  else if (m === "sneeze" || m === "wow") { c.ellipse(400, 250, 18, 14, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
+  else { c.moveTo(330, 250); c.quadraticCurveTo(376, 268, 414, 248); ink(6); c.fillStyle = "#fff"; c.beginPath(); c.moveTo(352, 251); c.lineTo(358, 263); c.lineTo(364, 253); c.closePath(); c.fill(); ink(3); }
   c.restore();
   c.restore();
 }

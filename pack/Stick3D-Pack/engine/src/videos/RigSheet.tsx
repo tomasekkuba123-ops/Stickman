@@ -21,8 +21,8 @@ export const RigSheet: React.FC = () => {
   const stand: Rig = { t, view: "front", face: "smile", ...POSES.stand(t) } as Rig;
   const walk: Rig = { t, face: "smile", ...POSES.walk(0.12) } as Rig;
   const thumb: Rig = { t, view: "front", face: "smile", armL: { a: 12, b: 10 }, armR: { a: 40, b: 128 }, handR: "thumb", handL: "relaxed", legL: { a: 4, b: 0 }, legR: { a: 6, b: 0 }, headTilt: -4 };
-  const laugh: Rig = { t, view: "front", face: "laugh", ikL: [-104, 575], ikR: [104, 575], handL: "fist", handR: "fist", legL: { a: 3, b: 0 }, legR: { a: 3, b: 0 }, squash: -0.02, headTilt: 3 };
-  const think: Rig = { t, view: "front", face: "think", lookX: 0.6, lookY: -0.6, handsOverHead: true, ikR: [44, 606], handR: "fist", ikL: [96, 500], handL: "relaxed", handRotL: 70, legL: { a: 3, b: 0 }, legR: { a: 3, b: 0 }, headTilt: -6 };
+  const laugh: Rig = { t, view: "front", face: "laugh", ikL: [-62, 596], ikR: [62, 596], ikBendL: -1, ikBendR: 1, handL: "fist", handR: "fist", legL: { a: 3, b: 0 }, legR: { a: 3, b: 0 }, squash: -0.02, headTilt: 3 };
+  const think: Rig = { t, view: "front", face: "think", lookX: 0.6, lookY: -0.6, handsOverHead: true, ikR: [34, 572], handR: "fist", ikL: [74, 468], handL: "hold", handRotL: -20, legL: { a: 3, b: 0 }, legR: { a: 3, b: 0 }, headTilt: -6 };
   const hands: Rig[] = (["open", "relaxed", "hold", "point", "fist", "thumb"] as const).map((hp) => ({ t, view: "front", face: "smile", armL: { a: 8, b: 6 }, armR: { a: 70, b: 70 }, handR: hp, handL: "relaxed", legL: { a: 3, b: 0 }, legR: { a: 3, b: 0 } }));
   return (<AbsoluteFill style={{ background: "#f7f8fc", padding: 36, flexDirection: "row", gap: 36 }}>
     <div style={{ width: 820, display: "flex", flexDirection: "column", gap: 14 }}>

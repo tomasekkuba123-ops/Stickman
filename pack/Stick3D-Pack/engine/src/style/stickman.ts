@@ -13,7 +13,7 @@ export type Rig = {
   t: number; view?: View; flip?: boolean; face?: Face; lookX?: number; lookY?: number; blink?: number;
   x?: number; y?: number; /* body offset in units (y up = negative) */ air?: number; /* extra height above the ground */
   lean?: number; /* deg, + forward/right */ headTilt?: number; squash?: number; /* + stretch, - squash */ breath?: number;
-  armL?: Arm; armR?: Arm; ikL?: [number, number]; ikR?: [number, number]; ikKL?: number; ikKR?: number; /* hand targets (units, x from body centre, y from baseline up) */
+  armL?: Arm; armR?: Arm; ikL?: [number, number]; ikR?: [number, number]; ikKL?: number; ikKR?: number; ikBendL?: number; ikBendR?: number; /* override elbow side (+1/-1) */ /* hand targets (units, x from body centre, y from baseline up) */
   handL?: HandPose; handR?: HandPose; handRotL?: number; handRotR?: number;
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
@@ -146,14 +146,14 @@ function shoeFront(c: CanvasRenderingContext2D) {
 
 
 /* ---------- head + face ---------- */
-const HR = 150;
+const HR = 172; const FK = HR / 150; // face scale
 function hair(c: CanvasRenderingContext2D, hx: number, hy: number, t: number, side: boolean) {
   // 3-4 thin curved strands from the crown
-  const sway = Math.sin(t * 0.18) * 0.04;
+  const sway = Math.sin(t * 0.18) * 0.04; const HL = 0.82;
   const strands: [number, number, number, number][] = side ? [[-20, 78, -0.55, -1], [6, 104, -0.15, 1], [26, 84, 0.25, 1], [-42, 56, -0.9, -1]] : [[-34, 80, -0.5, -1], [-6, 108, -0.12, 1], [22, 92, 0.32, 1], [40, 60, 0.7, 1]];
   for (const [dx, len, ang, bend] of strands) {
     const bx = hx + dx, by = hy - Math.sqrt(Math.max(0, HR * HR - dx * dx)) + 6, a = ang + sway;
-    const tx = bx + Math.sin(a) * len, ty = by - Math.cos(a) * len, mx = (bx + tx) / 2 + bend * 16 * Math.cos(a), my = (by + ty) / 2 + bend * 6;
+    const tx = bx + Math.sin(a) * len * HL, ty = by - Math.cos(a) * len * HL, mx = (bx + tx) / 2 + bend * 16 * Math.cos(a), my = (by + ty) / 2 + bend * 6;
     c.beginPath(); c.moveTo(bx - 6, by + 4); c.quadraticCurveTo(mx - 4, my, tx, ty); c.quadraticCurveTo(mx + 5, my + 3, bx + 6, by + 4); c.closePath(); c.fillStyle = INK; c.fill(); stroke(c, 2);
   }
 }
@@ -169,27 +169,28 @@ function headBall(c: CanvasRenderingContext2D, hx: number, hy: number, faceDir: 
   c.beginPath(); c.arc(hx, hy, HR, 0, Math.PI * 2); stroke(c, 11);
 }
 function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side: boolean) {
+  c.save(); c.translate(hx, hy); c.scale(FK, FK); c.translate(-hx, -hy);
   const f = r.face ?? "smile", lx = (r.lookX ?? 0) * 8, ly = (r.lookY ?? 0) * 8, bl = (r.blink ?? 0) > 0.5;
-  const eyes: [number, number, number][] = side ? [[hx + 30, hy + 2, 0.8], [hx + 94, hy + 2, 0.68]] : [[hx - 50, hy + 2, 1.1], [hx + 50, hy + 2, 1.1]];
+  const eyes: [number, number, number][] = side ? [[hx + 26, hy - 2, 0.8], [hx + 96, hy - 2, 0.66]] : [[hx - 52, hy - 4, 1]].concat([[hx + 52, hy - 4, 1]]) as [number, number, number][];
   const big = f === "surprised" || f === "scared" ? 1.18 : 1;
   // eyes
   for (const [ex, ey, sx] of eyes) {
-    if (f === "laugh" || f === "grin") { c.beginPath(); c.arc(ex, ey + 14, 24 * sx, rad(200), rad(340)); stroke(c, 9); continue; }
-    if (bl) { c.beginPath(); c.arc(ex, ey - 6, 22 * sx, rad(20), rad(160)); stroke(c, 8); continue; }
-    c.beginPath(); c.ellipse(ex + lx, ey + ly, 23 * sx * big, 39 * big, 0, 0, Math.PI * 2); c.fillStyle = INK; c.fill();
-    c.beginPath(); c.ellipse(ex + lx - 7 * sx, ey + ly - 14 * big, 8 * sx, 11, -0.2, 0, Math.PI * 2); c.fillStyle = "#fff"; c.fill();
-    c.beginPath(); c.arc(ex + lx + 6 * sx, ey + ly + 16 * big, 3.5, 0, Math.PI * 2); c.fill();
+    if (f === "laugh" || f === "grin") { c.beginPath(); c.arc(ex, ey + 18, 30 * sx, rad(200), rad(340)); stroke(c, 9); continue; }
+    if (bl) { c.beginPath(); c.arc(ex, ey - 6, 28 * sx, rad(20), rad(160)); stroke(c, 8); continue; }
+    c.beginPath(); c.ellipse(ex + lx, ey + ly, 31 * sx * big, 52 * big, 0, 0, Math.PI * 2); c.fillStyle = INK; c.fill();
+    c.beginPath(); c.ellipse(ex + lx - 10 * sx, ey + ly - 20 * big, 11 * sx, 15, -0.2, 0, Math.PI * 2); c.fillStyle = "#fff"; c.fill();
+    c.beginPath(); c.arc(ex + lx + 9 * sx, ey + ly + 24 * big, 5, 0, Math.PI * 2); c.fill();
   }
   // brows (thin arcs)
   const [e0, e1] = eyes;
-  const brow = (ex: number, ey: number, sx: number, lift: number, tilt: number) => { c.beginPath(); c.moveTo(ex - 24 * sx, ey - 52 - lift + tilt); c.quadraticCurveTo(ex, ey - 70 - lift, ex + 24 * sx, ey - 52 - lift - tilt); stroke(c, 6.5); };
+  const brow = (ex: number, ey: number, sx: number, lift: number, tilt: number) => { c.beginPath(); c.moveTo(ex - 28 * sx, ey - 68 - lift + tilt); c.quadraticCurveTo(ex, ey - 86 - lift, ex + 28 * sx, ey - 68 - lift - tilt); stroke(c, 6.5); };
   if (f === "think") { brow(e0[0], e0[1], e0[2], -4, -4); brow(e1[0], e1[1], e1[2], 18, 6); }
   else if (f === "surprised" || f === "scared") { brow(e0[0], e0[1], e0[2], 20, 0); brow(e1[0], e1[1], e1[2], 20, 0); }
   else if (f === "worried") { brow(e0[0], e0[1], e0[2], 6, -10); brow(e1[0], e1[1], e1[2], 6, 10); }
   else if (f === "determined") { brow(e0[0], e0[1], e0[2], -6, 12); brow(e1[0], e1[1], e1[2], -6, -12); }
   else { brow(e0[0], e0[1], e0[2], f === "laugh" ? 10 : 2, 0); brow(e1[0], e1[1], e1[2], f === "laugh" ? 10 : 2, 0); }
   // mouth
-  const mx = side ? hx + 70 : hx, my = hy + 78;
+  const mx = side ? hx + 74 : hx, my = hy + 84;
   c.beginPath();
   if (f === "laugh" || f === "grin") {
     const h = f === "laugh" ? 54 : 40; c.moveTo(mx - 40, my - 10); c.quadraticCurveTo(mx, my - 2, mx + 40, my - 10); c.quadraticCurveTo(mx + 34, my + h, mx, my + h + 2); c.quadraticCurveTo(mx - 34, my + h, mx - 40, my - 10); c.closePath(); c.fillStyle = "#3a1222"; c.fill();
@@ -200,6 +201,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
   else if (f === "determined") { c.moveTo(mx - 28, my + 8); c.quadraticCurveTo(mx, my + 2, mx + 28, my + 8); stroke(c, 7); }
   else if (f === "neutral") { c.moveTo(mx - 22, my + 6); c.lineTo(mx + 22, my + 6); stroke(c, 7); }
   else { c.moveTo(mx - 46, my - 6); c.quadraticCurveTo(mx, my + 40, mx + 46, my - 6); stroke(c, 7.5); }
+  c.restore();
 }
 
 /* ---------- main ---------- */
@@ -231,12 +233,12 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
   c.translate(0, gy);
   const shBase: P = side ? [8, -258] : [0, -258];
   const sh = torsoPt([0, -258]);
-  const shL = torsoPt(side ? [shBase[0] - 10, shBase[1] + 6] : [-140, -246 + breath * 0.3]), shR = torsoPt(side ? [shBase[0] + 4, shBase[1] + 4] : [140, -246 + breath * 0.3]);
+  const shL = torsoPt(side ? [shBase[0] - 10, shBase[1] + 6] : [-112, -234 + breath * 0.3]), shR = torsoPt(side ? [shBase[0] + 4, shBase[1] + 4] : [112, -234 + breath * 0.3]);
   const armPts = (arm: Arm | undefined, s: P, sx: number, ikT?: [number, number], ikK = 1): [P, P] => {
     const A = arm ?? { a: 8, b: 6 };
     const fa = rad(A.a) + lean * (side ? 1 : 0), fb = rad(A.a + A.b) + lean * (side ? 1 : 0);
     let e: P = add(s, dirDown(fa, side ? 1 : sx).map((v) => v * UPPER) as P), w: P = add(e, dirDown(fb, side ? 1 : sx).map((v) => v * FORE) as P);
-    if (ikT && ikK > 0) { const tgt: P = [ikT[0], 1000 - ikT[1] - gy]; const [ie, iw] = ik(s, tgt, UPPER, FORE, side ? -1 : sx > 0 ? -1 : 1); e = [e[0] + (ie[0] - e[0]) * ikK, e[1] + (ie[1] - e[1]) * ikK]; w = [w[0] + (iw[0] - w[0]) * ikK, w[1] + (iw[1] - w[1]) * ikK]; }
+    if (ikT && ikK > 0) { const tgt: P = [ikT[0], 1000 - ikT[1] - gy]; const bend = (sx > 0 ? r.ikBendR : r.ikBendL) ?? (side ? -1 : sx > 0 ? -1 : 1); const [ie, iw] = ik(s, tgt, UPPER, FORE, bend); e = [e[0] + (ie[0] - e[0]) * ikK, e[1] + (ie[1] - e[1]) * ikK]; w = [w[0] + (iw[0] - w[0]) * ikK, w[1] + (iw[1] - w[1]) * ikK]; }
     return [e, w];
   };
   const [elL, wrL] = armPts(r.armL, shL, -1, r.ikL, r.ikKL ?? 1), [elR, wrR] = armPts(r.armR, shR, 1, r.ikR, r.ikKR ?? 1);
@@ -250,20 +252,25 @@ function legLine(c: CanvasRenderingContext2D, h: P, k: P, a: P, dark: boolean) {
   c.beginPath(); c.moveTo(h[0], h[1]); c.quadraticCurveTo(k[0], k[1], a[0], a[1]);
   stroke(c, 19, dark ? "#05050a" : INK); c.beginPath(); c.moveTo(h[0] + 3, h[1]); c.quadraticCurveTo(k[0] + 3, k[1], a[0] + 3, a[1]); stroke(c, 3, "rgba(120,110,140,0.55)");
 }
+function smoothArm(s: P, e: P, w: P, n = 12): P[] { // Catmull-Rom through shoulder, elbow, cuff start
+  const pts: P[] = []; const q = [s, s, e, w, w];
+  for (let seg = 1; seg <= 2; seg++) for (let i = 0; i < n; i++) { const u = i / n, p0 = q[seg - 1], p1 = q[seg], p2 = q[seg + 1], p3 = q[seg + 2];
+    const f = (k: 0 | 1) => 0.5 * (2 * p1[k] + (-p0[k] + p2[k]) * u + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * u * u + (-p0[k] + 3 * p1[k] - 3 * p2[k] + p3[k]) * u * u * u); pts.push([f(0), f(1)]); }
+  pts.push(w); return pts;
+}
 function sleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean, foldSide: number) {
   const cuffStart: P = [e[0] + (w[0] - e[0]) * 0.8, e[1] + (w[1] - e[1]) * 0.8];
-  tube(c, [s, e, cuffStart], [76, 64, 58]);
+  const arm = smoothArm(s, e, cuffStart), aw = arm.map((_, i) => 74 - 18 * (i / (arm.length - 1)));
+  tube(c, arm, aw);
   const g = c.createLinearGradient(s[0] - 40, s[1], s[0] + 40, s[1]); g.addColorStop(0, dark ? RED_D : RED_L); g.addColorStop(1, dark ? RED_DD : RED);
   fillStroke(c, g, 8);
-  c.save(); tube(c, [s, e, cuffStart], [70, 58, 52]); c.clip();
+  c.save(); tube(c, arm, aw.map((v) => v - 7)); c.clip();
   // folds near the elbow + shading stripe
   const ex = e[0], ey = e[1], ang = Math.atan2(w[1] - e[1], w[0] - e[0]);
   c.save(); c.translate(ex, ey); c.rotate(ang);
   c.beginPath(); c.moveTo(-6, -22 * foldSide); c.quadraticCurveTo(8, -8 * foldSide, 4, 10 * foldSide); stroke(c, 4, dark ? RED_DD : RED_D);
   c.beginPath(); c.moveTo(-34, 24 * foldSide); c.quadraticCurveTo(-22, 14 * foldSide, -14, 22 * foldSide); stroke(c, 4, dark ? RED_DD : RED_D);
   c.restore();
-  { const sa = Math.atan2(e[1] - s[1], e[0] - s[0]); c.save(); c.translate(s[0] + (e[0] - s[0]) * 0.45, s[1] + (e[1] - s[1]) * 0.45); c.rotate(sa);
-    c.beginPath(); c.moveTo(-10, 22 * foldSide); c.quadraticCurveTo(4, 10 * foldSide, 14, 20 * foldSide); stroke(c, 3.5, dark ? RED_DD : RED_D); c.restore(); }
   c.restore();
   // ribbed cuff
   const ca = Math.atan2(w[1] - cuffStart[1], w[0] - cuffStart[0]);
@@ -275,44 +282,55 @@ function sleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean, fo
 function hoodieFront(c: CanvasRenderingContext2D, T: (p: P) => P, back: boolean, breath: number) {
   const pts = (arr: P[]) => arr.map(T);
   const b = breath * 0.4;
-  // torso body (shoulders -> long hem covering the hips)
-  const [a1, a2, a3, a4, a5, a6, a7, a8] = pts([[-128, -268 - b], [-158, -200], [-162, -40], [-152, 14], [152, 14], [162, -40], [158, -200], [128, -268 - b]]);
-  const top = T([0, -290 - b]);
-  c.beginPath(); c.moveTo(a1[0], a1[1]); c.quadraticCurveTo(a2[0] - 6, a2[1] - 30, a2[0], a2[1]); c.lineTo(a3[0], a3[1]); c.quadraticCurveTo(a4[0], a4[1] - 6, a4[0] + 10, a4[1]);
-  c.lineTo(a5[0] - 10, a5[1]); c.quadraticCurveTo(a5[0], a5[1] - 6, a6[0], a6[1]); c.lineTo(a7[0], a7[1]); c.quadraticCurveTo(a7[0] + 6, a7[1] - 30, a8[0], a8[1]); c.quadraticCurveTo(top[0], top[1] - 6, a1[0], a1[1]); c.closePath();
+  // soft rounded torso: sloped shoulders, slight belly curve, tapering into the ribbed hem
+  const body = () => { const m = (x: number, y: number) => T([x, y]); const P0 = m(-66, -282 - b);
+    c.beginPath(); c.moveTo(P0[0], P0[1]);
+    const bz = (a: P, bb: P, cc: P) => { const A = m(...a), B = m(...bb), C = m(...cc); c.bezierCurveTo(A[0], A[1], B[0], B[1], C[0], C[1]); };
+    bz([-94, -276], [-114, -262], [-120, -232]); bz([-128, -190], [-134, -110], [-126, -34]); bz([-124, 0], [-118, 16], [-94, 16]);
+    const L1 = m(94, 16); c.lineTo(L1[0], L1[1]); bz([118, 16], [124, 0], [126, -34]); bz([134, -110], [128, -190], [120, -232]); bz([114, -262], [94, -276], [66, -282 - b]);
+    const top = m(0, -298 - b), e0 = m(-66, -282 - b); c.quadraticCurveTo(top[0], top[1], e0[0], e0[1]); c.closePath(); };
+  const a3 = T([-130, -100]), a6 = T([130, -100]), a7 = T([120, -232]);
+  body();
   const g = c.createLinearGradient(a3[0], 0, a6[0], 0); g.addColorStop(0, RED_L); g.addColorStop(0.5, RED); g.addColorStop(1, RED_D); c.fillStyle = g; c.fill();
   c.save(); c.clip();
-  c.fillStyle = "rgba(120,0,10,0.22)"; c.beginPath(); c.ellipse(a6[0] + 10, (a6[1] + a7[1]) / 2, 48, 190, 0, 0, Math.PI * 2); c.fill(); // side shadow
-  const h0 = T([-170, -36]), h1 = T([170, -36]); c.fillStyle = RED_D; c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); c.lineTo(h1[0], h1[1] + 70); c.lineTo(h0[0], h0[1] + 70); c.fill(); // ribbed hem
-  for (let i = -150; i <= 150; i += 14) { const p0 = T([i, -32]), p1 = T([i, 10]); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); stroke(c, 2.5, "rgba(0,0,0,0.22)"); }
+  c.fillStyle = "rgba(120,0,10,0.22)"; c.beginPath(); c.ellipse(a6[0] + 4, (a6[1] + a7[1]) / 2, 40, 170, 0, 0, Math.PI * 2); c.fill(); // side shadow
+  const h0 = T([-150, -40]), h1 = T([150, -40]); c.fillStyle = RED_D; c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); c.lineTo(h1[0], h1[1] + 70); c.lineTo(h0[0], h0[1] + 70); c.fill(); // ribbed hem
+  for (let i = -126; i <= 126; i += 13) { const p0 = T([i, -36]), p1 = T([i, 12]); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); stroke(c, 2.5, "rgba(0,0,0,0.22)"); }
   c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); stroke(c, 5);
   // folds
-  for (const [p0, p1, p2] of [[[-140, -170], [-110, -120], [-122, -70]], [[132, -180], [104, -130], [118, -84]], [[-60, -64], [-40, -50], [-20, -60]]] as [P, P, P][]) { const q0 = T(p0), q1 = T(p1), q2 = T(p2); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0], q1[1], q2[0], q2[1]); stroke(c, 4.5, RED_DD); }
+  for (const [p0, p1, p2] of [[[-112, -180], [-92, -130], [-104, -84]], [[108, -190], [88, -140], [100, -96]], [[-50, -232], [-30, -214], [-12, -222]]] as [P, P, P][]) { const q0 = T(p0), q1 = T(p1), q2 = T(p2); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0], q1[1], q2[0], q2[1]); stroke(c, 4.5, RED_DD); }
   if (!back) {
     // kangaroo pocket: patch with stitched top + bottom seams, curved side openings with a dark inner edge
-    const p = pts([[-86, -166], [86, -166], [116, -46], [-116, -46]]);
+    const p = pts([[-70, -166], [70, -166], [96, -50], [-96, -50]]);
     const pocket = () => { c.beginPath(); c.moveTo(p[0][0], p[0][1]); c.lineTo(p[1][0], p[1][1]); c.quadraticCurveTo(p[2][0] - 2, p[2][1] - 46, p[2][0], p[2][1]); c.lineTo(p[3][0], p[3][1]); c.quadraticCurveTo(p[3][0] + 2, p[3][1] - 46, p[0][0], p[0][1]); c.closePath(); };
     pocket(); const pg = c.createLinearGradient(0, p[0][1], 0, p[2][1]); pg.addColorStop(0, "#ee3c3e"); pg.addColorStop(1, "#d42228"); c.fillStyle = pg; c.fill(); stroke(c, 6);
     for (const sx of [-1, 1]) { // side openings (hand slots)
-      const q0 = T([sx * 86, -166]), q1 = T([sx * 92, -104]), q2 = T([sx * 116, -50]);
+      const q0 = T([sx * 70, -166]), q1 = T([sx * 76, -106]), q2 = T([sx * 96, -54]);
       c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0] - sx * 22, q1[1], q2[0], q2[1]); c.quadraticCurveTo(q1[0] + sx * 2, q1[1] + 6, q0[0], q0[1]); c.fillStyle = RED_DD; c.fill(); stroke(c, 5);
     }
     c.setLineDash([9, 8]);
-    const s0 = T([-78, -154]), s1 = T([78, -154]); c.beginPath(); c.moveTo(s0[0], s0[1]); c.lineTo(s1[0], s1[1]); stroke(c, 3, RED_DD);
-    const b0 = T([-100, -58]), b1 = T([100, -58]); c.beginPath(); c.moveTo(b0[0], b0[1]); c.lineTo(b1[0], b1[1]); stroke(c, 3, RED_DD);
-    for (const sx of [-1, 1]) { const q0 = T([sx * 92, -150]), q1 = T([sx * 108, -60]); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q0[0] + sx * 2, (q0[1] + q1[1]) / 2, q1[0], q1[1]); stroke(c, 3, RED_DD); }
+    const s0 = T([-62, -154]), s1 = T([62, -154]); c.beginPath(); c.moveTo(s0[0], s0[1]); c.lineTo(s1[0], s1[1]); stroke(c, 3, RED_DD);
+    const b0 = T([-82, -62]), b1 = T([82, -62]); c.beginPath(); c.moveTo(b0[0], b0[1]); c.lineTo(b1[0], b1[1]); stroke(c, 3, RED_DD);
+    for (const sx of [-1, 1]) { const q0 = T([sx * 76, -150]), q1 = T([sx * 90, -64]); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q0[0] + sx * 2, (q0[1] + q1[1]) / 2, q1[0], q1[1]); stroke(c, 3, RED_DD); }
     c.setLineDash([]);
     const fo = T([0, -110]); c.beginPath(); c.moveTo(fo[0] - 30, fo[1] + 30); c.quadraticCurveTo(fo[0] - 6, fo[1] + 18, fo[0] + 20, fo[1] + 34); stroke(c, 3.5, RED_DD); // pocket fold
   }
   c.restore();
-  c.beginPath(); c.moveTo(a1[0], a1[1]); c.quadraticCurveTo(a2[0] - 6, a2[1] - 30, a2[0], a2[1]); c.lineTo(a3[0], a3[1]); c.quadraticCurveTo(a4[0], a4[1] - 6, a4[0] + 10, a4[1]); c.lineTo(a5[0] - 10, a5[1]); c.quadraticCurveTo(a5[0], a5[1] - 6, a6[0], a6[1]); c.lineTo(a7[0], a7[1]); c.quadraticCurveTo(a7[0] + 6, a7[1] - 30, a8[0], a8[1]); c.quadraticCurveTo(top[0], top[1] - 6, a1[0], a1[1]); c.closePath(); stroke(c, LW);
+  body(); stroke(c, LW);
 }
 function hoodFront(c: CanvasRenderingContext2D, T: (p: P) => P, back: boolean) {
   const n = T([0, -286]);
-  if (back) { c.beginPath(); c.ellipse(n[0], n[1] + 40, 112, 92, 0, 0, Math.PI * 2); fillStroke(c, RED, 8); c.beginPath(); c.ellipse(n[0], n[1] + 30, 70, 50, 0, 0, Math.PI * 2); fillStroke(c, RED_DD, 5); return; }
-  // hood lying around the neck: two rolled lobes + dark opening
-  for (const sx of [-1, 1]) { c.beginPath(); c.ellipse(n[0] + sx * 62, n[1] + 4, 66, 34, sx * 0.28, 0, Math.PI * 2); const g = c.createLinearGradient(n[0], n[1] - 30, n[0], n[1] + 30); g.addColorStop(0, RED_L); g.addColorStop(1, RED_D); fillStroke(c, g, 8); }
-  c.beginPath(); c.moveTo(n[0] - 44, n[1] - 4); c.quadraticCurveTo(n[0], n[1] + 54, n[0] + 44, n[1] - 4); c.quadraticCurveTo(n[0], n[1] + 14, n[0] - 44, n[1] - 4); c.closePath(); fillStroke(c, RED_DD, 6);
+  if (back) { c.beginPath(); c.ellipse(n[0], n[1] + 40, 104, 88, 0, 0, Math.PI * 2); fillStroke(c, RED, 8); c.beginPath(); c.ellipse(n[0], n[1] + 30, 64, 46, 0, 0, Math.PI * 2); fillStroke(c, RED_DD, 5); return; }
+  // soft hood fold lying behind the neck, visible over both shoulders
+  c.beginPath(); c.moveTo(n[0] - 116, n[1] + 22); c.bezierCurveTo(n[0] - 120, n[1] - 30, n[0] - 60, n[1] - 52, n[0], n[1] - 50); c.bezierCurveTo(n[0] + 60, n[1] - 52, n[0] + 120, n[1] - 30, n[0] + 116, n[1] + 22); c.closePath();
+  const g = c.createLinearGradient(n[0], n[1] - 50, n[0], n[1] + 20); g.addColorStop(0, RED_L); g.addColorStop(1, RED_D); fillStroke(c, g, 8);
+  c.beginPath(); c.moveTo(n[0] - 86, n[1] - 4); c.quadraticCurveTo(n[0], n[1] - 40, n[0] + 86, n[1] - 4); stroke(c, 4, RED_DD);
+}
+function hoodCollar(c: CanvasRenderingContext2D, T: (p: P) => P) {
+  const n = T([0, -280]);
+  for (const sx of [-1, 1]) { c.beginPath(); c.moveTo(n[0] + sx * 8, n[1] + 40); c.quadraticCurveTo(n[0] + sx * 70, n[1] + 24, n[0] + sx * 92, n[1] - 8); c.quadraticCurveTo(n[0] + sx * 50, n[1] - 18, n[0] + sx * 8, n[1] + 6); c.closePath();
+    const g = c.createLinearGradient(n[0], n[1] - 20, n[0], n[1] + 40); g.addColorStop(0, RED_L); g.addColorStop(1, RED); fillStroke(c, g, 7); }
+  c.beginPath(); c.moveTo(n[0] - 10, n[1] + 8); c.quadraticCurveTo(n[0], n[1] + 46, n[0] + 10, n[1] + 8); c.closePath(); fillStroke(c, RED_DD, 5);
 }
 function strings(c: CanvasRenderingContext2D, T: (p: P) => P, t: number, xs: number[]) {
   for (const sx of xs) { const sw = Math.sin(t * 0.17 + sx) * 3; const a = T([sx, -262]), b = T([sx * 1.1 + sw, -158]);
@@ -320,12 +338,12 @@ function strings(c: CanvasRenderingContext2D, T: (p: P) => P, t: number, xs: num
     c.beginPath(); c.roundRect(b[0] - 9, b[1] - 4, 18, 26, 4); fillStroke(c, "#e6eaf6", 5); }
 }
 function backpackFront(c: CanvasRenderingContext2D, T: (p: P) => P) {
-  const p = T([-150, -250]);
+  const p = T([-124, -246]);
   c.beginPath(); c.roundRect(p[0] - 62, p[1] - 6, 110, 236, 38); const g = c.createLinearGradient(p[0] - 62, 0, p[0] + 48, 0); g.addColorStop(0, BAG_L); g.addColorStop(1, BAG); fillStroke(c, g, LW);
   c.beginPath(); c.arc(p[0] - 10, p[1] + 110, 46, rad(150), rad(250)); stroke(c, 8, "rgba(255,255,255,0.18)");
 }
 function strapFront(c: CanvasRenderingContext2D, T: (p: P) => P) {
-  const a = T([-104, -276]), b = T([-122, -150]);
+  const a = T([-82, -274]), b = T([-100, -150]);
   c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo(a[0] - 18, (a[1] + b[1]) / 2, b[0], b[1]); stroke(c, 30); c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo(a[0] - 18, (a[1] + b[1]) / 2, b[0], b[1]); stroke(c, 18, BAG);
 }
 
@@ -338,8 +356,9 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   }
   hoodFront(c, T, back);
   hoodieFront(c, T, back, breath);
+  if (!back) hoodCollar(c, T);
   if (back && showBag) { const p = T([0, -232]); c.beginPath(); c.roundRect(p[0] - 104, p[1], 208, 230, 50); const gg = c.createLinearGradient(p[0] - 104, 0, p[0] + 104, 0); gg.addColorStop(0, BAG_L); gg.addColorStop(1, BAG); fillStroke(c, gg, LW); c.beginPath(); c.roundRect(p[0] - 70, p[1] + 110, 140, 90, 24); stroke(c, 6); }
-  if (!back) { strings(c, T, r.t, [-22, 22]); if (showBag) strapFront(c, T); }
+  if (!back) { strings(c, T, r.t, [-20, 20]); if (showBag) strapFront(c, T); }
   if (r.hug) r.hug(c, T([0, -180])[0], T([0, -180])[1]);
   const arms = () => {
     sleeve(c, g.shL, g.elL, g.wrL, false, 1); sleeve(c, g.shR, g.elR, g.wrR, false, -1);
