@@ -61,7 +61,7 @@ export const S1 = ({ t }: Ctx) => (<>
 /* ===================== S2 2.45–4.95 : bedroom at sunset, Stickman at desk with pencil, grin ===================== */
 const HERO_DESK: V3 = [-0.55, 0, -3.65];
 const drawRig = (t: number, face: Rig["face"], k: number, ex: Partial<Rig> = {}): Rig => stand(t, face, { ikR: [160 + Math.sin(t * 9) * 40 * k, 500 + Math.cos(t * 7) * 25 * k], ikKR: 1, handR: "hold", lookY: 0.6, lookX: 0.1, lean: 8, armL: { a: 14, b: 30 }, ...ex });
-const K2: Key[] = [K(2.45, [2.4, 3.2, 1.8], [-0.4, 2.1, -3.4], 50), K(4.95, [1.4, 3.0, 0.6], [-0.5, 2.2, -3.5], 46)];
+const K2: Key[] = [K(2.45, [-1.6, 3.6, 1.6], [-0.7, 2.0, -3.4], 50), K(4.95, [-1.3, 3.4, 0.5], [-0.6, 2.1, -3.5], 46)];
 export const S2 = ({ t }: Ctx) => (<>
   <Cam t={t} keys={K2} />
   <Bedroom t={t} />
