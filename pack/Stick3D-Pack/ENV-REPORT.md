@@ -1,7 +1,8 @@
-cat: ENV-REPORT.md: input file is output file
+# ENV REPORT (2026-11-18T08:40:39Z)
+## System
 cores: 4
-Mem:           16087         463       15588          12         250       15624
-/dev/vda        252G  8.9G   30G  23% /
+Mem:           16087         539       15365          12         438       15548
+/dev/vda        252G  9.5G   30G  25% /
 Linux 6.18.44-fc-v595
 ## GPU
 no NVIDIA GPU detected -> assume CPU-only rendering

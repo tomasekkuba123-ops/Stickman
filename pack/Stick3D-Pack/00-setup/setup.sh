@@ -2,7 +2,7 @@
 # ONE-COMMAND SETUP (Claude runs this first). Idempotent. Works on Linux/Mac cloud containers; no GPU needed.
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; cd "$ROOT"
-echo "== env report =="; bash tools/env_report.sh > ENV-REPORT.md 2>&1 || true; head -20 ENV-REPORT.md
+echo "== env report =="; bash tools/env_report.sh ENV-REPORT.md >/dev/null 2>&1 || true; head -20 ENV-REPORT.md
 command -v node >/dev/null || { echo "NODE MISSING: install Node 18+ (nvm install 22 / apt install nodejs npm) then rerun"; exit 1; }
 command -v ffmpeg >/dev/null || { echo "ffmpeg missing: apt-get install -y ffmpeg (or brew install ffmpeg)"; exit 1; }
 echo "== python libs =="; (python3 -m pip install -q pocketsphinx numpy pillow 2>&1 || python3 -m pip install -q --break-system-packages pocketsphinx numpy pillow 2>&1) | tail -1 || true
