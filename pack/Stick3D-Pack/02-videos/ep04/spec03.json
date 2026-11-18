@@ -1,0 +1,7 @@
+[{"name":"sharkblob","box":[160,0,652,382],"kind":"blob"},{"name":"fishbubble","box":[744,0,906,150],"kind":"blob"},{"name":"cow","box":[604,164,806,362]},
+ {"name":"redcar","box":[12,292,242,482]},{"name":"bike","box":[464,308,622,446]},{"name":"yellowfish","box":[304,408,502,522],"kind":"blob"},
+ {"name":"house","box":[612,322,916,632]},{"name":"lamp","box":[0,438,112,622]},{"name":"bluecar","box":[452,522,582,602]},
+ {"name":"bluehouse","box":[84,502,296,698]},{"name":"table","box":[268,594,532,802]},{"name":"can","box":[574,678,712,792]},
+ {"name":"plant","box":[752,628,902,762]},{"name":"tree","box":[18,698,282,982]},{"name":"bubble2","box":[468,788,616,892],"kind":"blob"},
+ {"name":"bubble3","box":[368,822,442,888],"kind":"blob"},{"name":"lounge","box":[698,778,896,942]},{"name":"smallhouse","box":[212,868,332,978]},
+ {"name":"fishblob","box":[678,922,916,1152],"kind":"blob"},{"name":"fence","box":[0,1008,142,1112]}]

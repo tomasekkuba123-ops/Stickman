@@ -1,0 +1,18 @@
+New episode: EP04 "What If Stickman Erased Gravity?". Same channel style and the approved rig v2 Stickman (default character). No dragon in this episode. New characters only as props: a calm cow, a cartoon shark (friendly, surprised), fish.
+Files: script.txt (20 lines; lines 15 and 16 are one sentence), EP04_VOICE.wav (HeyGen voice, ~58 s), EP04_SHOTLIST.csv (one scene per line), backgrounds BG_01_STREET.png, BG_02_STREET_ZERO_GRAVITY.png, BG_03_HIGH_SKY.png, BG_04_AFTER_ROOF.png.
+
+SPECS
+- 1080x1920, 30 fps, EXACTLY 100.000 s (3000 frames). Do not speed up or cut the voice. Find the lines in the audio and insert silence between them so the voice track is exactly 100 s: longer pauses (2-3 s) after action beats - lines 2, 6, 7, 8, 9, 11, 12, 16, 17, 19; short ones elsewhere; about 2.5 s after the last line for the end card. Save it as EP04_VOICE_100S.wav and send it too. The source voice peaks at 0 dBFS - normalise it, do not clip.
+- Use the 4 backgrounds as the look of each location (split into depth planes or use as backdrops behind matching 3D props), slow parallax camera moves, ambient motion (leaves, clouds, floating objects bobbing and slowly rotating, water blobs wobbling, fish swimming inside).
+- Floating objects must really float: slow drift, gentle rotation, never static. Water blobs: wobbly jelly shapes with fish inside.
+- Pencil with an eraser end (the eraser matters in this story).
+
+QUALITY (same as EP03)
+1. Stickman always fully in frame; captions never cover his face or the key action.
+2. Facing away from camera max 2 s.
+3. Audio: about -14 LUFS, true peak max -1 dBTP, voice on top; sparse SFX on real actions (eraser rub, rumble, whoosh, cow moo, splash, big slam).
+4. New angle or action at least every 2-3 s.
+5. The big slam (line 17) is the one place with a short camera shake.
+
+WORKFLOW
+First send 8 preview stills (lines 1, 2, 6, 8, 11, 15, 17, 19) and wait for my OK. Then render, check it yourself, and send the final mp4, EP04_VOICE_100S.wav, the SRT and the updated pack zip.

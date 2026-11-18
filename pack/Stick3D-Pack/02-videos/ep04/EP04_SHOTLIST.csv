@@ -1,0 +1,21 @@
+scene,line,visual,background
+1,"What if Stickman erased gravity?","HOOK flash-forward: Stickman flying upside down among floating houses, cars and a cow, laughing; quick rewind swoosh",BG_03_HIGH_SKY
+2,"He took his pencil, flipped it around, and rubbed out one tiny word on the page: GRAVITY.","Stickman sits on the porch steps with a notebook; flips the pencil to the eraser end; close-up: the word GRAVITY on the page is rubbed out letter by letter, eraser crumbs fly",BG_01_STREET
+3,"For a second, nothing happened.","Silence beat: Stickman looks around, blinks; a bird stops mid-air",BG_01_STREET
+4,"Then his sock floated off the floor.","A sock (drying on the porch rail) lifts and drifts up; he stares",BG_01_STREET
+5,"Then his bed.","Through the open window a bed floats up inside the house and bonks the ceiling",BG_01_STREET
+6,"Then the whole house lifted off its foundations.","Rumble; the yellow house rips off the ground with a chunk of lawn and rises, Stickman holds onto the porch railing, feet lifting",BG_01_STREET -> BG_02_STREET_ZERO_GRAVITY
+7,"Cars drifted down the street like balloons.","The blue and red cars float and slowly spin above the road",BG_02_STREET_ZERO_GRAVITY
+8,"A cow floated past the window, still chewing.","Gag: a cow drifts past the house window, calmly chewing grass",BG_02_STREET_ZERO_GRAVITY
+9,"Stickman laughed, kicked off the ceiling, and flew.","Stickman laughs, kicks off the porch roof and flies like a superhero, doing a loop",BG_02_STREET_ZERO_GRAVITY
+10,"But the ocean was rising too.","Camera tilts toward the horizon: water peeling up from the distant river/sea into the sky",BG_03_HIGH_SKY
+11,"Giant blobs of water wobbled into the sky, full of confused fish.","Wobbling water blobs drift past, fish inside with confused faces",BG_03_HIGH_SKY
+12,"And the Moon was getting closer. Much closer.","A huge Moon slides in and fills the sky; Stickman's face goes pale",BG_03_HIGH_SKY
+13,"Stickman panicked and tried to write GRAVITY back.","He flips the pencil, starts to write G-R in midair",BG_03_HIGH_SKY
+14,"But the pencil floated out of his hand.","The pencil slips and spins away; his fingers just miss it",BG_03_HIGH_SKY
+15,"He swam after it through the air, past a shark in a water bubble,","He 'swims' (breaststroke) through the air past a grinning shark in a water bubble, which turns to look at him",BG_03_HIGH_SKY
+16,"grabbed it, and wrote one big word across the sky.","He grabs the pencil and writes a giant glowing GRAVITY across the sky",BG_03_HIGH_SKY
+17,"Everything slammed back down.","Smash cut: everything drops; BIG impact, dust and water splash, short camera shake",BG_04_AFTER_ROOF
+18,"The house. The cars. The cow.","Three quick hits on each word: house lands, cars bounce, cow lands on its feet",BG_04_AFTER_ROOF
+19,"And one very surprised shark, sitting on his roof.","Stickman sits on his roof next to a surprised shark in a puddle; they look at each other",BG_04_AFTER_ROOF
+20,"What would you erase?","Stickman looks at the camera holding the pencil eraser-up; big end question WHAT WOULD YOU ERASE? then SUBSCRIBE FOR MORE card in the last ~2.5 s",BG_04_AFTER_ROOF

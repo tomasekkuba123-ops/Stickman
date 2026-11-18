@@ -217,3 +217,90 @@ export function bigNumber(c: CanvasRenderingContext2D, x: number, y: number, txt
   if (k <= 0) return; c.save(); c.translate(x, y); const sc = easeBack(clamp(k)); c.scale(sc, sc); c.font = `900 ${size}px Inter, Arial`; c.textAlign = "center"; c.textBaseline = "middle";
   c.lineJoin = "round"; c.lineWidth = size * 0.14; c.strokeStyle = INK; c.strokeText(txt, 0, 0); c.fillStyle = col; c.fillText(txt, 0, 0); c.restore();
 }
+
+/* ======================= EP04 props ======================= */
+/* COW (side view, facing left). (x,y) = ground under the hooves, h = height to the back; chew 0..1 phase */
+export function drawCow(c: CanvasRenderingContext2D, x: number, y: number, h: number, o: { t?: number; chew?: boolean; legs?: number; eyes?: "calm" | "shock"; flip?: boolean; rot?: number } = {}) {
+  const s = h / 300, t = o.t ?? 0; c.save(); c.translate(x, y); if (o.flip) c.scale(-1, 1); c.rotate(o.rot ?? 0); c.scale(s, s); c.lineJoin = "round"; c.lineCap = "round";
+  const lg = o.legs ?? 0; // 0 standing, 1 dangling/spread
+  for (const [lx, ph] of [[-110, 0], [-70, 1], [80, 2], [120, 3]] as [number, number][]) { const a = lg * Math.sin(t * 2 + ph) * 0.3 + lg * (lx < 0 ? 0.25 : -0.25); c.save(); c.translate(lx, -120); c.rotate(a); c.beginPath(); c.roundRect(-16, 0, 32, 110, 12); c.fillStyle = ph % 2 ? "#f4f4f8" : "#e6e8f0"; c.fill(); ink(c, 7); c.beginPath(); c.roundRect(-18, 92, 36, 26, 8); c.fillStyle = "#3a3038"; c.fill(); ink(c, 6); c.restore(); }
+  // tail
+  c.beginPath(); c.moveTo(150, -240); c.quadraticCurveTo(200 + Math.sin(t * 3) * 10, -200, 190 + Math.sin(t * 3) * 14, -130); c.lineWidth = 9; c.strokeStyle = INK; c.stroke(); c.beginPath(); c.ellipse(190 + Math.sin(t * 3) * 14, -120, 12, 20, 0, 0, TAU); c.fillStyle = "#3a3038"; c.fill(); ink(c, 5);
+  // body
+  const body = () => { c.beginPath(); c.roundRect(-160, -280, 330, 170, 80); };
+  body(); c.fillStyle = lg2(c, 0, -280, 0, -110, "#ffffff", "#dfe3ef"); c.fill();
+  c.save(); body(); c.clip(); c.fillStyle = "#2b2530"; for (const [px, py, r] of [[-60, -240, 46], [60, -170, 52], [130, -250, 34], [-130, -150, 30]]) { c.beginPath(); c.ellipse(px, py, r * 1.2, r, 0.4, 0, TAU); c.fill(); } c.restore(); body(); ink(c, 9);
+  // head
+  c.save(); c.translate(-170, -250);
+  c.beginPath(); c.ellipse(-30, -30, 60, 20, -0.5, 0, TAU); c.fillStyle = "#f4f4f8"; c.fill(); ink(c, 6); // ear
+  for (const hx of [-10, 30]) { c.beginPath(); c.moveTo(hx, -60); c.quadraticCurveTo(hx + 8, -100, hx + 26, -104); c.quadraticCurveTo(hx + 18, -84, hx + 18, -58); c.closePath(); c.fillStyle = "#f6e2ae"; c.fill(); ink(c, 5); }
+  c.beginPath(); c.ellipse(0, 0, 70, 80, 0.15, 0, TAU); c.fillStyle = "#ffffff"; c.fill(); ink(c, 9);
+  const jaw = o.chew ? Math.sin(t * 9) * 5 : 0;
+  c.beginPath(); c.ellipse(-30, 60 + jaw * 0.3, 62, 40, 0.2, 0, TAU); c.fillStyle = "#ffb3c6"; c.fill(); ink(c, 8);
+  c.fillStyle = "#c46a86"; for (const nx of [-50, -18]) { c.beginPath(); c.ellipse(nx, 52, 8, 11, 0.3, 0, TAU); c.fill(); }
+  if (o.chew) { c.beginPath(); c.moveTo(-60, 92 + jaw); c.lineTo(-110, 120 + jaw + Math.sin(t * 9) * 6); c.lineWidth = 6; c.strokeStyle = "#3fbf4a"; c.stroke(); c.beginPath(); c.moveTo(-60, 92 + jaw); c.lineTo(-100, 70 + jaw); c.stroke(); }
+  if (o.eyes === "shock") { c.beginPath(); c.arc(-10, -20, 18, 0, TAU); c.fillStyle = "#fff"; c.fill(); ink(c, 5); c.beginPath(); c.arc(-12, -20, 7, 0, TAU); c.fillStyle = INK; c.fill(); }
+  else { c.beginPath(); c.ellipse(-12, -18, 13, 16, 0, 0, TAU); c.fillStyle = INK; c.fill(); c.fillStyle = "#f4f4f8"; c.beginPath(); c.ellipse(-12, -26, 15, 9, 0, Math.PI, 0); c.fill(); c.beginPath(); c.moveTo(-28, -24); c.lineTo(4, -24); ink(c, 5); } // half-lidded, calm
+  c.restore(); c.restore();
+}
+const lg2 = (c: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, a: string, b: string) => { const g = c.createLinearGradient(x0, y0, x1, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
+
+/* SHARK (side view facing left, friendly). (x,y) centre, len = length; mood smile|surprised; look 0..1 turns the eye toward camera */
+export function drawShark(c: CanvasRenderingContext2D, x: number, y: number, len: number, o: { t?: number; mood?: "smile" | "surprised"; flip?: boolean; rot?: number; look?: number } = {}) {
+  const s = len / 500, t = o.t ?? 0; c.save(); c.translate(x, y); if (o.flip) c.scale(-1, 1); c.rotate(o.rot ?? 0); c.scale(s, s); c.lineJoin = "round"; c.lineCap = "round";
+  const tw = Math.sin(t * 5) * 0.15;
+  c.save(); c.translate(210, 0); c.rotate(tw); c.beginPath(); c.moveTo(0, 0); c.lineTo(90, -90); c.quadraticCurveTo(70, 0, 90, 80); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 9); c.restore(); // tail
+  c.beginPath(); c.moveTo(-40, -70); c.lineTo(10, -160); c.quadraticCurveTo(30, -100, 60, -70); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 9); // dorsal fin
+  const body = () => { c.beginPath(); c.moveTo(-250, 10); c.bezierCurveTo(-240, -80, -100, -95, 60, -75); c.bezierCurveTo(160, -60, 220, -20, 225, 0); c.bezierCurveTo(220, 30, 150, 60, 40, 70); c.bezierCurveTo(-100, 85, -240, 70, -250, 10); c.closePath(); };
+  body(); c.fillStyle = lg2(c, 0, -95, 0, 85, "#7fa6e0", "#4a6aa8"); c.fill();
+  c.save(); body(); c.clip(); c.beginPath(); c.moveTo(-250, 20); c.bezierCurveTo(-150, 50, 0, 40, 220, 10); c.lineTo(220, 100); c.lineTo(-250, 100); c.closePath(); c.fillStyle = "#f2f4fb"; c.fill(); c.restore(); body(); ink(c, 10);
+  c.beginPath(); c.moveTo(-20, 40); c.quadraticCurveTo(10, 110, 60, 120); c.quadraticCurveTo(40, 70, 40, 40); c.closePath(); c.fillStyle = "#5a7fb8"; c.fill(); ink(c, 8); // pectoral fin
+  for (const gx of [-110, -95, -80]) { c.beginPath(); c.moveTo(gx, -20); c.quadraticCurveTo(gx - 6, 0, gx, 20); c.lineWidth = 5; c.strokeStyle = "rgba(16,16,24,0.6)"; c.stroke(); } // gills
+  // eye (turns toward camera with look)
+  const lk = o.look ?? 0, ex = -170 + lk * 10, ey = -30;
+  if (o.mood === "surprised") { c.beginPath(); c.arc(ex, ey, 24, 0, TAU); c.fillStyle = "#fff"; c.fill(); ink(c, 6); c.beginPath(); c.arc(ex + 4 * lk - 2, ey, 10, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.moveTo(ex - 22, ey - 36); c.quadraticCurveTo(ex, ey - 50, ex + 22, ey - 38); ink(c, 6); }
+  else { c.beginPath(); c.ellipse(ex, ey, 13, 18, 0, 0, TAU); c.fillStyle = INK; c.fill(); c.beginPath(); c.arc(ex - 4, ey - 6, 4, 0, TAU); c.fillStyle = "#fff"; c.fill(); }
+  // mouth: grin with teeth / surprised O
+  if (o.mood === "surprised") { c.beginPath(); c.ellipse(-205, 30, 22, 26, 0, 0, TAU); c.fillStyle = "#3a1222"; c.fill(); ink(c, 7); }
+  else { c.beginPath(); c.moveTo(-235, 20); c.quadraticCurveTo(-170, 60, -100, 28); c.quadraticCurveTo(-170, 40, -235, 20); c.closePath(); c.fillStyle = "#3a1222"; c.fill(); ink(c, 7);
+    c.fillStyle = "#fff"; for (let i = 0; i < 6; i++) { const tx = -225 + i * 21; c.beginPath(); c.moveTo(tx, 24 + i * 1.5); c.lineTo(tx + 8, 38 + i); c.lineTo(tx + 16, 26 + i * 1.5); c.closePath(); c.fill(); } }
+  c.restore();
+}
+/* small fish (side view, facing left); confused adds a "?" */
+export function drawFish(c: CanvasRenderingContext2D, x: number, y: number, len: number, o: { t?: number; col?: string; confused?: boolean; flip?: boolean } = {}) {
+  const s = len / 100, t = o.t ?? 0; c.save(); c.translate(x, y); if (o.flip) c.scale(-1, 1); c.scale(s, s); c.lineJoin = "round";
+  const col = o.col ?? "#ff8a2a"; const tw = Math.sin(t * 9) * 0.3;
+  c.save(); c.translate(36, 0); c.rotate(tw); c.beginPath(); c.moveTo(0, 0); c.lineTo(26, -20); c.lineTo(26, 20); c.closePath(); c.fillStyle = col; c.fill(); ink(c, 4); c.restore();
+  c.beginPath(); c.ellipse(0, 0, 44, 26, 0, 0, TAU); c.fillStyle = col; c.fill(); ink(c, 5);
+  if (col === "#ff8a2a") { c.fillStyle = "#fff"; for (const bx of [-12, 14]) { c.fillRect(bx - 5, -24, 10, 48); } c.beginPath(); c.ellipse(0, 0, 44, 26, 0, 0, TAU); ink(c, 5); }
+  c.beginPath(); c.arc(-24, -6, 8, 0, TAU); c.fillStyle = "#fff"; c.fill(); ink(c, 3); c.beginPath(); c.arc(-26, -6, 3.5, 0, TAU); c.fillStyle = INK; c.fill();
+  if (o.confused) { c.beginPath(); c.moveTo(-38, 10); c.quadraticCurveTo(-32, 4, -26, 12); c.quadraticCurveTo(-20, 18, -14, 10); ink(c, 3); c.scale(o.flip ? -1 : 1, 1); c.font = "900 34px Inter, Arial"; c.fillStyle = "#ffffff"; c.strokeStyle = INK; c.lineWidth = 5; c.strokeText("?", -8, -34); c.fillText("?", -8, -34); }
+  c.restore();
+}
+/* wobbly water blob (jelly) with optional contents drawn by fill(); r = base radius */
+export function waterBlob(c: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, t: number, seed = 1, fill?: () => void) {
+  const pts = 28, path = () => { c.beginPath(); for (let i = 0; i <= pts; i++) { const a = (i / pts) * TAU, w = 1 + 0.06 * Math.sin(a * 3 + t * 2.2 + seed) + 0.04 * Math.sin(a * 5 - t * 3.1 + seed * 2); const px = x + Math.cos(a) * rx * w, py = y + Math.sin(a) * ry * w; i ? c.lineTo(px, py) : c.moveTo(px, py); } c.closePath(); };
+  path(); const g = c.createRadialGradient(x - rx * 0.3, y - ry * 0.3, 4, x, y, Math.max(rx, ry)); g.addColorStop(0, "rgba(190,240,255,0.55)"); g.addColorStop(1, "rgba(40,150,230,0.55)"); c.fillStyle = g; c.fill();
+  if (fill) { c.save(); path(); c.clip(); fill(); c.restore(); }
+  path(); c.lineWidth = 6; c.strokeStyle = "rgba(20,80,160,0.8)"; c.stroke();
+  c.fillStyle = "rgba(255,255,255,0.75)"; c.beginPath(); c.ellipse(x - rx * 0.45, y - ry * 0.45, rx * 0.16, ry * 0.08, -0.6, 0, TAU); c.fill();
+  for (let i = 0; i < 5; i++) { const u = (t * 0.3 + rnd(i + seed)) % 1; c.beginPath(); c.arc(x + (rnd(i * 3 + seed) - 0.5) * rx, y + ry * 0.6 - u * ry * 1.2, 4 + rnd(i) * 5, 0, TAU); c.lineWidth = 2.5; c.strokeStyle = "rgba(255,255,255,0.8)"; c.stroke(); }
+}
+export function drawSock(c: CanvasRenderingContext2D, x: number, y: number, s: number, rot: number) {
+  c.save(); c.translate(x, y); c.rotate(rot); c.scale(s, s); c.lineJoin = "round";
+  c.beginPath(); c.moveTo(-20, -60); c.lineTo(20, -60); c.lineTo(22, 10); c.quadraticCurveTo(60, 14, 62, 34); c.quadraticCurveTo(60, 56, 20, 52); c.lineTo(-14, 50); c.quadraticCurveTo(-24, 40, -22, 10); c.closePath(); c.fillStyle = "#ffffff"; c.fill();
+  c.save(); c.clip(); c.fillStyle = "#e5263a"; for (const yy of [-50, -30, -10]) c.fillRect(-30, yy, 100, 9); c.fillStyle = "#3a6fd8"; c.fillRect(-30, 30, 100, 30); c.restore(); ink(c, 6); c.restore();
+}
+export function drawBed(c: CanvasRenderingContext2D, x: number, y: number, w: number, rot = 0) {
+  const s = w / 300; c.save(); c.translate(x, y); c.rotate(rot); c.scale(s, s); c.lineJoin = "round";
+  c.beginPath(); c.roundRect(-150, -40, 300, 60, 10); c.fillStyle = "#b8743a"; c.fill(); ink(c, 7);
+  c.beginPath(); c.roundRect(-140, -80, 280, 50, 14); c.fillStyle = "#3a6fd8"; c.fill(); ink(c, 6);
+  c.beginPath(); c.roundRect(-136, -96, 80, 40, 16); c.fillStyle = "#ffffff"; c.fill(); ink(c, 5);
+  for (const lx of [-150, 136]) { c.beginPath(); c.rect(lx, -110, 14, 150); c.fillStyle = "#8a5a32"; c.fill(); ink(c, 6); }
+  c.restore();
+}
+export function drawMoon(c: CanvasRenderingContext2D, x: number, y: number, r: number, t = 0) {
+  c.save(); c.beginPath(); c.arc(x, y, r, 0, TAU); const g = c.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r); g.addColorStop(0, "#fffbe8"); g.addColorStop(1, "#c9c4d8"); c.fillStyle = g; c.fill(); c.lineWidth = Math.max(6, r * 0.012); c.strokeStyle = INK; c.stroke();
+  c.clip(); for (let i = 0; i < 14; i++) { const cx = x + (rnd(i) - 0.5) * r * 1.6, cy = y + (rnd(i + 7) - 0.5) * r * 1.6, cr = r * (0.05 + rnd(i + 3) * 0.12); c.beginPath(); c.arc(cx, cy, cr, 0, TAU); c.fillStyle = "rgba(150,140,175,0.55)"; c.fill(); c.lineWidth = Math.max(2, r * 0.006); c.strokeStyle = "rgba(90,80,120,0.6)"; c.stroke(); }
+  c.restore(); glow(c, x, y, r * 1.25, "rgba(255,250,220,1)", 0.18 + 0.03 * Math.sin(t * 2));
+}

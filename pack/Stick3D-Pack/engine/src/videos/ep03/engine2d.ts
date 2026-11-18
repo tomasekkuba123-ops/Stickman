@@ -58,13 +58,14 @@ const CW = 640, CH = 960, S_IN = (CH * 0.955) / 1040; // rig canvas; 1000 units 
 let cv: HTMLCanvasElement | null = null;
 export type StickOut = { gloveR: V2; gloveL: V2; head: V2; headR: number };
 // draws Stickman with his 1000-unit body height = h world px, feet at (x,y). anchor: move so the glove midpoint lands on that point.
-export function stick(c: CanvasRenderingContext2D, rig: Rig, x: number, y: number, h: number, anchor?: { p: V2; which?: "both" | "R" | "L" }): StickOut {
+export function stick(c: CanvasRenderingContext2D, rig: Rig, x: number, y: number, h: number, anchor?: { p: V2; which?: "both" | "R" | "L" }, rot = 0): StickOut {
   if (!cv) { cv = document.createElement("canvas"); cv.width = CW; cv.height = CH; }
   const out = drawStickman(cv.getContext("2d")!, CW, CH, rig);
   const k = h / (1000 * S_IN), fy = CH * 0.985;
   let ox = x, oy = y;
   const toW = (p: [number, number], bx: number, by: number): V2 => [bx + (p[0] - CW / 2) * k, by + (p[1] - fy) * k];
   if (anchor) { const g = anchor.which === "R" ? out.gloveR : anchor.which === "L" ? out.gloveL : [(out.gloveR[0] + out.gloveL[0]) / 2, (out.gloveR[1] + out.gloveL[1]) / 2] as [number, number]; const w = toW(g, 0, 0); ox = anchor.p[0] - w[0]; oy = anchor.p[1] - w[1]; }
-  c.drawImage(cv, ox - (CW / 2) * k, oy - fy * k, CW * k, CH * k);
+  if (rot) { const cx = ox, cy = oy - h * 0.5; c.save(); c.translate(cx, cy); c.rotate(rot); c.drawImage(cv, -(CW / 2) * k, -fy * k + h * 0.5, CW * k, CH * k); c.restore(); }
+  else c.drawImage(cv, ox - (CW / 2) * k, oy - fy * k, CW * k, CH * k);
   return { gloveR: toW(out.gloveR, ox, oy), gloveL: toW(out.gloveL, ox, oy), head: toW(out.head, ox, oy), headR: out.headR * k };
 }
