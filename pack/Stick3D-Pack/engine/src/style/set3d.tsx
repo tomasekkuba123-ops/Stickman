@@ -89,8 +89,8 @@ export const RopeLadder: React.FC<{ top: V3; L: number; sway: number; n?: number
 /* ---------------- sky + space ---------------- */
 export const GradientDome: React.FC<{ stops: [number, string][]; r?: number; stars?: number; t?: number }> = ({ stops, r = 300, stars = 0 }) => {
   const key = "dome|" + stops.map((s) => s.join(":")).join("|") + "|" + stars.toFixed(2);
-  const tex = canvasTex(key, 4096, 2048, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); for (const [k, col] of stops) g.addColorStop(k, col); c.fillStyle = g; c.fillRect(0, 0, W, H);
-    if (stars > 0) for (let i = 0; i < 3000; i++) { c.globalAlpha = stars * (0.35 + rnd(i) * 0.65); c.fillStyle = rnd(i + 3) > 0.85 ? "#ffd6f0" : "#ffffff"; c.beginPath(); c.arc(rnd(i * 3) * W, rnd(i * 7) * H * 0.8, 1.2 + rnd(i + 9) * 2.2, 0, TAU); c.fill(); } c.globalAlpha = 1; });
+  const tex = canvasTex(key, 2048, 1024, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); for (const [k, col] of stops) g.addColorStop(k, col); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    if (stars > 0) for (let i = 0; i < 2000; i++) { c.globalAlpha = stars * (0.35 + rnd(i) * 0.65); c.fillStyle = rnd(i + 3) > 0.85 ? "#ffd6f0" : "#ffffff"; c.beginPath(); c.arc(rnd(i * 3) * W, rnd(i * 7) * H * 0.8, 0.7 + rnd(i + 9) * 1.2, 0, TAU); c.fill(); } c.globalAlpha = 1; });
   return <mesh><sphereGeometry args={[r, 48, 32]} /><meshBasicMaterial map={tex} side={THREE.BackSide} depthWrite={false} fog={false} /></mesh>;
 };
 const mixC = (a: string, b: string, k: number) => "#" + new THREE.Color(a).lerp(new THREE.Color(b), clamp(k)).getHexString();
