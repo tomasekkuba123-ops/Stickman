@@ -26,9 +26,9 @@ export const Rig: React.FC<{ t: number; t0: number; t1: number; from: V3; to: V3
   camera.lookAt(l[0], l[1], l[2]); camera.updateMatrixWorld(); return null;
 };
 
-export const Person: React.FC<{ p: V3; h?: number; look: Look; pose: Omit<Pose, "t"> & { t?: number }; f: number; shadow?: boolean; sy?: number }> = ({ p, h = 2.5, look, pose, f, shadow = true, sy }) => (
+export const Person: React.FC<{ p: V3; h?: number; look: Look; pose: Omit<Pose, "t"> & { t?: number }; f: number; shadow?: boolean; sy?: number; res?: number }> = ({ p, h = 2.5, look, pose, f, shadow = true, sy, res }) => (
   <>{shadow ? <Shadow p={[p[0], sy ?? p[1], p[2]]} r={h * 0.32} /> : null}
-  <Billboard p={p} h={h} draw={(c, W, H) => drawPuppet(c, W, H, look, { ...pose, t: pose.t ?? f })} /></>
+  <Billboard p={p} h={h} res={res} draw={(c, W, H) => drawPuppet(c, W, H, look, { ...pose, t: pose.t ?? f })} /></>
 );
 
 export const Lights: React.FC<{ warm?: string }> = ({ warm = "#fff2d8" }) => (<><ambientLight intensity={1.55} /><directionalLight position={[4, 8, 5]} intensity={1.3} color={warm} /><directionalLight position={[-5, 3, 2]} intensity={0.5} color="#9ab8ff" /></>);

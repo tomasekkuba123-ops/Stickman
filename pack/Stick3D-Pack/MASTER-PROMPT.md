@@ -32,11 +32,17 @@ Read `rules/CREATIVE-FREEDOM.md`. For each scene: read the exact words -> write 
 ## 4. WHAT EXISTS (reuse, do not rewrite)
 `engine/src/style/puppet.ts` (character + outfits + acting params), `toon.tsx` (outlined boxes/cylinders/spheres, textured surfaces, yaw-only billboards, shadows), `kit.tsx` (camera rig, person, doors, signs, calendar, chart, stairs, chip, grade), `props.tsx` (floors, wall with real doorway, light shafts, glow, plants, shelves, frames, windows, lamps, monitors, chairs, rugs, dust), `src/Main.tsx` (scene wrapper, captions, starter), `src/examples/NvidiaDemo.tsx` (a complete 5-scene reference video; `examples/nvidia-demo/BENCHMARK-quality-v3.mp4` is the quality bar). v4 additions: `style/extra.tsx` (Cam spline camera with impact shake, FaceGroup+hand() for held props, Arrow3D, Domino, Globe, Crown, Throne, Lectern, Curtain, SpotCone, Building, street props, casino props, Stars), puppet IK hands (`armR`/`armL`), and `src/videos/NvidiaV4.tsx` (newest reference: 5 scenes, whip transition, crown physics). Batch still checks: `cd engine && node scripts/stills.mjs "$PWD" <CompId> <outDir> 0.4 <f1,f2,...>` (one bundle, many frames). Extend these files (new props/poses) instead of starting over; every new reusable prop or pose goes into `style/` and is recorded in `rules/ACTION-LIBRARY.md`.
 
+## 4b. CHANNEL OVERRIDES (if the user gives them, they win over §1)
+- Output size/length, "do not trim silences" (then align the ORIGINAL voice with `python3 -I tools/voice/align.py <voice.wav> <script.txt> <words.json>` and keep composition length = audio length), a fixed channel hero, end cards. EP02 (`src/videos/Ep02.tsx`, 1080x1920, 3000 frames) is the reference for these: its `ep02/common.tsx` has the STICKMAN hero, captions scaled for 1080, the meadow + sky-kingdom worlds; `render_ep02.sh` renders in 600-frame parts.
+- Use `flat` on ThreeCanvas (no tone mapping) so whites stay white.
+
 ## 5. PUPPET / ENGINE FACTS LEARNED (avoid these bugs)
 - Billboards must be YAW-ONLY (already implemented) or feet sink into the floor when the camera pitches.
 - Doors: build walls with `WallDoor` (real hole), hallway/room behind it, leaf rotates +Y (away from camera). Character stops at the door, `arms:"point"` ramps to the handle, THEN leaf opens, THEN he walks through.
 - Walk: pass `walk = distance * WALK` and `speed`; flip puppet when moving left.
 - Puppet `nerv` gives tremble only above 0.5 - use sparingly. `sweat` draws sliding drops.
+- Held creatures: use `pose.hug` (drawn on top of the body, offset to the side) or the head hides them. Keep cameras >= ~7 units from a 3.4-tall puppet for full-body shots and aim the look point below the chest so the subject sits above the caption band.
+- Keep windmills/props away from camera paths (a blade 1 unit from the lens fills the frame); check every camera key with stills.
 - `ThreeCanvas` per scene inside `Sequence`; overlap scenes by LEAD/TAIL for dissolves; zoom/flash variants exist.
 - Render: `npx remotion render Main out.mp4 --gl=$(cat .gl-flag) --concurrency=4 --muted` then mux voice+SFX with ffmpeg. Speed ~25-35 frames/min at 720x1280 on 4 CPU cores; GPU PC is much faster. Use `--frames=a-b` for partial re-renders and `remotion still` at scale 0.4 for checks.
 

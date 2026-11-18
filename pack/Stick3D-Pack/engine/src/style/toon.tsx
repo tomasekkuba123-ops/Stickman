@@ -13,7 +13,7 @@ export const Box: React.FC<{ p: [number, number, number]; s: [number, number, nu
   const { size } = useThree();
   const geo = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
   const edges = useMemo(() => { const g = new LineSegmentsGeometry(); g.setPositions(new THREE.EdgesGeometry(geo).attributes.position.array as Float32Array); return g; }, [geo]);
-  const mat = useMemo(() => new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line, resolution: new THREE.Vector2(size.width, size.height) }), [size, line]);
+  const mat = useMemo(() => new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line * size.height / 1280, resolution: new THREE.Vector2(size.width, size.height) }), [size, line]);
   const seg = useMemo(() => new LineSegments2(edges, mat), [edges, mat]);
   return (
     <group position={p} rotation={rot} scale={s}>
@@ -49,9 +49,9 @@ export const CanvasPlane: React.FC<{ p: [number, number, number]; s: [number, nu
 };
 
 // Upright (yaw-only) billboard: never tilts with camera pitch, so feet stay on the floor
-export const Billboard: React.FC<{ p: [number, number, number]; h: number; draw: (c: CanvasRenderingContext2D, W: number, H: number) => void }> = ({ p, h, draw }) => {
+export const Billboard: React.FC<{ p: [number, number, number]; h: number; draw: (c: CanvasRenderingContext2D, W: number, H: number) => void; res?: number; aspect?: number }> = ({ p, h, draw, res = 512, aspect = 1.5 }) => {
   const { camera } = useThree();
-  const W = 512, H = 768;
+  const W = res, H = Math.round(res * aspect);
   const { cv, tex } = useMemo(() => { const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4; return { cv, tex }; }, []);
   draw(cv.getContext("2d")!, W, H); tex.needsUpdate = true;
   const ref = React.useRef<THREE.Group>(null);
@@ -75,7 +75,7 @@ export const Cyl: React.FC<{ p: [number, number, number]; rt: number; rb?: numbe
   const { size } = useThree();
   const geo = useMemo(() => new THREE.CylinderGeometry(rt, rb ?? rt, h, 20), [rt, rb, h]);
   const edges = useMemo(() => { const g = new LineSegmentsGeometry(); g.setPositions(new THREE.EdgesGeometry(geo, 35).attributes.position.array as Float32Array); return g; }, [geo]);
-  const mat = useMemo(() => new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line, resolution: new THREE.Vector2(size.width, size.height) }), [size, line]);
+  const mat = useMemo(() => new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line * size.height / 1280, resolution: new THREE.Vector2(size.width, size.height) }), [size, line]);
   const seg = useMemo(() => new LineSegments2(edges, mat), [edges, mat]);
   return <group position={p} rotation={rot}><mesh geometry={geo}><meshToonMaterial color={color} gradientMap={ramp} /></mesh><primitive object={seg} /></group>;
 };

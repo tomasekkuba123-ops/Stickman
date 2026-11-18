@@ -1,0 +1,1037 @@
+[
+ {
+  "word": "What",
+  "start": 0.27,
+  "end": 0.42
+ },
+ {
+  "word": "if",
+  "start": 0.42,
+  "end": 0.5
+ },
+ {
+  "word": "Stickman",
+  "start": 0.5,
+  "end": 1.02
+ },
+ {
+  "word": "drew",
+  "start": 1.02,
+  "end": 1.23
+ },
+ {
+  "word": "a",
+  "start": 1.23,
+  "end": 1.28
+ },
+ {
+  "word": "door",
+  "start": 1.28,
+  "end": 1.78
+ },
+ {
+  "word": "and",
+  "start": 2.1,
+  "end": 2.19
+ },
+ {
+  "word": "the",
+  "start": 2.19,
+  "end": 2.25
+ },
+ {
+  "word": "sky",
+  "start": 2.25,
+  "end": 2.67
+ },
+ {
+  "word": "opened",
+  "start": 2.67,
+  "end": 3.13
+ },
+ {
+  "word": "He",
+  "start": 4.06,
+  "end": 4.16
+ },
+ {
+  "word": "found",
+  "start": 4.16,
+  "end": 4.39
+ },
+ {
+  "word": "a",
+  "start": 4.39,
+  "end": 4.44
+ },
+ {
+  "word": "glowing",
+  "start": 4.44,
+  "end": 4.92
+ },
+ {
+  "word": "chalk",
+  "start": 4.92,
+  "end": 5.29
+ },
+ {
+  "word": "key",
+  "start": 5.29,
+  "end": 5.66
+ },
+ {
+  "word": "hidden",
+  "start": 5.66,
+  "end": 5.94
+ },
+ {
+  "word": "in",
+  "start": 5.94,
+  "end": 6.04
+ },
+ {
+  "word": "the",
+  "start": 6.04,
+  "end": 6.11
+ },
+ {
+  "word": "grass",
+  "start": 6.11,
+  "end": 6.66
+ },
+ {
+  "word": "With",
+  "start": 7.41,
+  "end": 7.61
+ },
+ {
+  "word": "one",
+  "start": 7.61,
+  "end": 7.92
+ },
+ {
+  "word": "shaky",
+  "start": 7.92,
+  "end": 8.33
+ },
+ {
+  "word": "line",
+  "start": 8.33,
+  "end": 8.77
+ },
+ {
+  "word": "he",
+  "start": 9.0,
+  "end": 9.12
+ },
+ {
+  "word": "drew",
+  "start": 9.12,
+  "end": 9.32
+ },
+ {
+  "word": "a",
+  "start": 9.32,
+  "end": 9.38
+ },
+ {
+  "word": "door",
+  "start": 9.38,
+  "end": 9.7
+ },
+ {
+  "word": "in",
+  "start": 9.7,
+  "end": 9.79
+ },
+ {
+  "word": "midair",
+  "start": 9.79,
+  "end": 10.12
+ },
+ {
+  "word": "Click",
+  "start": 11.38,
+  "end": 11.78
+ },
+ {
+  "word": "It",
+  "start": 12.25,
+  "end": 12.4
+ },
+ {
+  "word": "opened",
+  "start": 12.4,
+  "end": 12.83
+ },
+ {
+  "word": "Beyond",
+  "start": 14.11,
+  "end": 14.49
+ },
+ {
+  "word": "it",
+  "start": 14.49,
+  "end": 14.64
+ },
+ {
+  "word": "floated",
+  "start": 14.64,
+  "end": 15.02
+ },
+ {
+  "word": "a",
+  "start": 15.02,
+  "end": 15.06
+ },
+ {
+  "word": "kingdom",
+  "start": 15.06,
+  "end": 15.51
+ },
+ {
+  "word": "of",
+  "start": 15.51,
+  "end": 15.61
+ },
+ {
+  "word": "clouds",
+  "start": 15.61,
+  "end": 16.35
+ },
+ {
+  "word": "golden",
+  "start": 16.6,
+  "end": 17.03
+ },
+ {
+  "word": "bridges",
+  "start": 17.03,
+  "end": 17.59
+ },
+ {
+  "word": "and",
+  "start": 17.77,
+  "end": 17.98
+ },
+ {
+  "word": "tiny",
+  "start": 17.98,
+  "end": 18.44
+ },
+ {
+  "word": "spinning",
+  "start": 18.44,
+  "end": 18.91
+ },
+ {
+  "word": "windmills",
+  "start": 18.91,
+  "end": 19.58
+ },
+ {
+  "word": "Stickman",
+  "start": 21.05,
+  "end": 21.46
+ },
+ {
+  "word": "stepped",
+  "start": 21.46,
+  "end": 21.8
+ },
+ {
+  "word": "through",
+  "start": 21.8,
+  "end": 22.15
+ },
+ {
+  "word": "The",
+  "start": 22.56,
+  "end": 22.65
+ },
+ {
+  "word": "door",
+  "start": 22.65,
+  "end": 22.92
+ },
+ {
+  "word": "vanished",
+  "start": 22.92,
+  "end": 23.51
+ },
+ {
+  "word": "Then",
+  "start": 24.37,
+  "end": 24.48
+ },
+ {
+  "word": "he",
+  "start": 24.48,
+  "end": 24.57
+ },
+ {
+  "word": "heard",
+  "start": 24.57,
+  "end": 24.74
+ },
+ {
+  "word": "a",
+  "start": 24.74,
+  "end": 24.78
+ },
+ {
+  "word": "cry",
+  "start": 24.78,
+  "end": 25.32
+ },
+ {
+  "word": "A",
+  "start": 26.27,
+  "end": 26.34
+ },
+ {
+  "word": "baby",
+  "start": 26.34,
+  "end": 26.68
+ },
+ {
+  "word": "dragon",
+  "start": 26.68,
+  "end": 27.09
+ },
+ {
+  "word": "was",
+  "start": 27.09,
+  "end": 27.24
+ },
+ {
+  "word": "trapped",
+  "start": 27.24,
+  "end": 27.64
+ },
+ {
+  "word": "in",
+  "start": 27.64,
+  "end": 27.77
+ },
+ {
+  "word": "crystal",
+  "start": 27.77,
+  "end": 28.19
+ },
+ {
+  "word": "vines",
+  "start": 28.19,
+  "end": 28.68
+ },
+ {
+  "word": "above",
+  "start": 28.68,
+  "end": 28.88
+ },
+ {
+  "word": "a",
+  "start": 28.88,
+  "end": 28.92
+ },
+ {
+  "word": "raging",
+  "start": 28.92,
+  "end": 29.45
+ },
+ {
+  "word": "storm",
+  "start": 29.45,
+  "end": 29.94
+ },
+ {
+  "word": "Stickman",
+  "start": 31.35,
+  "end": 31.86
+ },
+ {
+  "word": "ran",
+  "start": 31.86,
+  "end": 32.06
+ },
+ {
+  "word": "across",
+  "start": 32.06,
+  "end": 32.38
+ },
+ {
+  "word": "a",
+  "start": 32.38,
+  "end": 32.42
+ },
+ {
+  "word": "narrow",
+  "start": 32.42,
+  "end": 32.77
+ },
+ {
+  "word": "bridge",
+  "start": 32.77,
+  "end": 33.29
+ },
+ {
+  "word": "The",
+  "start": 33.65,
+  "end": 33.71
+ },
+ {
+  "word": "planks",
+  "start": 33.71,
+  "end": 34.08
+ },
+ {
+  "word": "began",
+  "start": 34.08,
+  "end": 34.35
+ },
+ {
+  "word": "to",
+  "start": 34.35,
+  "end": 34.43
+ },
+ {
+  "word": "shake",
+  "start": 34.43,
+  "end": 34.88
+ },
+ {
+  "word": "He",
+  "start": 35.56,
+  "end": 35.67
+ },
+ {
+  "word": "drew",
+  "start": 35.67,
+  "end": 35.87
+ },
+ {
+  "word": "a",
+  "start": 35.87,
+  "end": 35.9
+ },
+ {
+  "word": "shield",
+  "start": 35.9,
+  "end": 36.37
+ },
+ {
+  "word": "to",
+  "start": 36.37,
+  "end": 36.48
+ },
+ {
+  "word": "block",
+  "start": 36.48,
+  "end": 36.77
+ },
+ {
+  "word": "the",
+  "start": 36.77,
+  "end": 36.84
+ },
+ {
+  "word": "sparks",
+  "start": 36.84,
+  "end": 37.46
+ },
+ {
+  "word": "Then",
+  "start": 38.14,
+  "end": 38.29
+ },
+ {
+  "word": "a",
+  "start": 38.29,
+  "end": 38.32
+ },
+ {
+  "word": "ladder",
+  "start": 38.32,
+  "end": 38.64
+ },
+ {
+  "word": "Then",
+  "start": 39.15,
+  "end": 39.45
+ },
+ {
+  "word": "enormous",
+  "start": 39.45,
+  "end": 40.08
+ },
+ {
+  "word": "scissors",
+  "start": 40.08,
+  "end": 40.57
+ },
+ {
+  "word": "Snip",
+  "start": 41.25,
+  "end": 41.75
+ },
+ {
+  "word": "Snip",
+  "start": 41.75,
+  "end": 42.19
+ },
+ {
+  "word": "The",
+  "start": 42.43,
+  "end": 42.51
+ },
+ {
+  "word": "vines",
+  "start": 42.51,
+  "end": 42.91
+ },
+ {
+  "word": "broke",
+  "start": 42.91,
+  "end": 43.31
+ },
+ {
+  "word": "The",
+  "start": 44.09,
+  "end": 44.16
+ },
+ {
+  "word": "dragon",
+  "start": 44.16,
+  "end": 44.52
+ },
+ {
+  "word": "leaped",
+  "start": 44.52,
+  "end": 44.89
+ },
+ {
+  "word": "into",
+  "start": 44.89,
+  "end": 45.09
+ },
+ {
+  "word": "his",
+  "start": 45.09,
+  "end": 45.25
+ },
+ {
+  "word": "arms",
+  "start": 45.25,
+  "end": 45.72
+ },
+ {
+  "word": "But",
+  "start": 46.81,
+  "end": 46.98
+ },
+ {
+  "word": "their",
+  "start": 46.98,
+  "end": 47.12
+ },
+ {
+  "word": "rescue",
+  "start": 47.12,
+  "end": 47.51
+ },
+ {
+  "word": "had",
+  "start": 47.51,
+  "end": 47.62
+ },
+ {
+  "word": "woken",
+  "start": 47.62,
+  "end": 47.94
+ },
+ {
+  "word": "something",
+  "start": 47.94,
+  "end": 48.3
+ },
+ {
+  "word": "worse",
+  "start": 48.3,
+  "end": 48.73
+ },
+ {
+  "word": "A",
+  "start": 49.61,
+  "end": 49.67
+ },
+ {
+  "word": "cracked",
+  "start": 49.67,
+  "end": 50.07
+ },
+ {
+  "word": "storm",
+  "start": 50.07,
+  "end": 50.47
+ },
+ {
+  "word": "crystal",
+  "start": 50.47,
+  "end": 50.87
+ },
+ {
+  "word": "flashed",
+  "start": 50.87,
+  "end": 51.5
+ },
+ {
+  "word": "The",
+  "start": 51.86,
+  "end": 51.93
+ },
+ {
+  "word": "floating",
+  "start": 51.93,
+  "end": 52.34
+ },
+ {
+  "word": "islands",
+  "start": 52.34,
+  "end": 52.81
+ },
+ {
+  "word": "lurched",
+  "start": 52.81,
+  "end": 53.36
+ },
+ {
+  "word": "The",
+  "start": 54.49,
+  "end": 54.56
+ },
+ {
+  "word": "bridge",
+  "start": 54.56,
+  "end": 54.89
+ },
+ {
+  "word": "shattered",
+  "start": 54.89,
+  "end": 55.37
+ },
+ {
+  "word": "behind",
+  "start": 55.37,
+  "end": 55.75
+ },
+ {
+  "word": "them",
+  "start": 55.75,
+  "end": 55.94
+ },
+ {
+  "word": "The",
+  "start": 57.19,
+  "end": 57.27
+ },
+ {
+  "word": "chalk",
+  "start": 57.27,
+  "end": 57.58
+ },
+ {
+  "word": "key",
+  "start": 57.58,
+  "end": 57.82
+ },
+ {
+  "word": "flickered",
+  "start": 57.82,
+  "end": 58.36
+ },
+ {
+  "word": "One",
+  "start": 58.84,
+  "end": 59.1
+ },
+ {
+  "word": "drawing",
+  "start": 59.1,
+  "end": 59.43
+ },
+ {
+  "word": "left",
+  "start": 59.43,
+  "end": 59.94
+ },
+ {
+  "word": "Stickman",
+  "start": 60.71,
+  "end": 61.23
+ },
+ {
+  "word": "could",
+  "start": 61.23,
+  "end": 61.35
+ },
+ {
+  "word": "draw",
+  "start": 61.35,
+  "end": 61.55
+ },
+ {
+  "word": "a",
+  "start": 61.55,
+  "end": 61.58
+ },
+ {
+  "word": "rocket",
+  "start": 61.58,
+  "end": 62.17
+ },
+ {
+  "word": "Or",
+  "start": 62.96,
+  "end": 63.13
+ },
+ {
+  "word": "a",
+  "start": 63.13,
+  "end": 63.16
+ },
+ {
+  "word": "sword",
+  "start": 63.16,
+  "end": 63.75
+ },
+ {
+  "word": "Instead",
+  "start": 64.57,
+  "end": 65.23
+ },
+ {
+  "word": "he",
+  "start": 65.54,
+  "end": 65.66
+ },
+ {
+  "word": "drew",
+  "start": 65.66,
+  "end": 65.88
+ },
+ {
+  "word": "a",
+  "start": 65.88,
+  "end": 65.94
+ },
+ {
+  "word": "giant",
+  "start": 65.94,
+  "end": 66.76
+ },
+ {
+  "word": "glowing",
+  "start": 66.95,
+  "end": 67.37
+ },
+ {
+  "word": "heart",
+  "start": 67.37,
+  "end": 67.94
+ },
+ {
+  "word": "It",
+  "start": 69.41,
+  "end": 69.51
+ },
+ {
+  "word": "wrapped",
+  "start": 69.51,
+  "end": 69.87
+ },
+ {
+  "word": "around",
+  "start": 69.87,
+  "end": 70.09
+ },
+ {
+  "word": "the",
+  "start": 70.09,
+  "end": 70.16
+ },
+ {
+  "word": "crystal",
+  "start": 70.16,
+  "end": 70.76
+ },
+ {
+  "word": "and",
+  "start": 71.11,
+  "end": 71.23
+ },
+ {
+  "word": "sealed",
+  "start": 71.23,
+  "end": 71.63
+ },
+ {
+  "word": "the",
+  "start": 71.63,
+  "end": 71.7
+ },
+ {
+  "word": "crack",
+  "start": 71.7,
+  "end": 72.16
+ },
+ {
+  "word": "The",
+  "start": 73.36,
+  "end": 73.43
+ },
+ {
+  "word": "wind",
+  "start": 73.43,
+  "end": 73.89
+ },
+ {
+  "word": "fell",
+  "start": 73.89,
+  "end": 74.13
+ },
+ {
+  "word": "silent",
+  "start": 74.13,
+  "end": 74.75
+ },
+ {
+  "word": "Sunlight",
+  "start": 75.74,
+  "end": 76.37
+ },
+ {
+  "word": "flooded",
+  "start": 76.37,
+  "end": 76.83
+ },
+ {
+  "word": "the",
+  "start": 76.83,
+  "end": 76.91
+ },
+ {
+  "word": "sky",
+  "start": 76.91,
+  "end": 77.43
+ },
+ {
+  "word": "The",
+  "start": 78.18,
+  "end": 78.25
+ },
+ {
+  "word": "dragon",
+  "start": 78.25,
+  "end": 78.63
+ },
+ {
+  "word": "sneezed",
+  "start": 78.63,
+  "end": 79.54
+ },
+ {
+  "word": "releasing",
+  "start": 79.54,
+  "end": 79.92
+ },
+ {
+  "word": "a",
+  "start": 79.92,
+  "end": 79.96
+ },
+ {
+  "word": "trail",
+  "start": 79.96,
+  "end": 80.52
+ },
+ {
+  "word": "of",
+  "start": 80.52,
+  "end": 80.64
+ },
+ {
+  "word": "glittering",
+  "start": 80.75,
+  "end": 81.26
+ },
+ {
+  "word": "bubbles",
+  "start": 81.26,
+  "end": 81.76
+ },
+ {
+  "word": "One",
+  "start": 82.55,
+  "end": 82.86
+ },
+ {
+  "word": "bubble",
+  "start": 82.86,
+  "end": 83.17
+ },
+ {
+  "word": "carried",
+  "start": 83.17,
+  "end": 83.56
+ },
+ {
+  "word": "them",
+  "start": 83.56,
+  "end": 83.73
+ },
+ {
+  "word": "toward",
+  "start": 83.73,
+  "end": 84.03
+ },
+ {
+  "word": "a",
+  "start": 84.03,
+  "end": 84.06
+ },
+ {
+  "word": "distant",
+  "start": 84.06,
+  "end": 84.5
+ },
+ {
+  "word": "castle",
+  "start": 84.5,
+  "end": 85.08
+ },
+ {
+  "word": "But",
+  "start": 85.85,
+  "end": 85.98
+ },
+ {
+  "word": "as",
+  "start": 85.98,
+  "end": 86.1
+ },
+ {
+  "word": "they",
+  "start": 86.1,
+  "end": 86.22
+ },
+ {
+  "word": "approached",
+  "start": 86.22,
+  "end": 86.82
+ },
+ {
+  "word": "the",
+  "start": 87.1,
+  "end": 87.17
+ },
+ {
+  "word": "castle's",
+  "start": 87.17,
+  "end": 87.67
+ },
+ {
+  "word": "enormous",
+  "start": 87.67,
+  "end": 88.23
+ },
+ {
+  "word": "doors",
+  "start": 88.23,
+  "end": 88.64
+ },
+ {
+  "word": "opened",
+  "start": 88.64,
+  "end": 89.01
+ },
+ {
+  "word": "by",
+  "start": 89.01,
+  "end": 89.17
+ },
+ {
+  "word": "themselves",
+  "start": 89.17,
+  "end": 89.83
+ },
+ {
+  "word": "Inside",
+  "start": 90.67,
+  "end": 91.59
+ },
+ {
+  "word": "two",
+  "start": 91.59,
+  "end": 91.92
+ },
+ {
+  "word": "golden",
+  "start": 91.92,
+  "end": 92.3
+ },
+ {
+  "word": "eyes",
+  "start": 92.3,
+  "end": 92.62
+ },
+ {
+  "word": "blinked",
+  "start": 92.62,
+  "end": 93.13
+ },
+ {
+  "word": "Stickman",
+  "start": 93.98,
+  "end": 94.48
+ },
+ {
+  "word": "squeezed",
+  "start": 94.48,
+  "end": 94.96
+ },
+ {
+  "word": "the",
+  "start": 94.96,
+  "end": 95.02
+ },
+ {
+  "word": "key",
+  "start": 95.02,
+  "end": 95.4
+ },
+ {
+  "word": "What",
+  "start": 96.1,
+  "end": 96.23
+ },
+ {
+  "word": "would",
+  "start": 96.23,
+  "end": 96.33
+ },
+ {
+  "word": "you",
+  "start": 96.33,
+  "end": 96.44
+ },
+ {
+  "word": "draw",
+  "start": 96.44,
+  "end": 96.64
+ },
+ {
+  "word": "next",
+  "start": 96.64,
+  "end": 97.15
+ }
+]

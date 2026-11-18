@@ -53,7 +53,7 @@ export const hand = (h: number, tgt: [number, number], sq = 0, flip = false, dz 
 export const Extrude: React.FC<{ pts: [number, number][]; depth: number; color: string; p?: V3; rot?: V3; s?: number; line?: number }> = ({ pts, depth, color, p = [0, 0, 0], rot = [0, 0, 0], s = 1, line = 4 }) => {
   const { size } = useThree();
   const geo = useMemo(() => { const sh = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y))); const g = new THREE.ExtrudeGeometry(sh, { depth, bevelEnabled: false }); g.translate(0, 0, -depth / 2); return g; }, [JSON.stringify(pts), depth]);
-  const seg = useMemo(() => { const e = new LineSegmentsGeometry(); e.setPositions(new THREE.EdgesGeometry(geo, 30).attributes.position.array as Float32Array); return new LineSegments2(e, new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line, resolution: new THREE.Vector2(size.width, size.height) })); }, [geo, size, line]);
+  const seg = useMemo(() => { const e = new LineSegmentsGeometry(); e.setPositions(new THREE.EdgesGeometry(geo, 30).attributes.position.array as Float32Array); return new LineSegments2(e, new LineMaterial({ color: new THREE.Color(INK).getHex(), linewidth: line * size.height / 1280, resolution: new THREE.Vector2(size.width, size.height) })); }, [geo, size, line]);
   return <group position={p} rotation={rot} scale={s}><mesh geometry={geo}><meshToonMaterial color={color} gradientMap={ramp} /></mesh><primitive object={seg} /></group>;
 };
 // Big 3D arrow, tip at +y (length L centred on origin)
