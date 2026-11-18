@@ -131,10 +131,10 @@ export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number 
       <Cyl p={[0.9, 1.52, -3.1]} rt={0.25} h={0.06} color="#2b3350" line={2} /><Cyl p={[0.9, 2.0, -3.1]} rt={0.03} h={1.0} color="#e5483f" line={2} rot={[0, 0, -0.3]} /><Cyl p={[0.68, 2.55, -3.1]} rt={0.12} rb={0.35} h={0.4} color="#e5483f" line={3} rot={[0, 0, 0.6]} />
       <SGlow p={[0.5, 2.3, -2.9]} r={1.6} color="#ffd890" o={0.5} />
       {[0, 1, 2, 3].map((i) => <Box key={i} p={[-1.8 + i * 0.16, 1.62 + Math.max(0, Math.sin(t * 20 + i)) * 0.15 * shake, -3.1]} s={[0.1, 0.06, 0.5]} color={["#e5483f", "#3a6fd8", "#2fb87a", "#f0b429"][i]} line={1} rot={[0, 0.3 + i * 0.2, 0]} />)}
-      {[0, 1, 2].map((i) => <Box key={i} p={[-1.7, 1.55 + i * 0.13, -2.1]} s={[0.8, 0.12, 0.55]} color={["#3a6fd8", "#e5483f", "#2fb87a"][i]} line={2} />)}
+      {[0, 1, 2].map((i) => <Box key={i} p={[0.55, 1.55 + i * 0.13, -2.2]} s={[0.7, 0.12, 0.5]} color={["#3a6fd8", "#e5483f", "#2fb87a"][i]} line={2} />)}
       <Box p={[0.2, 1.58, -2.3]} s={[0.35, 0.16, 0.22]} color="#ff9fb8" line={2} />
     </group>
-    <group position={[-0.7, 0, -1.2]}><Box p={[0, 0.9, 0]} s={[1.0, 0.12, 1.0]} color="#3a6fd8" /><Box p={[0, 1.5, 0.45]} s={[1.0, 1.1, 0.12]} color="#3a6fd8" />{[[-0.4, -0.4], [0.4, -0.4], [-0.4, 0.4], [0.4, 0.4]].map(([x, z], i) => <Cyl key={i} p={[x, 0.45, z]} rt={0.05} h={0.9} color="#2b3350" line={1} />)}</group>
+    <group position={[2.6, 0, -1.4]} rotation={[0, -0.6, 0]}><Box p={[0, 0.9, 0]} s={[1.0, 0.12, 1.0]} color="#3a6fd8" /><Box p={[0, 1.5, 0.45]} s={[1.0, 1.1, 0.12]} color="#3a6fd8" />{[[-0.4, -0.4], [0.4, -0.4], [-0.4, 0.4], [0.4, 0.4]].map(([x, z], i) => <Cyl key={i} p={[x, 0.45, z]} rt={0.05} h={0.9} color="#2b3350" line={1} />)}</group>
     {/* shelves, posters, bed, rug, plant, toy rocket */}
     <Box p={[-6.3, 5.2, -2]} s={[0.4, 0.12, 2.4]} color="#9a6a3a" /><Box p={[-6.3, 4.0, -2]} s={[0.4, 0.12, 2.4]} color="#9a6a3a" />
     {Array.from({ length: 9 }, (_, i) => <Box key={i} p={[-6.2, 4.38 + (i % 2) * 1.2, -3 + (i % 5) * 0.45]} s={[0.3, 0.6 + rnd(i) * 0.3, 0.16]} color={["#e5483f", "#3a6fd8", "#f0b429", "#2fb87a", "#7a54d6"][i % 5]} line={2} />)}

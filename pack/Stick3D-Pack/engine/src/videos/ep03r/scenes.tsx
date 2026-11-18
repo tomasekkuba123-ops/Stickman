@@ -89,25 +89,25 @@ export const S3 = ({ t }: Ctx) => { const parts = { body: 1, fin1: seg(t, 5.2, 5
 /* ===================== S4 10.1–14.25 : paper shook, smoke poured from the bottom ===================== */
 const K4: [number, Key[]][] = [
   [10.1, [K(10.1, [1.4, 2.4, -1.2], [-0.6, 1.8, -3.0], 40), K(11.3, [1.0, 2.3, -1.5], [-0.6, 1.8, -3.0], 36)]],
-  [11.3, [K(11.3, [1.6, 2.2, 1.8], [-0.6, 2.2, -3.4], 50), K(14.3, [0.9, 2.0, 2.4], [-0.6, 2.4, -3.4], 52)]],
+  [11.3, [K(11.3, [0.8, 2.2, 1.8], [-1.1, 2.1, -3.4], 50), K(14.3, [0.2, 2.0, 2.3], [-1.1, 2.3, -3.4], 52)]],
 ];
 export const S4 = ({ t }: Ctx) => { const sh = seg(t, 10.5, 10.8), sm = t > 11.3;
   return (<>
     <Cam t={t} keys={shot(t, K4)} impacts={[[10.57, 0.02]]} />
     <Bedroom t={t} shake={sh * 0.6} />
     <DrawingPaper t={t} parts={{ body: 1, fin1: 1, fin2: 1, win: 1 }} shakeK={sh * (1 + seg(t, 12, 14))} glowK={sm ? 0.25 + 0.1 * Math.sin(t * 12) : 0} />
-    {sm ? <Smoke src={add(PAPER, [0, 0.15, 0.4])} t={t} t0={11.3} rate={7} vel={[0.6, 0.9, -0.3]} spread={0.5} size={0.4} life={2.4} color="#e8e4f0" lit={0.35} seed={5} /> : null}
-    <HeroV2 p={add(HERO_DESK, [-0.2 * seg(t, 10.5, 10.9, ease.back), 0, -0.25 * seg(t, 10.5, 10.9, ease.back)])} h={H}
+    {sm ? <Smoke src={add(PAPER, [0.35, 0.15, 0.1])} t={t} t0={11.3} rate={6} vel={[1.3, 0.8, -0.9]} spread={0.3} size={0.35} life={2.4} color="#e8e4f0" lit={0.35} seed={5} /> : null}
+    <HeroV2 p={add(HERO_DESK, [-1.3 * seg(t, 10.5, 10.9, ease.back), 0, 0.1 * seg(t, 10.5, 10.9, ease.back)])} h={H}
       rig={stand(t, sm ? "scared" : "surprised", { lean: -10 * sh, squash: -0.05 * Math.exp(-Math.max(0, t - 10.57) * 5), ikR: [200, 700], ikL: [-220, 720], handR: "open", handL: "open", lookY: 0.7, lookX: sm ? 0.2 : 0, headTilt: sm ? -8 : 0, zeroG: 0 })} extra={undefined} rim="255,200,140" />
   </>);
 };
 
 /* ===================== S5 14.25–19.5 : THREE. TWO. ONE. (cut on every number) ===================== */
 const K5: [number, Key[]][] = [
-  [14.25, [K(14.25, [0.2, 2.6, -1.6], [-0.6, 2.4, -3.6], 42), K(15.15, [0.1, 2.6, -1.9], [-0.6, 2.4, -3.6], 38)]],
-  [15.15, [K(15.15, [-2.0, 3.0, 0.6], [-0.6, 2.1, -3.4], 50), K(15.75, [-1.8, 2.9, 0.3], [-0.6, 2.1, -3.4], 48)]],
-  [15.75, [K(15.75, [1.8, 0.7, 0.4], [-0.6, 2.2, -3.2], 56, 0.08), K(16.6, [1.6, 0.8, 0.8], [-0.6, 2.4, -3.2], 58, 0.06)]],
-  [16.6, [K(16.6, [3.6, 3.0, 3.6], [-0.5, 1.9, -3.2], 50), K(19.6, [2.4, 2.2, 2.4], [-0.5, 2.2, -3.2], 50)]],
+  [14.25, [K(14.25, [-1.0, 2.6, -1.2], [-1.6, 2.3, -3.5], 42), K(15.15, [-1.1, 2.6, -1.5], [-1.6, 2.3, -3.5], 38)]],
+  [15.15, [K(15.15, [-2.6, 3.0, 0.6], [-1.1, 2.0, -3.3], 50), K(15.75, [-2.4, 2.9, 0.3], [-1.1, 2.0, -3.3], 48)]],
+  [15.75, [K(15.75, [1.0, 0.7, 0.4], [-1.2, 2.2, -3.2], 56, 0.08), K(16.6, [0.8, 0.8, 0.8], [-1.2, 2.4, -3.2], 58, 0.06)]],
+  [16.6, [K(16.6, [0.2, 2.6, 3.0], [-2.1, 1.8, -2.6], 50), K(19.6, [-0.4, 2.2, 2.4], [-2.1, 2.0, -2.6], 50)]],
 ];
 export const S5 = ({ t }: Ctx) => { const n = t < 15.19 ? "3" : t < 15.79 ? "2" : "1", nt = t < 15.19 ? 14.36 : t < 15.79 ? 15.19 : 15.79; const rumble = seg(t, 16.0, 19.4);
   const hide = seg(t, 16.8, 17.3, ease.back);
@@ -115,22 +115,22 @@ export const S5 = ({ t }: Ctx) => { const n = t < 15.19 ? "3" : t < 15.79 ? "2" 
     <Cam t={t} keys={shot(t, K5)} impacts={[[14.36, 0.015], [15.19, 0.02], [15.79, 0.03]]} quake={rumble * 0.025} />
     <Bedroom t={t} shake={0.6 + rumble * 1.4} />
     <DrawingPaper t={t} parts={{ body: 1, fin1: 1, fin2: 1, win: 1 }} shakeK={1 + rumble * 2} count={t < 16.6 && t > 14.3 ? n : undefined} countK={clamp((t - nt) / 0.25)} glowK={0.35 + rumble * 0.8} />
-    <Smoke src={add(PAPER, [0, 0.15, 0.4])} t={t} t0={13} rate={7 + rumble * 5} vel={[1.1, 0.6 + rumble * 0.5, -0.7]} spread={0.4 + rumble * 0.4} size={0.35 + rumble * 0.2} life={1.6} color="#e8e4f0" lit={0.5 + rumble * 0.5} seed={5} max={30} />
+    <Smoke src={add(PAPER, [0.35, 0.15, 0.1])} t={t} t0={13} rate={6 + rumble * 4} vel={[1.4, 0.7 + rumble * 0.5, -1.0]} spread={0.3 + rumble * 0.3} size={0.35 + rumble * 0.2} life={1.6} color="#e8e4f0" lit={0.5 + rumble * 0.5} seed={5} max={30} />
     {t > 16.0 ? <Sparks c={add(PAPER, [0, 0.2, 0])} t={t} t0={16.0 + Math.floor((t - 16) * 3) / 3} n={10} v={2.2} life={0.33} color="#ffcf5a" /> : null}
-    <HeroV2 p={[lerp(HERO_DESK[0], -2.6, hide), 0, lerp(HERO_DESK[2], -1.6, hide)]} h={H}
+    <HeroV2 p={[lerp(HERO_DESK[0] - 1.3, -2.9, hide), 0, lerp(HERO_DESK[2] + 0.1, -2.2, hide)]} h={H}
       rig={hide > 0 ? stand(t, "scared", { squash: -0.12 * hide, ikR: [140, 900], ikL: [-140, 900], handR: "open", handL: "open", lookX: 0.6, lookY: 0.3, legL: { a: 18, b: 40 }, legR: { a: 18, b: 40 } }) : stand(t, "scared", { lean: -6, ikR: [180, 740], ikL: [-180, 740], handR: "open", handL: "open", lookY: 0.7, squash: -0.03 })} rim="255,200,140" />
   </>);
 };
 
 /* ===================== S6 19.5–23.4 : rocket tore off the page, Stickman grabbed the ladder just in time ===================== */
 const K6: [number, Key[]][] = [
-  [19.5, [K(19.5, [1.6, 0.6, 1.6], [-0.6, 2.8, -2.9], 62, 0.05), K(21.0, [1.9, 0.6, 2.4], [-0.6, 3.8, -2.9], 64, 0.04)]],
+  [19.5, [K(19.5, [0.9, 0.7, 2.0], [-1.3, 2.8, -2.8], 64, 0.05), K(21.0, [1.2, 0.7, 2.8], [-1.3, 3.6, -2.8], 66, 0.04)]],
   [21.0, [K(21.0, [4.8, 2.6, 4.2], [-1.0, 3.6, -2.6], 54), K(23.5, [4.2, 2.4, 5.0], [-0.8, 5.2, -2.6], 58)]],
 ];
 export const S6 = ({ t }: Ctx) => { const grow = seg(t, 19.6, 20.5, ease.back), lift = seg(t, 20.5, 23.4, ease.i);
   const rp: V3 = [PAPER[0], PAPER[1] + 0.6 + grow * 1.6 + lift * 9, PAPER[2] + 0.3]; const s = 0.15 + grow * 1.15;
   const ant = seg(t, 21.15, 21.5), jump = seg(t, 21.5, 21.88, ease.o), grabbed = t > 21.88;
-  const jumpP: V3 = [lerp(-2.6, rp[0] + 1.2, jump), Math.sin(jump * Math.PI) * 1.2 + jump * 1.2, lerp(-1.6, rp[2], jump)];
+  const jumpP: V3 = [lerp(-2.9, rp[0] + 1.2, jump), Math.sin(jump * Math.PI) * 1.2 + jump * 1.2, lerp(-2.2, rp[2], jump)];
   return (<>
     <Cam t={t} keys={shot(t, K6)} impacts={[[19.68, 0.05], [21.88, 0.02]]} quake={0.012} />
     <Bedroom t={t} shake={1.5} />
@@ -138,8 +138,8 @@ export const S6 = ({ t }: Ctx) => { const grow = seg(t, 19.6, 20.5, ease.back), 
     {/* torn page scraps */}
     {t > 19.7 ? [0, 1, 2, 3, 4].map((i) => { const u = t - 19.7; return <Box key={i} p={[PAPER[0] + (i - 2) * 0.4 * (1 + u), PAPER[1] + 0.2 + u * 2 - u * u * 1.6, PAPER[2] + Math.sin(i) * u]} s={[0.35, 0.02, 0.25]} rot={[u * 5 + i, u * 3, i]} color="#fffdf4" line={2} />; }) : null}
     <PuffBurst c={[PAPER[0], PAPER[1], PAPER[2]]} t={t} t0={19.7} n={14} r={2.2} size={0.6} color="#eceaf4" up={1.2} life={1.8} />
-    <RocketRig t={t} rp={rp} s={s} flame={grow * 1.1} rig={grabbed ? hang(t, t < 22.6 ? "surprised" : "laugh", { zeroG: 0.3 }) : null} L={3.0 * Math.max(0.3, grow)} sway={Math.sin(t * 4) * 0.2} smokeVel={[0, -2.5, 0.4]} />
-    {!grabbed ? <HeroV2 p={jump > 0 ? jumpP : [-2.6, 0, -1.6]} h={H} sy={0} rig={jump > 0 ? stand(t, "determined", { ikR: [120, 1150], ikL: [-60, 1100], handR: "open", handL: "open", squash: 0.08, lookY: -0.8, legL: { a: 10, b: 50 }, legR: { a: -20, b: 20 }, grounded: false }) : stand(t, ant > 0 ? "determined" : "scared", { squash: -0.14 * ant, lean: 8 * ant, ikR: [160, 860 + ant * 60], ikL: [-160, 860], handR: "open", handL: "open", lookY: -0.7, lookX: 0.4, legL: { a: 14 * ant, b: 50 * ant }, legR: { a: 14 * ant, b: 50 * ant } })} rim="255,200,140" /> : null}
+    <RocketRig t={t} rp={rp} s={s} flame={grow * 1.1} rig={grabbed ? hang(t, t < 22.6 ? "surprised" : "laugh", { zeroG: 0.3 }) : null} L={3.0 * Math.max(0.3, grow)} sway={Math.sin(t * 4) * 0.2} smokeVel={[1.6, -1.2, -1.0]} />
+    {!grabbed ? <HeroV2 p={jump > 0 ? jumpP : [-2.9, 0, -2.2]} h={H} sy={0} rig={jump > 0 ? stand(t, "determined", { ikR: [120, 1150], ikL: [-60, 1100], handR: "open", handL: "open", squash: 0.08, lookY: -0.8, legL: { a: 10, b: 50 }, legR: { a: -20, b: 20 }, grounded: false }) : stand(t, ant > 0 ? "determined" : "scared", { squash: -0.14 * ant, lean: 8 * ant, ikR: [160, 860 + ant * 60], ikL: [-160, 860], handR: "open", handL: "open", lookY: -0.7, lookX: 0.4, legL: { a: 14 * ant, b: 50 * ant }, legR: { a: 14 * ant, b: 50 * ant } })} rim="255,200,140" /> : null}
   </>);
 };
 
