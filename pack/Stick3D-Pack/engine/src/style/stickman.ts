@@ -6,7 +6,7 @@
 
 export type View = "front" | "side" | "back";
 export type HandPose = "open" | "relaxed" | "fist" | "thumb" | "point" | "hold";
-export type Face = "smile" | "laugh" | "think" | "surprised" | "worried" | "determined" | "scared" | "neutral" | "grin";
+export type Face = "smile" | "laugh" | "think" | "surprised" | "worried" | "determined" | "scared" | "neutral" | "grin" | "smirk";
 export type Arm = { a: number; b: number }; // degrees: a = upper arm from hanging-down (+ outward in front view, + forward in side view); b = elbow bend (forearm = a + b)
 export type Leg = { a: number; b: number; f?: number; lift?: number }; // side: a thigh fwd+, b knee bend, f foot pitch (+ toe up). front: a outward+, lift raises the foot
 export type Rig = {
@@ -185,6 +185,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
   const [e0, e1] = eyes;
   const brow = (ex: number, ey: number, sx: number, lift: number, tilt: number) => { c.beginPath(); c.moveTo(ex - 28 * sx, ey - 68 - lift + tilt); c.quadraticCurveTo(ex, ey - 86 - lift, ex + 28 * sx, ey - 68 - lift - tilt); stroke(c, 6.5); };
   if (f === "think") { brow(e0[0], e0[1], e0[2], -4, -4); brow(e1[0], e1[1], e1[2], 18, 6); }
+  else if (f === "smirk") { brow(e0[0], e0[1], e0[2], -6, 10); brow(e1[0], e1[1], e1[2], 14, 4); }
   else if (f === "surprised" || f === "scared") { brow(e0[0], e0[1], e0[2], 20, 0); brow(e1[0], e1[1], e1[2], 20, 0); }
   else if (f === "worried") { brow(e0[0], e0[1], e0[2], 6, -10); brow(e1[0], e1[1], e1[2], 6, 10); }
   else if (f === "determined") { brow(e0[0], e0[1], e0[2], -6, 12); brow(e1[0], e1[1], e1[2], -6, -12); }
@@ -200,6 +201,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
   else if (f === "worried") { c.moveTo(mx - 30, my + 14); c.quadraticCurveTo(mx - 10, my + 2, mx, my + 8); c.quadraticCurveTo(mx + 12, my + 14, mx + 30, my + 6); stroke(c, 7); }
   else if (f === "determined") { c.moveTo(mx - 28, my + 8); c.quadraticCurveTo(mx, my + 2, mx + 28, my + 8); stroke(c, 7); }
   else if (f === "neutral") { c.moveTo(mx - 22, my + 6); c.lineTo(mx + 22, my + 6); stroke(c, 7); }
+  else if (f === "smirk") { c.moveTo(mx - 40, my + 8); c.quadraticCurveTo(mx - 6, my + 26, mx + 24, my + 4); c.quadraticCurveTo(mx + 38, my - 6, mx + 46, my - 18); stroke(c, 7.5); c.beginPath(); c.moveTo(mx + 40, my - 24); c.lineTo(mx + 50, my - 12); stroke(c, 5); }
   else { c.moveTo(mx - 46, my - 6); c.quadraticCurveTo(mx, my + 40, mx + 46, my - 6); stroke(c, 7.5); }
   c.restore();
 }

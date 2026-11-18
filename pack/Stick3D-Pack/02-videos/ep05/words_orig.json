@@ -1,0 +1,897 @@
+[
+ {
+  "word": "What",
+  "start": 0.25,
+  "end": 0.42
+ },
+ {
+  "word": "if",
+  "start": 0.42,
+  "end": 0.49
+ },
+ {
+  "word": "Stickman's",
+  "start": 0.49,
+  "end": 1.12
+ },
+ {
+  "word": "drawing",
+  "start": 1.12,
+  "end": 1.59
+ },
+ {
+  "word": "came",
+  "start": 1.59,
+  "end": 1.81
+ },
+ {
+  "word": "alive",
+  "start": 1.81,
+  "end": 2.36
+ },
+ {
+  "word": "He",
+  "start": 2.74,
+  "end": 2.86
+ },
+ {
+  "word": "drew",
+  "start": 2.86,
+  "end": 3.07
+ },
+ {
+  "word": "a",
+  "start": 3.07,
+  "end": 3.1
+ },
+ {
+  "word": "copy",
+  "start": 3.1,
+  "end": 3.48
+ },
+ {
+  "word": "of",
+  "start": 3.48,
+  "end": 3.55
+ },
+ {
+  "word": "himself",
+  "start": 3.55,
+  "end": 4.08
+ },
+ {
+  "word": "Same",
+  "start": 4.51,
+  "end": 4.85
+ },
+ {
+  "word": "hoodie",
+  "start": 4.85,
+  "end": 5.27
+ },
+ {
+  "word": "same",
+  "start": 5.4,
+  "end": 5.7
+ },
+ {
+  "word": "shoes",
+  "start": 5.7,
+  "end": 6.29
+ },
+ {
+  "word": "same",
+  "start": 6.46,
+  "end": 6.76
+ },
+ {
+  "word": "smile",
+  "start": 6.76,
+  "end": 7.3
+ },
+ {
+  "word": "Then",
+  "start": 8.12,
+  "end": 8.29
+ },
+ {
+  "word": "the",
+  "start": 8.29,
+  "end": 8.36
+ },
+ {
+  "word": "drawing",
+  "start": 8.36,
+  "end": 8.76
+ },
+ {
+  "word": "blinked",
+  "start": 8.76,
+  "end": 9.24
+ },
+ {
+  "word": "It",
+  "start": 9.63,
+  "end": 9.74
+ },
+ {
+  "word": "stepped",
+  "start": 9.74,
+  "end": 10.06
+ },
+ {
+  "word": "off",
+  "start": 10.06,
+  "end": 10.22
+ },
+ {
+  "word": "the",
+  "start": 10.22,
+  "end": 10.33
+ },
+ {
+  "word": "paper",
+  "start": 10.33,
+  "end": 10.81
+ },
+ {
+  "word": "grinned",
+  "start": 10.96,
+  "end": 11.74
+ },
+ {
+  "word": "and",
+  "start": 11.74,
+  "end": 11.92
+ },
+ {
+  "word": "snatched",
+  "start": 11.92,
+  "end": 12.42
+ },
+ {
+  "word": "the",
+  "start": 12.42,
+  "end": 12.49
+ },
+ {
+  "word": "pencil",
+  "start": 12.49,
+  "end": 12.88
+ },
+ {
+  "word": "right",
+  "start": 12.88,
+  "end": 13.19
+ },
+ {
+  "word": "out",
+  "start": 13.19,
+  "end": 13.31
+ },
+ {
+  "word": "of",
+  "start": 13.31,
+  "end": 13.37
+ },
+ {
+  "word": "his",
+  "start": 13.37,
+  "end": 13.52
+ },
+ {
+  "word": "hand",
+  "start": 13.52,
+  "end": 13.92
+ },
+ {
+  "word": "Stickman",
+  "start": 14.62,
+  "end": 15.05
+ },
+ {
+  "word": "froze",
+  "start": 15.05,
+  "end": 15.6
+ },
+ {
+  "word": "The",
+  "start": 16.0,
+  "end": 16.1
+ },
+ {
+  "word": "copy",
+  "start": 16.1,
+  "end": 16.48
+ },
+ {
+  "word": "drew",
+  "start": 16.48,
+  "end": 16.71
+ },
+ {
+  "word": "a",
+  "start": 16.71,
+  "end": 16.75
+ },
+ {
+  "word": "cage",
+  "start": 16.75,
+  "end": 17.21
+ },
+ {
+  "word": "around",
+  "start": 17.21,
+  "end": 17.54
+ },
+ {
+  "word": "him",
+  "start": 17.54,
+  "end": 17.73
+ },
+ {
+  "word": "Click",
+  "start": 18.15,
+  "end": 18.52
+ },
+ {
+  "word": "Then",
+  "start": 19.16,
+  "end": 19.29
+ },
+ {
+  "word": "it",
+  "start": 19.29,
+  "end": 19.38
+ },
+ {
+  "word": "drew",
+  "start": 19.38,
+  "end": 19.56
+ },
+ {
+  "word": "a",
+  "start": 19.56,
+  "end": 19.62
+ },
+ {
+  "word": "crown",
+  "start": 19.62,
+  "end": 20.16
+ },
+ {
+  "word": "on",
+  "start": 20.16,
+  "end": 20.25
+ },
+ {
+  "word": "its",
+  "start": 20.25,
+  "end": 20.4
+ },
+ {
+  "word": "own",
+  "start": 20.4,
+  "end": 20.6
+ },
+ {
+  "word": "head",
+  "start": 20.6,
+  "end": 21.32
+ },
+ {
+  "word": "a",
+  "start": 21.32,
+  "end": 21.36
+ },
+ {
+  "word": "throne",
+  "start": 21.36,
+  "end": 21.81
+ },
+ {
+  "word": "under",
+  "start": 21.81,
+  "end": 22.09
+ },
+ {
+  "word": "it",
+  "start": 22.09,
+  "end": 22.46
+ },
+ {
+  "word": "and",
+  "start": 22.46,
+  "end": 22.58
+ },
+ {
+  "word": "a",
+  "start": 22.58,
+  "end": 22.61
+ },
+ {
+  "word": "castle",
+  "start": 22.61,
+  "end": 23.13
+ },
+ {
+  "word": "around",
+  "start": 23.13,
+  "end": 23.41
+ },
+ {
+  "word": "the",
+  "start": 23.41,
+  "end": 23.47
+ },
+ {
+  "word": "throne",
+  "start": 23.47,
+  "end": 23.96
+ },
+ {
+  "word": "King",
+  "start": 24.39,
+  "end": 24.74
+ },
+ {
+  "word": "Copy",
+  "start": 24.74,
+  "end": 25.26
+ },
+ {
+  "word": "Stickman",
+  "start": 25.79,
+  "end": 26.17
+ },
+ {
+  "word": "shook",
+  "start": 26.17,
+  "end": 26.44
+ },
+ {
+  "word": "the",
+  "start": 26.44,
+  "end": 26.5
+ },
+ {
+  "word": "bars",
+  "start": 26.5,
+  "end": 27.04
+ },
+ {
+  "word": "Nothing",
+  "start": 27.84,
+  "end": 28.41
+ },
+ {
+  "word": "But",
+  "start": 28.91,
+  "end": 29.04
+ },
+ {
+  "word": "the",
+  "start": 29.04,
+  "end": 29.11
+ },
+ {
+  "word": "copy",
+  "start": 29.11,
+  "end": 29.45
+ },
+ {
+  "word": "forgot",
+  "start": 29.45,
+  "end": 29.83
+ },
+ {
+  "word": "one",
+  "start": 29.83,
+  "end": 30.15
+ },
+ {
+  "word": "thing",
+  "start": 30.15,
+  "end": 30.57
+ },
+ {
+  "word": "It",
+  "start": 30.99,
+  "end": 31.06
+ },
+ {
+  "word": "was",
+  "start": 31.06,
+  "end": 31.26
+ },
+ {
+  "word": "drawn",
+  "start": 31.26,
+  "end": 31.73
+ },
+ {
+  "word": "in",
+  "start": 31.73,
+  "end": 31.86
+ },
+ {
+  "word": "pencil",
+  "start": 31.86,
+  "end": 32.41
+ },
+ {
+  "word": "Stickman",
+  "start": 32.83,
+  "end": 33.23
+ },
+ {
+  "word": "licked",
+  "start": 33.23,
+  "end": 33.51
+ },
+ {
+  "word": "his",
+  "start": 33.51,
+  "end": 33.71
+ },
+ {
+  "word": "thumb",
+  "start": 33.71,
+  "end": 34.04
+ },
+ {
+  "word": "and",
+  "start": 34.04,
+  "end": 34.15
+ },
+ {
+  "word": "rubbed",
+  "start": 34.15,
+  "end": 34.48
+ },
+ {
+  "word": "one",
+  "start": 34.48,
+  "end": 34.78
+ },
+ {
+  "word": "bar",
+  "start": 34.78,
+  "end": 35.04
+ },
+ {
+  "word": "of",
+  "start": 35.04,
+  "end": 35.12
+ },
+ {
+  "word": "the",
+  "start": 35.12,
+  "end": 35.2
+ },
+ {
+  "word": "cage",
+  "start": 35.2,
+  "end": 35.73
+ },
+ {
+  "word": "It",
+  "start": 36.07,
+  "end": 36.16
+ },
+ {
+  "word": "smudged",
+  "start": 36.16,
+  "end": 36.55
+ },
+ {
+  "word": "away",
+  "start": 36.55,
+  "end": 36.93
+ },
+ {
+  "word": "He",
+  "start": 37.34,
+  "end": 37.41
+ },
+ {
+  "word": "slipped",
+  "start": 37.41,
+  "end": 37.76
+ },
+ {
+  "word": "out",
+  "start": 37.76,
+  "end": 38.09
+ },
+ {
+  "word": "tiptoed",
+  "start": 38.35,
+  "end": 38.87
+ },
+ {
+  "word": "past",
+  "start": 38.87,
+  "end": 39.21
+ },
+ {
+  "word": "the",
+  "start": 39.21,
+  "end": 39.27
+ },
+ {
+  "word": "guards",
+  "start": 39.27,
+  "end": 39.85
+ },
+ {
+  "word": "which",
+  "start": 40.11,
+  "end": 40.25
+ },
+ {
+  "word": "were",
+  "start": 40.25,
+  "end": 40.33
+ },
+ {
+  "word": "just",
+  "start": 40.33,
+  "end": 40.54
+ },
+ {
+  "word": "badly",
+  "start": 40.54,
+  "end": 41.02
+ },
+ {
+  "word": "drawn",
+  "start": 41.02,
+  "end": 41.37
+ },
+ {
+  "word": "dogs",
+  "start": 41.37,
+  "end": 41.9
+ },
+ {
+  "word": "and",
+  "start": 42.15,
+  "end": 42.26
+ },
+ {
+  "word": "climbed",
+  "start": 42.26,
+  "end": 42.68
+ },
+ {
+  "word": "up",
+  "start": 42.68,
+  "end": 42.82
+ },
+ {
+  "word": "behind",
+  "start": 42.82,
+  "end": 43.12
+ },
+ {
+  "word": "the",
+  "start": 43.12,
+  "end": 43.18
+ },
+ {
+  "word": "throne",
+  "start": 43.18,
+  "end": 43.65
+ },
+ {
+  "word": "The",
+  "start": 44.06,
+  "end": 44.13
+ },
+ {
+  "word": "copy",
+  "start": 44.13,
+  "end": 44.46
+ },
+ {
+  "word": "turned",
+  "start": 44.46,
+  "end": 44.72
+ },
+ {
+  "word": "around",
+  "start": 44.72,
+  "end": 45.18
+ },
+ {
+  "word": "Too",
+  "start": 45.53,
+  "end": 45.7
+ },
+ {
+  "word": "late",
+  "start": 45.7,
+  "end": 46.01
+ },
+ {
+  "word": "Stickman",
+  "start": 46.44,
+  "end": 46.84
+ },
+ {
+  "word": "spilled",
+  "start": 46.84,
+  "end": 47.17
+ },
+ {
+  "word": "a",
+  "start": 47.17,
+  "end": 47.23
+ },
+ {
+  "word": "whole",
+  "start": 47.23,
+  "end": 47.64
+ },
+ {
+  "word": "glass",
+  "start": 47.64,
+  "end": 47.99
+ },
+ {
+  "word": "of",
+  "start": 47.99,
+  "end": 48.11
+ },
+ {
+  "word": "water",
+  "start": 48.11,
+  "end": 48.48
+ },
+ {
+  "word": "over",
+  "start": 48.48,
+  "end": 48.69
+ },
+ {
+  "word": "its",
+  "start": 48.69,
+  "end": 48.82
+ },
+ {
+  "word": "head",
+  "start": 48.82,
+  "end": 49.12
+ },
+ {
+  "word": "The",
+  "start": 49.45,
+  "end": 49.52
+ },
+ {
+  "word": "crown",
+  "start": 49.52,
+  "end": 49.95
+ },
+ {
+  "word": "dripped",
+  "start": 49.95,
+  "end": 50.42
+ },
+ {
+  "word": "The",
+  "start": 50.64,
+  "end": 50.74
+ },
+ {
+  "word": "throne",
+  "start": 50.74,
+  "end": 51.17
+ },
+ {
+  "word": "melted",
+  "start": 51.17,
+  "end": 51.65
+ },
+ {
+  "word": "The",
+  "start": 51.95,
+  "end": 52.03
+ },
+ {
+  "word": "copy",
+  "start": 52.03,
+  "end": 52.37
+ },
+ {
+  "word": "looked",
+  "start": 52.37,
+  "end": 52.62
+ },
+ {
+  "word": "at",
+  "start": 52.62,
+  "end": 52.69
+ },
+ {
+  "word": "its",
+  "start": 52.69,
+  "end": 52.83
+ },
+ {
+  "word": "hands",
+  "start": 52.83,
+  "end": 53.46
+ },
+ {
+  "word": "shrugged",
+  "start": 53.46,
+  "end": 54.32
+ },
+ {
+  "word": "and",
+  "start": 54.32,
+  "end": 54.46
+ },
+ {
+  "word": "faded",
+  "start": 54.46,
+  "end": 54.9
+ },
+ {
+  "word": "into",
+  "start": 54.9,
+  "end": 55.14
+ },
+ {
+  "word": "a",
+  "start": 55.14,
+  "end": 55.17
+ },
+ {
+  "word": "grey",
+  "start": 55.17,
+  "end": 55.46
+ },
+ {
+  "word": "puddle",
+  "start": 55.46,
+  "end": 55.9
+ },
+ {
+  "word": "Stickman",
+  "start": 56.27,
+  "end": 56.7
+ },
+ {
+  "word": "picked",
+  "start": 56.7,
+  "end": 56.95
+ },
+ {
+  "word": "up",
+  "start": 56.95,
+  "end": 57.05
+ },
+ {
+  "word": "his",
+  "start": 57.05,
+  "end": 57.2
+ },
+ {
+  "word": "pencil",
+  "start": 57.2,
+  "end": 57.67
+ },
+ {
+  "word": "and",
+  "start": 57.67,
+  "end": 57.76
+ },
+ {
+  "word": "wiped",
+  "start": 57.76,
+  "end": 58.09
+ },
+ {
+  "word": "it",
+  "start": 58.09,
+  "end": 58.16
+ },
+ {
+  "word": "clean",
+  "start": 58.16,
+  "end": 58.66
+ },
+ {
+  "word": "Then",
+  "start": 59.12,
+  "end": 59.27
+ },
+ {
+  "word": "he",
+  "start": 59.27,
+  "end": 59.36
+ },
+ {
+  "word": "drew",
+  "start": 59.36,
+  "end": 59.57
+ },
+ {
+  "word": "a",
+  "start": 59.57,
+  "end": 59.6
+ },
+ {
+  "word": "small",
+  "start": 59.6,
+  "end": 60.08
+ },
+ {
+  "word": "sign",
+  "start": 60.08,
+  "end": 60.5
+ },
+ {
+  "word": "above",
+  "start": 60.5,
+  "end": 60.77
+ },
+ {
+  "word": "the",
+  "start": 60.77,
+  "end": 60.85
+ },
+ {
+  "word": "desk",
+  "start": 60.85,
+  "end": 61.32
+ },
+ {
+  "word": "NO",
+  "start": 61.82,
+  "end": 62.05
+ },
+ {
+  "word": "MORE",
+  "start": 62.05,
+  "end": 62.27
+ },
+ {
+  "word": "COPIES",
+  "start": 62.27,
+  "end": 62.88
+ },
+ {
+  "word": "What",
+  "start": 63.49,
+  "end": 63.63
+ },
+ {
+  "word": "would",
+  "start": 63.63,
+  "end": 63.74
+ },
+ {
+  "word": "your",
+  "start": 63.74,
+  "end": 63.83
+ },
+ {
+  "word": "copy",
+  "start": 63.83,
+  "end": 64.17
+ },
+ {
+  "word": "do",
+  "start": 64.17,
+  "end": 64.32
+ },
+ {
+  "word": "first",
+  "start": 64.32,
+  "end": 65.03
+ }
+]
