@@ -268,7 +268,7 @@ const Hose: React.FC<{ to: V3 }> = ({ to }) => { const curve = new THREE.Catmull
 const K12: [number, Key[]][] = [
   [49.9, [K(49.9, [1.2, 1.3, 7.4], [-3.4, 1.6, -2.4], 54), K(51.3, [0.8, 1.2, 6.8], [-2.4, 1.6, -1.2], 52)]],
   [51.3, [K(51.3, [-3.4, 2.6, 7.4], [-2.6, 1.9, -0.6], 50), K(52.45, [-3.0, 2.4, 6.8], [-2.4, 1.9, -0.6], 48)]],
-  [52.45, [K(52.45, [1.6, 2.4, 5.6], [-0.4, 1.9, 0], 42), K(55.1, [0.8, 2.2, 4.4], [-0.5, 1.9, 0.1], 38)]],
+  [52.45, [K(52.45, [0.8, 2.4, 7.0], [-1.0, 1.9, -0.2], 44), K(55.1, [0.3, 2.3, 6.2], [-1.0, 1.9, -0.2], 42)]],
 ];
 export const S12 = ({ t }: Ctx) => { const roll = seg(t, 50.2, 51.2, ease.o); const bp: V3 = [lerp(KIOSK[0] + 0.9, BOT[0], roll), 0, lerp(KIOSK[2] + 1.6, BOT[2], roll)];
   const fill = seg(t, 51.4, 52.4); const rec = seg(t, 52.5, 53.2); const hand = seg(t, 53.2, 53.7, ease.back);
@@ -321,7 +321,7 @@ export const S14 = ({ t }: Ctx) => { const pr = seg(t, 58.6, 59.3), pop = seg(t,
 
 /* ===================== S15 61.1–64.2 : the robot did not look happy ===================== */
 const K15: [number, Key[]][] = [
-  [61.1, [K(61.1, [2.2, 2.0, 3.0], [0.8, 2.0, -0.6], 40), K(62.6, [1.9, 2.1, 2.6], [0.8, 2.1, -0.6], 36)]],
+  [61.1, [K(61.1, [0.2, 2.2, 6.2], [-1.0, 2.0, -0.3], 48), K(62.6, [0.1, 2.2, 5.7], [-1.0, 2.0, -0.3], 46)]],
   [62.6, [K(62.6, [-3.4, 1.6, 5.0], [-0.4, 2.0, 0], 48), K(64.3, [-3.0, 1.7, 4.4], [-0.4, 2.0, 0], 46)]],
 ];
 export const S15 = ({ t }: Ctx) => { const angry = t > 61.6; const zoom = Math.max(0, Math.sin((t - 61.7) * 3)) * (t > 61.7 ? 1 : 0);
@@ -338,7 +338,7 @@ export const S15 = ({ t }: Ctx) => { const angry = t > 61.6; const zoom = Math.m
 /* ===================== S16 64.2–68.6 : so he drew a BIGGER coin ===================== */
 const K16: [number, Key[]][] = [
   [64.2, [K(64.2, [0.8, 2.0, 8.0], [-0.8, 2.2, 0.6], 50), K(66.0, [0.4, 1.9, 7.4], [-0.8, 2.3, 0.6], 52)]],
-  [66.0, [K(66.0, [-1.4, 0.8, 8.4], [-0.6, 2.4, 0.6], 56, 0.04), K(68.7, [-1.0, 1.0, 9.0], [-0.6, 2.3, 0.6], 54, 0.02)]],
+  [66.0, [K(66.0, [-2.2, 1.0, 7.4], [-1.0, 2.3, 0.6], 56, 0.04), K(68.7, [-1.8, 1.1, 8.0], [-1.0, 2.2, 0.6], 54, 0.02)]],
 ];
 export const BIGCOIN: V3 = [0.2, 1.75, 1.4];
 export const S16 = ({ t }: Ctx) => { const pr = seg(t, 64.5, 65.5), pop = seg(t, 65.5, 66.0, ease.back);
@@ -368,7 +368,7 @@ const PERP: [number, number] = [D2[1], -D2[0]];
 const WROT = Math.atan2(D2[0], D2[1]);
 const behind = (d: number, side: number, y: number): V3 => [RIM[0] + D2[0] * d + PERP[0] * side, y, RIM[2] + D2[1] * d + PERP[1] * side];
 const K17: [number, Key[]][] = [
-  [68.6, [K(68.6, [-2.6, 1.6, 7.2], [0.4, 1.8, 0.4], 52), K(69.4, [-2.2, 1.6, 6.8], [0.8, 1.6, 0], 52)]],
+  [68.6, [K(68.6, [-0.4, 1.8, 7.8], [-0.9, 1.7, 0.6], 54), K(69.4, [-0.1, 1.8, 7.4], [-0.6, 1.6, 0.4], 54)]],
   [69.4, [K(69.4, SIDE(-1, -9, 1.8), SIDE(1, 0, 1.4), 54), K(71.0, SIDE(5, -9, 2.2), SIDE(7, 0, 1.0), 54)]],
   [71.0, [K(71.0, behind(5.5, -1.5, 2.0), add(RIM, [0, 2.0, 0]), 44), K(73.0, behind(6.5, -2.0, 2.2), add(RIM, [0, 2.4, 0]), 48)]],
   [73.0, [K(73.0, behind(4.4, 1.2, 0.8), [lerp(RIM[0], CRATER[0], 0.4), 3.5, lerp(RIM[2], CRATER[2], 0.4)], 62), K(76.6, behind(5.2, 1.8, 0.7), [lerp(RIM[0], CRATER[0], 0.45), 6.5, lerp(RIM[2], CRATER[2], 0.45)], 64)]],
@@ -420,12 +420,13 @@ const WH: V3 = [CRATER[0], 9.5, CRATER[2]], WS = 1.8, WY = -0.6;
 const mouthW = (): V3 => { const lx = 0, ly = -1.4 * WS, lz = 6.6 * WS; return [WH[0] + lx * Math.cos(WY) + lz * Math.sin(WY), WH[1] + ly, WH[2] - lx * Math.sin(WY) + lz * Math.cos(WY)]; };
 const K19: [number, Key[]][] = [
   [79.8, [K(79.8, [-5.4, 1.0, 5.4], [3.5, 7.0, -9], 66), K(81.8, [-5.8, 0.9, 6.0], [3.5, 8.0, -9], 68)]],
-  [81.8, [K(81.8, [-9.5, 2.0, 7.5], [-0.5, 5.5, -6], 62, 0.03), K(83.6, [-10.5, 2.4, 8.5], [1, 7.0, -7], 64, -0.03)]],
+  [81.8, [K(81.8, [-8.5, 2.2, 4.5], [-3.5, 3.0, -1.5], 58, 0.03), K(82.6, [-6.5, 3.8, 4.5], [-1.5, 4.6, -3], 60), K(83.6, [-3.5, 6.0, 3.5], [1.5, 6.6, -5.5], 60, -0.03)]],
   [83.6, [K(83.6, [-5, 6, 6], [WH[0], WH[1] - 1, WH[2]], 54), K(85.4, [-7, 7, 8], [WH[0], WH[1], WH[2]], 56)]],
 ];
 export const S19 = ({ t }: Ctx) => { const yawn = seg(t, 80.9, 81.6, ease.io) * (1 - seg(t, 83.4, 83.8, ease.back)) + seg(t, 81.9, 82.2) * 0;
   const suck = seg(t, 82.0, 83.4, ease.i), M = mouthW();
-  const rp: V3 = [lerp(RP_PAD[0], M[0], suck), lerp(RP_PAD[1], M[1], suck) + Math.sin(suck * Math.PI) * 2, lerp(RP_PAD[2], M[2], suck)];
+  const pre = seg(t, 81.6, 82.1, ease.o) * 4.0;
+  const rp: V3 = [lerp(RP_PAD[0], M[0], suck), lerp(RP_PAD[1] + pre, M[1], suck) + Math.sin(suck * Math.PI) * 1.5, lerp(RP_PAD[2], M[2], suck)];
   const grab = t > 81.95;
   const hp: V3 = grab ? rp : [lerp(HP[0], HP[0] + 0.6, seg(t, 81.6, 81.95)), 0, HP[2]];
   return (<>
@@ -435,8 +436,8 @@ export const S19 = ({ t }: Ctx) => { const yawn = seg(t, 80.9, 81.6, ease.io) * 
     {yawn > 0.3 && t < 83.6 ? Array.from({ length: 16 }, (_, i) => { const u = ((t * 1.3 + i / 16) % 1); const a = i * 2.4; return <SGlow key={i} p={[lerp(M[0] + Math.cos(a) * 6, M[0], u), lerp(M[1] + Math.sin(a) * 4, M[1], u), lerp(M[2] + 4, M[2], u)]} r={0.3} color="#e8e4ff" o={0.8 * u} />; }) : null}
     {yawn > 0.3 && t < 83.6 ? <Smoke src={[RP_PAD[0], 0.3, RP_PAD[2]]} t={t} t0={81.4} rate={10} vel={[(M[0] - RP_PAD[0]) * 0.5, M[1] * 0.5, (M[2] - RP_PAD[2]) * 0.5]} spread={1.2} size={0.7} life={2} color="#c8c4d8" seed={21} max={20} /> : null}
     {suck < 0.995 ? (grab ? <RocketRig t={t} rp={rp} s={1.5 * (1 - suck * 0.35)} flame={0} smoke={false} rig={hang(t, "scared", { zeroG: 1, legL: { a: 30 * Math.sin(t * 13), b: 30, lift: 40 }, legR: { a: -30 * Math.sin(t * 13), b: 30, lift: 40 } })} L={2.6} sway={0.5 + Math.sin(t * 6) * 0.2} tilt={suck * 1.2} />
-      : <><ParkedRocket t={t} gauge={1} /><HeroV2 p={hp} h={H} rig={stand(t, t < 80.9 ? "surprised" : "scared", { ikR: [200, 900], ikL: [-200, 900], handR: "open", handL: "open", lookY: -0.9, lookX: 0.5, lean: t > 81.6 ? 14 : 0, zeroG: t > 81.4 ? 0.8 : 0 })} /></>) : null}
-    <Robot3D p={BOT} t={t} rotY={2.0} face={t > 83.8 ? "shock" : "shock"} armL={1.3} armR={1.3} />
+      : <><RocketRig t={t} rp={rp} s={1.5} flame={0} smoke={false} rig={null} L={2.6} sway={0} /><HeroV2 p={hp} h={H} rig={stand(t, t < 80.9 ? "surprised" : "scared", { ikR: [200, 900], ikL: [-200, 900], handR: "open", handL: "open", lookY: -0.9, lookX: 0.5, lean: t > 81.6 ? 14 : 0, zeroG: t > 81.4 ? 0.8 : 0 })} /></>) : null}
+    <Robot3D p={[1.6, 0, 1.2]} t={t} rotY={-2.4} face="shock" armL={1.3} armR={1.3} />
   </>);
 };
 
