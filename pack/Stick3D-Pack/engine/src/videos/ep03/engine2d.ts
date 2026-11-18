@@ -1,0 +1,70 @@
+// EP03 2D engine helpers: image cache, painted-background camera, Stickman/dragon stamping, captions data.
+import { staticFile } from "remotion";
+import { drawStickman, Rig } from "../../style/stickman";
+
+export const VW = 1080, VH = 1920, FPS = 30;
+export type V2 = [number, number];
+
+/* ---------- images ---------- */
+const files = { room: "ep03/BG_01_ROOM.png", sky: "ep03/BG_02_SKY_TO_SPACE.png", moon: "ep03/BG_03_MOON_GAS_STATION.png", moonClean: "ep03/BG_03_CLEAN.png", belly: "ep03/BG_04_WHALE_BELLY.png" };
+export type ImgKey = keyof typeof files;
+export const IMG: Partial<Record<ImgKey, HTMLImageElement>> = {};
+let promise: Promise<void> | null = null;
+export function loadImages(): Promise<void> {
+  if (promise) return promise;
+  promise = Promise.all((Object.keys(files) as ImgKey[]).map((k) => new Promise<void>((res) => { const im = new Image(); im.onload = () => { IMG[k] = im; res(); }; im.onerror = () => res(); im.src = staticFile(files[k]); }))).then(() => undefined);
+  return promise;
+}
+export const imagesReady = () => (Object.keys(files) as ImgKey[]).every((k) => IMG[k]);
+// world size of each background (scaled so it covers 1080 px width or 1920 px height)
+export const WORLD: Record<ImgKey, { k: number; w: number; h: number }> = {
+  room: { k: 1080 / 941, w: 1080, h: 1672 * 1080 / 941 },
+  sky: { k: 1080 / 724, w: 1080, h: 2172 * 1080 / 724 },
+  moon: { k: 1920 / 941, w: 1672 * 1920 / 941, h: 1920 },
+  moonClean: { k: 1920 / 941, w: 1672 * 1920 / 941, h: 1920 },
+  belly: { k: 1080 / 941, w: 1080, h: 1672 * 1080 / 941 },
+};
+export const B = (key: ImgKey, x: number, y: number): V2 => [x * WORLD[key].k, y * WORLD[key].k]; // BG pixel -> world
+
+/* ---------- camera: centre (x,y) in world px, zoom z, roll r ---------- */
+export type Cam = { x: number; y: number; z: number; r?: number; sx?: number; sy?: number };
+export function applyCam(c: CanvasRenderingContext2D, cam: Cam, parallax = 1) {
+  c.translate(VW / 2 + (cam.sx ?? 0), VH / 2 + (cam.sy ?? 0)); c.rotate(cam.r ?? 0); const z = 1 + (cam.z - 1) * parallax; c.scale(z, z); c.translate(-cam.x * parallax - (1 - parallax) * VW / 2, -cam.y * parallax - (1 - parallax) * VH / 2);
+}
+// clamp camera so the painted background always covers the frame
+export function clampCam(key: ImgKey, cam: Cam): Cam {
+  const w = WORLD[key], hw = VW / 2 / cam.z, hh = VH / 2 / cam.z;
+  return { ...cam, x: Math.min(w.w - hw, Math.max(hw, cam.x)), y: Math.min(w.h - hh, Math.max(hh, cam.y)) };
+}
+export function drawBG(c: CanvasRenderingContext2D, key: ImgKey, alpha = 1) {
+  const im = IMG[key]; if (!im) return; const w = WORLD[key]; c.globalAlpha = alpha; c.drawImage(im, 0, 0, w.w, w.h); c.globalAlpha = 1;
+}
+// Catmull-Rom camera keys
+export type CK = [number, number, number, number]; // t, x, y, z
+export function camKeys(t: number, keys: CK[]): Cam {
+  if (t <= keys[0][0]) return { x: keys[0][1], y: keys[0][2], z: keys[0][3] };
+  const n = keys.length; if (t >= keys[n - 1][0]) return { x: keys[n - 1][1], y: keys[n - 1][2], z: keys[n - 1][3] };
+  let i = 0; while (i < n - 2 && t > keys[i + 1][0]) i++;
+  let u = (t - keys[i][0]) / (keys[i + 1][0] - keys[i][0]); u = u * u * (3 - 2 * u);
+  const a = keys[Math.max(0, i - 1)], b = keys[i], c2 = keys[i + 1], d = keys[Math.min(n - 1, i + 2)];
+  const cr = (j: number) => 0.5 * (2 * b[j] + (-a[j] + c2[j]) * u + (2 * a[j] - 5 * b[j] + 4 * c2[j] - d[j]) * u * u + (-a[j] + 3 * b[j] - 3 * c2[j] + d[j]) * u * u * u);
+  return { x: cr(1), y: cr(2), z: cr(3) };
+}
+export const shake = (t: number, amp: number, freq = 37): V2 => [Math.sin(t * freq) * amp, Math.cos(t * freq * 1.13) * amp];
+export const impact = (t: number, t0: number, amp: number) => (t >= t0 && t < t0 + 0.5 ? amp * Math.exp(-(t - t0) * 9) : 0);
+
+/* ---------- Stickman stamping ---------- */
+const CW = 640, CH = 960, S_IN = (CH * 0.955) / 1040; // rig canvas; 1000 units = 1000*S_IN px
+let cv: HTMLCanvasElement | null = null;
+export type StickOut = { gloveR: V2; gloveL: V2; head: V2; headR: number };
+// draws Stickman with his 1000-unit body height = h world px, feet at (x,y). anchor: move so the glove midpoint lands on that point.
+export function stick(c: CanvasRenderingContext2D, rig: Rig, x: number, y: number, h: number, anchor?: { p: V2; which?: "both" | "R" | "L" }): StickOut {
+  if (!cv) { cv = document.createElement("canvas"); cv.width = CW; cv.height = CH; }
+  const out = drawStickman(cv.getContext("2d")!, CW, CH, rig);
+  const k = h / (1000 * S_IN), fy = CH * 0.985;
+  let ox = x, oy = y;
+  const toW = (p: [number, number], bx: number, by: number): V2 => [bx + (p[0] - CW / 2) * k, by + (p[1] - fy) * k];
+  if (anchor) { const g = anchor.which === "R" ? out.gloveR : anchor.which === "L" ? out.gloveL : [(out.gloveR[0] + out.gloveL[0]) / 2, (out.gloveR[1] + out.gloveL[1]) / 2] as [number, number]; const w = toW(g, 0, 0); ox = anchor.p[0] - w[0]; oy = anchor.p[1] - w[1]; }
+  c.drawImage(cv, ox - (CW / 2) * k, oy - fy * k, CW * k, CH * k);
+  return { gloveR: toW(out.gloveR, ox, oy), gloveL: toW(out.gloveL, ox, oy), head: toW(out.head, ox, oy), headR: out.headR * k };
+}

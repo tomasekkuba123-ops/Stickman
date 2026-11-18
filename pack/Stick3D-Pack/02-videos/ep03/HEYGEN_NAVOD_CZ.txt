@@ -1,0 +1,5 @@
+HLAS V HEYGENU:
+1. Vlož celý text ze script.txt (každá věta na samostatný řádek, tak jak je).
+2. Použij stejný hlas jako u EP02 (stejný avatar/hlas).
+3. Exportuj jen zvuk jako WAV (nebo MP3) a pojmenuj ho EP03_VOICE.wav.
+4. Délku neřeš - Claude Code ji sám natáhne na přesně 100 s pauzami mezi větami.

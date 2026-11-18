@@ -1,0 +1,22 @@
+scene,line,visual,background
+1,"What if Stickman drew a rocket… and it actually launched?","HOOK flash-forward: rocket blasting off through the window in a burst of smoke and sparks, Stickman clinging to a ladder under it; then quick rewind swoosh",BG_01_ROOM + BG_02_SKY_TO_SPACE
+2,"He sketched one fin, two fins, a round little window.","Stickman at the desk draws a rocket on paper with the pencil, line by line; each part pops on its word (fin, fin, window)",BG_01_ROOM
+3,"The paper shook. Smoke poured from the bottom.","Paper trembles on the desk, crayons bounce, smoke curls from the drawing; Stickman leans back surprised",BG_01_ROOM
+4,"Three. Two. One.","Big countdown numbers inside the world (on the paper / a sign), camera pushes in, everything shakes harder",BG_01_ROOM
+5,"The rocket tore off the page and Stickman grabbed the ladder just in time.","Rocket rips out of the paper growing to full size, flies out of the open window; a rope ladder hangs from it, Stickman jumps and grabs it",BG_01_ROOM
+6,"Clouds flashed past.","Vertical camera move upwards, Stickman dangling on the ladder, clouds whoosh past (parallax), birds scatter",BG_02_SKY_TO_SPACE
+7,"The sky turned dark blue, then black, then full of stars.","Continue the climb through sunset band and Earth curve into space; stars twinkle on",BG_02_SKY_TO_SPACE
+8,"The engine coughed. Fuel: empty.","Engine sputters with puffs, a fuel gauge needle drops to E (gauge on the rocket), rocket wobbles",BG_02_SKY_TO_SPACE (top)
+9,"Stickman panicked, then remembered the pencil in his pocket.","Stickman panics (sweat, wide eyes), then pats pocket and pulls out the pencil with a gleam",space
+10,"He drew a gas station. On the Moon.","He draws in midair; cut to the Moon where the gas station appears drawn line by line then becomes solid; rocket lands on the landing pad",BG_03_MOON_GAS_STATION
+11,"A tiny robot rolled out, filled the tank, and handed him a receipt.","Cute small robot on wheels rolls out of the kiosk, fills the rocket with the hose, prints a long receipt",BG_03_MOON_GAS_STATION
+12,"Thirty million dollars.","Close-up of the receipt: $30,000,000; Stickman's jaw drops",BG_03_MOON_GAS_STATION
+13,"Stickman drew a coin.","He draws a tiny coin and offers it",BG_03_MOON_GAS_STATION
+14,"The robot did not look happy.","Robot's screen face turns to an angry frown, steam puff",BG_03_MOON_GAS_STATION
+15,"So he drew a bigger coin.","He draws a HUGE coin that thuds down",BG_03_MOON_GAS_STATION
+16,"It fell, rolled across a crater, and woke up something enormous sleeping under the dust.","Giant coin rolls away across craters, falls into a big crater; the ground rumbles, dust rises",BG_03_MOON_GAS_STATION
+17,"Two glowing eyes opened.","Two huge glowing eyes open under the dust",BG_03_MOON_GAS_STATION
+18,"A giant space whale yawned, and swallowed the rocket whole.","A gigantic friendly space whale rises, yawns, and gulps the rocket (with Stickman) in one bite",BG_03_MOON_GAS_STATION
+19,"Inside it was warm, quiet, and full of lost satellites.","Inside the whale: rocket lands softly, Stickman climbs out and looks around",BG_04_WHALE_BELLY
+20,"Stickman smiled and picked up his pencil.","Close-up: Stickman smiles, lifts the pencil, it sparkles",BG_04_WHALE_BELLY
+21,"What would you draw to get out?","Big end question WHAT WOULD YOU DRAW TO GET OUT? then SUBSCRIBE FOR MORE card in the last ~2.5 s",BG_04_WHALE_BELLY

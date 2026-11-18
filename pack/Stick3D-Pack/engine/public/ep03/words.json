@@ -1,0 +1,998 @@
+[
+ {
+  "word": "What",
+  "start": 0.31,
+  "end": 0.44,
+  "line": 1
+ },
+ {
+  "word": "if",
+  "start": 0.44,
+  "end": 0.5,
+  "line": 1
+ },
+ {
+  "word": "Stickman",
+  "start": 0.5,
+  "end": 0.99,
+  "line": 1
+ },
+ {
+  "word": "drew",
+  "start": 0.99,
+  "end": 1.21,
+  "line": 1
+ },
+ {
+  "word": "a",
+  "start": 1.21,
+  "end": 1.24,
+  "line": 1
+ },
+ {
+  "word": "rocket",
+  "start": 1.24,
+  "end": 1.78,
+  "line": 1
+ },
+ {
+  "word": "and",
+  "start": 2.05,
+  "end": 2.16,
+  "line": 1
+ },
+ {
+  "word": "it",
+  "start": 2.16,
+  "end": 2.22,
+  "line": 1
+ },
+ {
+  "word": "actually",
+  "start": 2.22,
+  "end": 2.6,
+  "line": 1
+ },
+ {
+  "word": "launched",
+  "start": 2.6,
+  "end": 3.19,
+  "line": 1
+ },
+ {
+  "word": "He",
+  "start": 5.018,
+  "end": 5.108,
+  "line": 2
+ },
+ {
+  "word": "sketched",
+  "start": 5.108,
+  "end": 5.468,
+  "line": 2
+ },
+ {
+  "word": "one",
+  "start": 5.468,
+  "end": 5.728,
+  "line": 2
+ },
+ {
+  "word": "fin",
+  "start": 5.728,
+  "end": 6.378,
+  "line": 2
+ },
+ {
+  "word": "two",
+  "start": 6.378,
+  "end": 6.588,
+  "line": 2
+ },
+ {
+  "word": "fins",
+  "start": 6.588,
+  "end": 7.268,
+  "line": 2
+ },
+ {
+  "word": "a",
+  "start": 7.408,
+  "end": 7.438,
+  "line": 2
+ },
+ {
+  "word": "round",
+  "start": 7.438,
+  "end": 7.868,
+  "line": 2
+ },
+ {
+  "word": "little",
+  "start": 7.868,
+  "end": 8.078,
+  "line": 2
+ },
+ {
+  "word": "window",
+  "start": 8.078,
+  "end": 8.588,
+  "line": 2
+ },
+ {
+  "word": "The",
+  "start": 10.186,
+  "end": 10.256,
+  "line": 3
+ },
+ {
+  "word": "paper",
+  "start": 10.256,
+  "end": 10.566,
+  "line": 3
+ },
+ {
+  "word": "shook",
+  "start": 10.566,
+  "end": 11.006,
+  "line": 3
+ },
+ {
+  "word": "Smoke",
+  "start": 11.326,
+  "end": 11.696,
+  "line": 3
+ },
+ {
+  "word": "poured",
+  "start": 11.696,
+  "end": 12.096,
+  "line": 3
+ },
+ {
+  "word": "from",
+  "start": 12.096,
+  "end": 12.246,
+  "line": 3
+ },
+ {
+  "word": "the",
+  "start": 12.246,
+  "end": 12.316,
+  "line": 3
+ },
+ {
+  "word": "bottom",
+  "start": 12.316,
+  "end": 12.766,
+  "line": 3
+ },
+ {
+  "word": "Three",
+  "start": 14.364,
+  "end": 14.884,
+  "line": 4
+ },
+ {
+  "word": "Two",
+  "start": 15.194,
+  "end": 15.634,
+  "line": 4
+ },
+ {
+  "word": "One",
+  "start": 15.794,
+  "end": 16.324,
+  "line": 4
+ },
+ {
+  "word": "The",
+  "start": 19.618,
+  "end": 19.678,
+  "line": 5
+ },
+ {
+  "word": "rocket",
+  "start": 19.678,
+  "end": 20.048,
+  "line": 5
+ },
+ {
+  "word": "tore",
+  "start": 20.048,
+  "end": 20.268,
+  "line": 5
+ },
+ {
+  "word": "off",
+  "start": 20.268,
+  "end": 20.418,
+  "line": 5
+ },
+ {
+  "word": "the",
+  "start": 20.418,
+  "end": 20.508,
+  "line": 5
+ },
+ {
+  "word": "page",
+  "start": 20.508,
+  "end": 20.908,
+  "line": 5
+ },
+ {
+  "word": "and",
+  "start": 20.908,
+  "end": 21.018,
+  "line": 5
+ },
+ {
+  "word": "Stickman",
+  "start": 21.018,
+  "end": 21.518,
+  "line": 5
+ },
+ {
+  "word": "grabbed",
+  "start": 21.518,
+  "end": 21.818,
+  "line": 5
+ },
+ {
+  "word": "the",
+  "start": 21.818,
+  "end": 21.878,
+  "line": 5
+ },
+ {
+  "word": "ladder",
+  "start": 21.878,
+  "end": 22.218,
+  "line": 5
+ },
+ {
+  "word": "just",
+  "start": 22.218,
+  "end": 22.478,
+  "line": 5
+ },
+ {
+  "word": "in",
+  "start": 22.478,
+  "end": 22.578,
+  "line": 5
+ },
+ {
+  "word": "time",
+  "start": 22.578,
+  "end": 22.948,
+  "line": 5
+ },
+ {
+  "word": "Clouds",
+  "start": 26.202,
+  "end": 26.672,
+  "line": 6
+ },
+ {
+  "word": "flashed",
+  "start": 26.672,
+  "end": 27.022,
+  "line": 6
+ },
+ {
+  "word": "past",
+  "start": 27.022,
+  "end": 27.452,
+  "line": 6
+ },
+ {
+  "word": "The",
+  "start": 29.089,
+  "end": 29.179,
+  "line": 7
+ },
+ {
+  "word": "sky",
+  "start": 29.179,
+  "end": 29.539,
+  "line": 7
+ },
+ {
+  "word": "turned",
+  "start": 29.539,
+  "end": 29.879,
+  "line": 7
+ },
+ {
+  "word": "dark",
+  "start": 29.879,
+  "end": 30.139,
+  "line": 7
+ },
+ {
+  "word": "blue",
+  "start": 30.139,
+  "end": 30.479,
+  "line": 7
+ },
+ {
+  "word": "then",
+  "start": 30.779,
+  "end": 30.979,
+  "line": 7
+ },
+ {
+  "word": "black",
+  "start": 30.979,
+  "end": 31.529,
+  "line": 7
+ },
+ {
+  "word": "then",
+  "start": 31.529,
+  "end": 31.799,
+  "line": 7
+ },
+ {
+  "word": "full",
+  "start": 31.799,
+  "end": 31.999,
+  "line": 7
+ },
+ {
+  "word": "of",
+  "start": 31.999,
+  "end": 32.069,
+  "line": 7
+ },
+ {
+  "word": "stars",
+  "start": 32.069,
+  "end": 32.649,
+  "line": 7
+ },
+ {
+  "word": "The",
+  "start": 35.783,
+  "end": 35.913,
+  "line": 8
+ },
+ {
+  "word": "engine",
+  "start": 35.913,
+  "end": 36.203,
+  "line": 8
+ },
+ {
+  "word": "coughed",
+  "start": 36.203,
+  "end": 36.733,
+  "line": 8
+ },
+ {
+  "word": "Fuel",
+  "start": 37.053,
+  "end": 37.493,
+  "line": 8
+ },
+ {
+  "word": "empty",
+  "start": 37.723,
+  "end": 38.143,
+  "line": 8
+ },
+ {
+  "word": "Stickman",
+  "start": 39.881,
+  "end": 40.331,
+  "line": 9
+ },
+ {
+  "word": "panicked",
+  "start": 40.331,
+  "end": 41.131,
+  "line": 9
+ },
+ {
+  "word": "then",
+  "start": 41.131,
+  "end": 41.291,
+  "line": 9
+ },
+ {
+  "word": "remembered",
+  "start": 41.291,
+  "end": 41.681,
+  "line": 9
+ },
+ {
+  "word": "the",
+  "start": 41.681,
+  "end": 41.751,
+  "line": 9
+ },
+ {
+  "word": "pencil",
+  "start": 41.751,
+  "end": 42.121,
+  "line": 9
+ },
+ {
+  "word": "in",
+  "start": 42.121,
+  "end": 42.181,
+  "line": 9
+ },
+ {
+  "word": "his",
+  "start": 42.181,
+  "end": 42.311,
+  "line": 9
+ },
+ {
+  "word": "pocket",
+  "start": 42.311,
+  "end": 42.771,
+  "line": 9
+ },
+ {
+  "word": "He",
+  "start": 44.419,
+  "end": 44.519,
+  "line": 10
+ },
+ {
+  "word": "drew",
+  "start": 44.519,
+  "end": 44.699,
+  "line": 10
+ },
+ {
+  "word": "a",
+  "start": 44.699,
+  "end": 44.729,
+  "line": 10
+ },
+ {
+  "word": "gas",
+  "start": 44.729,
+  "end": 45.029,
+  "line": 10
+ },
+ {
+  "word": "station",
+  "start": 45.029,
+  "end": 45.489,
+  "line": 10
+ },
+ {
+  "word": "On",
+  "start": 45.939,
+  "end": 46.079,
+  "line": 10
+ },
+ {
+  "word": "the",
+  "start": 46.079,
+  "end": 46.139,
+  "line": 10
+ },
+ {
+  "word": "Moon",
+  "start": 46.139,
+  "end": 46.529,
+  "line": 10
+ },
+ {
+  "word": "A",
+  "start": 49.843,
+  "end": 49.913,
+  "line": 11
+ },
+ {
+  "word": "tiny",
+  "start": 49.913,
+  "end": 50.233,
+  "line": 11
+ },
+ {
+  "word": "robot",
+  "start": 50.233,
+  "end": 50.653,
+  "line": 11
+ },
+ {
+  "word": "rolled",
+  "start": 50.653,
+  "end": 50.913,
+  "line": 11
+ },
+ {
+  "word": "out",
+  "start": 50.913,
+  "end": 51.153,
+  "line": 11
+ },
+ {
+  "word": "filled",
+  "start": 51.383,
+  "end": 51.663,
+  "line": 11
+ },
+ {
+  "word": "the",
+  "start": 51.663,
+  "end": 51.743,
+  "line": 11
+ },
+ {
+  "word": "tank",
+  "start": 51.743,
+  "end": 52.113,
+  "line": 11
+ },
+ {
+  "word": "and",
+  "start": 52.113,
+  "end": 52.473,
+  "line": 11
+ },
+ {
+  "word": "handed",
+  "start": 52.473,
+  "end": 52.773,
+  "line": 11
+ },
+ {
+  "word": "him",
+  "start": 52.773,
+  "end": 52.883,
+  "line": 11
+ },
+ {
+  "word": "a",
+  "start": 52.883,
+  "end": 52.913,
+  "line": 11
+ },
+ {
+  "word": "receipt",
+  "start": 52.913,
+  "end": 53.443,
+  "line": 11
+ },
+ {
+  "word": "Thirty",
+  "start": 55.031,
+  "end": 55.541,
+  "line": 12
+ },
+ {
+  "word": "million",
+  "start": 55.541,
+  "end": 56.071,
+  "line": 12
+ },
+ {
+  "word": "dollars",
+  "start": 56.071,
+  "end": 56.581,
+  "line": 12
+ },
+ {
+  "word": "Stickman",
+  "start": 58.199,
+  "end": 58.649,
+  "line": 13
+ },
+ {
+  "word": "drew",
+  "start": 58.649,
+  "end": 58.819,
+  "line": 13
+ },
+ {
+  "word": "a",
+  "start": 58.819,
+  "end": 58.859,
+  "line": 13
+ },
+ {
+  "word": "coin",
+  "start": 58.859,
+  "end": 59.329,
+  "line": 13
+ },
+ {
+  "word": "The",
+  "start": 61.047,
+  "end": 61.117,
+  "line": 14
+ },
+ {
+  "word": "robot",
+  "start": 61.117,
+  "end": 61.537,
+  "line": 14
+ },
+ {
+  "word": "did",
+  "start": 61.537,
+  "end": 61.677,
+  "line": 14
+ },
+ {
+  "word": "not",
+  "start": 61.677,
+  "end": 61.867,
+  "line": 14
+ },
+ {
+  "word": "look",
+  "start": 61.867,
+  "end": 62.037,
+  "line": 14
+ },
+ {
+  "word": "happy",
+  "start": 62.037,
+  "end": 62.467,
+  "line": 14
+ },
+ {
+  "word": "So",
+  "start": 64.165,
+  "end": 64.295,
+  "line": 15
+ },
+ {
+  "word": "he",
+  "start": 64.295,
+  "end": 64.385,
+  "line": 15
+ },
+ {
+  "word": "drew",
+  "start": 64.385,
+  "end": 64.585,
+  "line": 15
+ },
+ {
+  "word": "a",
+  "start": 64.585,
+  "end": 64.615,
+  "line": 15
+ },
+ {
+  "word": "bigger",
+  "start": 64.615,
+  "end": 64.945,
+  "line": 15
+ },
+ {
+  "word": "coin",
+  "start": 64.945,
+  "end": 65.335,
+  "line": 15
+ },
+ {
+  "word": "It",
+  "start": 68.619,
+  "end": 68.789,
+  "line": 16
+ },
+ {
+  "word": "fell",
+  "start": 68.789,
+  "end": 69.369,
+  "line": 16
+ },
+ {
+  "word": "rolled",
+  "start": 69.369,
+  "end": 69.649,
+  "line": 16
+ },
+ {
+  "word": "across",
+  "start": 69.649,
+  "end": 69.969,
+  "line": 16
+ },
+ {
+  "word": "a",
+  "start": 69.969,
+  "end": 70.009,
+  "line": 16
+ },
+ {
+  "word": "crater",
+  "start": 70.009,
+  "end": 70.469,
+  "line": 16
+ },
+ {
+  "word": "and",
+  "start": 70.469,
+  "end": 70.879,
+  "line": 16
+ },
+ {
+  "word": "woke",
+  "start": 70.879,
+  "end": 71.109,
+  "line": 16
+ },
+ {
+  "word": "up",
+  "start": 71.109,
+  "end": 71.219,
+  "line": 16
+ },
+ {
+  "word": "something",
+  "start": 71.219,
+  "end": 71.509,
+  "line": 16
+ },
+ {
+  "word": "enormous",
+  "start": 71.509,
+  "end": 72.109,
+  "line": 16
+ },
+ {
+  "word": "sleeping",
+  "start": 72.109,
+  "end": 72.469,
+  "line": 16
+ },
+ {
+  "word": "under",
+  "start": 72.469,
+  "end": 72.609,
+  "line": 16
+ },
+ {
+  "word": "the",
+  "start": 72.609,
+  "end": 72.709,
+  "line": 16
+ },
+ {
+  "word": "dust",
+  "start": 72.709,
+  "end": 73.179,
+  "line": 16
+ },
+ {
+  "word": "Two",
+  "start": 76.523,
+  "end": 76.823,
+  "line": 17
+ },
+ {
+  "word": "glowing",
+  "start": 76.823,
+  "end": 77.213,
+  "line": 17
+ },
+ {
+  "word": "eyes",
+  "start": 77.213,
+  "end": 77.573,
+  "line": 17
+ },
+ {
+  "word": "opened",
+  "start": 77.573,
+  "end": 77.983,
+  "line": 17
+ },
+ {
+  "word": "A",
+  "start": 79.73,
+  "end": 79.8,
+  "line": 18
+ },
+ {
+  "word": "giant",
+  "start": 79.8,
+  "end": 80.24,
+  "line": 18
+ },
+ {
+  "word": "space",
+  "start": 80.24,
+  "end": 80.62,
+  "line": 18
+ },
+ {
+  "word": "whale",
+  "start": 80.62,
+  "end": 80.91,
+  "line": 18
+ },
+ {
+  "word": "yawned",
+  "start": 80.91,
+  "end": 81.48,
+  "line": 18
+ },
+ {
+  "word": "and",
+  "start": 81.75,
+  "end": 81.91,
+  "line": 18
+ },
+ {
+  "word": "swallowed",
+  "start": 81.91,
+  "end": 82.38,
+  "line": 18
+ },
+ {
+  "word": "the",
+  "start": 82.38,
+  "end": 82.45,
+  "line": 18
+ },
+ {
+  "word": "rocket",
+  "start": 82.45,
+  "end": 82.81,
+  "line": 18
+ },
+ {
+  "word": "whole",
+  "start": 82.81,
+  "end": 83.29,
+  "line": 18
+ },
+ {
+  "word": "Inside",
+  "start": 86.494,
+  "end": 86.994,
+  "line": 19
+ },
+ {
+  "word": "it",
+  "start": 86.994,
+  "end": 87.064,
+  "line": 19
+ },
+ {
+  "word": "was",
+  "start": 87.064,
+  "end": 87.244,
+  "line": 19
+ },
+ {
+  "word": "warm",
+  "start": 87.244,
+  "end": 88.054,
+  "line": 19
+ },
+ {
+  "word": "quiet",
+  "start": 88.054,
+  "end": 88.604,
+  "line": 19
+ },
+ {
+  "word": "and",
+  "start": 88.954,
+  "end": 89.084,
+  "line": 19
+ },
+ {
+  "word": "full",
+  "start": 89.084,
+  "end": 89.444,
+  "line": 19
+ },
+ {
+  "word": "of",
+  "start": 89.444,
+  "end": 89.544,
+  "line": 19
+ },
+ {
+  "word": "lost",
+  "start": 89.544,
+  "end": 89.944,
+  "line": 19
+ },
+ {
+  "word": "satellites",
+  "start": 89.944,
+  "end": 90.654,
+  "line": 19
+ },
+ {
+  "word": "Stickman",
+  "start": 92.442,
+  "end": 92.882,
+  "line": 20
+ },
+ {
+  "word": "smiled",
+  "start": 92.882,
+  "end": 93.462,
+  "line": 20
+ },
+ {
+  "word": "and",
+  "start": 93.462,
+  "end": 93.592,
+  "line": 20
+ },
+ {
+  "word": "picked",
+  "start": 93.592,
+  "end": 93.812,
+  "line": 20
+ },
+ {
+  "word": "up",
+  "start": 93.812,
+  "end": 93.902,
+  "line": 20
+ },
+ {
+  "word": "his",
+  "start": 93.902,
+  "end": 94.032,
+  "line": 20
+ },
+ {
+  "word": "pencil",
+  "start": 94.032,
+  "end": 94.422,
+  "line": 20
+ },
+ {
+  "word": "What",
+  "start": 95.74,
+  "end": 95.87,
+  "line": 21
+ },
+ {
+  "word": "would",
+  "start": 96.19,
+  "end": 96.43,
+  "line": 21
+ },
+ {
+  "word": "you",
+  "start": 96.43,
+  "end": 96.53,
+  "line": 21
+ },
+ {
+  "word": "draw",
+  "start": 96.53,
+  "end": 96.78,
+  "line": 21
+ },
+ {
+  "word": "to",
+  "start": 96.78,
+  "end": 96.85,
+  "line": 21
+ },
+ {
+  "word": "get",
+  "start": 96.85,
+  "end": 97.03,
+  "line": 21
+ },
+ {
+  "word": "out",
+  "start": 97.03,
+  "end": 97.5,
+  "line": 21
+ }
+]

@@ -1,0 +1,17 @@
+New episode: EP03 "What If Stickman Drew a Rocket?". Same channel style and the SAME Stickman as EP02 (keep his look exactly as in EP02). No dragon in this episode.
+Files: script.txt (21 lines), EP03_VOICE.wav (HeyGen voice), EP03_SHOTLIST.csv (one scene per line), and 4 background paintings BG_01_ROOM.png, BG_02_SKY_TO_SPACE.png (tall strip for an upward camera move), BG_03_MOON_GAS_STATION.png, BG_04_WHALE_BELLY.png.
+
+SPECS
+- 1080x1920, 30 fps, EXACTLY 100.000 s (3000 frames). Do not speed up or cut the voice. Find the 21 lines in the audio and insert silence between them (longer pauses after action beats: lines 4, 5, 7, 10, 15, 16, 18) so the voice track is exactly 100 s; leave about 2.5 s after the last line for the end card. Save the edited voice as EP03_VOICE_100S.wav and send it to me too.
+- Use the 4 backgrounds as the look of each location: split them into depth planes (sky / far / mid / foreground) or use them as backdrops behind matching 3D props, with slow parallax camera moves. Keep their colours and style. Add ambient motion (clouds, stars twinkling, neon flicker, glowing dots in the whale).
+- New props/characters to build in the same flat cartoon style: the rocket (white body, red fins, round blue window), rope ladder, pencil, a cute tiny wheeled robot with a screen face, a long receipt showing $30,000,000, coins (small and huge), the giant friendly space whale (blue/purple, big glowing eyes).
+
+IMPROVEMENTS vs EP02 (please apply)
+1. Keep Stickman fully inside the frame in every shot: never cut him at the screen edge (EP02 64-70 s had him half off the left edge).
+2. Captions must never cover his face or the key action: if the action is in the lower half, move the caption up for that shot.
+3. When he faces away from the camera, keep it short (max 2 s) - viewers need to see his face.
+4. Audio: true peak max -1 dBTP, loudness about -14 LUFS, voice clearly on top; sparse SFX on real actions (pencil scribbles, rocket rumble, coin thud, robot beeps, whale yawn).
+5. Faster visual rhythm: a new angle or action at least every 2-3 s, no static shots longer than 3 s.
+
+WORKFLOW
+First send me 8 preview stills of key scenes (lines 1, 2, 5, 7, 10, 12, 18, 19) and wait for my OK. Then render, check it yourself, and send the final mp4, EP03_VOICE_100S.wav, the SRT captions and the updated pack zip.

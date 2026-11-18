@@ -7,3 +7,4 @@ ep02_src/
 *.mp4
 !pack/Stick3D-Pack/examples/**/*.mp4
 pack/Stick3D-Pack/99-exports/*.zip
+ep03_src/

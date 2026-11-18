@@ -206,7 +206,8 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
 
 /* ---------- main ---------- */
 type Geo = { hip: P; hipL: P; hipR: P; kneeL: P; kneeR: P; ankL: P; ankR: P; footL: number; footR: number; sh: P; shL: P; shR: P; elL: P; elR: P; wrL: P; wrR: P; head: P };
-export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, r: Rig) {
+export type RigOut = { gloveR: [number, number]; gloveL: [number, number]; head: [number, number]; headR: number; S: number };
+export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, r: Rig): RigOut {
   c.clearRect(0, 0, W, H); c.save();
   const S = (H * 0.955) / 1040; // 1000 units + hair headroom
   c.translate(W / 2, H * 0.985 - 1000 * S); c.scale(S, S);
@@ -246,6 +247,10 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
   const g: Geo = { hip, hipL, hipR, kneeL, kneeR, ankL, ankR, footL, footR, sh, shL, shR, elL, elR, wrL, wrR, head };
   if (view === "side") drawSide(c, r, g, breath, lean, sq, torsoPt); else drawFront(c, r, g, breath, lean, sq, torsoPt, view === "back");
   c.restore();
+  // geometry out (canvas px): glove centres + head centre, for props held in the hands
+  const fx = r.flip ? -1 : 1, px = (p: P): [number, number] => [W / 2 + S * fx * p[0], H * 0.985 - 1000 * S + S * (p[1] + gy)];
+  const glove = (w: P, e: P): P => { const dx = w[0] - e[0], dy = w[1] - e[1], n = Math.hypot(dx, dy) || 1; return [w[0] + dx / n * 64, w[1] + dy / n * 64]; };
+  return { gloveR: px(glove(wrR, elR)), gloveL: px(glove(wrL, elL)), head: px(head), headR: HR * S, S };
 }
 
 function legLine(c: CanvasRenderingContext2D, h: P, k: P, a: P, dark: boolean) {

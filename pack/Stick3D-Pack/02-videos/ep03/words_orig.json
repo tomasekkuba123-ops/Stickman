@@ -1,0 +1,832 @@
+[
+ {
+  "word": "What",
+  "start": 0.31,
+  "end": 0.44
+ },
+ {
+  "word": "if",
+  "start": 0.44,
+  "end": 0.5
+ },
+ {
+  "word": "Stickman",
+  "start": 0.5,
+  "end": 0.99
+ },
+ {
+  "word": "drew",
+  "start": 0.99,
+  "end": 1.21
+ },
+ {
+  "word": "a",
+  "start": 1.21,
+  "end": 1.24
+ },
+ {
+  "word": "rocket",
+  "start": 1.24,
+  "end": 1.78
+ },
+ {
+  "word": "and",
+  "start": 2.05,
+  "end": 2.16
+ },
+ {
+  "word": "it",
+  "start": 2.16,
+  "end": 2.22
+ },
+ {
+  "word": "actually",
+  "start": 2.22,
+  "end": 2.6
+ },
+ {
+  "word": "launched",
+  "start": 2.6,
+  "end": 3.19
+ },
+ {
+  "word": "He",
+  "start": 3.7,
+  "end": 3.79
+ },
+ {
+  "word": "sketched",
+  "start": 3.79,
+  "end": 4.15
+ },
+ {
+  "word": "one",
+  "start": 4.15,
+  "end": 4.41
+ },
+ {
+  "word": "fin",
+  "start": 4.41,
+  "end": 5.06
+ },
+ {
+  "word": "two",
+  "start": 5.06,
+  "end": 5.27
+ },
+ {
+  "word": "fins",
+  "start": 5.27,
+  "end": 5.95
+ },
+ {
+  "word": "a",
+  "start": 6.09,
+  "end": 6.12
+ },
+ {
+  "word": "round",
+  "start": 6.12,
+  "end": 6.55
+ },
+ {
+  "word": "little",
+  "start": 6.55,
+  "end": 6.76
+ },
+ {
+  "word": "window",
+  "start": 6.76,
+  "end": 7.27
+ },
+ {
+  "word": "The",
+  "start": 7.55,
+  "end": 7.62
+ },
+ {
+  "word": "paper",
+  "start": 7.62,
+  "end": 7.93
+ },
+ {
+  "word": "shook",
+  "start": 7.93,
+  "end": 8.37
+ },
+ {
+  "word": "Smoke",
+  "start": 8.69,
+  "end": 9.06
+ },
+ {
+  "word": "poured",
+  "start": 9.06,
+  "end": 9.46
+ },
+ {
+  "word": "from",
+  "start": 9.46,
+  "end": 9.61
+ },
+ {
+  "word": "the",
+  "start": 9.61,
+  "end": 9.68
+ },
+ {
+  "word": "bottom",
+  "start": 9.68,
+  "end": 10.13
+ },
+ {
+  "word": "Three",
+  "start": 10.41,
+  "end": 10.93
+ },
+ {
+  "word": "Two",
+  "start": 11.24,
+  "end": 11.68
+ },
+ {
+  "word": "One",
+  "start": 11.84,
+  "end": 12.37
+ },
+ {
+  "word": "The",
+  "start": 12.84,
+  "end": 12.9
+ },
+ {
+  "word": "rocket",
+  "start": 12.9,
+  "end": 13.27
+ },
+ {
+  "word": "tore",
+  "start": 13.27,
+  "end": 13.49
+ },
+ {
+  "word": "off",
+  "start": 13.49,
+  "end": 13.64
+ },
+ {
+  "word": "the",
+  "start": 13.64,
+  "end": 13.73
+ },
+ {
+  "word": "page",
+  "start": 13.73,
+  "end": 14.13
+ },
+ {
+  "word": "and",
+  "start": 14.13,
+  "end": 14.24
+ },
+ {
+  "word": "Stickman",
+  "start": 14.24,
+  "end": 14.74
+ },
+ {
+  "word": "grabbed",
+  "start": 14.74,
+  "end": 15.04
+ },
+ {
+  "word": "the",
+  "start": 15.04,
+  "end": 15.1
+ },
+ {
+  "word": "ladder",
+  "start": 15.1,
+  "end": 15.44
+ },
+ {
+  "word": "just",
+  "start": 15.44,
+  "end": 15.7
+ },
+ {
+  "word": "in",
+  "start": 15.7,
+  "end": 15.8
+ },
+ {
+  "word": "time",
+  "start": 15.8,
+  "end": 16.17
+ },
+ {
+  "word": "Clouds",
+  "start": 16.6,
+  "end": 17.07
+ },
+ {
+  "word": "flashed",
+  "start": 17.07,
+  "end": 17.42
+ },
+ {
+  "word": "past",
+  "start": 17.42,
+  "end": 17.85
+ },
+ {
+  "word": "The",
+  "start": 18.17,
+  "end": 18.26
+ },
+ {
+  "word": "sky",
+  "start": 18.26,
+  "end": 18.62
+ },
+ {
+  "word": "turned",
+  "start": 18.62,
+  "end": 18.96
+ },
+ {
+  "word": "dark",
+  "start": 18.96,
+  "end": 19.22
+ },
+ {
+  "word": "blue",
+  "start": 19.22,
+  "end": 19.56
+ },
+ {
+  "word": "then",
+  "start": 19.86,
+  "end": 20.06
+ },
+ {
+  "word": "black",
+  "start": 20.06,
+  "end": 20.61
+ },
+ {
+  "word": "then",
+  "start": 20.61,
+  "end": 20.88
+ },
+ {
+  "word": "full",
+  "start": 20.88,
+  "end": 21.08
+ },
+ {
+  "word": "of",
+  "start": 21.08,
+  "end": 21.15
+ },
+ {
+  "word": "stars",
+  "start": 21.15,
+  "end": 21.73
+ },
+ {
+  "word": "The",
+  "start": 22.04,
+  "end": 22.17
+ },
+ {
+  "word": "engine",
+  "start": 22.17,
+  "end": 22.46
+ },
+ {
+  "word": "coughed",
+  "start": 22.46,
+  "end": 22.99
+ },
+ {
+  "word": "Fuel",
+  "start": 23.31,
+  "end": 23.75
+ },
+ {
+  "word": "empty",
+  "start": 23.98,
+  "end": 24.4
+ },
+ {
+  "word": "Stickman",
+  "start": 24.82,
+  "end": 25.27
+ },
+ {
+  "word": "panicked",
+  "start": 25.27,
+  "end": 26.07
+ },
+ {
+  "word": "then",
+  "start": 26.07,
+  "end": 26.23
+ },
+ {
+  "word": "remembered",
+  "start": 26.23,
+  "end": 26.62
+ },
+ {
+  "word": "the",
+  "start": 26.62,
+  "end": 26.69
+ },
+ {
+  "word": "pencil",
+  "start": 26.69,
+  "end": 27.06
+ },
+ {
+  "word": "in",
+  "start": 27.06,
+  "end": 27.12
+ },
+ {
+  "word": "his",
+  "start": 27.12,
+  "end": 27.25
+ },
+ {
+  "word": "pocket",
+  "start": 27.25,
+  "end": 27.71
+ },
+ {
+  "word": "He",
+  "start": 28.04,
+  "end": 28.14
+ },
+ {
+  "word": "drew",
+  "start": 28.14,
+  "end": 28.32
+ },
+ {
+  "word": "a",
+  "start": 28.32,
+  "end": 28.35
+ },
+ {
+  "word": "gas",
+  "start": 28.35,
+  "end": 28.65
+ },
+ {
+  "word": "station",
+  "start": 28.65,
+  "end": 29.11
+ },
+ {
+  "word": "On",
+  "start": 29.56,
+  "end": 29.7
+ },
+ {
+  "word": "the",
+  "start": 29.7,
+  "end": 29.76
+ },
+ {
+  "word": "Moon",
+  "start": 29.76,
+  "end": 30.15
+ },
+ {
+  "word": "A",
+  "start": 30.64,
+  "end": 30.71
+ },
+ {
+  "word": "tiny",
+  "start": 30.71,
+  "end": 31.03
+ },
+ {
+  "word": "robot",
+  "start": 31.03,
+  "end": 31.45
+ },
+ {
+  "word": "rolled",
+  "start": 31.45,
+  "end": 31.71
+ },
+ {
+  "word": "out",
+  "start": 31.71,
+  "end": 31.95
+ },
+ {
+  "word": "filled",
+  "start": 32.18,
+  "end": 32.46
+ },
+ {
+  "word": "the",
+  "start": 32.46,
+  "end": 32.54
+ },
+ {
+  "word": "tank",
+  "start": 32.54,
+  "end": 32.91
+ },
+ {
+  "word": "and",
+  "start": 32.91,
+  "end": 33.27
+ },
+ {
+  "word": "handed",
+  "start": 33.27,
+  "end": 33.57
+ },
+ {
+  "word": "him",
+  "start": 33.57,
+  "end": 33.68
+ },
+ {
+  "word": "a",
+  "start": 33.68,
+  "end": 33.71
+ },
+ {
+  "word": "receipt",
+  "start": 33.71,
+  "end": 34.24
+ },
+ {
+  "word": "Thirty",
+  "start": 34.51,
+  "end": 35.02
+ },
+ {
+  "word": "million",
+  "start": 35.02,
+  "end": 35.55
+ },
+ {
+  "word": "dollars",
+  "start": 35.55,
+  "end": 36.06
+ },
+ {
+  "word": "Stickman",
+  "start": 36.36,
+  "end": 36.81
+ },
+ {
+  "word": "drew",
+  "start": 36.81,
+  "end": 36.98
+ },
+ {
+  "word": "a",
+  "start": 36.98,
+  "end": 37.02
+ },
+ {
+  "word": "coin",
+  "start": 37.02,
+  "end": 37.49
+ },
+ {
+  "word": "The",
+  "start": 37.89,
+  "end": 37.96
+ },
+ {
+  "word": "robot",
+  "start": 37.96,
+  "end": 38.38
+ },
+ {
+  "word": "did",
+  "start": 38.38,
+  "end": 38.52
+ },
+ {
+  "word": "not",
+  "start": 38.52,
+  "end": 38.71
+ },
+ {
+  "word": "look",
+  "start": 38.71,
+  "end": 38.88
+ },
+ {
+  "word": "happy",
+  "start": 38.88,
+  "end": 39.31
+ },
+ {
+  "word": "So",
+  "start": 39.69,
+  "end": 39.82
+ },
+ {
+  "word": "he",
+  "start": 39.82,
+  "end": 39.91
+ },
+ {
+  "word": "drew",
+  "start": 39.91,
+  "end": 40.11
+ },
+ {
+  "word": "a",
+  "start": 40.11,
+  "end": 40.14
+ },
+ {
+  "word": "bigger",
+  "start": 40.14,
+  "end": 40.47
+ },
+ {
+  "word": "coin",
+  "start": 40.47,
+  "end": 40.86
+ },
+ {
+  "word": "It",
+  "start": 41.32,
+  "end": 41.49
+ },
+ {
+  "word": "fell",
+  "start": 41.49,
+  "end": 42.07
+ },
+ {
+  "word": "rolled",
+  "start": 42.07,
+  "end": 42.35
+ },
+ {
+  "word": "across",
+  "start": 42.35,
+  "end": 42.67
+ },
+ {
+  "word": "a",
+  "start": 42.67,
+  "end": 42.71
+ },
+ {
+  "word": "crater",
+  "start": 42.71,
+  "end": 43.17
+ },
+ {
+  "word": "and",
+  "start": 43.17,
+  "end": 43.58
+ },
+ {
+  "word": "woke",
+  "start": 43.58,
+  "end": 43.81
+ },
+ {
+  "word": "up",
+  "start": 43.81,
+  "end": 43.92
+ },
+ {
+  "word": "something",
+  "start": 43.92,
+  "end": 44.21
+ },
+ {
+  "word": "enormous",
+  "start": 44.21,
+  "end": 44.81
+ },
+ {
+  "word": "sleeping",
+  "start": 44.81,
+  "end": 45.17
+ },
+ {
+  "word": "under",
+  "start": 45.17,
+  "end": 45.31
+ },
+ {
+  "word": "the",
+  "start": 45.31,
+  "end": 45.41
+ },
+ {
+  "word": "dust",
+  "start": 45.41,
+  "end": 45.88
+ },
+ {
+  "word": "Two",
+  "start": 46.4,
+  "end": 46.7
+ },
+ {
+  "word": "glowing",
+  "start": 46.7,
+  "end": 47.09
+ },
+ {
+  "word": "eyes",
+  "start": 47.09,
+  "end": 47.45
+ },
+ {
+  "word": "opened",
+  "start": 47.45,
+  "end": 47.86
+ },
+ {
+  "word": "A",
+  "start": 48.29,
+  "end": 48.36
+ },
+ {
+  "word": "giant",
+  "start": 48.36,
+  "end": 48.8
+ },
+ {
+  "word": "space",
+  "start": 48.8,
+  "end": 49.18
+ },
+ {
+  "word": "whale",
+  "start": 49.18,
+  "end": 49.47
+ },
+ {
+  "word": "yawned",
+  "start": 49.47,
+  "end": 50.04
+ },
+ {
+  "word": "and",
+  "start": 50.31,
+  "end": 50.47
+ },
+ {
+  "word": "swallowed",
+  "start": 50.47,
+  "end": 50.94
+ },
+ {
+  "word": "the",
+  "start": 50.94,
+  "end": 51.01
+ },
+ {
+  "word": "rocket",
+  "start": 51.01,
+  "end": 51.37
+ },
+ {
+  "word": "whole",
+  "start": 51.37,
+  "end": 51.85
+ },
+ {
+  "word": "Inside",
+  "start": 52.23,
+  "end": 52.73
+ },
+ {
+  "word": "it",
+  "start": 52.73,
+  "end": 52.8
+ },
+ {
+  "word": "was",
+  "start": 52.8,
+  "end": 52.98
+ },
+ {
+  "word": "warm",
+  "start": 52.98,
+  "end": 53.79
+ },
+ {
+  "word": "quiet",
+  "start": 53.79,
+  "end": 54.34
+ },
+ {
+  "word": "and",
+  "start": 54.69,
+  "end": 54.82
+ },
+ {
+  "word": "full",
+  "start": 54.82,
+  "end": 55.18
+ },
+ {
+  "word": "of",
+  "start": 55.18,
+  "end": 55.28
+ },
+ {
+  "word": "lost",
+  "start": 55.28,
+  "end": 55.68
+ },
+ {
+  "word": "satellites",
+  "start": 55.68,
+  "end": 56.39
+ },
+ {
+  "word": "Stickman",
+  "start": 56.86,
+  "end": 57.3
+ },
+ {
+  "word": "smiled",
+  "start": 57.3,
+  "end": 57.88
+ },
+ {
+  "word": "and",
+  "start": 57.88,
+  "end": 58.01
+ },
+ {
+  "word": "picked",
+  "start": 58.01,
+  "end": 58.23
+ },
+ {
+  "word": "up",
+  "start": 58.23,
+  "end": 58.32
+ },
+ {
+  "word": "his",
+  "start": 58.32,
+  "end": 58.45
+ },
+ {
+  "word": "pencil",
+  "start": 58.45,
+  "end": 58.84
+ },
+ {
+  "word": "What",
+  "start": 58.84,
+  "end": 58.97
+ },
+ {
+  "word": "would",
+  "start": 59.29,
+  "end": 59.53
+ },
+ {
+  "word": "you",
+  "start": 59.53,
+  "end": 59.63
+ },
+ {
+  "word": "draw",
+  "start": 59.63,
+  "end": 59.88
+ },
+ {
+  "word": "to",
+  "start": 59.88,
+  "end": 59.95
+ },
+ {
+  "word": "get",
+  "start": 59.95,
+  "end": 60.13
+ },
+ {
+  "word": "out",
+  "start": 60.13,
+  "end": 60.6
+ }
+]
