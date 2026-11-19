@@ -19,6 +19,7 @@ Goal: the user gives ONLY a script + a voiceover. You (Claude) design, build, ch
 - **PIPELINE (mandatory order):**
   0. Voice: `python3 tools/voice_fit.py <heygen.wav> script.txt 100 02-videos/epXX` (finds the lines, inserts pauses to EXACT length, normalises, writes words.json/script.json).
      Audio: `actions.json` -> `tools/auto_sfx.py` -> sfx-events.json; `music.json` (moods); `tools/mix_episode.py voice events music mix.wav` (-14 LUFS, TP <= -1 dBTP, signature `magic_pencil` sound always included).
+  0b. ORDER RULE (EP07): QC mask + framing fixes + captions.py BEFORE the final render — never render the final first.
   1. **ANIMATIC for approval:** `bash engine/pipeline/animatic.sh EpXX 100 out/epXX engine/public/epXX/mix.wav` -> 540x960 @ 12 fps + QC mask.
      Then `python3 tools/captions.py words.json script.txt 02-videos/epXX --mask out/epXX/mask.json` (auto caption placement). Send the animatic, wait for OK (or the user's time-out rule).
   2. **FINAL:** `bash engine/pipeline/final.sh EpXX 3000 out/epXX engine/public/epXX/mix.wav` (resumable 300-frame parts; `--redo a-b` re-renders only those seconds).

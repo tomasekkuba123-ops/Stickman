@@ -5,6 +5,26 @@ Newest entries on top.
 
 ---
 
+## v14 — after EP07 "What If Stickman's Baby Dragon Grew Up Overnight?"
+**Learned (EP07)**
+- First full render FAILED QC: Stickman big enough only 57 % (giant dragon + wide two-shots make him tiny), captions over his face in 8 places.
+- The QC mask itself was wrong: bright green grass passed the HSV "face green" test, so face boxes covered the whole frame (false "tinted head" FAIL, wrong caption placement). → measurement tools must be validated on every new set palette.
+- Rendering the final BEFORE the QC mask wastes 2.5 h: caption placement and framing fixes both need the mask first.
+- Background tasks stop at 2 h: a 100 s final (10 parts × ~16 min) needs one resume. final.sh resumes cleanly.
+- No speech-to-text model downloads here (Hugging Face / OpenAI blocked): transcripts come from pocketsphinx + candidate-grammar checks; uncertain lines must be flagged to the user.
+- Template titles from the script can be nonsense ("Giant Happy"); curated titles are better.
+
+**Changed (engine)**
+- `tools/stickmask.py`: exact RGB key match (magenta body, green face) + largest face blob only → grass/foliage never read as the face.
+- ORDER in MASTER-PROMPT: animatic/QC-mask → fix framing → captions.py → final → qc_check. (Never final first.)
+- Foreground-hero framing pattern (EP07 `fg()`): camera 5 units behind/beside Stickman looking past him at the giant subject → Stickman 45-55 % tall while the giant stays readable. To be promoted into kit/camera.tsx as `foregroundShot()`.
+- `tools/voice_fit.py`: pause markers in the script (`[++]` long, `[+]` longer, `[-]` short) control where pauses go and how long.
+- `kit/sets.tsx`: Cottage (door, windows, chimney smoke, burnt roof), CottageHall (real doorway, `outside` slot), Garden (fence, gate, path, mailbox, swing, birdhouse, flower beds, trees), GardenTable, Pancake/PancakeStack (wobbling towers, syrup), Teacup, Town, Mountains, Sea, Island + PalmTree, DragonEgg (wobble, crack, peek).
+- `kit/fx.tsx`: Fire (flickering flame tongues, glow, embers, lit smoke), Rain (streaks + splash rings).
+- Dragon: `mood "sad"`, `tear`, `mouthOpen` (gulp/fire/yawn), any size via `h` (grown dragon = same drawing ×11), `dragonPoint()` (world position of mouth/snout/eye for gulps, fire and riding on the nose).
+- Bedroom `night` mode (moonlit window, lamp light). `autoBlink` never fires on frame 0 (hook frames).
+- `tools/publish_kit.py`: optional `titles.txt`, `topic.txt`, `hashtags.txt` in the episode folder; no adjectives across sentence breaks; thumbnail word auto-fits.
+
 ## v13 — after EP03 remake review (user score 7/10)
 **Learned (EP03 remake)**
 - QC FAIL: Stickman visible 92.3 % (user QC) / 95.3 % (mask QC), one 2.25 s gap at 83.5 s (whale swallow), big enough only 58 % of the time (too many wide shots: 2.5-3.7, 11-14, 22-28, 32-34, 46-50, 76-78 s).
