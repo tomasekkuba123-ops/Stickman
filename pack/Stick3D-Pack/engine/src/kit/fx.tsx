@@ -3,7 +3,8 @@
 import React from "react";
 import * as THREE from "three";
 import { V3 } from "../style/kit";
-import { SGlow, Sparkles as SkySparkles, ChalkDraw, Path2, ROCKET_PATH, DOOR_PATHS } from "../style/sky";
+import { SGlow, Sparkles as SkySparkles, ChalkDraw, Path2, ROCKET_PATH, DOOR_PATHS, pathTip as pathTipN, strokePaths } from "../style/sky";
+import { CanvasPlane } from "../style/toon";
 import { Smoke as SmokeFx, PuffBurst, Sparks as SparksFx } from "../style/set3d";
 
 const TAU = Math.PI * 2;
@@ -67,3 +68,38 @@ export const ImpactFrame: React.FC<{ t: number; t0: number; frames?: number; col
 };
 /* camera shake list helper: only on big impacts. Returns [time, amplitude][] for <Cam impacts={...}> */
 export const shakes = (...hits: [number, "small" | "big" | "huge"][]) => hits.map(([t, k]) => [t, k === "small" ? 0.015 : k === "big" ? 0.035 : 0.07] as [number, number]);
+
+/* DRAW-IT-REAL: whatever Stickman draws appears LINE BY LINE AT ITS FINAL POSITION, then fills with flat colour, then inflates into
+   the real 3D object (children) with an overshoot, while the lines fade and sparkles burst. Never a floating icon.
+     <DrawItReal t={t} t0={4} p={[2,0,-1]} size={[2.4,3]} paths={PATHS.house} fill="#ffd23a"> <House3D/> </DrawItReal>
+   paths are normalised (0..1, y down) over a size[0] x size[1] plane whose bottom-centre sits at p (the object's footprint).
+   timing: draw (strokes) -> fill (colour) -> pop (3D inflate). drawTip() gives the world position of the pencil tip for the hand IK. */
+export const DrawItReal: React.FC<{ t: number; t0: number; p: V3; size: [number, number]; paths: Path2[]; rotY?: number; fill?: string; ink?: string; draw?: number; fillDur?: number; pop?: number; face?: boolean; children?: React.ReactNode }> =
+  ({ t, t0, p, size, paths, rotY = 0, fill = "#ffe680", ink = "rgba(30,30,50,1)", draw = 1.4, fillDur = 0.35, pop = 0.5, face = false, children }) => {
+  const u = t - t0; if (u < 0) return null;
+  const prog = Math.min(1, u / draw), fk = Math.min(1, Math.max(0, (u - draw) / fillDur)), pk = Math.min(1, Math.max(0, (u - draw - fillDur) / pop));
+  const back = (x: number) => { const c = 2.2; return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2; };
+  const inflate = pk <= 0 ? 0 : back(pk), lineO = 1 - Math.min(1, pk * 1.6);
+  const centre: V3 = [p[0], p[1] + size[1] / 2, p[2]];
+  return (<group>
+    {lineO > 0 ? <group position={centre} rotation={[0, rotY, 0]}><InkDraw s={size} paths={paths} prog={prog} ink={ink} fill={fill} fillK={fk} o={lineO} t={t} face={face} /></group> : null}
+    {pk > 0 ? <group position={p} rotation={[0, rotY, 0]} scale={[Math.max(0.02, inflate), Math.max(0.02, Math.min(1.15, 0.6 + inflate * 0.4)), Math.max(0.02, inflate)]}>{children}</group> : null}
+    {pk > 0 && pk < 1 ? <SkySparkles t={t} c={centre} area={[size[0] * 0.6, size[1] * 0.6, 0.6]} n={18} color="#fff27a" size={0.16} rise={1} /> : null}
+    {pk > 0 && pk < 1 ? <SGlow p={[centre[0], centre[1], centre[2] + 0.3]} r={Math.max(size[0], size[1]) * 0.9} color="#fff4c0" o={0.7 * (1 - pk)} /> : null}
+  </group>);
+};
+/* world position of the drawing tip at progress prog (for Stickman's pencil hand / gloveOffset IK) */
+export const drawTip = (paths: Path2[], prog: number, p: V3, size: [number, number], rotY = 0): V3 => {
+  const [nx, ny] = pathTipN(paths, prog); const lx = (nx - 0.5) * size[0], ly = (0.5 - ny) * size[1] + size[1] / 2;
+  return [p[0] + lx * Math.cos(rotY), p[1] + ly, p[2] - lx * Math.sin(rotY)];
+};
+
+/* opaque (non-additive) ink drawing plane: pencil/marker lines that can be dark, plus a flat colour fill inside the outline */
+export const InkDraw: React.FC<{ s: [number, number]; paths: Path2[]; prog: number; ink?: string; fill?: string; fillK?: number; o?: number; t?: number; face?: boolean; width?: number }> = ({ s, paths, prog, ink = "rgba(30,30,50,1)", fill, fillK = 0, o = 1, t = 0, face, width = 10 }) => (
+  <CanvasPlane p={[0, 0, 0.02]} s={s} face={face} px={[512, Math.round((512 * s[1]) / s[0])]} draw={(c, W, H) => {
+    c.clearRect(0, 0, W, H); c.globalAlpha = o;
+    if (fill && fillK > 0) { c.save(); c.globalAlpha = o * fillK; c.fillStyle = fill; c.beginPath(); for (const pth of paths) pth.forEach(([x, y], i) => (i ? c.lineTo(x * W, y * H) : c.moveTo(x * W, y * H))); c.fill("evenodd"); c.restore(); }
+    // white halo under the ink so it reads on any background, then the ink line
+    strokePaths(c, W, H, paths, prog, "rgba(255,255,255,0.9)", (width + 8) * W / 512, 0.4, t); strokePaths(c, W, H, paths, prog, ink, width * W / 512, 0.4, t);
+  }} />
+);

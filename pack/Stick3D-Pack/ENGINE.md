@@ -42,6 +42,14 @@ Depth of field: `<Foreground kind="leaves|grass|bokeh|frame">` — put it in the
 HOME SET: `<HomeSet t preset paper>` (bedroom from EP03 remake) with `HOME.hero`, `HOME.heroSide`, `HOME.paper`, `HOME.window`, `HOME.bed`.
 More proven sets/props: `style/set3d.tsx` (Bedroom, DrawingPaper, MoonSet + gas station, Rocket3D + RopeLadder, Robot3D, Coin3D, Whale3D, WhaleBelly, Satellite3D, Smoke...), `style/sky.tsx` (islands, castle, bridge, windmill, dragon 3D bits), `style/extra.tsx` (city, casino, stage props).
 
+## v13 additions
+- `kit/puff.tsx`: `CloudPuff`, `PuffSmoke` (emitter), `PuffRing` (burst) — the only smoke/dust/cloud particle.
+- `kit/creatures.tsx`: `GiantWhale` (jaw, teeth, tongue, throat, grooves, fins, flukes, eyes with lids), `whaleMouth()`, `gulpAt()` swallow action.
+- `kit/dressing.tsx`: `SetDressing kind="room|moon|meadow|space"` (3 depth zones), `SpaceBackdrop` (nebulae, planets, star layers).
+- `kit/fx.tsx`: `DrawItReal` (+ `InkDraw`, `drawTip`).  `kit/camera.tsx`: `twoShot`, `keyMoment()`.  `kit/world.tsx`: `SafeGrade`.  `kit/character.tsx`: `paintHero()` (head stays white).
+- QC gate: `python3 tools/qc_check.py <video.mp4> --duration <s>` after EVERY render (mask.json next to the video is used automatically); deliver `qc/report.txt` + `qc/contact_sheet.png` with the video.
+- Log every episode in `ENGINE_CHANGELOG.md` (Learned / Changed).
+
 ## kit/fx.tsx — FX LIBRARY
 `<DrawStrokes paths prog style="pencil|chalk|magic">` + `PATHS` (rocket, door, circle, star, heart, house); `<MagicSparkles>`, `<MagicGlow>`, `<Smoke>` (soft shaded puffs, lit),
 `<Sparks>`, `<DustImpact>`, `<Splash>`, `<ExplosionPuff>`; overlays `<SpeedLines mode="radial|down|side">`, `<ImpactFrame t0>`; `shakes([t,"small"|"big"|"huge"])` for `<ShotCam impacts>` (impacts only).

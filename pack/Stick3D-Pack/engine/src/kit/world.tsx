@@ -10,6 +10,7 @@ import { V3 } from "../style/kit";
 import { SGlow } from "../style/sky";
 import { GradientDome, Cloud3D, canvasTex, Bedroom, DrawingPaper, PAPER } from "../style/set3d";
 import { LookContext, Look } from "./character";
+import { SetDressing, SpaceBackdrop } from "./dressing";
 
 const TAU = Math.PI * 2;
 const rnd = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
@@ -29,7 +30,7 @@ export const SKY: Record<SkyName, SkyPreset> = {
 
 /* ---------------- World wrapper ---------------- */
 // bloom: 0 = off (default). Real bloom costs ~2-4x render time on the CPU renderer: use it for magic/glow scenes, not everywhere.
-export const World: React.FC<{ preset: SkyName; t: number; fog?: boolean; bloom?: number; rays?: number; children?: React.ReactNode; stars?: number }> = ({ preset, t, fog = true, bloom = 0, rays = 0, children, stars }) => {
+export const World: React.FC<{ preset: SkyName; t: number; fog?: boolean; bloom?: number; rays?: number; children?: React.ReactNode; stars?: number; backdrop?: boolean }> = ({ preset, t, fog = true, bloom = 0, rays = 0, children, stars, backdrop = true }) => {
   const P = SKY[preset];
   return (<LookContext.Provider value={P.look}>
     <ambientLight intensity={P.amb} /><directionalLight position={P.sun.pos} intensity={P.sun.i} color={P.sun.color} /><directionalLight position={[-P.sun.pos[0], 6, 10]} intensity={0.45} color={P.fill} />
@@ -37,6 +38,7 @@ export const World: React.FC<{ preset: SkyName; t: number; fog?: boolean; bloom?
     {fog ? <fog attach="fog" args={P.fog} /> : null}
     <SGlow p={[P.sun.pos[0] * 1.2, P.sun.pos[1] * 1.2, Math.max(-140, P.sun.pos[2] * 1.3)]} r={22} color={P.sun.color} o={P.sun.glow} />
     {P.stars > 0 || (stars ?? 0) > 0 ? <TwinkleStars t={t} n={60} /> : null}
+    {preset === "space" && backdrop ? <SpaceBackdrop t={t} /> : null}
     {rays > 0 ? <GodRays from={P.sun.pos} t={t} o={rays} color={P.sun.color} /> : null}
     {children}
     {bloom > 0 ? <BloomPass k={bloom} /> : null}
@@ -161,11 +163,18 @@ export const Foreground: React.FC<{ t: number; kind?: "leaves" | "grass" | "boke
    Re-uses the EP03 bedroom: desk + drawing paper, window with city, curtains, shelves, lamp, rug, posters, bed, plant, light rays, dust motes.
    HOME.hero = where Stickman stands at the desk; HOME.paper = paper centre; HOME.cams = good camera keys (wide / desk / window). */
 export const HOME = { hero: [-0.55, 0, -3.65] as V3, heroSide: [-2.9, 0, -2.2] as V3, paper: PAPER, window: [2.4, 4.3, -5.8] as V3, bed: [4.8, 0, -3.5] as V3 };
-export const HomeSet: React.FC<{ t: number; preset?: SkyName; paper?: { body: number; fin1: number; fin2: number; win: number } | null; shake?: number }> = ({ t, preset = "sunset", paper = null, shake = 0 }) => (
+export const HomeSet: React.FC<{ t: number; preset?: SkyName; paper?: { body: number; fin1: number; fin2: number; win: number } | null; shake?: number; dress?: boolean }> = ({ t, preset = "sunset", paper = null, shake = 0, dress = true }) => (
   <LookContext.Provider value={SKY[preset].look}>
     <Bedroom t={t} shake={shake} />
     {paper ? <DrawingPaper t={t} parts={paper} /> : null}
     <DustMotes t={t} c={[0.5, 2.5, -3]} area={[6, 3, 4]} n={20} />
+    {dress ? <SetDressing kind="room" anchor={HOME.hero} keep={2.6} bounds={[-6, 6, -5.4, 3.2]} n={26} seed={4} t={t} /> : null}
   </LookContext.Provider>
 );
 void Box; void CanvasPlane; void useThree;
+
+/* SAFE GRADE (overlay): neutral vignette only. Colour mood comes from the <World> preset lights/sky — never from a full-frame CSS tint,
+   which would tint Stickman's white head (STYLE rule: his head stays white in every scene). */
+export const SafeGrade: React.FC<{ k?: number }> = ({ k = 0.35 }) => (
+  <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 62%, rgba(5,8,30,${k}) 100%)` }} />
+);

@@ -9,6 +9,10 @@ import { SGlow } from "./sky";
 import { drawStickman, Rig, RigOut } from "./stickman";
 import { drawPencil, sketchRocket, rnd } from "./props2d";
 import { QC, maskify } from "../kit/qc";
+import { PuffSmoke, PuffRing, CloudPuff } from "../kit/puff";
+import { GiantWhale } from "../kit/creatures";
+import { paintHero } from "../kit/character";
+import { SetDressing } from "../kit/dressing";
 
 const TAU = Math.PI * 2;
 const ramp = (() => { const d = new Uint8Array([110, 185, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
@@ -23,8 +27,7 @@ export type Extra2D = (c: CanvasRenderingContext2D, out: RigOut, W: number, H: n
 export const HeroV2: React.FC<{ p: V3; h?: number; rig: Rig; rim?: string; extra?: Extra2D; shadow?: boolean; sy?: number }> = ({ p, h = 3, rig, rim = "255,220,170", extra, shadow = true, sy }) => (
   <>{shadow ? <Shadow p={[p[0], sy ?? p[1], p[2]]} r={h * 0.3} o={0.5} /> : null}
     <Billboard p={p} h={h} res={640} aspect={1.5} draw={(c, W, H) => {
-      const out = drawStickman(c, W, H, rig);
-      if (rim) { c.save(); c.globalCompositeOperation = "source-atop"; const g = c.createLinearGradient(W * 0.6, 0, W * 0.95, 0); g.addColorStop(0, `rgba(${rim},0)`); g.addColorStop(1, `rgba(${rim},0.45)`); c.fillStyle = g; c.fillRect(0, 0, W, H); const g2 = c.createLinearGradient(0, H * 0.7, 0, H); g2.addColorStop(0, "rgba(20,10,40,0)"); g2.addColorStop(1, "rgba(20,10,40,0.2)"); c.fillStyle = g2; c.fillRect(0, 0, W, H); c.restore(); }
+      const out = rim ? paintHero(c, W, H, rig, rim, "20,10,40", 0.45) : drawStickman(c, W, H, rig);
       if (extra) extra(c, out, W, H);
       if (QC) maskify(c, out.head, out.headR, W, H);
     }} /></>
@@ -40,20 +43,10 @@ export function gloveOffset(rig: Rig, h: number, which: "both" | "R" | "L" = "bo
 export const pencil2D = (ang = 0.4, len = 0.13, gleam = 0, tipUp = false, which: "R" | "L" = "R"): Extra2D => (c, out, W, H) => { const g = which === "R" ? out.gloveR : out.gloveL, a = ang + (tipUp ? Math.PI : 0), L = H * len, bx = Math.sin(a), by = -Math.cos(a); void W; drawPencil(c, g[0] - bx * L * 0.42, g[1] - by * L * 0.42, L, a, gleam); };
 
 /* ---------------- volumetric-looking smoke: soft shaded puffs, sizes vary, dissipate, lit by the flame ---------------- */
-export const Smoke: React.FC<{ src: V3; t: number; t0: number; t1?: number; rate?: number; vel?: V3; spread?: number; size?: number; life?: number; lit?: number; color?: string; seed?: number; max?: number }> = ({ src, t, t0, t1 = 1e9, rate = 8, vel = [0, 1.2, 0], spread = 0.8, size = 0.6, life = 2.2, lit = 0, color = "#e9e6f2", seed = 1, max = 40 }) => {
-  const items: React.ReactNode[] = []; const first = Math.max(0, Math.floor((t - life - t0) * rate)), last = Math.floor((Math.min(t, t1) - t0) * rate);
-  for (let i = Math.max(first, last - max); i <= last; i++) { const born = t0 + i / rate, age = t - born; if (age < 0 || age > life) continue; const u = age / life;
-    const dx = (rnd(i * 3 + seed) - 0.5) * 2, dz = (rnd(i * 7 + seed) - 0.5) * 2, r = size * (0.5 + rnd(i + seed * 11) * 0.7) * (0.6 + u * 1.6);
-    const p: V3 = [src[0] + vel[0] * age + dx * spread * Math.sqrt(age), src[1] + vel[1] * age + Math.sin(i) * 0.1, src[2] + vel[2] * age + dz * spread * Math.sqrt(age)];
-    const col = new THREE.Color(color).lerp(new THREE.Color("#ffc890"), lit * Math.max(0, 1 - u * 2.5) * 0.6);
-    items.push(<mesh key={i} position={p}><sphereGeometry args={[r, 16, 12]} /><meshToonMaterial color={col} gradientMap={ramp} transparent opacity={0.88 * (1 - u * u)} depthWrite={false} /></mesh>); }
-  return <>{items}</>;
-};
+// v13: both are thin wrappers around the cloud-puff particle (kit/puff.tsx) — no more circle smoke anywhere.
+export const Smoke: React.FC<{ src: V3; t: number; t0: number; t1?: number; rate?: number; vel?: V3; spread?: number; size?: number; life?: number; lit?: number; color?: string; seed?: number; max?: number }> = (props) => <PuffSmoke {...props} color={props.color ?? "#eeeaf6"} />;
 // burst of puffs at time t0 (dust ring / impact)
-export const PuffBurst: React.FC<{ c: V3; t: number; t0: number; n?: number; r?: number; size?: number; color?: string; up?: number; life?: number }> = ({ c, t, t0, n = 12, r = 2, size = 0.6, color = "#d8d2e6", up = 0.6, life = 1.6 }) => {
-  const age = t - t0; if (age < 0 || age > life) return null; const u = age / life, e = 1 - (1 - u) ** 3;
-  return <>{Array.from({ length: n }, (_, i) => { const a = (i / n) * TAU + rnd(i) * 0.4, d = r * e * (0.7 + rnd(i + 3) * 0.6); return <mesh key={i} position={[c[0] + Math.cos(a) * d, c[1] + size * 0.6 + up * e * (0.5 + rnd(i + 5)), c[2] + Math.sin(a) * d * 0.7]}><sphereGeometry args={[size * (0.6 + rnd(i + 9) * 0.6) * (0.7 + u), 14, 10]} /><meshToonMaterial color={color} gradientMap={ramp} transparent opacity={0.9 * (1 - u)} depthWrite={false} /></mesh>; })}</>;
-};
+export const PuffBurst: React.FC<{ c: V3; t: number; t0: number; n?: number; r?: number; size?: number; color?: string; up?: number; life?: number }> = (props) => <PuffRing {...props} />;
 export const Sparks: React.FC<{ c: V3; t: number; t0: number; n?: number; v?: number; life?: number; color?: string }> = ({ c, t, t0, n = 14, v = 4, life = 0.7, color = "#ffe68a" }) => {
   const age = t - t0; if (age < 0 || age > life) return null; const u = age / life;
   return <>{Array.from({ length: n }, (_, i) => { const a = rnd(i) * TAU, b = (rnd(i + 4) - 0.3) * 1.4, s = v * (0.6 + rnd(i + 8) * 0.6); return <SGlow key={i} p={[c[0] + Math.cos(a) * s * age, c[1] + b * s * age - 4 * age * age, c[2] + Math.sin(a) * s * age]} r={0.12 * (1 - u) + 0.03} color={color} o={1 - u} />; })}</>;
@@ -89,7 +82,7 @@ export const RopeLadder: React.FC<{ top: V3; L: number; sway: number; n?: number
 };
 
 /* ---------------- sky + space ---------------- */
-export const GradientDome: React.FC<{ stops: [number, string][]; r?: number; stars?: number; t?: number }> = ({ stops, r = 300, stars = 0 }) => {
+export const GradientDome: React.FC<{ stops: [number, string][]; r?: number; stars?: number; t?: number }> = ({ stops, r = 150, stars = 0 }) => { // r must stay < camera far (200)
   const key = "dome|" + stops.map((s) => s.join(":")).join("|") + "|" + stars.toFixed(2);
   const tex = canvasTex(key, 2048, 1024, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); for (const [k, col] of stops) g.addColorStop(k, col); c.fillStyle = g; c.fillRect(0, 0, W, H);
     if (stars > 0) for (let i = 0; i < 2000; i++) { c.globalAlpha = stars * (0.35 + rnd(i) * 0.65); c.fillStyle = rnd(i + 3) > 0.85 ? "#ffd6f0" : "#ffffff"; c.beginPath(); c.arc(rnd(i * 3) * W, rnd(i * 7) * H * 0.8, 0.7 + rnd(i + 9) * 1.2, 0, TAU); c.fill(); } c.globalAlpha = 1; });
@@ -103,9 +96,11 @@ export const AltDome: React.FC<{ alt: number }> = ({ alt }) => {
   return <GradientDome r={150} stops={[[0, col(0)], [0.55, col(1)], [1, col(2)]]} stars={clamp(q - 1.1) * 1.1} />;
 };
 // fluffy 3D cloud (soft white puffs, slightly lit underneath)
-export const Cloud3D: React.FC<{ p: V3; s?: number; seed?: number; tint?: string; o?: number }> = ({ p, s = 1, seed = 1, tint = "#ffffff", o = 1 }) => (
-  <group position={p} scale={s}>{Array.from({ length: 9 }, (_, i) => { const a = rnd(i + seed) * TAU, d = rnd(i * 3 + seed) * 1.6; return <mesh key={i} position={[Math.cos(a) * d * 1.5, rnd(i * 5 + seed) * 0.8 - (i % 3) * 0.1, Math.sin(a) * d * 0.7]}><sphereGeometry args={[0.8 + rnd(i * 7 + seed) * 0.8, 16, 12]} /><meshToonMaterial color={new THREE.Color(tint).lerp(new THREE.Color("#c8c8f0"), i % 3 === 2 ? 0.35 : 0)} gradientMap={ramp} transparent={o < 1} opacity={o} /></mesh>; })}</group>
-);
+export const Cloud3D: React.FC<{ p: V3; s?: number; seed?: number; tint?: string; o?: number }> = ({ p, s = 1, seed = 1, tint = "#ffffff", o = 1 }) => {
+  const shade = "#" + new THREE.Color(tint).lerp(new THREE.Color("#9a9ad8"), 0.4).getHexString();
+  return (<group position={p} scale={s}>{Array.from({ length: 5 }, (_, i) => { const a = rnd(i + seed) * TAU, d = i ? 0.9 + rnd(i * 3 + seed) * 0.8 : 0;
+    return <CloudPuff key={i} p={[Math.cos(a) * d * 1.5, rnd(i * 5 + seed) * 0.5 - (i ? 0.2 : 0), Math.sin(a) * d * 0.6]} r={i ? 0.9 + rnd(i * 7 + seed) * 0.5 : 1.4} u={o < 1 ? (1 - o) * 0.9 + 0.45 : 0} seed={seed * 9 + i} look={{ color: tint, shadow: shade, rim: "#7a78a8" }} />; })}</group>);
+};
 export const Earth: React.FC<{ p: V3; r: number; rotY?: number; glow?: number }> = ({ p, r, rotY = 0, glow = 0.35 }) => (<><Globe p={p} r={r} rotY={rotY} tilt={0.2} /><SGlow p={[p[0], p[1], p[2] + r * 0.2]} r={r * 1.6} color="#7ac8ff" o={glow} /></>);
 
 /* ---------------- bedroom at sunset ---------------- */
@@ -118,6 +113,13 @@ export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number 
     <Surface p={[0, 4, -6]} s={[18, 8]} kind="plain" a="#f0a870" b="#e89860" unit={2} />
     <Surface p={[-6.5, 4, -1]} s={[12, 8]} rot={[0, Math.PI / 2, 0]} kind="plain" a="#e89060" b="#e08858" unit={2} />
     <CanvasPlane p={[0, 6.5, -5.95]} s={[18, 3]} px={[900, 150]} draw={(c, W, H) => { c.clearRect(0, 0, W, H); c.fillStyle = "rgba(255,255,255,0.2)"; for (let i = 0; i < 40; i++) { const x = rnd(i) * W, y = rnd(i + 3) * H; c.beginPath(); for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * TAU / 5, b = a + TAU / 10; c.lineTo(x + Math.cos(a) * 9, y + Math.sin(a) * 9); c.lineTo(x + Math.cos(b) * 4, y + Math.sin(b) * 4); } c.fill(); } }} />
+    {/* v13 set dressing: wallpaper, skirting boards, wall socket + cables */}
+    <CanvasPlane p={[0, 4, -5.97]} s={[18, 8]} px={[900, 400]} draw={(c, W, H) => { c.fillStyle = "#f2b07a"; c.fillRect(0, 0, W, H); for (let x = 0; x < W; x += 50) { c.fillStyle = "rgba(255,255,255,0.13)"; c.fillRect(x, 0, 22, H); } c.fillStyle = "rgba(200,90,60,0.25)"; for (let y = 25; y < H; y += 60) for (let x = 36; x < W; x += 50) { c.beginPath(); c.arc(x + ((y / 60) % 2) * 25, y, 5, 0, TAU); c.fill(); } }} />
+    <CanvasPlane p={[-6.47, 4, -1]} rot={[0, Math.PI / 2, 0]} s={[12, 8]} px={[600, 400]} draw={(c, W, H) => { c.fillStyle = "#eca472"; c.fillRect(0, 0, W, H); for (let x = 0; x < W; x += 50) { c.fillStyle = "rgba(255,255,255,0.12)"; c.fillRect(x, 0, 22, H); } }} />
+    <Box p={[0, 0.16, -5.92]} s={[18, 0.32, 0.12]} color="#fff6e8" line={2} /><Box p={[-6.42, 0.16, -1]} s={[0.12, 0.32, 12]} color="#fff6e8" line={2} />
+    <Box p={[1.7, 0.55, -5.93]} s={[0.36, 0.36, 0.05]} color="#ffffff" line={2} />{[-0.07, 0.07].map((x) => <Box key={x} p={[1.7 + x, 0.55, -5.9]} s={[0.04, 0.1, 0.02]} color="#2b2f40" line={1} />)}
+    <mesh><tubeGeometry args={[new THREE.CatmullRomCurve3([new THREE.Vector3(0.9, 1.5, -3.25), new THREE.Vector3(0.95, 0.8, -3.4), new THREE.Vector3(1.1, 0.04, -3.9), new THREE.Vector3(1.6, 0.04, -5.6), new THREE.Vector3(1.7, 0.5, -5.88)]), 40, 0.035, 6, false]} /><meshToonMaterial color="#2b2f40" gradientMap={ramp} /></mesh>
+    <mesh><tubeGeometry args={[new THREE.CatmullRomCurve3([new THREE.Vector3(-1.9, 1.5, -3.3), new THREE.Vector3(-2.2, 0.6, -3.6), new THREE.Vector3(-2.6, 0.04, -4.4), new THREE.Vector3(-0.6, 0.04, -5.7), new THREE.Vector3(1.66, 0.5, -5.88)]), 40, 0.03, 6, false]} /><meshToonMaterial color="#e8e8f0" gradientMap={ramp} /></mesh>
     {/* window with sunset city; open sash */}
     <Box p={[2.4, 4.3, -5.9]} s={[5.4, 4.4, 0.2]} color="#f6efe4" line={4} />
     <CanvasPlane p={[2.4, 4.3, -5.78]} s={[5.0, 4.0]} px={[600, 480]} draw={(c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#5a3a9a"); g.addColorStop(0.5, "#ff8a5a"); g.addColorStop(1, "#ffd08a"); c.fillStyle = g; c.fillRect(0, 0, W, H); c.fillStyle = "#fff0b0"; c.beginPath(); c.arc(W * 0.35, H * 0.68, 60, 0, TAU); c.fill();
@@ -176,11 +178,15 @@ export const MoonSet: React.FC<{ t: number; reveal?: number; earthRot?: number; 
     <ambientLight intensity={0.85} /><directionalLight position={[-6, 8, 6]} intensity={1.25} color="#f0f0ff" /><directionalLight position={[6, 3, -4]} intensity={0.5} color="#ff7ad8" />
     <GradientDome stops={[[0, "#05041a"], [0.5, "#120a3a"], [1, "#2a1a5a"]]} stars={1} />
     <Earth p={[-22, 22, -70]} r={9} rotY={t * 0.05} />
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -10]}><planeGeometry args={[160, 160]} /><meshToonMaterial map={groundTex} gradientMap={ramp} /></mesh>
+    {/* v13: curved Moon horizon (flat within 25 units, then curving away), distant mountains, dressed with rocks / footprints / small craters */}
+    <MoonGround tex={groundTex} />
+    {Array.from({ length: 14 }, (_, i) => { const a = -Math.PI * 0.95 + (i / 13) * Math.PI * 0.9, d = 85 + rnd(i * 3) * 25, h = 18 + rnd(i * 5) * 22; const x = Math.cos(a) * d, z = Math.sin(a) * d - 10; return <mesh key={"m" + i} position={[x, moonY(x, z) + h * 0.3, z]}><coneGeometry args={[h * 0.9, h, 6]} /><meshToonMaterial color={i % 2 ? "#8a84a8" : "#9a94b8"} gradientMap={ramp} /></mesh>; })}
+    <SetDressing kind="moon" anchor={PAD} keep={6} bounds={[-24, 24, -30, 10]} n={34} seed={7} t={t} ground={moonY} />
+    {Array.from({ length: 9 }, (_, i) => <mesh key={"fp" + i} rotation={[-Math.PI / 2, 0, -0.5]} position={[PAD[0] + 2.4 + i * 0.55, 0.02, PAD[2] + 1.5 - i * 0.35 + (i % 2 ? 0.2 : -0.2)]}><circleGeometry args={[0.12, 12]} /><meshBasicMaterial color="#6a6488" transparent opacity={0.85} /></mesh>)}
     {[[-12, -8, 2.4], [12, 4, 1.6], [-8, 8, 1.2], [3, -24, 3.0], [-20, -26, 2.0]].map(([x, z, r], i) => <group key={i} position={[x, 0, z]}><mesh rotation={[-Math.PI / 2, 0, 0]}><torusGeometry args={[r, r * 0.18, 10, 32]} /><meshToonMaterial color="#c8c4d8" gradientMap={ramp} /></mesh><mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}><circleGeometry args={[r, 32]} /><meshBasicMaterial color="#8a84a8" /></mesh></group>)}
     {Array.from({ length: 22 }, (_, i) => <Ball key={i} p={[(rnd(i) - 0.5) * 40, 0.2, -rnd(i + 4) * 30 + 6]} r={0.2 + rnd(i + 2) * 0.5} color="#a8a2c0" s={[1.3, 0.7, 1]} ink={0.04} />)}
     {/* big crater where the whale sleeps */}
-    <group position={CRATER}><mesh rotation={[-Math.PI / 2, 0, 0]}><torusGeometry args={[11, 2.0, 12, 48]} /><meshToonMaterial color="#c4c0d6" gradientMap={ramp} /></mesh><mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}><circleGeometry args={[11, 48]} /><meshBasicMaterial color="#4a4268" /></mesh></group>
+    <group position={CRATER}><mesh rotation={[-Math.PI / 2, 0, 0]}><torusGeometry args={[11, 2.0, 12, 48]} /><meshToonMaterial color="#c4c0d6" gradientMap={ramp} /></mesh><mesh rotation={[-Math.PI / 2, 0, 2.2]} position={[0, 1.3, 0]}><torusGeometry args={[11, 0.35, 6, 48, Math.PI * 0.9]} /><meshBasicMaterial color="#f4f2ff" /></mesh><mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}><circleGeometry args={[11, 48]} /><meshBasicMaterial color="#4a4268" /></mesh></group>
     {/* landing pad */}
     <group position={PAD}><Cyl p={[0, 0.12, 0]} rt={3.0} h={0.24} color="#6a6f88" line={3} /><CanvasPlane p={[0, 0.25, 0]} rot={[-Math.PI / 2, 0, 0]} s={[5.6, 5.6]} px={[400, 400]} draw={(c, W, H) => { c.clearRect(0, 0, W, H); c.beginPath(); c.arc(W / 2, H / 2, W / 2 - 20, 0, TAU); c.lineWidth = 16; c.strokeStyle = "#ffd23a"; c.stroke(); c.font = "900 220px Inter"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = "#ffd23a"; c.fillText("H", W / 2, H / 2 + 10); }} />
       {[0, 1, 2, 3, 4, 5].map((i) => { const a = i * TAU / 6; const on = Math.sin(t * 4 + i) > 0; return <React.Fragment key={i}><Ball p={[Math.cos(a) * 2.9, 0.32, Math.sin(a) * 2.9]} r={0.12} color={on ? "#5aff8a" : "#2a6a3a"} ink={0.03} />{on ? <SGlow p={[Math.cos(a) * 2.9, 0.4, Math.sin(a) * 2.9]} r={0.5} color="#5aff8a" o={0.6} /> : null}</React.Fragment>; })}</group>
@@ -214,7 +220,7 @@ export const Robot3D: React.FC<{ p: V3; t: number; face?: BotFace; rotY?: number
       else { for (const ex of [W * 0.32, W * 0.68]) { c.beginPath(); if (face === "blink") { c.moveTo(ex - 20, H * 0.42); c.lineTo(ex + 20, H * 0.42); c.stroke(); } else { c.arc(ex, H * 0.42, 14, 0, TAU); c.fill(); } } c.beginPath(); c.moveTo(W * 0.4, H * 0.75); c.lineTo(W * 0.6, H * 0.75); c.stroke(); }
       c.restore(); }} />
     <Cyl p={[0, 2.6, 0]} rt={0.03} h={0.4} color={INK} line={1} /><Ball p={[0, 2.85, 0]} r={0.1} color={Math.sin(t * 8) > 0 ? "#ff4a5a" : "#ffd23a"} ink={0.03} />
-    {steam > 0 ? [0, 1, 2].map((i) => { const u = (steam + i * 0.3) % 1; return <mesh key={i} position={[(i - 1) * 0.35, 2.6 + u * 1.4, 0]}><sphereGeometry args={[0.18 + u * 0.3, 12, 10]} /><meshToonMaterial color="#ffffff" gradientMap={ramp} transparent opacity={0.85 * (1 - u)} depthWrite={false} /></mesh>; }) : null}
+    {steam > 0 ? [0, 1, 2].map((i) => { const u = (steam + i * 0.3) % 1; return <CloudPuff key={i} p={[(i - 1) * 0.35, 2.7 + u * 1.4, 0]} r={0.22 + u * 0.2} u={u} seed={i + 40} look={{ color: "#ffffff", shadow: "#c8c8e0" }} />; }) : null}
   </group>
 );
 export const Receipt3D: React.FC<{ p: V3; len: number; rot?: V3; w?: number }> = ({ p, len, rot, w = 0.32 }) => (len <= 0.02 ? null :
@@ -230,34 +236,10 @@ export const Coin3D: React.FC<{ p: V3; r: number; rot?: V3 }> = ({ p, r, rot = [
 };
 
 /* ---------------- giant space whale (faces +z) ---------------- */
-export const Whale3D: React.FC<{ p: V3; s?: number; t: number; mouth?: number; eyes?: number; blink?: number; rotY?: number; tilt?: number }> = ({ p, s = 1, t, mouth = 0, eyes = 1, blink = 0, rotY = 0, tilt = 0 }) => {
-  const skin = canvasTex("whaleskin", 1024, 512, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#5a6cf0"); g.addColorStop(0.55, "#6a4ad8"); g.addColorStop(0.62, "#d8dcff"); g.addColorStop(1, "#c8ccff"); c.fillStyle = g; c.fillRect(0, 0, W, H);
-    c.strokeStyle = "rgba(90,90,180,0.6)"; c.lineWidth = 8; for (let i = 0; i < 26; i++) { const x = i * W / 26; c.beginPath(); c.moveTo(x, H * 0.64); c.lineTo(x + 6, H * 0.98); c.stroke(); }
-    for (let i = 0; i < 90; i++) { const x = rnd(i * 3) * W, y = rnd(i * 7) * H * 0.52, r = 5 + rnd(i) * 12; const gg = c.createRadialGradient(x, y, 1, x, y, r * 2); gg.addColorStop(0, "rgba(190,250,255,1)"); gg.addColorStop(1, "rgba(190,250,255,0)"); c.fillStyle = gg; c.fillRect(x - r * 2, y - r * 2, r * 4, r * 4); } });
-  const fin = (sd: number) => <group position={[sd * 5.6, -1.6, 1.2]} rotation={[0.2, sd * 0.3, sd * (0.6 + Math.sin(t * 2.2) * 0.25)]}><Extrude pts={[[0, 0], [sd * 3.2, -1.0], [sd * 4.0, -2.6], [sd * 1.0, -1.4]]} depth={0.5} color="#5a4ad0" line={6} /></group>;
-  return (<group position={p} rotation={[tilt, rotY, 0]} scale={s}>
-    <mesh scale={[6, 4.6, 7]}><sphereGeometry args={[1, 48, 32]} /><meshToonMaterial map={skin} gradientMap={ramp} /></mesh>
-    <mesh scale={[6.08, 4.68, 7.08]}><sphereGeometry args={[1, 40, 28]} /><meshBasicMaterial color={INK} side={THREE.BackSide} /></mesh>
-    {fin(-1)}{fin(1)}
-    <group position={[0, 1.2, -6.6]} rotation={[-0.4 + Math.sin(t * 1.6) * 0.15, 0, 0]}><Extrude pts={[[0, 0], [-3.6, 2.4], [-1.4, 1.2], [0, 2.0], [1.4, 1.2], [3.6, 2.4]]} depth={0.6} color="#5a4ad0" line={6} rot={[Math.PI / 2, 0, 0]} /></group>
-    {/* blowhole spout */}
-    {[0, 1, 2, 3].map((i) => { const u = (t * 0.8 + i * 0.25) % 1; return <SGlow key={i} p={[Math.sin(i * 2) * 0.4, 4.6 + u * 3, -1.5]} r={0.5 + u * 0.6} color="#bfe8ff" o={0.7 * (1 - u)} />; })}
-    {/* eyes */}
-    {[-1, 1].map((sd) => <group key={sd} position={[sd * 2.3, 0.9, 6.0]}>
-      <mesh scale={[1, Math.max(0.05, eyes * (1 - blink)), 1]}><sphereGeometry args={[1.05, 32, 24]} /><meshToonMaterial color="#fffbe0" gradientMap={ramp} /></mesh>
-      <mesh scale={[1.06, Math.max(0.06, eyes * (1 - blink) * 1.06), 1.06]}><sphereGeometry args={[1.05, 24, 18]} /><meshBasicMaterial color={INK} side={THREE.BackSide} /></mesh>
-      {eyes * (1 - blink) > 0.25 ? <><mesh position={[0, -0.05, 0.62]}><sphereGeometry args={[0.6, 24, 18]} /><meshBasicMaterial color="#1a0a3a" /></mesh><mesh position={[-0.2, 0.22, 1.05]}><sphereGeometry args={[0.2, 12, 10]} /><meshBasicMaterial color="#ffffff" /></mesh></> : null}
-      <SGlow p={[0, 0, 1.2]} r={2.4} color="#ffd86a" o={0.55 * eyes * (1 - blink)} />
-    </group>)}
-    {[-1, 1].map((sd) => <mesh key={sd} position={[sd * 3.6, -0.5, 5.2]} rotation={[0, sd * 0.55, 0]}><circleGeometry args={[0.7, 20]} /><meshBasicMaterial color="#ff8ab8" transparent opacity={0.55} /></mesh>)}
-    {/* mouth: dark opening that grows, pink tongue */}
-    <group position={[0, -1.4, 6.3]} rotation={[-0.25, 0, 0]}>
-      <mesh scale={[3.4, 0.25 + 2.4 * mouth, 1]}><circleGeometry args={[1, 40]} /><meshBasicMaterial color="#1a0620" /></mesh>
-      {mouth > 0.1 ? <mesh position={[0, -1.4 * mouth, 0.05]} scale={[2.0, 0.9 * mouth, 1]}><circleGeometry args={[1, 32]} /><meshBasicMaterial color="#ff6aa8" /></mesh> : null}
-      <mesh position={[0, 0, -0.02]} scale={[3.55, 0.36 + 2.5 * mouth, 1]}><circleGeometry args={[1, 40]} /><meshBasicMaterial color={INK} /></mesh>
-    </group>
-  </group>);
-};
+// v13: the space whale is the proper creature model (kit/creatures.tsx GiantWhale: hinged jaw, teeth, tongue, throat, grooves, fins, flukes)
+export const Whale3D: React.FC<{ p: V3; s?: number; t: number; mouth?: number; eyes?: number; blink?: number; rotY?: number; tilt?: number; bulge?: number }> = ({ p, s = 1, t, mouth = 0, eyes = 1, blink = 0, rotY = 0, tilt = 0, bulge = -1 }) => (
+  <GiantWhale p={p} s={s} t={t} jaw={mouth} eyes={eyes} blink={blink} rotY={rotY} tilt={tilt} bulge={bulge} />
+);
 
 /* ---------------- inside the whale: rib tunnel, glowing dots, turquoise pool, lost satellites ---------------- */
 export const Satellite3D: React.FC<{ p: V3; rot?: V3; s?: number }> = ({ p, rot = [0, 0, 0], s = 1 }) => (
@@ -283,3 +265,10 @@ export const WhaleBelly: React.FC<{ t: number }> = ({ t }) => {
   </>);
 };
 void Ball; void lerp;
+
+/* curved Moon ground: flat inside 25 units of the origin, then falls away like a small planet (visible curved horizon) */
+export const moonY = (x: number, z: number) => { const r = Math.hypot(x, z + 10); return r < 25 ? 0 : -((r - 25) ** 2) / 240; };
+const MoonGround: React.FC<{ tex: THREE.Texture }> = ({ tex }) => {
+  const geo = React.useMemo(() => { const g = new THREE.PlaneGeometry(260, 260, 140, 140); g.rotateX(-Math.PI / 2); const pos = g.attributes.position as THREE.BufferAttribute; for (let i = 0; i < pos.count; i++) pos.setY(i, moonY(pos.getX(i), pos.getZ(i) - 10)); g.computeVertexNormals(); return g; }, []);
+  return <mesh geometry={geo} position={[0, 0, -10]}><meshToonMaterial map={tex} gradientMap={ramp} /></mesh>;
+};

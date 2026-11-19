@@ -7,9 +7,9 @@ import React from "react";
 import { Cam, Key } from "../style/extra";
 import { V3 } from "../style/kit";
 
-export type ShotKind = "wide" | "medium" | "closeUp" | "lowAngle" | "overShoulder" | "tracking" | "orbit" | "crane" | "pushIn";
+export type ShotKind = "wide" | "medium" | "closeUp" | "lowAngle" | "overShoulder" | "tracking" | "orbit" | "crane" | "pushIn" | "twoShot";
 export type Subject = V3 | ((t: number) => V3);
-export type ShotOpts = { subject: Subject; h?: number; side?: number; /* yaw around the subject, rad (0 = camera in front, +z) */ target?: V3; frac?: number; fov?: number; roll?: number; dist?: number };
+export type ShotOpts = { subject: Subject; h?: number; /* twoShot: */ other?: Subject; otherH?: number; side?: number; /* yaw around the subject, rad (0 = camera in front, +z) */ target?: V3; frac?: number; fov?: number; roll?: number; dist?: number };
 export type Shot = { t0: number; t1: number; kind: ShotKind; keys: Key[]; band: "low" | "high" };
 
 const at = (s: Subject, t: number): V3 => (typeof s === "function" ? s(t) : s);
@@ -18,8 +18,8 @@ const rad = (d: number) => (d * Math.PI) / 180;
 export const frameDist = (h: number, frac: number, fov: number) => h / (2 * Math.tan(rad(fov) / 2) * frac);
 const around = (c: V3, yaw: number, d: number, y: number): V3 => [c[0] + Math.sin(yaw) * d, y, c[2] + Math.cos(yaw) * d];
 
-export const FRAC: Record<ShotKind, number> = { wide: 0.4, medium: 0.52, closeUp: 0.9, lowAngle: 0.5, overShoulder: 0.55, tracking: 0.48, orbit: 0.5, crane: 0.45, pushIn: 0.5 };
-export const CAPTION_BAND: Record<ShotKind, "low" | "high"> = { wide: "low", medium: "low", closeUp: "low", lowAngle: "high", overShoulder: "low", tracking: "low", orbit: "low", crane: "low", pushIn: "low" };
+export const FRAC: Record<ShotKind, number> = { wide: 0.4, medium: 0.52, closeUp: 0.9, lowAngle: 0.5, overShoulder: 0.55, tracking: 0.48, orbit: 0.5, crane: 0.45, pushIn: 0.5, twoShot: 0.4 };
+export const CAPTION_BAND: Record<ShotKind, "low" | "high"> = { wide: "low", medium: "low", closeUp: "low", lowAngle: "high", overShoulder: "low", tracking: "low", orbit: "low", crane: "low", pushIn: "low", twoShot: "high" };
 
 export function shotPreset(kind: ShotKind, t0: number, t1: number, o: ShotOpts): Shot {
   const h = o.h ?? 3, fov = o.fov ?? (kind === "wide" ? 56 : kind === "closeUp" ? 38 : kind === "lowAngle" ? 58 : 48), frac = o.frac ?? FRAC[kind], yaw = o.side ?? 0.35;
@@ -37,6 +37,13 @@ export function shotPreset(kind: ShotKind, t0: number, t1: number, o: ShotOpts):
       case "tracking": pos = around(s, Math.PI / 2 * Math.sign(yaw || 1), d, cy + 0.2); look = [s[0], cy, s[2]]; break;
       case "orbit": pos = around(s, yaw + 0.7 * u - 0.35, d, cy + 0.4); look = [s[0], cy, s[2]]; break;
       case "crane": pos = around(s, yaw, d * (1 + 0.15 * u), s[1] + 0.8 + 4.5 * u); look = [s[0], cy - 0.2 * u, s[2]]; break;
+      case "twoShot": { // KEY MOMENT framing: Stickman AND the other object (landing rocket, creature...) both clearly readable
+        const ob = at(o.other ?? o.subject, t), oh = o.otherH ?? h, mx = (s[0] + ob[0]) / 2, mz = (s[2] + ob[2]) / 2;
+        const top = Math.max(s[1] + h, ob[1] + oh), bot = Math.min(s[1], ob[1]), sep = Math.hypot(ob[0] - s[0], ob[2] - s[2]);
+        const vfov = rad(fov), hfov = 2 * Math.atan(Math.tan(vfov / 2) * 9 / 16);
+        const dd = Math.max((top - bot) / (2 * Math.tan(vfov / 2) * 0.8), (sep + 1.5) / (2 * Math.tan(hfov / 2) * 0.85), h / (2 * Math.tan(vfov / 2) * 0.42) * 0.6);
+        const ang = Math.atan2(ob[0] - s[0], ob[2] - s[2]) + Math.PI / 2 + (yaw - 0.35) ; const cy = (top + bot) / 2;
+        pos = [mx + Math.sin(ang) * dd * (1.04 - 0.06 * u), cy + 0.3, mz + Math.cos(ang) * dd * (1.04 - 0.06 * u)]; look = [mx, cy, mz]; break; }
       case "pushIn": pos = around(s, yaw, d * (1.18 - 0.3 * u), cy + 0.3); look = [s[0], cy + 0.15 * u, s[2]]; f = fov - 4 * u; break;
     }
     keys.push({ t, pos, look, fov: f, roll: o.roll ?? (kind === "lowAngle" ? 0.03 * (1 - 2 * u) : 0) });
@@ -58,3 +65,6 @@ export const ShotCam: React.FC<{ t: number; shots: Shot[]; impacts?: [number, nu
 );
 // export the cut list + caption bands (handy for logging / docs)
 export const cutList = (shots: Shot[]) => shots.map((s) => ({ t0: s.t0, t1: s.t1, kind: s.kind, band: s.band }));
+
+/* key story moment (landing, arrival, reveal): a twoShot that keeps both readable — Stickman >= ~25 % tall and the object fully in frame */
+export const keyMoment = (t0: number, t1: number, hero: Subject, other: Subject, otherH: number, side = 0.35) => shotPreset("twoShot", t0, t1, { subject: hero, other, otherH, side });

@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
-import { QC } from "../kit/qc";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
@@ -57,7 +56,7 @@ export const Billboard: React.FC<{ p: [number, number, number]; h: number; draw:
   draw(cv.getContext("2d")!, W, H); tex.needsUpdate = true;
   const ref = React.useRef<THREE.Group>(null);
   React.useLayoutEffect(() => { if (ref.current) ref.current.rotation.y = Math.atan2(camera.position.x - p[0], camera.position.z - p[2]); });
-  return <group ref={ref} position={[p[0], p[1] + h * 0.483, p[2]]}><mesh><planeGeometry args={[h * W / H, h]} /><meshBasicMaterial map={tex} transparent alphaTest={0.02} fog={!QC} toneMapped={!QC} /></mesh></group>;
+  return <group ref={ref} position={[p[0], p[1] + h * 0.483, p[2]]}><mesh><planeGeometry args={[h * W / H, h]} /><meshBasicMaterial map={tex} transparent alphaTest={0.02} fog={false} toneMapped={false} /></mesh></group>;
 };
 
 // soft contact shadow on the floor

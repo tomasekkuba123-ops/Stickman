@@ -4,6 +4,8 @@ Goal: the user gives ONLY a script + a voiceover. You (Claude) design, build, ch
 
 ## 00. SERIES STANDARD (v12+) — READ FIRST, OVERRIDES EVERYTHING BELOW WHERE THEY DIFFER
 - **Mandatory rules:** `STYLE_RULES.md` (10 series quality rules) + `WORLD_RULES.md` (3D world rules). Every episode must follow both and must be better than the last.
+- **QC GATE after EVERY render:** `python3 tools/qc_check.py <video.mp4> --duration <target>` must print PASS before ANYTHING is sent to the user (previews included when they are videos). On FAIL fix the failing scenes and re-render them (`final.sh --redo a-b`). Every delivery includes `qc/report.txt` + `qc/contact_sheet.png`.
+- **ENGINE_CHANGELOG.md:** after every episode add Learned / Changed, and build the fix into the engine (kit/), not just the episode.
 - **Format for the channel:** 1080x1920, 30 fps, exact length 60 s or 100 s (voice is fitted with pauses, never trimmed). No external images.
 - **Default character:** rig v2 Stickman (`<Stickman>` in `engine/src/kit/character.tsx`) and the baby dragon (`<Dragon>`). Never the old puppet.
 - **Build with the ENGINE KIT, not from scratch** (`import { ... } from "../kit"`, guide: `ENGINE.md`):

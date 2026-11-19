@@ -101,6 +101,20 @@ export function rigAt(name: ActionName, t: number, t0 = 0, o: ActOpts & { face?:
   return { rig, dx: a.dx ?? 0, lift: a.lift ?? 0 };
 }
 
+/* ---------------- hero painter: rig + rim light + ground shade, HEAD KEPT WHITE (grading never tints his face) ---------------- */
+let clean: HTMLCanvasElement | null = null;
+export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig: Rig, rim: string, shade: string, rimK: number) {
+  const out = drawStickman(c, W, H, rig);
+  if (!clean || clean.width !== W || clean.height !== H) { clean = document.createElement("canvas"); clean.width = W; clean.height = H; }
+  const cc = clean.getContext("2d")!; cc.clearRect(0, 0, W, H); cc.drawImage(c.canvas, 0, 0);
+  c.save(); c.globalCompositeOperation = "source-atop";
+  const g = c.createLinearGradient(W * 0.6, 0, W * 0.95, 0); g.addColorStop(0, `rgba(${rim},0)`); g.addColorStop(1, `rgba(${rim},${rimK})`); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const g2 = c.createLinearGradient(0, H * 0.7, 0, H); g2.addColorStop(0, `rgba(${shade},0)`); g2.addColorStop(1, `rgba(${shade},0.2)`); c.fillStyle = g2; c.fillRect(0, 0, W, H); c.restore();
+  // restore the head (face, eyes, hair) from the untinted copy
+  c.save(); c.beginPath(); c.arc(out.head[0], out.head[1], out.headR * 1.03, 0, Math.PI * 2); c.clip(); c.clearRect(0, 0, W, H); c.drawImage(clean, 0, 0); c.restore();
+  return out;
+}
+
 /* ---------------- Stickman component ---------------- */
 export type Prop2D = "pencil" | "chalk" | "pencilUp" | null;
 export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; speed?: number; dur?: number;
@@ -112,10 +126,7 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
   return (<>
     {shadow ? <Shadow p={[x, gy, p[2]]} r={h * 0.3 / (1 + r.lift * k * 0.5)} o={0.5 / (1 + r.lift * k * 0.6)} /> : null}
     <Billboard p={[x, y, p[2]]} h={h} res={640} aspect={1.5} draw={(c, W, H) => {
-      const out = drawStickman(c, W, H, r.rig);
-      c.save(); c.globalCompositeOperation = "source-atop";
-      const g = c.createLinearGradient(W * 0.6, 0, W * 0.95, 0); g.addColorStop(0, `rgba(${rimC},0)`); g.addColorStop(1, `rgba(${rimC},${look.rimK})`); c.fillStyle = g; c.fillRect(0, 0, W, H);
-      const g2 = c.createLinearGradient(0, H * 0.7, 0, H); g2.addColorStop(0, `rgba(${look.shade},0)`); g2.addColorStop(1, `rgba(${look.shade},0.2)`); c.fillStyle = g2; c.fillRect(0, 0, W, H); c.restore();
+      const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK);
       if (prop === "pencil" || prop === "chalk" || prop === "pencilUp") { const L = H * 0.13, a = prop === "pencilUp" ? Math.PI + 0.3 : 0.5, bx = Math.sin(a), by = -Math.cos(a); drawPencil(c, out.gloveR[0] - bx * L * 0.42, out.gloveR[1] - by * L * 0.42, L, a, prop === "chalk" ? 0.6 : 0); }
       if (extra) extra(c, out, W, H);
       if (QC) maskify(c, out.head, out.headR, W, H);

@@ -1,0 +1,208 @@
+{
+ "A_duration": {
+  "frames": 3000,
+  "expected": 3000,
+  "duration": 100.0,
+  "size": "1080x1920",
+  "fps": "30/1"
+ },
+ "B_visible": {
+  "percent": 95.3,
+  "gaps": [
+   [
+    0.0,
+    0.17
+   ],
+   [
+    10.0,
+    10.17
+   ],
+   [
+    19.33,
+    19.5
+   ],
+   [
+    26.0,
+    26.17
+   ],
+   [
+    37.67,
+    38.83
+   ],
+   [
+    44.33,
+    44.5
+   ],
+   [
+    54.83,
+    55.0
+   ],
+   [
+    68.5,
+    68.67
+   ],
+   [
+    79.67,
+    79.83
+   ],
+   [
+    81.83,
+    82.0
+   ],
+   [
+    83.5,
+    85.5
+   ]
+  ]
+ },
+ "C_size": {
+  "big_enough": 58.2,
+  "median_height": 0.396,
+  "in_40_60_band": 44.2,
+  "fully_in_frame": 62.4,
+  "too_small_ranges": [
+   [
+    2.5,
+    3.67
+   ],
+   [
+    11.33,
+    14.17
+   ],
+   [
+    15.83,
+    17.0
+   ],
+   [
+    21.0,
+    22.17
+   ],
+   [
+    22.67,
+    26.0
+   ],
+   [
+    26.17,
+    28.33
+   ],
+   [
+    32.5,
+    34.33
+   ],
+   [
+    46.0,
+    49.83
+   ],
+   [
+    76.5,
+    78.33
+   ],
+   [
+    82.0,
+    83.5
+   ]
+  ],
+  "too_big_ranges": []
+ },
+ "H_face_white": {
+  "white_percent": 94.5,
+  "tinted_at": [
+   [
+    21.5,
+    22.0
+   ],
+   [
+    47.33,
+    48.0
+   ],
+   [
+    69.67,
+    70.0
+   ],
+   [
+    86.0,
+    86.33
+   ]
+  ]
+ },
+ "D_motion": {
+  "cuts": 114,
+  "static_over_3s": [],
+  "longest_shot_s": 4.3,
+  "mean_shot_s": 0.87
+ },
+ "F_audio": {
+  "lufs": -14.0,
+  "true_peak": -1.1
+ },
+ "G_contact_sheet": "/home/user/Stickman/pack/Stick3D-Pack/99-exports/ep03r/qc/contact_sheet.png",
+ "fix_ranges": [
+  [
+   2.5,
+   3.67
+  ],
+  [
+   11.33,
+   14.17
+  ],
+  [
+   15.83,
+   17.0
+  ],
+  [
+   21.0,
+   22.17
+  ],
+  [
+   22.67,
+   26.0
+  ],
+  [
+   26.17,
+   28.33
+  ],
+  [
+   32.5,
+   34.33
+  ],
+  [
+   46.0,
+   49.83
+  ],
+  [
+   76.5,
+   78.33
+  ],
+  [
+   82.0,
+   83.5
+  ],
+  [
+   83.5,
+   85.5
+  ]
+ ],
+ "redo_commands": [
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 2-4",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 11-15",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 15-17",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 21-23",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 22-26",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 26-29",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 32-35",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 46-50",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 76-79",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 82-84",
+  "pipeline/final.sh <Id> <frames> <outdir> <mix.wav> --redo 83-86"
+ ],
+ "result": "FAIL",
+ "fails": [
+  "B: off screen ~2 s or more at [(83.5, 85.5)]",
+  "C: Stickman big enough (>= 38 % of frame height) only 58 % of the time (need >= 75 %)",
+  "C: Stickman 40-60 % tall only 44 % of the time (need >= 50 %); too small at [(2.5, 3.67), (11.33, 14.17), (15.83, 17.0), (21.0, 22.17), (22.67, 26.0), (26.17, 28.33), (32.5, 34.33), (46.0, 49.83), (76.5, 78.33), (82.0, 83.5)], too big at []"
+ ],
+ "warnings": [
+  "C: fully inside the frame only 62 % of the time",
+  "E: no captions.json given \u2014 caption/face check skipped"
+ ]
+}
