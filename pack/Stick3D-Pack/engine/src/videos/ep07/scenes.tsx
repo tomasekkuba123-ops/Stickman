@@ -27,6 +27,15 @@ const towardCam = (p: V3, cam: V3, d: number): V3 => { const dx = cam[0] - p[0],
 // one action per beat: [start time, action, face?]
 const beats = (t: number, list: [number, ActionName, Face?][]) => { let b = list[0]; for (const x of list) if (t >= x[0]) b = x; return { action: b[1], t0: b[0], face: b[2] }; };
 
+
+/* FOREGROUND HERO framing (QC rule: Stickman >= 38 % of frame height): camera ~6 units behind/beside Stickman, looking past him at the target */
+const fg = (hero: V3, target: V3, t0: number, t1: number, side = 0.5, dist = 6.0, fov = 56, k = 0.38, lift = 1.7): Key[] => {
+  const dx = hero[0] - target[0], dz = hero[2] - target[2], n = Math.hypot(dx, dz) || 1, ux = dx / n, uz = dz / n, px = -uz, pz = ux;
+  const head: V3 = [hero[0], hero[1] + 1.8, hero[2]], look = lerp3(head, target, k);
+  const cam = (d: number, sd: number): V3 => [hero[0] + ux * d + px * sd * d, hero[1] + lift, hero[2] + uz * d + pz * sd * d];
+  return [K(t0, cam(dist, side), look, fov), K(t1, cam(dist * 0.92, side * 0.85), look, fov - 2)];
+};
+
 /* paths for draw-it-real */
 const ELLIPSE = (cx: number, cy: number, rx: number, ry: number): Path2 => Array.from({ length: 41 }, (_, i) => [cx + Math.cos((i / 40) * TAU) * rx, cy + Math.sin((i / 40) * TAU) * ry] as [number, number]);
 const PANCAKE_PATH: Path2[] = [ELLIPSE(0.5, 0.42, 0.44, 0.16), [[0.06, 0.42], [0.06, 0.62], [0.2, 0.74], [0.5, 0.78], [0.8, 0.74], [0.94, 0.62], [0.94, 0.42]], [[0.4, 0.3], [0.6, 0.3], [0.6, 0.38], [0.4, 0.38], [0.4, 0.3]]];
@@ -88,7 +97,7 @@ export const S2 = ({ t }: Ctx) => (<>
 </>);
 
 /* ===================== S3 7.9–11.9 this morning: the tail out of the window ===================== */
-const K3: [number, Key[]][] = [[7.9, [K(7.9, [13.5, 1.8, 8.5], [4.6, 2.2, -1.6], 52), K(10.0, [12.6, 1.7, 7.4], [4.6, 2.1, -1.4], 50)]], [10.0, [K(10.0, [9.6, 1.6, 7.4], [5.2, 1.8, 0.2], 50), K(12.0, [9.3, 1.6, 6.8], [5.2, 1.8, 0.2], 48)]]];
+const K3: [number, Key[]][] = [[7.9, [K(7.9, [13.5, 1.8, 8.5], [4.6, 2.2, -1.6], 52), K(10.0, [12.6, 1.7, 7.4], [4.6, 2.1, -1.4], 50)]], [10.0, [K(10.0, [8.2, 1.6, 8.6], [5.6, 1.9, 1.0], 56), K(12.0, [8.0, 1.6, 8.0], [5.6, 1.9, 1.0], 54)]]];
 export const S3 = ({ t }: Ctx) => { const b = beats(t, [[7.9, "walk", "smile"], [9.0, "think"], [10.1, "freezeShock", "surprised"]]);
   return (<World preset="morning" t={t}>
     <Cam t={t} keys={shot(t, K3)} />
@@ -112,7 +121,7 @@ export const S4 = ({ t }: Ctx) => { const door = eio(seg(t, 12.5, 13.3)), open =
 const DP: V3 = [5.2, 0, 1.0], DH = 11, TB: V3 = [-2.4, 0, 5.0], HG: V3 = [-3.7, 0, 5.8];
 
 /* ===================== S5 16.6–20.1 Giant. Happy. Hungry. ===================== */
-const K5: [number, Key[]][] = [[16.6, [K(16.6, [-2.2, 0.6, 14.5], [3.6, 5.4, 0], 60), K(17.7, [-2.0, 0.7, 14.0], [3.6, 5.8, 0], 60)]], [17.7, [K(17.7, [-2.4, 2.4, 16.5], [2.4, 4.4, 2.5], 56), K(18.75, [-2.2, 2.5, 16.0], [2.4, 4.6, 2.5], 56)]], [18.75, [K(18.75, [-1.8, 1.8, 12.6], [0.8, 2.6, 6.0], 52), K(20.2, [-1.7, 1.8, 12.0], [0.8, 2.7, 6.0], 50)]]];
+const K5: [number, Key[]][] = [[16.6, [K(16.6, [-2.2, 0.6, 14.5], [3.6, 5.4, 0], 60), K(17.7, [-2.0, 0.7, 14.0], [3.6, 5.8, 0], 60)]], [17.7, fg([0.2, 0, 7.4], [5.2, 6.0, 1.0], 17.7, 18.75, 0.5, 6.2, 60, 0.45)], [18.75, [K(18.75, [-1.8, 1.8, 12.6], [0.8, 2.6, 6.0], 52), K(20.2, [-1.7, 1.8, 12.0], [0.8, 2.7, 6.0], 50)]]];
 export const S5 = ({ t }: Ctx) => { const mood: DragonPose["mood"] = t < 17.7 ? "wow" : t < 18.75 ? "happy" : "calm";
   const b = beats(t, [[16.6, "freezeShock", "surprised"], [17.75, "laugh"], [18.8, "think"]]);
   return (<World preset="morning" t={t}>
@@ -123,7 +132,7 @@ export const S5 = ({ t }: Ctx) => { const mood: DragonPose["mood"] = t < 17.7 ? 
   </World>); };
 
 /* ===================== S6 20.1–27.3 breakfast: pancake drawn line by line -> real + fluffy -> one gulp ===================== */
-const K6: [number, Key[]][] = [[20.1, [K(20.1, [-1.4, 2.4, 14.4], [-2.4, 3.0, 4.5], 56), K(21.8, [-1.6, 2.3, 13.8], [-2.4, 2.9, 4.5], 56)]], [21.8, [K(21.8, [-1.9, 2.3, 10.8], [-3.0, 1.4, 5.2], 48), K(24.3, [-2.1, 2.2, 10.0], [-3.0, 1.35, 5.2], 46)]], [24.3, [K(24.3, [-6.5, 2.2, 15.0], [0.8, 4.4, 2.0], 56), K(27.4, [-6.0, 2.4, 14.0], [0.8, 4.6, 2.0], 56)]]];
+const K6: [number, Key[]][] = [[20.1, fg(HG, [5.2, 6.0, 1.0], 20.1, 21.8, 0.55, 6.2, 60, 0.42)], [21.8, [K(21.8, [-1.9, 2.3, 10.8], [-3.0, 1.4, 5.2], 48), K(24.3, [-2.1, 2.2, 10.0], [-3.0, 1.35, 5.2], 46)]], [24.3, fg(HG, [4.4, 7.2, 1.5], 24.3, 27.3, -0.5, 6.4, 62, 0.45)]];
 export const S6 = ({ t }: Ctx) => { const keys = shot(t, K6), cam = camAt(t, keys).pos as V3, M = dragonPoint(DP, DH, DRAGON_PTS.mouth, cam);
   const plate: V3 = [TB[0], 1.07, TB[2]], g = gulpAt(t, 24.75, 25.5, [plate[0], plate[1] + 0.3, plate[2]], M, { arc: 1.8, spin: 3 });
   const b = beats(t, [[20.1, "idle", "smile"], [20.6, "think"], [21.7, "drawInAir"], [23.5, "thumbsUp", "grin"], [24.9, "freezeShock", "surprised"], [26.0, "facepalm"]]);
@@ -139,7 +148,7 @@ export const S6 = ({ t }: Ctx) => { const keys = shot(t, K6), cam = camAt(t, key
 
 /* ===================== S7 27.3–31.2 two hundred pancakes — gulp ===================== */
 const TW: V3 = [-0.9, 0, 4.6];
-const K7: [number, Key[]][] = [[27.3, [K(27.3, [0.6, 0.8, 12.6], [-1.7, 3.4, 4.4], 58), K(29.4, [0.8, 0.9, 12.0], [-1.7, 3.8, 4.4], 60)]], [29.4, [K(29.4, [-6.0, 2.2, 15.5], [0.8, 4.8, 2.2], 58), K(31.3, [-5.6, 2.4, 14.6], [0.8, 5.0, 2.2], 58)]]];
+const K7: [number, Key[]][] = [[27.3, [K(27.3, [-1.0, 1.4, 11.6], [-1.6, 3.0, 4.8], 60), K(29.4, [-1.1, 1.5, 11.0], [-1.6, 3.3, 4.8], 60)]], [29.4, fg([-2.6, 0, 5.4], [4.4, 7.2, 1.5], 29.4, 31.2, 0.5, 6.4, 62, 0.45)]];
 export const S7 = ({ t }: Ctx) => { const keys = shot(t, K7), cam = camAt(t, keys).pos as V3, M = dragonPoint(DP, DH, DRAGON_PTS.mouth, cam);
   const g = gulpAt(t, 29.45, 30.3, [TW[0], 3.0, TW[2]], M, { arc: 1.0, spin: 1.2 });
   const b = beats(t, [[27.3, "drawInAir"], [28.9, "celebrate"], [29.5, "freezeShock", "surprised"], [30.4, "scaredShake"]]);
@@ -154,7 +163,7 @@ export const S7 = ({ t }: Ctx) => { const keys = shot(t, K7), cam = camAt(t, key
 
 /* ===================== S8 31.2–34.9 a pancake the size of a house ===================== */
 const BP: V3 = [-9.0, 0, 3.0];
-const K8: [number, Key[]][] = [[31.2, [K(31.2, [-2.0, 1.6, 13.5], [-6.2, 2.4, 3], 58), K(33.2, [-2.6, 1.8, 13.0], [-6.4, 2.6, 3], 58)]], [33.2, [K(33.2, [-1.4, 1.2, 14.5], [-6.2, 2.8, 3], 60), K(35.0, [-1.8, 1.3, 14.0], [-6.2, 3.0, 3], 60)]]];
+const K8: [number, Key[]][] = [[31.2, fg([-4.6, 0, 6.6], [-9.0, 1.6, 3.0], 31.2, 33.2, -0.6, 6.0, 60, 0.4)], [33.2, fg([-4.6, 0, 6.6], [-9.0, 1.6, 3.0], 33.2, 35.0, 0.7, 6.0, 60, 0.4)]];
 export const S8 = ({ t }: Ctx) => { const b = beats(t, [[31.2, "drawInAir"], [32.9, "freezeShock", "surprised"], [33.6, "laugh"]]);
   return (<World preset="morning" t={t}>
     <Cam t={t} keys={shot(t, K8)} impacts={[[32.75, 0.025]]} />
@@ -167,7 +176,7 @@ export const S8 = ({ t }: Ctx) => { const b = beats(t, [[31.2, "drawInAir"], [32
 
 /* ===================== S9 34.9–39.2 dragon burp — the roof catches fire ===================== */
 const ROOF: V3 = [-1.0, 4.7, -1.0];
-const K9: [number, Key[]][] = [[34.9, [K(34.9, [-1.6, 2.4, 18.0], [0.6, 4.6, 0.5], 62), K(37.2, [-1.4, 2.6, 17.2], [0.4, 4.8, 0.5], 62)]], [37.2, [K(37.2, [-4.2, 1.8, 14.6], [-1.4, 3.6, 2.0], 58), K(39.3, [-4.0, 1.8, 14.0], [-1.4, 3.8, 2.0], 58)]]];
+const K9: [number, Key[]][] = [[34.9, fg([-2.0, 0, 8.2], [1.6, 5.4, 0.0], 34.9, 37.2, 0.5, 6.4, 62, 0.45)], [37.2, fg([-2.0, 0, 8.2], [-1.0, 5.0, -1.0], 37.2, 39.2, -0.5, 6.0, 60, 0.4)]];
 export const S9 = ({ t }: Ctx) => { const keys = shot(t, K9), cam = camAt(t, keys).pos as V3, M = dragonPoint(DP, DH, DRAGON_PTS.mouth, cam);
   const burp = seg(t, 35.4, 35.65) * (1 - seg(t, 36.25, 36.6)), fire = seg(t, 35.9, 36.8);
   const b = beats(t, [[34.9, "laugh"], [35.6, "freezeShock", "surprised"], [36.4, "panic"]]);
@@ -182,7 +191,7 @@ export const S9 = ({ t }: Ctx) => { const keys = shot(t, K9), cam = camAt(t, key
 
 /* ===================== S10 39.2–46.4 he draws a rain cloud — it rains on the roof — Sssss ===================== */
 const CL: V3 = [-1.0, 8.4, -1.0];
-const K10: [number, Key[]][] = [[39.2, [K(39.2, [-1.0, 2.6, 10.6], [-2.6, 2.2, 6], 44), K(40.6, [-1.3, 2.6, 10.0], [-2.6, 2.3, 6], 42)]], [40.6, [K(40.6, [-5.2, 1.2, 14.5], [-1.4, 5.4, -0.5], 60), K(43.0, [-5.0, 1.3, 14.0], [-1.4, 5.8, -0.5], 60)]], [43.0, [K(43.0, [-3.2, 1.4, 11.8], [-1.2, 4.6, -0.8], 58), K(46.5, [-3.0, 1.5, 11.0], [-1.2, 4.8, -0.8], 58)]]];
+const K10: [number, Key[]][] = [[39.2, [K(39.2, [-1.0, 2.6, 10.6], [-2.6, 2.2, 6], 44), K(40.6, [-1.3, 2.6, 10.0], [-2.6, 2.3, 6], 42)]], [40.6, fg([-3.4, 0, 6.8], [-1.0, 6.4, -1.0], 40.6, 43.0, -0.4, 6.0, 62, 0.42)], [43.0, [K(43.0, [-3.2, 1.4, 11.8], [-1.2, 4.6, -0.8], 58), K(46.5, [-3.0, 1.5, 11.0], [-1.2, 4.8, -0.8], 58)]]];
 export const S10 = ({ t }: Ctx) => { const rain = seg(t, 42.5, 42.9) * (1 - seg(t, 45.6, 46.3)), fire = 1 - seg(t, 43.0, 45.4), steam = seg(t, 43.2, 43.6) * (1 - seg(t, 46.0, 46.5));
   const b = beats(t, [[39.2, "point", "determined"], [40.7, "drawInAir"], [42.5, "celebrate"], [43.6, "scaredShake"], [45.5, "laugh"]]);
   return (<World preset="morning" t={t}>
@@ -199,7 +208,7 @@ export const S10 = ({ t }: Ctx) => { const rain = seg(t, 42.5, 42.9) * (1 - seg(
   </World>); };
 
 /* ===================== S11 46.4–53.9 sad dragon with a tear — Stickman climbs onto its nose and hugs it ===================== */
-const K11: [number, Key[]][] = [[46.4, [K(46.4, [-0.8, 3.0, 15.5], [3.6, 5.2, 2.5], 56), K(48.9, [-0.5, 3.1, 14.8], [3.7, 5.4, 2.5], 54)]], [48.9, [K(48.9, [-0.8, 2.4, 12.4], [2.6, 3.0, 4.0], 52), K(51.9, [-0.4, 4.6, 14.2], [3.6, 6.2, 2.5], 56)]], [51.9, [K(51.9, [2.6, 6.4, 10.4], [5.8, 7.4, 1.4], 46), K(53.9, [2.8, 6.6, 9.6], [5.8, 7.5, 1.4], 42)]]];
+const K11: [number, Key[]][] = [[46.4, fg([1.8, 0, 6.0], [5.6, 7.2, 1.0], 46.4, 48.9, -0.4, 6.2, 60, 0.45)], [48.9, [K(48.9, [-0.8, 2.4, 12.4], [2.6, 3.0, 4.0], 52), K(51.9, [-0.4, 4.6, 14.2], [3.6, 6.2, 2.5], 56)]], [51.9, [K(51.9, [2.6, 6.4, 10.4], [5.8, 7.4, 1.4], 46), K(53.9, [2.8, 6.6, 9.6], [5.8, 7.5, 1.4], 42)]]];
 export const S11 = ({ t }: Ctx) => { const keys = shot(t, K11), cam = camAt(t, keys).pos as V3, snout = towardCam(dragonPoint(DP, DH, DRAGON_PTS.snout, cam), cam, 0.4);
   const climb = eio(seg(t, 50.7, 51.9)), ground: V3 = [1.8, 0, 6.0]; const P = lerp3(ground, [snout[0], snout[1] - 0.35, snout[2]], climb);
   const b = beats(t, [[46.4, "idle", "worried"], [49.1, "think"], [50.3, "climb"], [51.95, "land"], [52.3, "hug"]]);
@@ -212,7 +221,8 @@ export const S11 = ({ t }: Ctx) => { const keys = shot(t, K11), cam = camAt(t, k
   </World>); };
 
 /* ===================== S12 53.9–60.9 smile, wings spread — he is still on its nose ===================== */
-const K12: [number, Key[]][] = [[53.9, [K(53.9, [1.8, 5.6, 12.4], [5.4, 6.8, 1.2], 50), K(55.3, [1.6, 5.4, 13.0], [5.4, 6.8, 1.2], 52)]], [55.3, [K(55.3, [-3.0, 2.2, 19.0], [4.6, 6.2, 1], 60), K(57.2, [-3.6, 2.2, 20.0], [4.6, 6.6, 1], 60)]], [57.2, [K(57.2, [3.2, 7.4, 10.0], [5.8, 8.0, 1.4], 44), K(61.0, [3.0, 7.2, 9.2], [5.8, 8.0, 1.4], 40)]]];
+const K12a = (): Key[] => flyCloseKeys([DP[0], 0, DP[2]], DH, [-2.4, 1.0, 6.2], 53.9, 55.3);
+const K12: [number, Key[]][] = [[53.9, K12a()], [55.3, [K(55.3, [-3.0, 2.2, 19.0], [4.6, 6.2, 1], 60), K(56.4, [-3.3, 2.2, 19.5], [4.6, 6.4, 1], 60)]], [56.4, [K(56.4, [3.2, 7.4, 10.0], [5.8, 8.0, 1.4], 44), K(61.0, [3.0, 7.2, 9.2], [5.8, 8.0, 1.4], 40)]]];
 export const S12 = ({ t }: Ctx) => { const keys = shot(t, K12), cam = camAt(t, keys).pos as V3, lift = eio(seg(t, 55.4, 57.0)) * 0.08;
   const snout = towardCam(dragonPoint(DP, DH, DRAGON_PTS.snout, cam, false, lift), cam, 0.4);
   const b = beats(t, [[53.9, "hug"], [54.6, "laugh"], [57.2, "freezeShock", "surprised"], [58.6, "scaredShake"]]);
@@ -234,9 +244,10 @@ const K13: [number, Key[]][] = [
   [68.8, [K(68.8, [1.8, 13.0, 6.0], [1.1, 12.8, 0], 40), K(70.5, [1.6, 13.0, 5.4], [1.1, 12.8, 0], 38)]],
   [70.5, [K(70.5, [-12, 9, 16], [0, 11, 0], 58), K(73.0, [-14, 10, 12], [0, 11, 0], 58)]],
 ];
-const flyClose = (t: number, base: V3, dh: number, off: V3, t0: number, t1: number): Key[] => { const guess = add(base, [3, 5, 8]), sn = dragonPoint(base, dh, DRAGON_PTS.snout, guess), lk = add(sn, [0, 1.3, 0]);
-  return [K(t0, add(sn, off), lk, 52), K(t1, add(sn, [off[0] * 0.9, off[1] * 0.95, off[2] * 0.9]), lk, 50)]; };
-export const S13 = ({ t }: Ctx) => { const keys = t >= 64.8 && t < 66.8 ? flyClose(t, [0, 20, 0], FH, [-2.6, 3.4, 6.6], 64.8, 66.8) : t >= 66.8 && t < 68.8 ? flyClose(t, [0, 7.5, 0], FH, [2.8, 3.2, 6.6], 66.8, 68.8) : t >= 70.5 ? flyClose(t, [0, 7.5, 0], FH, [-3.0, 2.6, 7.0], 70.5, 73.0) : shot(t, K13), cam = camAt(t, keys).pos as V3;
+function flyCloseKeys(base: V3, dh: number, off: V3, t0: number, t1: number): Key[] { return flyClose(0, base, dh, off, t0, t1); }
+function flyClose(t: number, base: V3, dh: number, off: V3, t0: number, t1: number): Key[] { void t; const guess = add(base, [3, 5, 8]), sn = dragonPoint(base, dh, DRAGON_PTS.snout, guess), lk = add(sn, [0, 1.3, 0]);
+  return [K(t0, add(sn, off), lk, 52), K(t1, add(sn, [off[0] * 0.9, off[1] * 0.95, off[2] * 0.9]), lk, 50)]; }
+export const S13 = ({ t }: Ctx) => { const keys = t >= 61.8 && t < 62.8 ? [...flyClose(t, [DP[0], 8.2, DP[2]], DH, [-2.6, 1.6, 7.4], 61.8, 62.8)] : t >= 62.8 && t < 64.8 ? flyClose(t, [0, 12, 0], FH, [2.6, 3.8, 6.4], 62.8, 64.8) : t >= 64.8 && t < 66.8 ? flyClose(t, [0, 20, 0], FH, [-2.6, 3.4, 6.6], 64.8, 66.8) : t >= 66.8 && t < 68.8 ? flyClose(t, [0, 7.5, 0], FH, [2.8, 3.2, 6.6], 66.8, 68.8) : t >= 70.5 ? flyClose(t, [0, 7.5, 0], FH, [-3.0, 2.6, 7.0], 70.5, 73.0) : shot(t, K13), cam = camAt(t, keys).pos as V3;
   const take = t < 62.8 ? eo(seg(t, 61.0, 62.8)) : 1, DPf: V3 = t < 62.8 ? [DP[0], take * 9, DP[2]] : t < 64.8 ? [0, 12, 0] : t < 66.8 ? [0, 20, 0] : [0, 7.5, 0];
   const dh = t < 62.8 ? DH : FH, snout = towardCam(dragonPoint(DPf, dh, DRAGON_PTS.snout, cam), cam, 0.4), scroll = (t - 62.8) * 9;
   return (<World preset={t < 62.8 ? "morning" : "sunset"} t={t} rays={t > 66.8 ? 0.12 : 0}>
@@ -252,7 +263,7 @@ export const S13 = ({ t }: Ctx) => { const keys = t >= 64.8 && t < 66.8 ? flyClo
 /* ===================== S14 72.9–80.9 tiny island: landing, curl up, yawn, shrink with sparkles ===================== */
 const ISL: V3 = [0, 0, 0], DL: V3 = [1.6, 1.0, -2.6];
 const sandY = (x: number, z: number) => Math.max(0, Math.sqrt(Math.max(0, 36 - x * x - z * z)) - 6 * 0.82);
-const K14: [number, Key[]][] = [[72.9, [K(72.9, [-9, 4, 13], [0.5, 4.5, -1], 56), K(75.6, [-8, 3.4, 12], [0.5, 3.6, -1], 56)]], [75.6, [K(75.6, [-2.2, 2.8, 9.6], [1.0, 3.6, -1.5], 52), K(78.0, [-2.0, 2.6, 9.0], [1.0, 3.4, -1.5], 50)]], [78.0, [K(78.0, [-1.8, 2.0, 7.4], [0.6, 1.6, -1.0], 48), K(81.0, [-1.6, 2.0, 6.8], [0.6, 1.6, -1.0], 46)]]];
+const K14: [number, Key[]][] = [[72.9, [K(72.9, [-5.6, 3.0, 9.0], [-0.4, 3.6, -0.5], 56), K(74.3, [-5.4, 2.9, 8.7], [-0.6, 3.0, 0.0], 56)]], [74.3, [K(74.3, [-4.4, 2.2, 8.2], [-1.2, 1.6, 2.0], 54), K(75.6, [-4.2, 2.2, 7.8], [-1.2, 1.6, 2.0], 52)]], [75.6, [K(75.6, [-2.2, 2.8, 9.6], [1.0, 3.6, -1.5], 52), K(78.0, [-2.0, 2.6, 9.0], [1.0, 3.4, -1.5], 50)]], [78.0, [K(78.0, [-1.8, 2.0, 7.4], [0.6, 1.6, -1.0], 48), K(81.0, [-1.6, 2.0, 6.8], [0.6, 1.6, -1.0], 46)]]];
 export const S14 = ({ t }: Ctx) => { const keys = shot(t, K14), cam = camAt(t, keys).pos as V3;
   const land = eo(seg(t, 73.1, 74.3)), shrink = eio(seg(t, 78.1, 78.95)), dh = 9 - 8.25 * shrink;
   const dp: V3 = [DL[0] + (1 - land) * 7, DL[1] + (1 - land) * 9, DL[2] - (1 - land) * 4];

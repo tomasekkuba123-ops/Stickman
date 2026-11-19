@@ -24,8 +24,10 @@ def scan(v):
         f = np.frombuffer(b, np.uint8).reshape(H, W, 3)
         hsv = cv2.cvtColor(f, cv2.COLOR_RGB2HSV)
         h, s, v_ = hsv[..., 0].astype(int), hsv[..., 1].astype(int), hsv[..., 2].astype(int)
-        body = (np.abs(h - 150) <= 6) & (s > 200) & (v_ > 50)
-        face = (np.abs(h - 60) <= 6) & (s > 220) & (v_ > 90)
+        r, g, b_ = f[..., 0].astype(int), f[..., 1].astype(int), f[..., 2].astype(int)
+        # exact key colours (magenta #ff00ff body, green #00ff00 face) with a tight RGB tolerance — scene greens/pinks never match
+        body = (r > 205) & (b_ > 205) & (g < 60)
+        face = (g > 215) & (r < 50) & (b_ < 50)
         allm = (body | face).astype(np.uint8)
         # keep only the hero blob: the connected component(s) touching the green face (else the largest blob)
         nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.morphologyEx(allm, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8)), 8)
@@ -33,6 +35,9 @@ def scan(v):
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
         allm = np.isin(lab, list(keep)) if keep else np.zeros_like(face)
         face = face & allm
+        if face.any():  # keep only the largest face blob (the hero's head)
+            nf, fl, fs, _ = cv2.connectedComponentsWithStats(face.astype(np.uint8), 8)
+            if nf > 2: face = fl == (int(np.argmax(fs[1:, 4])) + 1)
         rec = {"t": round(i / fps, 3), "vis": False, "body": None, "face": None, "hf": 0.0, "cut": False}
         if allm.sum() > W * H * 0.0015:
             ys, xs = np.nonzero(allm)
