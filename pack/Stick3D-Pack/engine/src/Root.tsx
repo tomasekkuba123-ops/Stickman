@@ -9,7 +9,9 @@ import { Ep04 } from "./videos/Ep04";
 import { Ep05 } from "./videos/Ep05";
 import { Ep06 } from "./videos/Ep06";
 import { Ep03R } from "./videos/Ep03R";
-// DURATION: set durationInFrames = ceil(voiceover_seconds * 30). Use --props or edit per video.
+import { EpisodeCompositions } from "./kit/episode";
+import { Showreel } from "./videos/Showreel";
+// NEW EPISODES: register with <EpisodeCompositions id="EpXX" component={EpXX} seconds={60|100} /> (adds EpXXAnimatic for approval + QC mask).
 export const Root: React.FC = () => <>
   <Composition id="Main" component={Main} width={720} height={1280} fps={30} durationInFrames={60} />
   <Composition id="NvidiaV4" component={NvidiaV4} width={720} height={1280} fps={30} durationInFrames={661} />
@@ -18,5 +20,6 @@ export const Root: React.FC = () => <>
   <Composition id="Ep04" component={Ep04} width={1080} height={1920} fps={30} durationInFrames={3000} />
   <Composition id="Ep05" component={Ep05} width={1080} height={1920} fps={30} durationInFrames={3000} />
   <Composition id="Ep06" component={Ep06} width={1080} height={1920} fps={30} durationInFrames={1800} />
-  <Composition id="Ep03R" component={Ep03R} width={1080} height={1920} fps={30} durationInFrames={3000} />
+  <EpisodeCompositions id="Ep03R" component={Ep03R} seconds={100} />
+  <Composition id="Showreel" component={Showreel} width={1080} height={1920} fps={30} durationInFrames={300} />
 </>;

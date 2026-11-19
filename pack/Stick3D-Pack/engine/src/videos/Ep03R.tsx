@@ -2,6 +2,7 @@
 import React from "react";
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame, interpolate, Easing } from "remotion";
 import { Grade } from "../style/kit";
+import { QC } from "../kit/qc";
 import { Scene, FPS, clamp } from "./ep02/common";
 import { S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22 } from "./ep03r/scenes";
 import WORDS from "../../public/ep03/words.json";
@@ -21,7 +22,7 @@ const groups: G[] = (() => { const g: G[] = []; let cur: number[] = [];
 // caption band per time window: "low" (y 1450) or "high" (y 230)
 const HIGH: [number, number][] = [[4.95, 14.25], [19.5, 23.4], [44.4, 45.95], [49.9, 55.0], [58.2, 68.6], [76.5, 78.2], [85.3, 89.4]];
 const Captions: React.FC<{ until: number }> = ({ until }) => {
-  const f = useCurrentFrame(), t = f / FPS; if (t >= until) return null;
+  const f = useCurrentFrame(), t = f / FPS; if (QC || t >= until) return null;
   const idx = groups.findIndex((g, i) => t >= g.a - 0.02 && t < (groups[i + 1]?.a ?? 999) - 0.02); if (idx < 0) return null; const g = groups[idx];
   if (t > g.e + 0.7) return null;
   const sc = interpolate(t - g.a, [0, 0.12], [0.75, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.6)) });
@@ -30,10 +31,10 @@ const Captions: React.FC<{ until: number }> = ({ until }) => {
     {g.words.map((w, i) => <span key={i} style={{ color: KEY.has(w) ? "#ffd23a" : "#fff" }}>{(i ? " " : "") + w}</span>)}</div>;
 };
 // hook word on frame 1
-const Hook: React.FC<{ t: number }> = ({ t }) => { if (t > 2.4) return null; const k = 1 - clamp((t - 2.0) / 0.4), s = 1 + 0.04 * Math.sin(t * 8);
+const Hook: React.FC<{ t: number }> = ({ t }) => { if (QC || t > 2.4) return null; const k = 1 - clamp((t - 2.0) / 0.4), s = 1 + 0.04 * Math.sin(t * 8);
   return <div style={{ position: "absolute", top: 170, left: 0, right: 0, textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: 210, color: "#ffd23a", WebkitTextStroke: "24px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${s}) rotate(-4deg)`, opacity: k, textShadow: "0 16px 0 rgba(0,0,0,.35)" }}>LIFTOFF!</div>; };
 const EndCard: React.FC<{ t: number }> = ({ t }) => {
-  if (t < 95.75) return null;
+  if (QC || t < 95.75) return null;
   const words = ["WHAT", "WOULD", "YOU", "DRAW", "TO", "GET", "OUT?"], wt = [95.74, 96.19, 96.43, 96.53, 96.78, 96.85, 97.03];
   const card = interpolate(t, [97.5, 97.85], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(1.8)) });
   return (<AbsoluteFill style={{ pointerEvents: "none" }}>

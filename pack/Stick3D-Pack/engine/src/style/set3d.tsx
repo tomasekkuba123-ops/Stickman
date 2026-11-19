@@ -8,6 +8,7 @@ import { Extrude, Globe } from "./extra";
 import { SGlow } from "./sky";
 import { drawStickman, Rig, RigOut } from "./stickman";
 import { drawPencil, sketchRocket, rnd } from "./props2d";
+import { QC, maskify } from "../kit/qc";
 
 const TAU = Math.PI * 2;
 const ramp = (() => { const d = new Uint8Array([110, 185, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
@@ -25,6 +26,7 @@ export const HeroV2: React.FC<{ p: V3; h?: number; rig: Rig; rim?: string; extra
       const out = drawStickman(c, W, H, rig);
       if (rim) { c.save(); c.globalCompositeOperation = "source-atop"; const g = c.createLinearGradient(W * 0.6, 0, W * 0.95, 0); g.addColorStop(0, `rgba(${rim},0)`); g.addColorStop(1, `rgba(${rim},0.45)`); c.fillStyle = g; c.fillRect(0, 0, W, H); const g2 = c.createLinearGradient(0, H * 0.7, 0, H); g2.addColorStop(0, "rgba(20,10,40,0)"); g2.addColorStop(1, "rgba(20,10,40,0.2)"); c.fillStyle = g2; c.fillRect(0, 0, W, H); c.restore(); }
       if (extra) extra(c, out, W, H);
+      if (QC) maskify(c, out.head, out.headR, W, H);
     }} /></>
 );
 // world offset (relative to feet) of the glove midpoint for a rig drawn at height h (yaw-facing plane: x is camera-right)

@@ -17,7 +17,7 @@ export type Rig = {
   handL?: HandPose; handR?: HandPose; handRotL?: number; handRotR?: number;
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
-  backpack?: boolean; zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
+  backpack?: boolean; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
 };
 
 const INK = "#101018", RED = "#e2262c", RED_L = "#f2484a", RED_D = "#b51a22", RED_DD = "#8e121a";
@@ -149,7 +149,7 @@ function shoeFront(c: CanvasRenderingContext2D) {
 const HR = 172; const FK = HR / 150; // face scale
 function hair(c: CanvasRenderingContext2D, hx: number, hy: number, t: number, side: boolean) {
   // 3-4 thin curved strands from the crown
-  const sway = Math.sin(t * 0.18) * (0.04 + ZG * 0.22) + ZG * Math.sin(t * 0.07) * 0.1; const HL = 0.82 + ZG * 0.25;
+  const sway = Math.sin(t * 0.18) * (0.04 + ZG * 0.22) + ZG * Math.sin(t * 0.07) * 0.1 + DX * 0.006; const HL = 0.82 + ZG * 0.25;
   const strands: [number, number, number, number][] = side ? [[-20, 78, -0.55, -1], [6, 104, -0.15, 1], [26, 84, 0.25, 1], [-42, 56, -0.9, -1]] : [[-34, 80, -0.5, -1], [-6, 108, -0.12, 1], [22, 92, 0.32, 1], [40, 60, 0.7, 1]];
   for (const [dx, len, ang, bend] of strands) {
     const bx = hx + dx, by = hy - Math.sqrt(Math.max(0, HR * HR - dx * dx)) + 6, a = ang + sway;
@@ -210,7 +210,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
 type Geo = { hip: P; hipL: P; hipR: P; kneeL: P; kneeR: P; ankL: P; ankR: P; footL: number; footR: number; sh: P; shL: P; shR: P; elL: P; elR: P; wrL: P; wrR: P; head: P };
 export type RigOut = { gloveR: [number, number]; gloveL: [number, number]; head: [number, number]; headR: number; S: number };
 export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, r: Rig): RigOut {
-  ZG = r.zeroG ?? 0;
+  ZG = r.zeroG ?? 0; DX = r.drag?.[0] ?? 0; DY = r.drag?.[1] ?? 0;
   c.clearRect(0, 0, W, H); c.save();
   const S = (H * 0.955) / 1040; // 1000 units + hair headroom
   c.translate(W / 2, H * 0.985 - 1000 * S); c.scale(S, S);
@@ -340,14 +340,14 @@ function hoodCollar(c: CanvasRenderingContext2D, T: (p: P) => P) {
     const g = c.createLinearGradient(n[0], n[1] - 20, n[0], n[1] + 40); g.addColorStop(0, RED_L); g.addColorStop(1, RED); fillStroke(c, g, 7); }
   c.beginPath(); c.moveTo(n[0] - 10, n[1] + 8); c.quadraticCurveTo(n[0], n[1] + 46, n[0] + 10, n[1] + 8); c.closePath(); fillStroke(c, RED_DD, 5);
 }
-let ZG = 0;
+let ZG = 0, DX = 0, DY = 0;
 function strings(c: CanvasRenderingContext2D, T: (p: P) => P, t: number, xs: number[]) {
-  for (const sx of xs) { const sw = Math.sin(t * 0.17 + sx) * (3 + ZG * 26); const a = T([sx, -262]), b = T([sx * (1.1 + ZG * 1.6) + sw, -158 - ZG * 150 + Math.sin(t * 0.11 + sx) * ZG * 20]);
+  for (const sx of xs) { const sw = Math.sin(t * 0.17 + sx) * (3 + ZG * 26); const a = T([sx, -262]), b = T([sx * (1.1 + ZG * 1.6) + sw + DX * 0.7, -158 - ZG * 150 + Math.sin(t * 0.11 + sx) * ZG * 20 + DY * 0.6]);
     c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo((a[0] + b[0]) / 2 + sw, (a[1] + b[1]) / 2, b[0], b[1]); stroke(c, 14); c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo((a[0] + b[0]) / 2 + sw, (a[1] + b[1]) / 2, b[0], b[1]); stroke(c, 7, "#ffffff");
     c.beginPath(); c.roundRect(b[0] - 9, b[1] - 4, 18, 26, 4); fillStroke(c, "#e6eaf6", 5); }
 }
 function backpackFront(c: CanvasRenderingContext2D, T: (p: P) => P) {
-  const p = T([-124, -246]);
+  const p0 = T([-124, -246]), p: P = [p0[0] + DX * 0.15, p0[1] + DY * 0.3];
   c.beginPath(); c.roundRect(p[0] - 62, p[1] - 6, 110, 236, 38); const g = c.createLinearGradient(p[0] - 62, 0, p[0] + 48, 0); g.addColorStop(0, BAG_L); g.addColorStop(1, BAG); fillStroke(c, g, LW);
   c.beginPath(); c.arc(p[0] - 10, p[1] + 110, 46, rad(150), rad(250)); stroke(c, 8, "rgba(255,255,255,0.18)");
 }
@@ -391,7 +391,7 @@ function drawSide(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, l
   drawGlove(c, g.wrL[0], g.wrL[1], Math.atan2(g.wrL[1] - g.elL[1], g.wrL[0] - g.elL[0]) - Math.PI / 2 + rad(r.handRotL ?? 0), r.handL ?? "relaxed", true, 1.22);
   legLine(c, g.hipL, g.kneeL, g.ankL, true); c.save(); c.translate(g.ankL[0], g.ankL[1]); c.rotate(-g.footL); shoeSide(c, true); c.restore();
   // backpack on the back
-  if (r.backpack !== false) { const p = T([-118, -250]); c.save(); c.translate(p[0], p[1]); c.rotate(lean * 0.6);
+  if (r.backpack !== false) { const p = T([-118, -250]); c.save(); c.translate(p[0], p[1] + DY * 0.3); c.rotate(lean * 0.6 + DX * 0.0025);
     c.beginPath(); c.roundRect(-82, -4, 116, 250, 40); const gg = c.createLinearGradient(-82, 0, 34, 0); gg.addColorStop(0, BAG_L); gg.addColorStop(1, BAG); fillStroke(c, gg, LW);
     c.beginPath(); c.roundRect(-98, 110, 40, 110, 16); fillStroke(c, BAG, 7); c.beginPath(); c.moveTo(-70, 60); c.lineTo(10, 60); stroke(c, 5, "rgba(255,255,255,0.18)"); c.restore(); }
   // torso

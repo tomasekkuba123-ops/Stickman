@@ -18,10 +18,8 @@ Every episode must be better than the last. No external / ChatGPT images: every 
 9. **Ending** – a big question + SUBSCRIBE card; the last shot visually connects to the first shot so the video loops well.
 10. **Before delivering** – render a 1-fps contact sheet, check rules 1–9 yourself and fix every failure before sending.
 
-## How to check (rule 10)
-```
-ffmpeg -i OUT.mp4 -vf "fps=1,scale=108:192,tile=20x5" -frames:v 1 contact.png     # every second of the video
-ffmpeg -i OUT.mp4 -af ebur128=peak=true -f null - 2>&1 | tail -12                  # loudness / true peak
-```
-Go through the sheet tile by tile: is Stickman visible and large? Does the shot change within 3 s? Is any caption on a face?
-Write the result in the episode's `_ledger.md`.
+## How to check (rule 10) — automatic
+`tools/qc_check.py` (run by `engine/pipeline/deliver.sh`) checks rules 2, 3, 7, 8 and the exact length, and saves the 1-fps contact sheet.
+It measures Stickman exactly from a QC MASK render (`pipeline/qcmask.sh`: body painted magenta, face green), so visibility, height and
+caption-over-face are measured, not guessed. It must print PASS before delivery. Rules 1, 4, 5, 6, 9 are checked by eye on the contact sheet
+(write the result in the episode `_ledger.md`).

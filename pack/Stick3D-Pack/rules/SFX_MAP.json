@@ -1,0 +1,10 @@
+{
+ "_comment": "Action -> SFX (offset seconds from the action start). Mirrors ACTION_SFX in engine/src/kit/character.tsx. tools/auto_sfx.py turns an actions.json timeline into sfx events.",
+ "jump": [[0.22, "swing"], [0.78, "thud2"]], "land": [[0, "thud2"]], "fallOnBottom": [[0.35, "thud"]], "run": [[0, "whoosh"]], "climb": [[0, "rub"]],
+ "push": [[0.2, "rub"]], "pull": [[0.2, "rub"]], "drawInAir": [[0, "magic_pencil"]], "write": [[0, "draw"]], "pickUp": [[0.5, "pop"]], "hug": [[0.3, "heart"]],
+ "wave": [[0.1, "swing"]], "thumbsUp": [[0.2, "ding"]], "celebrate": [[0.1, "success"]], "panic": [[0, "yip"]], "freezeShock": [[0, "impact"]],
+ "scaredShake": [[0, "buzz"]], "think": [[0.2, "tick"]], "facepalm": [[0.3, "slam"]], "laugh": [[0, "pop"]], "sneezeReact": [[0.55, "whoosh"]],
+ "float": [[0, "hum"]], "swimInAir": [[0, "blub"]],
+ "fx:explosion": [[0, "impact"], [0.05, "rumble"]], "fx:splash": [[0, "splash"]], "fx:dust": [[0, "thud"]], "fx:sparkle": [[0, "sparkle"]], "fx:draw": [[0, "magic_pencil"]],
+ "fx:speed": [[0, "whoosh"]], "fx:impactFrame": [[0, "impact"]], "dragon:sneeze": [[0.55, "zap"]], "dragon:fly": [[0, "swing"]], "door": [[0, "lock"]]
+}
