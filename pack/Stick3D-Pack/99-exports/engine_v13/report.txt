@@ -1,0 +1,11 @@
+QC PASS  final.mp4  (target 12 s)
+WARN C: fully inside the frame only 51 % of the time
+WARN E: no captions.json given — caption/face check skipped
+
+A_duration: {"frames": 360, "expected": 360, "duration": 12.0, "size": "1080x1920", "fps": "30/1"}
+B_visible: {"percent": 98.6, "gaps": [[3.83, 4.0]]}
+C_size: {"big_enough": 98.6, "median_height": 0.521, "in_40_60_band": 98.6, "fully_in_frame": 50.7, "too_small_ranges": [], "too_big_ranges": []}
+H_face_white: {"white_percent": 97.2, "tinted_at": []}
+D_motion: {"cuts": 14, "static_over_3s": [], "longest_shot_s": 4.0, "mean_shot_s": 0.79}
+F_audio: {"lufs": -13.9, "true_peak": -1.7}
+contact sheet: /home/user/Stickman/pack/Stick3D-Pack/engine/out/showreel13/qc/contact_sheet.png
