@@ -4,6 +4,8 @@
 usage: voice_fit.py voice.wav script.txt target_seconds out_dir [--tail 2.6] [--max-pause 1.4]
   - lines = sentences of script.txt (split after . ! ? …); pauses are inserted at the QUIETEST 10 ms point between the last word of a
     line and the first word of the next, weighted (paragraph breaks get more), never more than --max-pause per gap
+  - PAUSE MARKERS in script.txt (removed before alignment/captions): put after a word
+      [++] long pause after a big action beat   [+] longer pause   [-] short pause (also inside a line, e.g. "Giant. [-] Happy.")
   - if the voice is too long it is sped up with atempo (max 8 %), otherwise the remaining time goes to the tail
   - writes out_dir/VOICE_<N>S.wav (-16 LUFS, peaks -2 dBFS; the final mix brings it to -14), words.json, script.json
 Needs pocketsphinx (tools/voice/align.py). Spoken overrides (numbers, names) go in spoken.json next to script.txt."""
@@ -41,9 +43,18 @@ def main():
     env = np.sqrt(np.convolve(x * x, np.ones(480) / 480, "same")); idx = np.nonzero(env > 0.01)[0]
     x = x[max(0, idx[0] - int(0.15 * SR)): idx[-1] + int(0.25 * SR)]
     tmp = os.path.join(a.out, "_trim.wav"); save(tmp, x)
-    words = align(tmp, a.script, os.path.join(a.out, "_words.json"))
-    text = open(a.script).read(); toks = text.split()
-    ends = [i for i, t in enumerate(toks) if re.search(r"[.!?…]$", t)][:-1]  # line ends (not the last)
+    raw_text = open(a.script).read(); W8 = {"[++]": 3.5, "[+]": 2.0, "[-]": 0.4}; marks = {}; toks = []
+    for tok in raw_text.split():
+        if tok in W8: marks[len(toks) - 1] = W8[tok]
+        else: toks.append(tok)
+    clean = os.path.join(a.out, "script.txt")
+    if os.path.abspath(clean) != os.path.abspath(a.script) or marks: open(clean, "w").write(re.sub(r"\s*\[(\+\+|\+|-)\]", "", raw_text))
+    for sp in ("spoken.json",):
+        src = os.path.join(os.path.dirname(os.path.abspath(a.script)), sp)
+        if os.path.exists(src) and os.path.dirname(os.path.abspath(src)) != os.path.abspath(a.out): import shutil; shutil.copy(src, os.path.join(a.out, sp))
+    words = align(tmp, clean, os.path.join(a.out, "_words.json"))
+    text = open(clean).read()
+    ends = sorted(set([i for i, t in enumerate(toks) if re.search(r"[.!?…]$", t)] + list(marks)) - {len(toks) - 1})  # pause points (not after the last word)
     paras = set(); acc = 0
     for para in re.split(r"\n\s*\n", text.strip()):
         acc += len(para.split()); paras.add(acc - 1)
@@ -52,8 +63,8 @@ def main():
         tempo = min(1.08, dur / (a.target - a.tail)); print(f"voice too long ({dur:.2f}s): atempo {tempo:.3f}")
         run("ffmpeg", "-v", "error", "-y", "-i", tmp, "-af", f"atempo={tempo}", tmp + ".t.wav"); os.replace(tmp + ".t.wav", tmp); x = load(tmp)
         words = align(tmp, a.script, os.path.join(a.out, "_words.json")); dur = len(x) / SR; budget = max(0, a.target - a.tail - dur)
-    wts = [2.0 if i in paras else 1.0 for i in ends]; tot = sum(wts) or 1
-    adds = [min(a.max_pause, budget * w / tot) for w in wts]
+    wts = [marks.get(i, 2.0 if i in paras else 1.0) for i in ends]; tot = sum(wts) or 1
+    adds = [min(a.max_pause * max(0.4, w) ** 0.6, budget * w / tot) for w in wts]
     # insertion points = quietest 10 ms between word i end and word i+1 start
     cuts = []
     for i, add in zip(ends, adds):

@@ -13,6 +13,7 @@ import { EpisodeCompositions } from "./kit/episode";
 import { Showreel } from "./videos/Showreel";
 import { Lab } from "./videos/Lab";
 import { ShowreelV13 } from "./videos/ShowreelV13";
+import { Ep07 } from "./videos/Ep07";
 // NEW EPISODES: register with <EpisodeCompositions id="EpXX" component={EpXX} seconds={60|100} /> (adds EpXXAnimatic for approval + QC mask).
 export const Root: React.FC = () => <>
   <Composition id="Main" component={Main} width={720} height={1280} fps={30} durationInFrames={60} />
@@ -23,6 +24,7 @@ export const Root: React.FC = () => <>
   <Composition id="Ep05" component={Ep05} width={1080} height={1920} fps={30} durationInFrames={3000} />
   <Composition id="Ep06" component={Ep06} width={1080} height={1920} fps={30} durationInFrames={1800} />
   <EpisodeCompositions id="Ep03R" component={Ep03R} seconds={100} />
+  <EpisodeCompositions id="Ep07" component={Ep07} seconds={100} />
   <EpisodeCompositions id="ShowreelV13" component={ShowreelV13} seconds={12} />
   <Composition id="Lab" component={Lab} width={1080} height={1920} fps={30} durationInFrames={30} />
   <Composition id="Showreel" component={Showreel} width={1080} height={1920} fps={30} durationInFrames={300} />

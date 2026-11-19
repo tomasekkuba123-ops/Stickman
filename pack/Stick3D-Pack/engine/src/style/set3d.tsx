@@ -105,10 +105,11 @@ export const Earth: React.FC<{ p: V3; r: number; rotY?: number; glow?: number }>
 
 /* ---------------- bedroom at sunset ---------------- */
 export const PAPER: V3 = [-0.6, 1.53, -2.85]; // centre of the drawing paper on the desk
-export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number }> = ({ t, windowOpen = 0, shake = 0 }) => {
+export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number; night?: boolean }> = ({ t, windowOpen = 0, shake = 0, night = false }) => {
   const j = (k: number) => Math.sin(t * 40 + k) * 0.02 * shake;
   return (<>
-    <ambientLight intensity={1.0} /><directionalLight position={[4, 6, 6]} intensity={1.1} color="#ffd6a0" /><directionalLight position={[-6, 3, 2]} intensity={0.45} color="#a0b0ff" />
+    <ambientLight intensity={night ? 0.55 : 1.0} /><directionalLight position={[4, 6, 6]} intensity={night ? 0.45 : 1.1} color={night ? "#8a9aff" : "#ffd6a0"} /><directionalLight position={[-6, 3, 2]} intensity={0.45} color="#a0b0ff" />
+    {night ? <pointLight position={[0.6, 2.4, -2.6]} intensity={2.2} distance={9} color="#ffd890" /> : null}
     <Surface p={[0, 0, -1]} s={[18, 14]} rot={[-Math.PI / 2, 0, 0]} kind="plank" a="#c8844a" b="#b8743a" unit={1.6} />
     <Surface p={[0, 4, -6]} s={[18, 8]} kind="plain" a="#f0a870" b="#e89860" unit={2} />
     <Surface p={[-6.5, 4, -1]} s={[12, 8]} rot={[0, Math.PI / 2, 0]} kind="plain" a="#e89060" b="#e08858" unit={2} />
@@ -122,7 +123,7 @@ export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number 
     <mesh><tubeGeometry args={[new THREE.CatmullRomCurve3([new THREE.Vector3(-1.9, 1.5, -3.3), new THREE.Vector3(-2.2, 0.6, -3.6), new THREE.Vector3(-2.6, 0.04, -4.4), new THREE.Vector3(-0.6, 0.04, -5.7), new THREE.Vector3(1.66, 0.5, -5.88)]), 40, 0.03, 6, false]} /><meshToonMaterial color="#e8e8f0" gradientMap={ramp} /></mesh>
     {/* window with sunset city; open sash */}
     <Box p={[2.4, 4.3, -5.9]} s={[5.4, 4.4, 0.2]} color="#f6efe4" line={4} />
-    <CanvasPlane p={[2.4, 4.3, -5.78]} s={[5.0, 4.0]} px={[600, 480]} draw={(c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#5a3a9a"); g.addColorStop(0.5, "#ff8a5a"); g.addColorStop(1, "#ffd08a"); c.fillStyle = g; c.fillRect(0, 0, W, H); c.fillStyle = "#fff0b0"; c.beginPath(); c.arc(W * 0.35, H * 0.68, 60, 0, TAU); c.fill();
+    <CanvasPlane p={[2.4, 4.3, -5.78]} s={[5.0, 4.0]} px={[600, 480]} draw={(c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); if (night) { g.addColorStop(0, "#050a2a"); g.addColorStop(1, "#22307a"); } else { g.addColorStop(0, "#5a3a9a"); g.addColorStop(0.5, "#ff8a5a"); g.addColorStop(1, "#ffd08a"); } c.fillStyle = g; c.fillRect(0, 0, W, H); c.fillStyle = "#fff0b0"; c.beginPath(); c.arc(W * (night ? 0.7 : 0.35), H * (night ? 0.22 : 0.68), night ? 40 : 60, 0, TAU); c.fill(); if (night) { c.fillStyle = "#fff"; for (let i = 0; i < 40; i++) c.fillRect(rnd(i * 3) * W, rnd(i * 5) * H * 0.6, 2, 2); }
       for (let i = 0; i < 12; i++) { const bw = 60 + rnd(i) * 50, bh = 120 + rnd(i + 2) * 200, bx = i * 52 - 20; c.fillStyle = "#3a2a6a"; c.fillRect(bx, H - bh, bw, bh); c.fillStyle = "#ffd66a"; for (let yy = H - bh + 14; yy < H - 10; yy += 26) for (let xx = bx + 8; xx < bx + bw - 12; xx += 18) if (rnd(xx * 3 + yy) > 0.5) c.fillRect(xx, yy, 8, 12); } }} />
     <Box p={[2.4, 4.3, -5.75]} s={[0.14, 4.0, 0.08]} color="#f6efe4" line={2} /><Box p={[2.4, 4.3, -5.75]} s={[5.0, 0.14, 0.08]} color="#f6efe4" line={2} />
     <Box p={[2.4, 2.0, -5.5]} s={[5.8, 0.18, 0.7]} color="#f6efe4" line={3} />

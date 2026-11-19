@@ -2,6 +2,7 @@
 // 3D effects go inside the ThreeCanvas; Overlay effects (SpeedLines, ImpactFrame) go in the AbsoluteFill above it.
 import React from "react";
 import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
 import { V3 } from "../style/kit";
 import { SGlow, Sparkles as SkySparkles, ChalkDraw, Path2, ROCKET_PATH, DOOR_PATHS, pathTip as pathTipN, strokePaths } from "../style/sky";
 import { CanvasPlane } from "../style/toon";
@@ -103,3 +104,32 @@ export const InkDraw: React.FC<{ s: [number, number]; paths: Path2[]; prog: numb
     strokePaths(c, W, H, paths, prog, "rgba(255,255,255,0.9)", (width + 8) * W / 512, 0.4, t); strokePaths(c, W, H, paths, prog, ink, width * W / 512, 0.4, t);
   }} />
 );
+
+/* ---------------- FIRE (v13): cartoon flame tongues (outlined, orange -> yellow -> white core) that flicker, + glow, embers, lit smoke ---------------- */
+const flameTex = (() => { const cache: Record<string, THREE.CanvasTexture> = {}; return (k: number) => { const key = String(k); if (cache[key]) return cache[key];
+  const cv = document.createElement("canvas"); cv.width = 128; cv.height = 256; const c = cv.getContext("2d")!;
+  const tongue = (sx: number, col: string, ink: boolean) => { c.beginPath(); c.moveTo(64, 250); c.bezierCurveTo(64 - 58 * sx, 240, 64 - 50 * sx, 150, 64 - 22 * sx + k * 6, 90); c.bezierCurveTo(64 - 8 * sx + k * 8, 60, 70 + k * 10, 30, 62 + k * 14, 4);
+    c.bezierCurveTo(84 + k * 6, 50, 64 + 46 * sx, 120, 64 + 52 * sx, 180); c.bezierCurveTo(64 + 56 * sx, 236, 64 + 30 * sx, 250, 64, 250); c.closePath(); c.fillStyle = col; c.fill(); if (ink) { c.lineWidth = 7; c.strokeStyle = "#7a1a08"; c.stroke(); } };
+  tongue(1, "#ff5a1e", true); c.save(); c.translate(0, 40); c.scale(1, 0.84); tongue(0.66, "#ffb21e", false); c.restore(); c.save(); c.translate(16, 120); c.scale(0.75, 0.5); tongue(0.5, "#fff3a0", false); c.restore();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; cache[key] = t; return t; }; })();
+const FaceCam: React.FC<{ p: V3; children: React.ReactNode }> = ({ p, children }) => { const ref = React.useRef<THREE.Group>(null); const { camera } = useThree();
+  React.useLayoutEffect(() => { if (ref.current) { const yaw = Math.atan2(camera.position.x - p[0], camera.position.z - p[2]); ref.current.rotation.set(0, yaw, 0); } }); return <group ref={ref} position={p}>{children}</group>; };
+export const Fire: React.FC<{ p: V3; t: number; size?: number; n?: number; spread?: [number, number]; intensity?: number; smoke?: boolean; seed?: number }> = ({ p, t, size = 1.2, n = 9, spread = [2.4, 1.2], intensity = 1, smoke = true, seed = 1 }) => {
+  if (intensity <= 0.01) return null; const items: React.ReactNode[] = [];
+  for (let i = 0; i < n; i++) { const x = (rnd(i * 3 + seed) - 0.5) * spread[0], z = (rnd(i * 7 + seed) - 0.5) * spread[1], ph = rnd(i * 11 + seed) * 6;
+    const hgt = size * (0.6 + rnd(i * 5 + seed) * 0.7) * intensity * (0.85 + 0.25 * Math.sin(t * 13 + ph) + 0.1 * Math.sin(t * 29 + ph * 2));
+    const sway = Math.sin(t * 7 + ph) * 0.12, k = (Math.floor(t * 12 + ph * 3) % 3);
+    items.push(<FaceCam key={i} p={[p[0] + x, p[1], p[2] + z]}><mesh position={[0, hgt / 2, 0.01 * i]} rotation={[0, 0, sway]} scale={[hgt * 0.5, hgt, 1]}><planeGeometry args={[1, 1]} /><meshBasicMaterial map={flameTex(k)} transparent alphaTest={0.05} depthWrite={false} toneMapped={false} /></mesh></FaceCam>); }
+  return (<>{items}
+    <SGlow p={[p[0], p[1] + size * 0.6, p[2]]} r={size * 2.4 * intensity} color="#ff9a3a" o={0.55 * intensity * (0.9 + 0.1 * Math.sin(t * 17))} />
+    {Array.from({ length: 8 }, (_, i) => { const u = (t * (0.6 + rnd(i) * 0.5) + rnd(i * 9)) % 1; return <SGlow key={"e" + i} p={[p[0] + (rnd(i * 4) - 0.5) * spread[0] + Math.sin(t * 3 + i) * 0.3, p[1] + u * size * 3, p[2] + (rnd(i * 6) - 0.5) * spread[1]]} r={0.07} color="#ffd06a" o={(1 - u) * intensity} />; })}
+    {smoke ? <SmokeFx src={[p[0], p[1] + size * 1.1 * intensity, p[2]]} t={t} t0={t - 3} rate={5} vel={[0.25, 1.6, 0]} spread={spread[0] * 0.25} size={size * 0.55} life={2.6} lit={0.8} color="#5a5464" seed={seed + 3} max={14} /> : null}
+  </>);
+};
+/* ---------------- RAIN (v13): streaks under a cloud, splashes on the surface below ---------------- */
+export const Rain: React.FC<{ c: V3; t: number; area?: [number, number]; top?: number; ground?: number; n?: number; on?: number }> = ({ c, t, area = [4, 2.5], top = 6, ground = 0, n = 60, on = 1 }) => {
+  if (on <= 0.01) return null; const len = top - ground;
+  return (<>{Array.from({ length: Math.round(n * on) }, (_, i) => { const u = (t * 2.2 + rnd(i)) % 1, x = c[0] + (rnd(i * 3) - 0.5) * area[0], z = c[2] + (rnd(i * 7) - 0.5) * area[1], y = c[1] + top - u * len;
+    return <mesh key={i} position={[x, y, z]}><boxGeometry args={[0.03, 0.42, 0.03]} /><meshBasicMaterial color="#9fd8ff" transparent opacity={0.85} /></mesh>; })}
+    {Array.from({ length: 10 }, (_, i) => { const u = (t * 3 + rnd(i * 13)) % 1; return <mesh key={"s" + i} position={[c[0] + (rnd(i * 5) - 0.5) * area[0], c[1] + ground + 0.03, c[2] + (rnd(i * 9) - 0.5) * area[1]]} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[0.05 + u * 0.3, 0.09 + u * 0.3, 16]} /><meshBasicMaterial color="#d8f0ff" transparent opacity={(1 - u) * on} depthWrite={false} /></mesh>; })}</>);
+};

@@ -90,7 +90,7 @@ export function act(name: ActionName, u: number, o: ActOpts = {}): ActOut {
 function lerpN(a: number, b: number, k: number) { return a + (b - a) * k; }
 
 /* blink every ~3 s (two-frame blink), deterministic */
-export const autoBlink = (t: number, seed = 0) => { const p = (t + seed * 0.7) % 3.3; return p < 0.09 ? 1 : 0; };
+export const autoBlink = (t: number, seed = 0) => { const p = (t + seed * 0.7) % 3.3; return p > 1.6 && p < 1.69 ? 1 : 0; }; // never on frame 0 (hook frames)
 
 /* Full rig for an action at absolute time t, with overlapping motion (drag) from the action's own velocity. */
 export function rigAt(name: ActionName, t: number, t0 = 0, o: ActOpts & { face?: Face; over?: Partial<Rig> } = {}) {
@@ -148,11 +148,20 @@ export function dragonAt(name: DragonAction, t: number, t0 = 0): { pose: DragonP
     default: return { pose: { t: T, mood: "calm", flap: 0.15, blink: autoBlink(t, 3) === 1, squash: S(u * 2) * 0.015 }, lift: 0 };
   }
 }
-export const Dragon: React.FC<{ p: V3; t: number; action?: DragonAction; t0?: number; h?: number; flip?: boolean; shadow?: boolean; groundY?: number }> = ({ p, t, action = "idle", t0 = 0, h = 1.6, flip = false, shadow = true, groundY }) => {
-  const look = useLook(); const d = dragonAt(action, t, t0); const y = p[1] + d.lift * h;
+// GROWN dragon = the same EP02 design scaled up (h up to ~14 world units). pose overrides any DragonPose field (mouthOpen, tear, mood, fly...).
+export const Dragon: React.FC<{ p: V3; t: number; action?: DragonAction; t0?: number; h?: number; flip?: boolean; shadow?: boolean; groundY?: number; pose?: Partial<DragonPose>; res?: number }> = ({ p, t, action = "idle", t0 = 0, h = 1.6, flip = false, shadow = true, groundY, pose, res }) => {
+  const look = useLook(); const d0 = dragonAt(action, t, t0); const d = { ...d0, pose: { ...d0.pose, ...(pose ?? {}) } }; const y = p[1] + d.lift * h;
   return (<>
     {shadow ? <Shadow p={[p[0], groundY ?? p[1], p[2]]} r={h * 0.35 / (1 + d.lift)} o={0.45 / (1 + d.lift)} /> : null}
-    <Billboard p={[p[0], y, p[2]]} h={h} res={512} aspect={1} draw={(c, W, H) => { drawDragon(c, W, H, { ...d.pose, flip });
+    <Billboard p={[p[0], y, p[2]]} h={h} res={res ?? (h > 4 ? 1024 : 512)} aspect={1} draw={(c, W, H) => { drawDragon(c, W, H, { ...d.pose, flip });
       c.save(); c.globalCompositeOperation = "source-atop"; const g = c.createLinearGradient(W * 0.55, 0, W, 0); g.addColorStop(0, `rgba(${look.rim},0)`); g.addColorStop(1, `rgba(${look.rim},${look.rimK * 0.8})`); c.fillStyle = g; c.fillRect(0, 0, W, H); c.restore(); }} />
   </>);
 };
+
+/* points on the dragon drawing (normalised 0..1 of its square canvas, unflipped) and their WORLD position for a camera at `cam`
+   (billboards face the camera, so the point depends on where the camera is). Use for gulps (mouth), fire (mouth), riding (snout). */
+export const DRAGON_PTS = { mouth: [0.739, 0.544] as [number, number], snout: [0.70, 0.40] as [number, number], noseTip: [0.76, 0.45] as [number, number], eye: [0.577, 0.40] as [number, number], belly: [0.5, 0.72] as [number, number], head: [0.6, 0.34] as [number, number] };
+export function dragonPoint(p: V3, h: number, n: [number, number], cam: V3, flip = false, lift = 0): V3 {
+  const yaw = Math.atan2(cam[0] - p[0], cam[2] - p[2]), nx = flip ? 1 - n[0] : n[0], lx = (nx - 0.5) * h;
+  return [p[0] + Math.cos(yaw) * lx, p[1] + lift * h + h * 0.483 + (0.5 - n[1]) * h, p[2] - Math.sin(yaw) * lx];
+}

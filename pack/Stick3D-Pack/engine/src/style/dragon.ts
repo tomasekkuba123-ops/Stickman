@@ -2,7 +2,8 @@
 // Red body with soft shading, warm yellow striped belly, small orange-yellow wings with membrane ribs, cream horns,
 // back spikes, spade tail, big glossy eyes. 3/4 view facing right (flip -> left). Square canvas, feet at the bottom.
 export type DragonPose = {
-  t: number; mood?: "happy" | "calm" | "scared" | "sneeze" | "wow" | "sleepy";
+  t: number; mood?: "happy" | "calm" | "scared" | "sneeze" | "wow" | "sleepy" | "sad";
+  mouthOpen?: number; /* 0..1 big open mouth (gulp / fire / yawn / roar), v13 */ tear?: number; /* 0..1 a tear rolls down (v13) */
   flap?: number; /* 0..1 wing-flap amplitude */ flapHz?: number; flip?: boolean; tilt?: number; squash?: number;
   arms?: "down" | "up" | "reach"; blink?: boolean; lookX?: number; headRecoil?: number; /* -1 back .. 1 forward (sneeze) */ legsTucked?: boolean; curl?: number;
   fly?: number; /* 0..1: big spread wings, dangling legs, streaming tail */
@@ -120,11 +121,21 @@ export function drawDragon(c: CanvasRenderingContext2D, W: number, H: number, d:
   // brows
   c.beginPath();
   if (m === "scared" || m === "wow") { c.moveTo(248, 132); c.quadraticCurveTo(266, 118, 284, 128); c.moveTo(316, 122); c.quadraticCurveTo(334, 112, 350, 126); }
+  else if (m === "sad") { c.moveTo(250, 128); c.quadraticCurveTo(268, 128, 286, 140); c.moveTo(316, 140); c.quadraticCurveTo(334, 126, 350, 126); }
   else { c.moveTo(250, 138); c.quadraticCurveTo(268, 128, 286, 136); c.moveTo(316, 130); c.quadraticCurveTo(334, 122, 350, 132); }
   ink(6);
+  // tear (v13)
+  if ((d.tear ?? 0) > 0) { const k = d.tear!, ty = 196 + k * 70, tx = 262 - k * 6; c.beginPath(); c.moveTo(tx, ty - 16); c.quadraticCurveTo(tx + 11, ty + 2, tx, ty + 9); c.quadraticCurveTo(tx - 11, ty + 2, tx, ty - 16); c.fillStyle = "rgba(150,220,255,0.95)"; c.fill(); ink(4); c.fillStyle = "#fff"; c.beginPath(); c.arc(tx - 3, ty, 2.5, 0, Math.PI * 2); c.fill(); }
   // mouth
   c.beginPath();
-  if (m === "scared") { c.ellipse(392, 252, 13, 9 + Math.sin(t * 1.3) * 2, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
+  const mo = d.mouthOpen ?? 0;
+  if (mo > 0.02) { // big open mouth: dark inside, pink tongue, two little fangs (gulp / fire / yawn)
+    c.ellipse(388, 254, 22 + 18 * mo, 8 + 30 * mo, 0.12, 0, Math.PI * 2); c.fillStyle = "#4a0c18"; c.fill(); ink(7);
+    c.save(); c.clip(); c.beginPath(); c.ellipse(392, 254 + 22 * mo, 20 + 10 * mo, 9 + 8 * mo, 0.1, 0, Math.PI * 2); c.fillStyle = "#ff6a90"; c.fill(); c.restore();
+    c.fillStyle = "#fff"; for (const fx of [370, 404]) { c.beginPath(); c.moveTo(fx - 6, 248 - 6 * mo); c.lineTo(fx, 262 - 2 * mo); c.lineTo(fx + 6, 248 - 6 * mo); c.closePath(); c.fill(); ink(3); }
+  }
+  else if (m === "sad") { c.moveTo(340, 262); c.quadraticCurveTo(376, 246, 410, 260); ink(6); }
+  else if (m === "scared") { c.ellipse(392, 252, 13, 9 + Math.sin(t * 1.3) * 2, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
   else if (m === "sneeze" || m === "wow") { c.ellipse(400, 250, 18, 14, 0, 0, Math.PI * 2); c.fillStyle = "#5a1420"; c.fill(); ink(6); }
   else { c.moveTo(330, 250); c.quadraticCurveTo(376, 268, 414, 248); ink(6); c.fillStyle = "#fff"; c.beginPath(); c.moveTo(352, 251); c.lineTo(358, 263); c.lineTo(364, 253); c.closePath(); c.fill(); ink(3); }
   c.restore();

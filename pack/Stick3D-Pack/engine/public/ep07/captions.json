@@ -1,0 +1,1403 @@
+{
+"groups": [
+{
+"words": [
+"WHAT",
+"IF"
+],
+"a": 0.11,
+"e": 0.39,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN'S",
+"BABY"
+],
+"a": 0.39,
+"e": 1.46,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"DRAGON",
+"GREW"
+],
+"a": 1.46,
+"e": 2.19,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"UP",
+"OVERNIGHT"
+],
+"a": 2.19,
+"e": 2.98,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"LAST",
+"NIGHT"
+],
+"a": 4.45,
+"e": 5.26,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"WAS"
+],
+"a": 5.26,
+"e": 5.48,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SMALL",
+"ENOUGH"
+],
+"a": 5.48,
+"e": 5.99,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TO",
+"SLEEP"
+],
+"a": 5.99,
+"e": 6.37,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IN",
+"A"
+],
+"a": 6.37,
+"e": 6.51,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TEACUP"
+],
+"a": 6.51,
+"e": 7.12,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THIS",
+"MORNING"
+],
+"a": 8.069,
+"e": 8.859,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ITS",
+"TAIL"
+],
+"a": 8.859,
+"e": 9.389,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"WAS",
+"STICKING"
+],
+"a": 9.389,
+"e": 9.879,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"OUT",
+"OF"
+],
+"a": 9.879,
+"e": 10.059,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"WINDOW"
+],
+"a": 10.059,
+"e": 10.609,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"OPENED"
+],
+"a": 12.049,
+"e": 12.679,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"DOOR"
+],
+"a": 12.679,
+"e": 13.109,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"THE"
+],
+"a": 13.109,
+"e": 13.449,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"DRAGON'S",
+"EYE"
+],
+"a": 13.449,
+"e": 14.219,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"OPENED",
+"RIGHT"
+],
+"a": 14.219,
+"e": 14.869,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"OUTSIDE"
+],
+"a": 14.869,
+"e": 15.449,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"GIANT"
+],
+"a": 16.779,
+"e": 17.369,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HAPPY"
+],
+"a": 17.754,
+"e": 18.314,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HUNGRY"
+],
+"a": 18.81,
+"e": 19.37,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"WANTED"
+],
+"a": 20.24,
+"e": 20.6,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BREAKFAST"
+],
+"a": 20.6,
+"e": 21.19,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"DREW"
+],
+"a": 21.91,
+"e": 22.53,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"PANCAKE"
+],
+"a": 22.53,
+"e": 23.23,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"DRAGON"
+],
+"a": 24.42,
+"e": 24.91,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"SWALLOWED",
+"IT"
+],
+"a": 24.91,
+"e": 25.52,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IN",
+"ONE"
+],
+"a": 25.52,
+"e": 25.87,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"GULP"
+],
+"a": 25.87,
+"e": 26.31,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"DREW"
+],
+"a": 27.559,
+"e": 27.929,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TWO",
+"HUNDRED"
+],
+"a": 27.929,
+"e": 28.339,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"PANCAKES"
+],
+"a": 28.339,
+"e": 29.069,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"GULP"
+],
+"a": 29.565,
+"e": 29.965,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"A"
+],
+"a": 31.405,
+"e": 31.595,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"PANCAKE",
+"THE"
+],
+"a": 31.595,
+"e": 32.215,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SIZE",
+"OF"
+],
+"a": 32.215,
+"e": 32.575,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"HOUSE"
+],
+"a": 32.575,
+"e": 33.145,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"DRAGON",
+"BURP"
+],
+"a": 35.104,
+"e": 35.824,
+"key": [
+true,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT"
+],
+"a": 36.0,
+"e": 36.19,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SET",
+"THE"
+],
+"a": 36.55,
+"e": 36.85,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ROOF",
+"ON"
+],
+"a": 36.85,
+"e": 37.24,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"FIRE"
+],
+"a": 37.24,
+"e": 37.55,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"GRABBED"
+],
+"a": 39.489,
+"e": 40.249,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HIS",
+"PENCIL"
+],
+"a": 40.249,
+"e": 40.859,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"DREW"
+],
+"a": 40.859,
+"e": 41.149,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"CLOUD"
+],
+"a": 41.149,
+"e": 41.799,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"RAINED"
+],
+"a": 42.589,
+"e": 43.099,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"ON",
+"THE"
+],
+"a": 43.099,
+"e": 43.299,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ROOF"
+],
+"a": 43.299,
+"e": 43.729,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SSSSS!"
+],
+"a": 45.7,
+"e": 46.2,
+"key": [
+true
+],
+"band": "high"
+},
+{
+"words": [
+"THE",
+"DRAGON"
+],
+"a": 46.528,
+"e": 46.998,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"LOOKED",
+"SAD"
+],
+"a": 46.998,
+"e": 47.788,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"DIDN'T"
+],
+"a": 49.078,
+"e": 49.358,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"MEAN",
+"TO"
+],
+"a": 49.358,
+"e": 49.768,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SO",
+"STICKMAN"
+],
+"a": 50.148,
+"e": 50.768,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"CLIMBED",
+"ONTO"
+],
+"a": 50.768,
+"e": 51.398,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ITS",
+"NOSE"
+],
+"a": 51.398,
+"e": 51.988,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"GAVE"
+],
+"a": 51.988,
+"e": 52.288,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"A"
+],
+"a": 52.288,
+"e": 52.398,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HUG"
+],
+"a": 52.398,
+"e": 52.818,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"DRAGON"
+],
+"a": 54.167,
+"e": 54.577,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"SMILED"
+],
+"a": 54.577,
+"e": 55.357,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SPREAD",
+"ITS"
+],
+"a": 55.357,
+"e": 55.787,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WINGS"
+],
+"a": 55.787,
+"e": 56.297,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"STICKMAN"
+],
+"a": 56.797,
+"e": 57.247,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"REALIZED",
+"HE"
+],
+"a": 57.247,
+"e": 57.847,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WAS",
+"STILL"
+],
+"a": 57.847,
+"e": 58.237,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ON",
+"ITS"
+],
+"a": 58.237,
+"e": 58.517,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"NOSE"
+],
+"a": 58.517,
+"e": 59.007,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"WHOOSH"
+],
+"a": 61.107,
+"e": 61.597,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"OVER",
+"THE"
+],
+"a": 62.866,
+"e": 63.106,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TOWN"
+],
+"a": 63.106,
+"e": 63.666,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"OVER",
+"THE"
+],
+"a": 64.866,
+"e": 65.076,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"MOUNTAINS"
+],
+"a": 65.076,
+"e": 65.766,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"OVER",
+"THE"
+],
+"a": 66.845,
+"e": 67.065,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SEA"
+],
+"a": 67.065,
+"e": 67.605,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"SCREAMED"
+],
+"a": 68.905,
+"e": 69.915,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"LOT"
+],
+"a": 70.511,
+"e": 71.221,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THEY",
+"LANDED"
+],
+"a": 73.25,
+"e": 73.72,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ON",
+"A"
+],
+"a": 73.72,
+"e": 73.89,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TINY",
+"ISLAND"
+],
+"a": 73.89,
+"e": 74.8,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"DRAGON"
+],
+"a": 75.73,
+"e": 76.22,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"CURLED",
+"UP"
+],
+"a": 76.22,
+"e": 76.95,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"YAWNED"
+],
+"a": 77.14,
+"e": 77.72,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"SHRANK"
+],
+"a": 78.0,
+"e": 78.47,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"BACK",
+"DOWN"
+],
+"a": 78.47,
+"e": 79.16,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SMALL",
+"ENOUGH"
+],
+"a": 81.159,
+"e": 81.679,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TO",
+"SLEEP"
+],
+"a": 81.679,
+"e": 82.069,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IN",
+"A"
+],
+"a": 82.069,
+"e": 82.189,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TEACUP"
+],
+"a": 82.189,
+"e": 82.729,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"SIGHED"
+],
+"a": 84.119,
+"e": 85.139,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"HE"
+],
+"a": 86.538,
+"e": 86.728,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HEARD",
+"A"
+],
+"a": 86.728,
+"e": 86.918,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"CRACK"
+],
+"a": 86.918,
+"e": 87.478,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"BEHIND",
+"HIM"
+],
+"a": 88.838,
+"e": 89.498,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"PILE"
+],
+"a": 89.698,
+"e": 90.068,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"OF",
+"EGGS"
+],
+"a": 90.068,
+"e": 90.608,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"FIVE",
+"OF"
+],
+"a": 91.928,
+"e": 92.448,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THEM"
+],
+"a": 92.448,
+"e": 92.688,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SHOULD",
+"THEY"
+],
+"a": 94.757,
+"e": 95.007,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"GROW",
+"BIG"
+],
+"a": 95.007,
+"e": 95.477,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AS",
+"A"
+],
+"a": 95.477,
+"e": 95.587,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HOUSE"
+],
+"a": 95.587,
+"e": 96.077,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"OR",
+"BIG"
+],
+"a": 96.257,
+"e": 96.617,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AS",
+"A"
+],
+"a": 96.617,
+"e": 96.707,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TEACUP"
+],
+"a": 96.707,
+"e": 97.397,
+"key": [
+true
+],
+"band": "low"
+}
+],
+"keywords": [
+"DRAGON",
+"TEACUP",
+"TAIL",
+"WINDOW",
+"EYE",
+"GIANT",
+"HAPPY",
+"HUNGRY",
+"BREAKFAST",
+"PANCAKE",
+"PANCAKES",
+"GULP",
+"HOUSE",
+"BURP",
+"FIRE",
+"PENCIL",
+"CLOUD",
+"RAINED",
+"SAD",
+"HUG",
+"WINGS",
+"NOSE",
+"WHOOSH",
+"TOWN",
+"MOUNTAINS",
+"SEA",
+"SCREAMED",
+"ISLAND",
+"SHRANK",
+"SIGHED",
+"CRACK",
+"EGGS",
+"FIVE",
+"OVERNIGHT"
+]
+}
