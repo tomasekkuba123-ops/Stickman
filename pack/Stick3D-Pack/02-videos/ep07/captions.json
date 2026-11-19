@@ -152,7 +152,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -165,7 +165,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -178,7 +178,7 @@ false
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -191,7 +191,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -487,7 +487,7 @@ false
 false,
 false
 ],
-"band": "high"
+"band": "low"
 },
 {
 "words": [
@@ -500,7 +500,7 @@ false
 false,
 true
 ],
-"band": "high"
+"band": "low"
 },
 {
 "words": [
@@ -802,7 +802,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -911,7 +911,7 @@ true
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -1048,7 +1048,7 @@ false
 false,
 true
 ],
-"band": "high"
+"band": "low"
 },
 {
 "words": [
