@@ -26,7 +26,13 @@ def scan(v):
         h, s, v_ = hsv[..., 0].astype(int), hsv[..., 1].astype(int), hsv[..., 2].astype(int)
         body = (np.abs(h - 150) <= 6) & (s > 200) & (v_ > 50)
         face = (np.abs(h - 60) <= 6) & (s > 220) & (v_ > 90)
-        allm = body | face
+        allm = (body | face).astype(np.uint8)
+        # keep only the hero blob: the connected component(s) touching the green face (else the largest blob)
+        nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.morphologyEx(allm, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8)), 8)
+        keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
+        if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
+        allm = np.isin(lab, list(keep)) if keep else np.zeros_like(face)
+        face = face & allm
         rec = {"t": round(i / fps, 3), "vis": False, "body": None, "face": None, "hf": 0.0, "cut": False}
         if allm.sum() > W * H * 0.0015:
             ys, xs = np.nonzero(allm)

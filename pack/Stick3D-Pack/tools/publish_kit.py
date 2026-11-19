@@ -12,27 +12,43 @@ from PIL import Image, ImageDraw, ImageFont
 STOP = set("a an the and or but if of to in on at by for with from into up down out off he his him it its was were is be then than so very just what would you your".split())
 
 
+def nouns(script):
+    toks = re.findall(r"[A-Za-z']+", script); out = []
+    ADJ = ("a", "an", "the", "giant", "tiny", "huge", "big", "bigger", "space", "magic", "little", "lost", "enormous")
+    for i in range(1, len(toks)):
+        w = toks[i].lower()
+        if w in ADJ or w in STOP or len(w) <= 2 or w.endswith(("ing", "ed", "ly")): continue
+        back = [t.lower() for t in toks[max(0, i - 2):i]]
+        if back and back[-1] in ADJ:
+            out.append((i, next((x for x in back if x in ("giant", "huge", "space", "enormous")), back[-1]), w))
+    return out, len(toks)
+
+
 def titles(script, kw):
-    sents = [s.strip() for s in re.split(r"(?<=[.!?…])\s+", script.strip()) if s.strip()]
-    hook = sents[0].replace("…", "...").rstrip()
+    lines = [l.strip() for l in script.strip().splitlines() if l.strip()]
+    first = re.split(r"(?<=[?!])\s", lines[0])[0].replace("…", "...").strip()
     m = re.search(r"drew an? ([A-Za-z]+)", script, re.I); obj = (m.group(1) if m else (kw[0].lower() if kw else "something")).capitalize()
-    twist = next((w for w in kw if w.lower() not in (obj.lower(), "stickman")), "").capitalize()
-    q = next((s for s in reversed(sents) if s.endswith("?")), "What would YOU draw?")
-    return [hook if hook.endswith("?") else hook + "?",
-            f"Stickman Drew a {obj}... Then a {twist} Showed Up 😱" if twist else f"Stickman Drew a {obj}... and It Came ALIVE 😱",
+    N, n = nouns(script)
+    big = [w for i, adj, w in N if adj in ("giant", "huge", "space", "enormous") and w != obj.lower()]
+    late = [w for i, adj, w in N if i > n * 0.5 and w not in (obj.lower(), "stickman", "pencil")]
+    twist = (big or late or [""])[0].capitalize()
+    sents = [x.strip() for x in re.split(r"(?<=[.!?])\s+", script.strip()) if x.strip()]
+    q = next((x for x in reversed(sents) if x.endswith("?")), "What would YOU draw?")
+    return [first if first.endswith(("?", "!")) else first + "?",
+            f"Stickman Drew a {obj}... Then a {('Giant ' if big else '')}{twist} Showed Up 😱" if twist else f"Stickman Drew a {obj}... and It Came ALIVE 😱",
             f"{q} ✏️ #Shorts"], obj
 
 
 def best_frame(video, mask, caps):
     M = json.load(open(mask)); cands = []
-    busy = [(g["a"], g["e"] + 0.7) for g in caps.get("groups", [])] if caps else []
+    busy = [(g["a"] - 0.25, g["e"] + 0.75) for g in caps.get("groups", [])] if caps else []
     for f in M["frames"]:
         fc = f.get("face")
         if not f["vis"] or not fc or f["cut"] or f["t"] < 1.0: continue
         fh = fc[3] - fc[1]
         if fh < 0.08: continue
         if fc[1] < 0.03 or fc[3] > 0.97 or fc[0] < 0.02 or fc[2] > 0.98: continue  # full face inside
-        score = min(fh, 0.32) * (0.6 if any(a <= f["t"] <= b for a, b in busy) else 1.0)
+        score = min(fh, 0.32) * (0.2 if any(a <= f["t"] <= b for a, b in busy) else 1.0)
         cands.append((score, f["t"]))
     cands.sort(reverse=True)
     best = None
@@ -54,8 +70,8 @@ def main():
     kw = caps.get("keywords") or [w.upper() for w in re.findall(r"[A-Za-z]{5,}", script) if w.lower() not in STOP][:20]
     T, obj = titles(script, kw)
     sents = [s.strip() for s in re.split(r"(?<=[.!?…])\s+", script.strip()) if s.strip()]
-    tags = ["#stickman", "#animation", "#shorts", "#whatif", f"#{obj.lower()}", "#cartoon", "#funny", "#story"] + [f"#{w.lower()}" for w in kw[:4] if w.lower() != obj.lower()]
-    desc = f"{sents[0]} {sents[1] if len(sents) > 1 else ''}\n\nStickman has a magic pencil: whatever he draws becomes real. This time it was a {obj.lower()}... and things got out of hand. ✏️\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
+    tags = ["#stickman", "#animation", "#shorts", "#whatif", f"#{obj.lower()}", "#cartoon", "#funny", "#story"] + [f"#{w}" for w in dict.fromkeys(x[2] for x in nouns(script)[0]) if w not in (obj.lower(), "stickman")][:4]
+    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. This time it was a {obj.lower()}... and things got out of hand. ✏️\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
     b = best_frame(video, mask, caps)
     lines = ["# PUBLISH KIT", "", "## Title options"] + [f"{i + 1}. {t}" for i, t in enumerate(T)] + ["", "## Description", "", desc, ""]
     if b:

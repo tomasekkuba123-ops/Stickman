@@ -1,0 +1,1219 @@
+{
+"groups": [
+{
+"words": [
+"WHAT",
+"IF"
+],
+"a": 0.31,
+"e": 0.5,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"STICKMAN",
+"DREW"
+],
+"a": 0.5,
+"e": 1.21,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"A",
+"ROCKET"
+],
+"a": 1.21,
+"e": 1.78,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"IT"
+],
+"a": 2.05,
+"e": 2.22,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"ACTUALLY",
+"LAUNCHED"
+],
+"a": 2.22,
+"e": 3.19,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"SKETCHED"
+],
+"a": 5.018,
+"e": 5.468,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ONE",
+"FIN"
+],
+"a": 5.468,
+"e": 6.378,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"TWO",
+"FINS"
+],
+"a": 6.378,
+"e": 7.268,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"ROUND"
+],
+"a": 7.408,
+"e": 7.868,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"LITTLE",
+"WINDOW"
+],
+"a": 7.868,
+"e": 8.588,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"PAPER"
+],
+"a": 10.186,
+"e": 10.566,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SHOOK"
+],
+"a": 10.566,
+"e": 11.006,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SMOKE",
+"POURED"
+],
+"a": 11.326,
+"e": 12.096,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"FROM",
+"THE"
+],
+"a": 12.096,
+"e": 12.316,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BOTTOM"
+],
+"a": 12.316,
+"e": 12.766,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THREE"
+],
+"a": 14.364,
+"e": 14.884,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"TWO"
+],
+"a": 15.194,
+"e": 15.634,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ONE"
+],
+"a": 15.794,
+"e": 16.324,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"THE",
+"ROCKET"
+],
+"a": 19.618,
+"e": 20.048,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"TORE",
+"OFF"
+],
+"a": 20.048,
+"e": 20.418,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"THE",
+"PAGE"
+],
+"a": 20.418,
+"e": 20.908,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"STICKMAN"
+],
+"a": 20.908,
+"e": 21.518,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"GRABBED",
+"THE"
+],
+"a": 21.518,
+"e": 21.878,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"LADDER",
+"JUST"
+],
+"a": 21.878,
+"e": 22.478,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IN",
+"TIME"
+],
+"a": 22.478,
+"e": 22.948,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"CLOUDS",
+"FLASHED"
+],
+"a": 26.202,
+"e": 27.022,
+"key": [
+true,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"PAST"
+],
+"a": 27.022,
+"e": 27.452,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"THE",
+"SKY"
+],
+"a": 29.089,
+"e": 29.539,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TURNED",
+"DARK"
+],
+"a": 29.539,
+"e": 30.139,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BLUE"
+],
+"a": 30.139,
+"e": 30.479,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"BLACK"
+],
+"a": 30.779,
+"e": 31.529,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"THEN",
+"FULL"
+],
+"a": 31.529,
+"e": 31.999,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"OF",
+"STARS"
+],
+"a": 31.999,
+"e": 32.649,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"THE",
+"ENGINE"
+],
+"a": 35.783,
+"e": 36.203,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"COUGHED"
+],
+"a": 36.203,
+"e": 36.733,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"FUEL"
+],
+"a": 37.053,
+"e": 37.493,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"EMPTY"
+],
+"a": 37.723,
+"e": 38.143,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"PANICKED"
+],
+"a": 39.881,
+"e": 41.131,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"REMEMBERED"
+],
+"a": 41.131,
+"e": 41.681,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"PENCIL"
+],
+"a": 41.681,
+"e": 42.121,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IN",
+"HIS"
+],
+"a": 42.121,
+"e": 42.311,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"POCKET"
+],
+"a": 42.311,
+"e": 42.771,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"DREW"
+],
+"a": 44.419,
+"e": 44.699,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"A",
+"GAS"
+],
+"a": 44.699,
+"e": 45.029,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"STATION"
+],
+"a": 45.029,
+"e": 45.489,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"ON",
+"THE"
+],
+"a": 45.939,
+"e": 46.139,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"MOON"
+],
+"a": 46.139,
+"e": 46.529,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"TINY"
+],
+"a": 49.843,
+"e": 50.233,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ROBOT",
+"ROLLED"
+],
+"a": 50.233,
+"e": 50.913,
+"key": [
+true,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"OUT"
+],
+"a": 50.913,
+"e": 51.153,
+"key": [
+true
+],
+"band": "high"
+},
+{
+"words": [
+"FILLED",
+"THE"
+],
+"a": 51.383,
+"e": 51.743,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"TANK"
+],
+"a": 51.743,
+"e": 52.113,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"HANDED"
+],
+"a": 52.113,
+"e": 52.773,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HIM",
+"A"
+],
+"a": 52.773,
+"e": 52.913,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"RECEIPT"
+],
+"a": 52.913,
+"e": 53.443,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THIRTY",
+"MILLION"
+],
+"a": 55.031,
+"e": 56.071,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"DOLLARS"
+],
+"a": 56.071,
+"e": 56.581,
+"key": [
+true
+],
+"band": "high"
+},
+{
+"words": [
+"STICKMAN",
+"DREW"
+],
+"a": 58.199,
+"e": 58.819,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"COIN"
+],
+"a": 58.819,
+"e": 59.329,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"ROBOT"
+],
+"a": 61.047,
+"e": 61.537,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"DID",
+"NOT"
+],
+"a": 61.537,
+"e": 61.867,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"LOOK",
+"HAPPY"
+],
+"a": 61.867,
+"e": 62.467,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SO",
+"HE"
+],
+"a": 64.165,
+"e": 64.385,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"DREW",
+"A"
+],
+"a": 64.385,
+"e": 64.615,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"BIGGER",
+"COIN"
+],
+"a": 64.615,
+"e": 65.335,
+"key": [
+true,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"IT",
+"FELL"
+],
+"a": 68.619,
+"e": 69.369,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ROLLED",
+"ACROSS"
+],
+"a": 69.369,
+"e": 69.969,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"CRATER"
+],
+"a": 69.969,
+"e": 70.469,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"WOKE"
+],
+"a": 70.469,
+"e": 71.109,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"UP",
+"SOMETHING"
+],
+"a": 71.109,
+"e": 71.509,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"ENORMOUS",
+"SLEEPING"
+],
+"a": 71.509,
+"e": 72.469,
+"key": [
+true,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"UNDER",
+"THE"
+],
+"a": 72.469,
+"e": 72.709,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"DUST"
+],
+"a": 72.709,
+"e": 73.179,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"TWO",
+"GLOWING"
+],
+"a": 76.523,
+"e": 77.213,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"EYES",
+"OPENED"
+],
+"a": 77.213,
+"e": 77.983,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"A",
+"GIANT"
+],
+"a": 79.73,
+"e": 80.24,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"SPACE",
+"WHALE"
+],
+"a": 80.24,
+"e": 80.91,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"YAWNED"
+],
+"a": 80.91,
+"e": 81.48,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"SWALLOWED"
+],
+"a": 81.75,
+"e": 82.38,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THE",
+"ROCKET"
+],
+"a": 82.38,
+"e": 82.81,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"WHOLE"
+],
+"a": 82.81,
+"e": 83.29,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"INSIDE",
+"IT"
+],
+"a": 86.494,
+"e": 87.064,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"WAS",
+"WARM"
+],
+"a": 87.064,
+"e": 88.054,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"QUIET"
+],
+"a": 88.054,
+"e": 88.604,
+"key": [
+false
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"FULL"
+],
+"a": 88.954,
+"e": 89.444,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"OF",
+"LOST"
+],
+"a": 89.444,
+"e": 89.944,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"SATELLITES"
+],
+"a": 89.944,
+"e": 90.654,
+"key": [
+true
+],
+"band": "high"
+},
+{
+"words": [
+"STICKMAN",
+"SMILED"
+],
+"a": 92.442,
+"e": 93.462,
+"key": [
+false,
+true
+],
+"band": "high"
+},
+{
+"words": [
+"AND",
+"PICKED"
+],
+"a": 93.462,
+"e": 93.812,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"UP",
+"HIS"
+],
+"a": 93.812,
+"e": 94.032,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"PENCIL"
+],
+"a": 94.032,
+"e": 94.422,
+"key": [
+true
+],
+"band": "high"
+},
+{
+"words": [
+"WHAT",
+"WOULD"
+],
+"a": 95.74,
+"e": 96.43,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"YOU",
+"DRAW"
+],
+"a": 96.43,
+"e": 96.78,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"TO",
+"GET"
+],
+"a": 96.78,
+"e": 97.03,
+"key": [
+false,
+false
+],
+"band": "high"
+},
+{
+"words": [
+"OUT"
+],
+"a": 97.03,
+"e": 97.5,
+"key": [
+true
+],
+"band": "high"
+}
+],
+"keywords": [
+"ROCKET",
+"LAUNCHED",
+"FIN",
+"FINS",
+"WINDOW",
+"SMOKE",
+"LADDER",
+"CLOUDS",
+"STARS",
+"EMPTY",
+"PENCIL",
+"MOON",
+"ROBOT",
+"RECEIPT",
+"MILLION",
+"DOLLARS",
+"COIN",
+"BIGGER",
+"CRATER",
+"ENORMOUS",
+"GLOWING",
+"WHALE",
+"SWALLOWED",
+"SATELLITES",
+"SMILED",
+"OUT"
+]
+}
