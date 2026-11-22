@@ -5,6 +5,25 @@ Newest entries on top.
 
 ---
 
+## v16 — EP09 "What If the Moon Disappeared?" (first episode on the v4 workflow, CLAUDE.md)
+**Learned**
+- The old puppet drifted from the master sheet: legs too long/thin, hoodie too narrow, 4 thin hair strands, no cheeks, colours off. Measured overlay IoU 0.748.
+- Kenney downloads need a page session cookie + a signed link; Hugging Face model files redirect to us.aws.cdn.hf.co / cas-server.xethub.hf.co (allow-list both).
+- PyAV in this image breaks faster-whisper's audio decode -> decode with ffmpeg to float32 first.
+- A big additive cone for a flashlight beam reads as a grey blob on dark skies; keep the cone at ~5 % opacity and let the spot light + glow do the work.
+- Seamless loop: the end shot must reuse the hook's exact camera keys, pose and moon state; blinks off on both ends; captions start when the voice starts.
+
+**Changed (engine)**
+- PUPPET v3 (style/stickman.ts `MODEL`): proportions + palette fitted to assets/reference views with `tools/puppet_fit.py` (OpenCV trace -> overlay -> measure; IoU 0.748 -> 0.823), 3 thick tufts, pink cheeks, neck, v3 hex colours, bigger sneakers. Turnaround: assets/character/.
+- LIP SYNC: `Mouth` shapes A-H/X (Rhubarb) in the face; `<Stickman lips={mouthCues}>`.
+- EXPRESSIONS: + happy, confused, sad.
+- MOTION LIBRARY: CMU BVH (11 clips: walk run jump fall wave point sit scared celebrate flashlight shrug) -> `tools/bvh_retarget.py` -> src/motion/motion_lib.json; `<Stickman mo={[{clip, t0, view, amp, hold}]}>` blends in/out, root motion, follow-through from velocity. Check sheet: composition `MotionSheet`.
+- ENV LIBRARY (CC0): Kenney Nature Kit (39 GLB) + Poly Haven textures; `KModel`, `KScatter` (recoloured toon), `usePHTex`, `DepthPass` (real depth of field on far layers). assets/env/LICENSES.md.
+- CAPTIONS v4: `WordCaptions` — 3-word groups, current word highlighted + pop (`tools/captions.py --max 3` stores per-word times).
+- VOICE: Kokoro am_michael (`tools/tts.py`), Whisper words (`tools/whisper_words.py`), Rhubarb mouth cues.
+- SETS (kit/sets3.tsx): Moon (vanish pop / pop back), Earth (tilt wobble), NightHill, Beach + tide wave, SeasonMeadow, FlashBeam; critters owl / wolf / crab with confused mode (style/critters.ts).
+- SFX synthesized: owl_hoot, wolf_howl, ocean_wave (`tools/make_sfx_nature.py`).
+
 ## v15 — after EP08 "What If Stickman Drew a Million Dollars?"
 **Learned (EP08)**
 - Mask-first order (EP07 lesson) worked first try: QC mask 97.8 % visible, 80.1 % big enough, 56.4 % in the 40-60 % band before the final render; captions placed 42 high / 49 low from the mask.
