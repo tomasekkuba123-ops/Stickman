@@ -6,7 +6,7 @@ Never ask the user for technical details. The user's only inputs: SCRIPT + VOICE
 
 **After every render: `python3 tools/qc_check.py video.mp4 --duration <s>` must PASS before sending; include qc/report.txt + qc/contact_sheet.png. After every episode update `ENGINE_CHANGELOG.md`.**
 
-## STANDARD WORKFLOW — every "WHAT IF STICKMAN" episode (Stick3D-Pack v4). Use it every time; the user will not repeat it.
+## STANDARD WORKFLOW — every "WHAT IF STICKMAN" episode from EP09 on (Stick3D-Pack v4). EP08 is finished with the old workflow. Use it every time; the user will not repeat it.
 **This section overrides older defaults above/in MASTER-PROMPT where they differ (episode length, voice source, music/SFX sources).**
 
 1. **Character:** build the puppet ONCE from the user's reference sheet: trace it with OpenCV, measure proportions, overlay on the reference and iterate until it matches, cut it at all joints, keep the EP02 3D look. Save as a reusable asset (`assets/character/`) and reuse it in every episode — never rebuild it.
