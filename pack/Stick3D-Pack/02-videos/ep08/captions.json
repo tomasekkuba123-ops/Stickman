@@ -61,7 +61,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -87,7 +87,7 @@ false
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -100,7 +100,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -113,7 +113,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -124,7 +124,7 @@ false
 "key": [
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -163,7 +163,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -176,7 +176,7 @@ false
 true,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -215,7 +215,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -228,7 +228,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -239,7 +239,7 @@ true
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -252,7 +252,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -263,7 +263,7 @@ true
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -276,7 +276,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -289,7 +289,7 @@ false
 true,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -302,7 +302,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -315,7 +315,7 @@ false
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -339,7 +339,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -413,7 +413,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -426,7 +426,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -439,7 +439,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -452,7 +452,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -465,7 +465,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -478,7 +478,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -491,7 +491,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -582,7 +582,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -595,7 +595,7 @@ false
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -608,7 +608,7 @@ false
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -621,7 +621,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -656,7 +656,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -860,7 +860,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -873,7 +873,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -884,7 +884,7 @@ false
 "key": [
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -910,7 +910,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -923,7 +923,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -936,7 +936,7 @@ true
 false,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -947,7 +947,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -960,7 +960,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -973,7 +973,7 @@ true
 true,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -986,7 +986,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -999,7 +999,7 @@ true
 false,
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -1012,7 +1012,7 @@ true
 true,
 false
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
@@ -1023,7 +1023,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "high"
 },
 {
 "words": [
