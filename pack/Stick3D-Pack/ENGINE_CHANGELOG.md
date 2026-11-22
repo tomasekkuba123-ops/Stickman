@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## v15 — after EP08 "What If Stickman Drew a Million Dollars?"
+**Learned (EP08)**
+- Mask-first order (EP07 lesson) worked first try: QC mask 97.8 % visible, 80.1 % big enough, 56.4 % in the 40-60 % band before the final render; captions placed 42 high / 49 low from the mask.
+- Crowd scenes need townspeople that read as *different people* at a glance: hoodie colour + hat is enough; faces stay the same style.
+- Night scenes with dark money blankets go muddy without extra moon fill lights near Stickman.
+- Price/sign close-ups are fine as short cutaways (≤1.2 s) — the gap rule allows them.
+- Still one 2-hour background stop on a 100 s final → resume works (5 of 10 parts per run).
+
+**Changed (engine)**
+- `foregroundShot()` and `heroShot()` promoted into `kit/camera.tsx` (EP07 `fg()` pattern) — dist 5 ≈ Stickman 50 % tall.
+- `Townsperson` + `TOWNSFOLK` outfits (neighbor, mailman, chef, kid1, kid2, granny, worker, teen): `Outfit {hoodie, hat, hatColor}`, `drawHat()` (cap, chef, mail, beanie, bow); never masked as hero in QC.
+- `kit/sets2.tsx`: Banknote (procedural bill texture), MoneyStack (topple), MoneyPile (instanced, glow), MoneyRain, MoneyBlanket, PencilProp, GoldCar, GoldToilet (sparkle, lid), GoldMansion, SoldSign, PizzaShop (neon sign), PriceBoard (spinning digits), Street (morning/day/dinner/night, sold signs), Bike, AppleTree (grow), Apple (bite), SeedSprout, Garden8.
+
 ## v14 — after EP07 "What If Stickman's Baby Dragon Grew Up Overnight?"
 **Learned (EP07)**
 - First full render FAILED QC: Stickman big enough only 57 % (giant dragon + wide two-shots make him tiny), captions over his face in 8 places.
