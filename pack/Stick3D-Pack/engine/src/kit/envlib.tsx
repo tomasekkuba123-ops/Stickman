@@ -46,7 +46,7 @@ export const KScatter: React.FC<{ names: KenneyName[]; n: number; area: [number,
 /* DEPTH LAYERS: real depth-of-field — the subject plane at `focus` (world units from camera) stays sharp, far layers blur. */
 export const DepthPass: React.FC<{ focus: number; range?: number; blur?: number }> = ({ focus, range = 6, blur = 3 }) => {
   const { camera } = useThree(); const cam = camera as THREE.PerspectiveCamera; const span = cam.far - cam.near;
-  return (<EffectComposer multisampling={0}><DepthOfField focusDistance={(focus - cam.near) / span} focalLength={range / span} bokehScale={blur} /></EffectComposer>);
+  return (<EffectComposer multisampling={0}><DepthOfField focusDistance={(focus - cam.near) / span} focalLength={range / span} bokehScale={blur} resolutionScale={0.25} height={240} /></EffectComposer>);
 };
 /* tinted photo texture (Poly Haven) for ground planes */
 export function usePHTex(id: "coast_sand_01" | "forest_ground_04", repeat = 8) {
