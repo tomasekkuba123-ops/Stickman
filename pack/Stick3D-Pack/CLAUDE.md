@@ -7,17 +7,17 @@ Never ask the user for technical details. The user's only inputs: SCRIPT + VOICE
 **After every render: `python3 tools/qc_check.py video.mp4 --duration <s>` must PASS before sending; include qc/report.txt + qc/contact_sheet.png. After every episode update `ENGINE_CHANGELOG.md`.**
 
 ## STANDARD WORKFLOW — every "WHAT IF STICKMAN" episode from EP09 on (Stick3D-Pack v4). EP08 is finished with the old workflow. Use it every time; the user will not repeat it.
-**This section overrides older defaults above/in MASTER-PROMPT where they differ (episode length, voice source, music/SFX sources).**
+**This section overrides older defaults above/in MASTER-PROMPT where they differ (episode length, voice source, music/SFX = self-synthesized).**
 
 1. **Character:** build the puppet ONCE from the user's reference sheet: trace it with OpenCV, measure proportions, overlay on the reference and iterate until it matches, cut it at all joints, keep the EP02 3D look. Save as a reusable asset (`assets/character/`) and reuse it in every episode — never rebuild it.
 2. **Voice:** the user gives the script text. Generate the English voiceover with **Kokoro TTS** (free, open source). First time only: make a short sample in 3 male Kokoro voices and let the user pick. Save the chosen voice + settings (`assets/voice/VOICE.json`) and use exactly the same voice in every episode.
 3. **Timing:** transcribe the voiceover with **Whisper** (word timestamps); time gestures, cuts and captions to the words.
 4. **Lip sync:** generate mouth shapes with **Rhubarb Lip Sync** and sync the puppet's mouth to the voice.
-5. **Sound:** sound effects only from **freesound.org, CC0 license only** (safe for monetization). Log every file + URL + license in the episode ledger.
+5. **Sound:** NO Freesound, no downloads. Generate ALL sound effects yourself with Python/ffmpeg synthesis (whoosh, pop, swoosh, impact, ding, ka-ching, pencil scratch, crunch...) -> own work, no license issues. Save them as reusable assets in `sfx/` (library already exists: whoosh, pop, swing, impact, ding, sparkle, thud...) and reuse them; only synthesize what is missing.
 6. **Format:** episodes **max 40 s**, vertical 9:16 (1080x1920, 30 fps). Use credits sparingly: reuse saved assets, don't rebuild what already exists.
 7. **Retention (every episode):**
    - Word-by-word animated captions from the Whisper timestamps (current word highlighted, big bold font, center-lower screen, never covering the character's face).
-   - Normalize audio with ffmpeg loudnorm to **-14 LUFS**; background music only **CC0 from freesound.org**, ducked under the voice. No AI music with non-commercial licenses.
+   - Normalize audio with ffmpeg loudnorm to **-14 LUFS**; background music synthesized by us with `tools/music_bed.py` (no downloads), ducked under the voice. No AI music with non-commercial licenses.
    - Hook in the first **1.5 s**: show the "WHAT IF...?" question as big text with action immediately.
    - The last frame flows seamlessly into the first frame so the Short loops.
 
