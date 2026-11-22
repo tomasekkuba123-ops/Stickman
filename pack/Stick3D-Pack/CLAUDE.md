@@ -40,3 +40,7 @@ Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (`--dura
 - Every scene: 3-4 parallax layers, gentle camera moves, depth blur on far layers, particles (dust, light rays, sparkles), colour grading with a soft vignette (grading never tints Stickman's white head).
 
 Build libraries once and reuse them; spend credits sparingly.
+
+## INSTALL GATE — any GitHub repo / skill / tool the user mentions
+Before installing: open its README + source, check the LICENSE (must allow commercial use), check what it runs (install scripts, binaries, background processes) and what network access it needs. Report to the user in 3 lines: safe? / license / worth the credits. Install ONLY after the user confirms.
+Already vetted + installed (00-setup/install_v4_tools.sh): kokoro-onnx (MIT) + Kokoro-82M weights (Apache-2.0), faster-whisper (MIT) + Whisper base.en (MIT), Rhubarb Lip Sync 1.14 (MIT).
