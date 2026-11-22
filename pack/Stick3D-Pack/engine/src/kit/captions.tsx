@@ -4,7 +4,7 @@
 // Without captions.json it falls back to grouping words.json/script.json itself (band from the camera shot list, else "low").
 import React from "react";
 import { useCurrentFrame, interpolate, Easing } from "remotion";
-import { QC } from "./qc";
+import { QC, CLEAN } from "./qc";
 
 export type CapGroup = { words: string[]; a: number; e: number; band?: "low" | "high"; key?: boolean[] };
 export type CaptionData = { groups: CapGroup[]; keywords?: string[] };
@@ -17,7 +17,7 @@ export function groupWords(words: { start: number; end: number }[], script: stri
 }
 
 export const Captions: React.FC<{ data: CaptionData; until?: number; fps?: number; bandAt?: (t: number) => "low" | "high" | undefined; size?: number }> = ({ data, until = 1e9, fps = 30, bandAt, size = 128 }) => {
-  const t = useCurrentFrame() / fps; if (QC || t >= until) return null;
+  const t = useCurrentFrame() / fps; if (QC || CLEAN || t >= until) return null;
   const G = data.groups; const idx = G.findIndex((g, i) => t >= g.a - 0.02 && t < (G[i + 1]?.a ?? 1e9) - 0.02); if (idx < 0) return null; const g = G[idx];
   if (t > g.e + 0.7) return null;
   const KEY = new Set((data.keywords ?? []).map((k) => k.toUpperCase()));

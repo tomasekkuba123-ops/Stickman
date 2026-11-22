@@ -16,6 +16,8 @@ Newest entries on top.
 **Changed (engine)**
 - `foregroundShot()` and `heroShot()` promoted into `kit/camera.tsx` (EP07 `fg()` pattern) — dist 5 ≈ Stickman 50 % tall.
 - `Townsperson` + `TOWNSFOLK` outfits (neighbor, mailman, chef, kid1, kid2, granny, worker, teen): `Outfit {hoodie, hat, hatColor}`, `drawHat()` (cap, chef, mail, beanie, bow); never masked as hero in QC.
+- Auto thumbnail picked a frame with the hand over the face and no money in it → `tools/publish_kit.py` now takes `thumb.txt` ("<seconds> [WORD]"), `thumb.png` (clean still) and `logline.txt` (description line) from the episode folder; input prop `{"clean":true}` (kit/qc.ts `CLEAN`) renders stills without captions.
+- Final QC: PASS first try — 97.8 % visible, 80.1 % big, 56.4 % band, head white 97.1 %, -14.0 LUFS / -1.2 dBTP, 96 cuts (mean 1.03 s).
 - `kit/sets2.tsx`: Banknote (procedural bill texture), MoneyStack (topple), MoneyPile (instanced, glow), MoneyRain, MoneyBlanket, PencilProp, GoldCar, GoldToilet (sparkle, lid), GoldMansion, SoldSign, PizzaShop (neon sign), PriceBoard (spinning digits), Street (morning/day/dinner/night, sold signs), Bike, AppleTree (grow), Apple (bite), SeedSprout, Garden8.
 
 ## v14 — after EP07 "What If Stickman's Baby Dragon Grew Up Overnight?"

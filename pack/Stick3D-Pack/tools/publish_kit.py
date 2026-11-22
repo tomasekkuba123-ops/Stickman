@@ -84,13 +84,23 @@ def main():
     tags = ["#stickman", "#animation", "#shorts", "#whatif", f"#{obj.lower()}", "#cartoon", "#funny", "#story"] + [f"#{w}" for w in dict.fromkeys(re.sub(r"[^a-z]", "", x[2]) for x in nouns(script)[0]) if w and w not in (obj.lower(), "stickman", "window", "door", "morning", "night") and not w.endswith("s")][:4]
     hp = os.path.join(ep, "hashtags.txt")
     if os.path.exists(hp): tags = open(hp).read().split()
-    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. This time it was a {obj.lower()}... and things got out of hand. ✏️\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
+    lp = os.path.join(ep, "logline.txt")  # optional middle line of the description
+    logline = open(lp).read().strip() if os.path.exists(lp) else f"This time it was a {obj.lower()}... and things got out of hand. ✏️"
+    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. {logline}\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
     b = best_frame(video, mask, caps)
+    thp = os.path.join(ep, "thumb.txt")  # optional "<seconds> [WORD]": force the thumbnail frame (e.g. the hook) and word
+    th = open(thp).read().split() if os.path.exists(thp) else []
+    if th:
+        cap = cv2.VideoCapture(video); cap.set(cv2.CAP_PROP_POS_MSEC, float(th[0]) * 1000); ok, im = cap.read()
+        if ok: b = (0, float(th[0]), im)
+    tpng = os.path.join(ep, "thumb.png")  # optional clean still (render with --props '{"clean":true}' = no captions)
+    if os.path.exists(tpng) and th: b = (0, float(th[0]), cv2.imread(tpng))
     lines = ["# PUBLISH KIT", "", "## Title options"] + [f"{i + 1}. {t}" for i, t in enumerate(T)] + ["", "## Description", "", desc, ""]
     if b:
         _, t, im = b; p = os.path.join(out, "THUMBNAIL.png"); cv2.imwrite(p, im)
         pil = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB)); d = ImageDraw.Draw(pil)
         word = (obj.upper() + "?!") if len(obj) < 9 else obj.upper()
+        if len(th) > 1: word = " ".join(th[1:])
         try: F = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 190)
         except Exception: F = ImageFont.load_default()
         M = json.load(open(mask)); fr = min(M["frames"], key=lambda f: abs(f["t"] - t)); fy = (fr.get("face") or [0, 0.3, 0, 0.5])

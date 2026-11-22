@@ -8,3 +8,4 @@ export function maskify(c: CanvasRenderingContext2D, head: [number, number], hea
   c.save(); c.globalCompositeOperation = "source-in"; c.fillStyle = MASK_BODY; c.fillRect(0, 0, W, H);
   c.globalCompositeOperation = "source-atop"; c.fillStyle = MASK_FACE; c.beginPath(); c.arc(head[0], head[1], headR * 0.92, 0, Math.PI * 2); c.fill(); c.restore();
 }
+export const CLEAN: boolean = (() => { try { return !!(getInputProps() as Record<string, unknown>).clean; } catch { return false; } })(); // {"clean":true}: no captions (thumbnails / clean plates)
