@@ -43,4 +43,5 @@ Build libraries once and reuse them; spend credits sparingly.
 
 ## INSTALL GATE — any GitHub repo / skill / tool the user mentions
 Before installing: open its README + source, check the LICENSE (must allow commercial use), check what it runs (install scripts, binaries, background processes) and what network access it needs. Report to the user in 3 lines: safe? / license / worth the credits. Install ONLY after the user confirms.
+Installed skill: humanizer (blader/humanizer, MIT, text-only) in `.claude/skills/humanizer/` — run it on PUBLISH.md titles + description before delivery.
 Already vetted + installed (00-setup/install_v4_tools.sh): kokoro-onnx (MIT) + Kokoro-82M weights (Apache-2.0), faster-whisper (MIT) + Whisper base.en (MIT), Rhubarb Lip Sync 1.14 (MIT).

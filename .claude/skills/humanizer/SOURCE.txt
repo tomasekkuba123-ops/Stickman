@@ -1,0 +1,1 @@
+Source: https://github.com/blader/humanizer @ a32f244 (MIT). Vetted 2026-11-22: text-only skill, no code, no network. Use on PUBLISH.md titles/descriptions.
