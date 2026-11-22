@@ -5,7 +5,7 @@
 // Contact shadow is automatic (shrinks while airborne); rim light colour comes from the active <World> sky preset.
 import React, { createContext, useContext } from "react";
 import { Billboard, Shadow } from "../style/toon";
-import { drawStickman, Rig, POSES, Face, RigOut, WALK_STRIDE, RUN_STRIDE } from "../style/stickman";
+import { drawStickman, Rig, POSES, Face, RigOut, WALK_STRIDE, RUN_STRIDE, Outfit } from "../style/stickman";
 import { drawDragon, DragonPose } from "../style/dragon";
 import { drawPencil } from "../style/props2d";
 import { V3 } from "../style/kit";
@@ -118,9 +118,9 @@ export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig
 /* ---------------- Stickman component ---------------- */
 export type Prop2D = "pencil" | "chalk" | "pencilUp" | null;
 export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; speed?: number; dur?: number;
-  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string }> =
-  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim }) => {
-  const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: rig, speed, dur });
+  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number }> =
+  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0 }) => {
+  const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: { ...(outfit ? { outfit, backpack: false } : {}), ...(blinkSeed ? { blink: autoBlink(t, blinkSeed) } : {}), ...(rig ?? {}) }, speed, dur });
   const k = h / 1000, x = p[0] + (move ? r.dx * k * dir : 0), y = p[1] + r.lift * k, gy = groundY ?? p[1];
   const rimC = rim ?? look.rim;
   return (<>
@@ -129,7 +129,7 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
       const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK);
       if (prop === "pencil" || prop === "chalk" || prop === "pencilUp") { const L = H * 0.13, a = prop === "pencilUp" ? Math.PI + 0.3 : 0.5, bx = Math.sin(a), by = -Math.cos(a); drawPencil(c, out.gloveR[0] - bx * L * 0.42, out.gloveR[1] - by * L * 0.42, L, a, prop === "chalk" ? 0.6 : 0); }
       if (extra) extra(c, out, W, H);
-      if (QC) maskify(c, out.head, out.headR, W, H);
+      if (QC && hero) maskify(c, out.head, out.headR, W, H);
     }} />
   </>);
 };
@@ -165,3 +165,14 @@ export function dragonPoint(p: V3, h: number, n: [number, number], cam: V3, flip
   const yaw = Math.atan2(cam[0] - p[0], cam[2] - p[2]), nx = flip ? 1 - n[0] : n[0], lx = (nx - 0.5) * h;
   return [p[0] + Math.cos(yaw) * lx, p[1] + lift * h + h * 0.483 + (0.5 - n[1]) * h, p[2] - Math.sin(yaw) * lx];
 }
+
+/* TOWNSPEOPLE (v15): same rig + style as Stickman, different hoodie colours and hats; NOT part of the QC hero mask. */
+export const TOWNSFOLK: Record<string, Outfit> = {
+  neighbor: { hoodie: "#2fa04a", hat: "cap", hatColor: "#ffd23a" }, mailman: { hoodie: "#3a6fd8", hat: "mail", hatColor: "#1d2f66" },
+  chef: { hoodie: "#f4f4f8", hat: "chef" }, kid1: { hoodie: "#ff9a3a", hat: "beanie", hatColor: "#7a54d6" }, kid2: { hoodie: "#ff6aa8", hat: "bow", hatColor: "#ffd23a" },
+  granny: { hoodie: "#7a54d6", hat: "beanie", hatColor: "#ff8fb0" }, worker: { hoodie: "#f0b429", hat: "cap", hatColor: "#e5483f" }, teen: { hoodie: "#2fd4c8", hat: "none" },
+};
+export const Townsperson: React.FC<{ who: keyof typeof TOWNSFOLK | Outfit; p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; seed?: number }> =
+  ({ who, p, t, h = 2.8, action = "idle", t0 = 0, face, dir = 1, move = true, rig, extra, seed = 1 }) => (
+  <Stickman p={p} t={t} h={h} action={action} t0={t0} face={face} dir={dir} move={move} rig={rig} extra={extra} hero={false} outfit={typeof who === "string" ? TOWNSFOLK[who] : who} blinkSeed={seed} />
+);

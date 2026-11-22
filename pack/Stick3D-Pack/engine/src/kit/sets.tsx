@@ -18,8 +18,9 @@ const Toon: React.FC<{ color: string }> = ({ color }) => <meshToonMaterial color
 
 /* ---------------- COTTAGE (exterior). Origin = front-centre at ground; faces +z. 8 wide, 6 deep, walls 3.6, ridge 6.3 ---------------- */
 export const COTTAGE = { door: [0, 0, 0.05] as V3, sideWindow: [4.05, 2.0, -3] as V3, roofFront: [0, 5.0, -1.4] as V3, chimney: [2.5, 7.1, -3.8] as V3, ridgeY: 6.3 };
-export const Cottage: React.FC<{ p?: V3; t: number; chimneySmoke?: boolean; doorOpen?: number; burnt?: number }> = ({ p = [0, 0, 0], t, chimneySmoke = true, doorOpen = 0, burnt = 0 }) => {
-  const roof = burnt > 0 ? "#" + new THREE.Color("#c8403a").lerp(new THREE.Color("#3a2a2a"), burnt).getHexString() : "#c8403a";
+export const Cottage: React.FC<{ p?: V3; t: number; chimneySmoke?: boolean; doorOpen?: number; burnt?: number; goldTint?: boolean }> = ({ p = [0, 0, 0], t, chimneySmoke = true, doorOpen = 0, burnt = 0, goldTint = false }) => {
+  const wall = goldTint ? "#ffd86a" : "#fff1d6", gable = goldTint ? "#ffe08a" : "#ffe8c4";
+  const roof = goldTint ? "#d8962a" : burnt > 0 ? "#" + new THREE.Color("#c8403a").lerp(new THREE.Color("#3a2a2a"), burnt).getHexString() : "#c8403a";
   const win = (x: number, y: number, z: number, rotY = 0, light = 0) => (<group position={[x, y, z]} rotation={[0, rotY, 0]}>
     <Box p={[0, 0, 0]} s={[1.4, 1.4, 0.12]} color="#ffffff" line={3} /><Box p={[0, 0, 0.05]} s={[1.15, 1.15, 0.04]} color={light ? "#ffe3a0" : "#9fd8ff"} line={2} />
     <Box p={[0, 0, 0.09]} s={[0.07, 1.15, 0.03]} color="#ffffff" line={1} /><Box p={[0, 0, 0.09]} s={[1.15, 0.07, 0.03]} color="#ffffff" line={1} />
@@ -29,11 +30,11 @@ export const Cottage: React.FC<{ p?: V3; t: number; chimneySmoke?: boolean; door
   </group>);
   return (<group position={p}>
     {/* walls + timber frame */}
-    <Box p={[0, 1.8, -3]} s={[8, 3.6, 6]} color="#fff1d6" line={4} />
+    <Box p={[0, 1.8, -3]} s={[8, 3.6, 6]} color={wall} line={4} />
     {[-3.9, 3.9].map((x) => <Box key={x} p={[x, 1.8, 0.02]} s={[0.25, 3.6, 0.08]} color="#8a5a32" line={2} />)}
     <Box p={[0, 3.55, 0.02]} s={[8.1, 0.22, 0.08]} color="#8a5a32" line={2} /><Box p={[0, 0.2, 0.02]} s={[8.1, 0.4, 0.1]} color="#b8b2c8" line={2} />
     {/* gables + roof slabs with tile rows */}
-    {[0.05, -6.05].map((z) => <group key={z} position={[0, 3.6, z]}><Extrude pts={[[-4, 0], [4, 0], [0, 2.7]]} depth={0.1} color="#ffe8c4" line={3} /></group>)}
+    {[0.05, -6.05].map((z) => <group key={z} position={[0, 3.6, z]}><Extrude pts={[[-4, 0], [4, 0], [0, 2.7]]} depth={0.1} color={gable} line={3} /></group>)}
     {[1, -1].map((sd) => <group key={sd} position={[0, 4.95, -3 + sd * 1.62]} rotation={[sd * 0.73, 0, 0]}>
       <Box p={[0, 0, 0]} s={[8.9, 0.24, 4.5]} color={roof} line={4} />
       {[-1.6, -0.8, 0, 0.8, 1.6].map((r) => <Box key={r} p={[0, 0.14, r]} s={[8.9, 0.06, 0.1]} color={burnt > 0.5 ? "#2a1a1a" : "#a82e2a"} line={0} />)}

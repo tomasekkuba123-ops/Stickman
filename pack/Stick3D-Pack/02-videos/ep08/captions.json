@@ -1,0 +1,1196 @@
+{
+"groups": [
+{
+"words": [
+"WHAT",
+"IF"
+],
+"a": 0.13,
+"e": 0.34,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"DREW"
+],
+"a": 0.34,
+"e": 1.18,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"MILLION"
+],
+"a": 1.18,
+"e": 1.66,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"DOLLARS"
+],
+"a": 1.66,
+"e": 2.28,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"ONE",
+"BILL"
+],
+"a": 3.583,
+"e": 4.223,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"ANOTHER"
+],
+"a": 4.869,
+"e": 5.499,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"A"
+],
+"a": 6.146,
+"e": 6.346,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WHOLE",
+"STACK"
+],
+"a": 6.346,
+"e": 7.226,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"TALLER",
+"THAN"
+],
+"a": 7.386,
+"e": 7.876,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HIM"
+],
+"a": 7.876,
+"e": 8.256,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"BOUGHT"
+],
+"a": 10.448,
+"e": 10.718,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"PIZZA"
+],
+"a": 10.718,
+"e": 11.278,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"THE"
+],
+"a": 11.704,
+"e": 11.944,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"PIZZA",
+"SHOP"
+],
+"a": 11.944,
+"e": 12.664,
+"key": [
+true,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"THE"
+],
+"a": 13.421,
+"e": 13.631,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WHOLE",
+"STREET"
+],
+"a": 13.631,
+"e": 14.521,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"DREW"
+],
+"a": 16.903,
+"e": 17.213,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"GOLD"
+],
+"a": 17.213,
+"e": 17.563,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"CAR"
+],
+"a": 17.563,
+"e": 18.043,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"GOLD"
+],
+"a": 18.253,
+"e": 18.633,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HOUSE"
+],
+"a": 18.633,
+"e": 19.333,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"A"
+],
+"a": 19.333,
+"e": 19.483,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"GOLD",
+"TOILET"
+],
+"a": 19.483,
+"e": 20.203,
+"key": [
+true,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"JUST",
+"BECAUSE"
+],
+"a": 21.736,
+"e": 22.196,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"COULD"
+],
+"a": 22.196,
+"e": 22.756,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BUT",
+"PEOPLE"
+],
+"a": 25.238,
+"e": 25.658,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"NOTICED"
+],
+"a": 25.658,
+"e": 26.218,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HIS",
+"NEIGHBOR"
+],
+"a": 27.8,
+"e": 28.28,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BORROWED",
+"A"
+],
+"a": 28.28,
+"e": 28.65,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"PENCIL"
+],
+"a": 28.65,
+"e": 29.2,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"THE"
+],
+"a": 29.837,
+"e": 30.047,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"MAILMAN"
+],
+"a": 30.047,
+"e": 30.707,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"THEN",
+"THE"
+],
+"a": 31.223,
+"e": 31.453,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WHOLE",
+"TOWN"
+],
+"a": 31.453,
+"e": 32.323,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"BY",
+"LUNCHTIME"
+],
+"a": 34.765,
+"e": 35.585,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"EVERYONE",
+"WAS"
+],
+"a": 35.725,
+"e": 36.275,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"MILLIONAIRE"
+],
+"a": 36.275,
+"e": 36.915,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"BY",
+"DINNER"
+],
+"a": 38.318,
+"e": 38.908,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"PIZZA"
+],
+"a": 39.128,
+"e": 39.618,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"COST",
+"THREE"
+],
+"a": 39.618,
+"e": 40.218,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"MILLION",
+"DOLLARS"
+],
+"a": 40.218,
+"e": 41.088,
+"key": [
+true,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"BY",
+"MIDNIGHT"
+],
+"a": 42.641,
+"e": 43.511,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"PEOPLE",
+"WERE"
+],
+"a": 43.511,
+"e": 43.891,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"USING",
+"MONEY"
+],
+"a": 43.891,
+"e": 44.451,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AS",
+"BLANKETS"
+],
+"a": 44.451,
+"e": 45.221,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"LOOKED"
+],
+"a": 47.383,
+"e": 48.103,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AT",
+"HIS"
+],
+"a": 48.103,
+"e": 48.353,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"GIANT",
+"PILE"
+],
+"a": 48.353,
+"e": 49.093,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"OF",
+"CASH"
+],
+"a": 49.093,
+"e": 49.743,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT",
+"WAS"
+],
+"a": 51.215,
+"e": 51.465,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WORTH"
+],
+"a": 51.465,
+"e": 52.205,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"NOTHING"
+],
+"a": 53.338,
+"e": 53.998,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"NEEDED"
+],
+"a": 55.561,
+"e": 55.911,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SOMETHING",
+"NOBODY"
+],
+"a": 55.911,
+"e": 56.651,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"COULD",
+"DRAW"
+],
+"a": 56.651,
+"e": 57.251,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"THOUGHT"
+],
+"a": 58.583,
+"e": 59.163,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"THOUGHT"
+],
+"a": 59.8,
+"e": 60.41,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"THEN"
+],
+"a": 60.986,
+"e": 61.256,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"DREW"
+],
+"a": 61.256,
+"e": 61.606,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"TINY"
+],
+"a": 61.606,
+"e": 62.156,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"SEED"
+],
+"a": 62.156,
+"e": 62.716,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HE",
+"PLANTED"
+],
+"a": 65.128,
+"e": 65.728,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"IT"
+],
+"a": 65.728,
+"e": 66.008,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WATERED",
+"IT"
+],
+"a": 66.178,
+"e": 67.048,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"WAITED"
+],
+"a": 67.048,
+"e": 67.698,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"EVERYONE",
+"LAUGHED"
+],
+"a": 69.201,
+"e": 70.091,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"UNTIL",
+"MORNING"
+],
+"a": 70.877,
+"e": 71.617,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"TREE"
+],
+"a": 74.07,
+"e": 74.65,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"FULL",
+"OF"
+],
+"a": 75.246,
+"e": 75.806,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"REAL"
+],
+"a": 75.806,
+"e": 76.326,
+"key": [
+false
+],
+"band": "low"
+},
+{
+"words": [
+"JUICY",
+"APPLES"
+],
+"a": 76.326,
+"e": 77.496,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"SUDDENLY",
+"THE"
+],
+"a": 79.998,
+"e": 80.558,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WHOLE",
+"TOWN"
+],
+"a": 80.558,
+"e": 81.318,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"WANTED",
+"TO"
+],
+"a": 81.318,
+"e": 81.658,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TRADE"
+],
+"a": 81.658,
+"e": 82.168,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"GOLD"
+],
+"a": 83.015,
+"e": 83.385,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"CAR",
+"FOR"
+],
+"a": 83.385,
+"e": 83.905,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ONE",
+"APPLE"
+],
+"a": 83.905,
+"e": 84.565,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"A",
+"GOLD"
+],
+"a": 85.011,
+"e": 85.341,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"HOUSE",
+"FOR"
+],
+"a": 85.341,
+"e": 85.861,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TWO"
+],
+"a": 85.861,
+"e": 86.321,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"STICKMAN",
+"SMILED"
+],
+"a": 88.553,
+"e": 89.653,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TOOK",
+"A"
+],
+"a": 89.843,
+"e": 90.043,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"BITE"
+],
+"a": 90.043,
+"e": 90.473,
+"key": [
+true
+],
+"band": "low"
+},
+{
+"words": [
+"AND",
+"THE"
+],
+"a": 91.886,
+"e": 92.196,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"APPLE",
+"TASTED"
+],
+"a": 92.196,
+"e": 92.976,
+"key": [
+true,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"LIKE",
+"PENCIL"
+],
+"a": 92.976,
+"e": 93.706,
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"WHAT",
+"WOULD"
+],
+"a": 95.298,
+"e": 95.548,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"YOU",
+"DRAW"
+],
+"a": 95.548,
+"e": 96.028,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"IF",
+"MONEY"
+],
+"a": 96.028,
+"e": 96.408,
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"WAS",
+"WORTHLESS"
+],
+"a": 96.408,
+"e": 97.238,
+"key": [
+false,
+true
+],
+"band": "low"
+}
+],
+"keywords": [
+"MILLION",
+"DOLLARS",
+"BILL",
+"STACK",
+"PIZZA",
+"SHOP",
+"STREET",
+"GOLD",
+"CAR",
+"HOUSE",
+"TOILET",
+"NOTICED",
+"PENCIL",
+"MAILMAN",
+"TOWN",
+"LUNCHTIME",
+"MILLIONAIRE",
+"DINNER",
+"THREE",
+"MIDNIGHT",
+"BLANKETS",
+"CASH",
+"NOTHING",
+"NOBODY",
+"SEED",
+"PLANTED",
+"WATERED",
+"WAITED",
+"LAUGHED",
+"MORNING",
+"TREE",
+"APPLES",
+"TRADE",
+"APPLE",
+"TWO",
+"BITE",
+"WORTHLESS"
+]
+}

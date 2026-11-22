@@ -17,10 +17,28 @@ export type Rig = {
   handL?: HandPose; handR?: HandPose; handRotL?: number; handRotR?: number;
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
-  backpack?: boolean; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
+  backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
 };
 
-const INK = "#101018", RED = "#e2262c", RED_L = "#f2484a", RED_D = "#b51a22", RED_DD = "#8e121a";
+const INK = "#101018"; let RED = "#e2262c", RED_L = "#f2484a", RED_D = "#b51a22", RED_DD = "#8e121a";
+// v15 OUTFITS (townspeople): same rig, different hoodie colour + hat. Hoodie "#e2262c" = Stickman (default).
+export type Hat = "none" | "cap" | "chef" | "mail" | "beanie" | "bow";
+export type Outfit = { hoodie?: string; hat?: Hat; hatColor?: string };
+const shade = (hex: string, k: number) => { const n = parseInt(hex.slice(1), 16); const f = (v: number) => Math.max(0, Math.min(255, Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k)))); return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, "0")).join(""); };
+function setOutfit(o?: Outfit) { const h = o?.hoodie ?? "#e2262c"; RED = h; RED_L = shade(h, 0.18); RED_D = shade(h, -0.2); RED_DD = shade(h, -0.37); }
+function drawHat(c: CanvasRenderingContext2D, hx: number, hy: number, o: Outfit | undefined, side: boolean) {
+  const hat = o?.hat ?? "none"; if (hat === "none") return; const col = o?.hatColor ?? "#3a6fd8", R = HR;
+  c.save(); c.lineJoin = "round";
+  if (hat === "cap" || hat === "mail") { c.beginPath(); c.arc(hx, hy - R * 0.2, R * 0.98, Math.PI * 1.04, Math.PI * 1.96); c.closePath(); c.fillStyle = col; c.fill(); stroke(c, LW);
+    c.beginPath(); c.ellipse(hx + (side ? R * 0.75 : R * 0.15), hy - R * 0.32, R * (side ? 0.55 : 0.75), R * 0.13, side ? 0.1 : 0, 0, Math.PI * 2); c.fillStyle = shade(col, -0.25); c.fill(); stroke(c, LW * 0.8);
+    if (hat === "mail") { c.beginPath(); c.arc(hx, hy - R * 0.62, R * 0.16, 0, Math.PI * 2); c.fillStyle = "#ffd23a"; c.fill(); stroke(c, 5); } }
+  else if (hat === "chef") { c.beginPath(); c.rect(hx - R * 0.62, hy - R * 1.05, R * 1.24, R * 0.45); c.fillStyle = "#ffffff"; c.fill(); stroke(c, LW);
+    for (const dx of [-0.45, 0, 0.45]) { c.beginPath(); c.arc(hx + dx * R, hy - R * 1.25, R * 0.38, 0, Math.PI * 2); c.fillStyle = "#ffffff"; c.fill(); stroke(c, LW); } c.beginPath(); c.rect(hx - R * 0.6, hy - R * 1.05, R * 1.2, R * 0.43); c.fillStyle = "#ffffff"; c.fill(); }
+  else if (hat === "beanie") { c.beginPath(); c.arc(hx, hy - R * 0.15, R * 1.0, Math.PI * 1.02, Math.PI * 1.98); c.closePath(); c.fillStyle = col; c.fill(); stroke(c, LW);
+    c.beginPath(); c.rect(hx - R * 1.0, hy - R * 0.32, R * 2.0, R * 0.24); c.fillStyle = shade(col, -0.2); c.fill(); stroke(c, LW * 0.8); c.beginPath(); c.arc(hx, hy - R * 1.2, R * 0.2, 0, Math.PI * 2); c.fillStyle = "#ffffff"; c.fill(); stroke(c, 6); }
+  else if (hat === "bow") { for (const sx of [-1, 1]) { c.beginPath(); c.moveTo(hx + R * 0.45, hy - R * 0.8); c.lineTo(hx + R * 0.45 + sx * R * 0.38, hy - R * 1.0); c.lineTo(hx + R * 0.45 + sx * R * 0.38, hy - R * 0.6); c.closePath(); c.fillStyle = col; c.fill(); stroke(c, 6); } }
+  c.restore();
+}
 const GLOVE = "#ffffff", GLOVE_S = "#c9d2ea", BAG = "#3b3c48", BAG_L = "#55566a", SOLE = "#ffffff";
 const LW = 9; // main outline width (units)
 const rad = (d: number) => (d * Math.PI) / 180;
@@ -210,7 +228,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
 type Geo = { hip: P; hipL: P; hipR: P; kneeL: P; kneeR: P; ankL: P; ankR: P; footL: number; footR: number; sh: P; shL: P; shR: P; elL: P; elR: P; wrL: P; wrR: P; head: P };
 export type RigOut = { gloveR: [number, number]; gloveL: [number, number]; head: [number, number]; headR: number; S: number };
 export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, r: Rig): RigOut {
-  ZG = r.zeroG ?? 0; DX = r.drag?.[0] ?? 0; DY = r.drag?.[1] ?? 0;
+  ZG = r.zeroG ?? 0; DX = r.drag?.[0] ?? 0; DY = r.drag?.[1] ?? 0; setOutfit(r.outfit);
   c.clearRect(0, 0, W, H); c.save();
   const S = (H * 0.955) / 1040; // 1000 units + hair headroom
   c.translate(W / 2, H * 0.985 - 1000 * S); c.scale(S, S);
@@ -377,8 +395,9 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   if (!r.handsOverHead) arms();
   // head
   c.save(); c.translate(g.head[0], g.head[1]); c.rotate(rad(r.headTilt ?? 0)); c.translate(-g.head[0], -g.head[1]);
-  headBall(c, g.head[0], g.head[1], 1); hair(c, g.head[0], g.head[1], r.t, false);
+  headBall(c, g.head[0], g.head[1], 1); if ((r.outfit?.hat ?? "none") === "none" || r.outfit?.hat === "bow") hair(c, g.head[0], g.head[1], r.t, false);
   if (!back) face(c, g.head[0], g.head[1], r, false);
+  drawHat(c, g.head[0], g.head[1], r.outfit, false);
   c.restore();
   if (r.handsOverHead) arms();
   void lean; void sq;
@@ -417,7 +436,7 @@ function drawSide(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, l
   legLine(c, g.hipR, g.kneeR, g.ankR, false); c.save(); c.translate(g.ankR[0], g.ankR[1]); c.rotate(-g.footR); shoeSide(c, false); c.restore();
   // head
   c.save(); c.translate(g.head[0], g.head[1]); c.rotate(rad(r.headTilt ?? 0)); c.translate(-g.head[0], -g.head[1]);
-  headBall(c, g.head[0], g.head[1], 1); hair(c, g.head[0], g.head[1], r.t, true); face(c, g.head[0], g.head[1], r, true);
+  headBall(c, g.head[0], g.head[1], 1); if ((r.outfit?.hat ?? "none") === "none" || r.outfit?.hat === "bow") hair(c, g.head[0], g.head[1], r.t, true); face(c, g.head[0], g.head[1], r, true); drawHat(c, g.head[0], g.head[1], r.outfit, true);
   c.restore();
   // near arm
   sleeve(c, g.shR, g.elR, g.wrR, false, -1);

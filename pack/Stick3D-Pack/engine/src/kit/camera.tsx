@@ -68,3 +68,19 @@ export const cutList = (shots: Shot[]) => shots.map((s) => ({ t0: s.t0, t1: s.t1
 
 /* key story moment (landing, arrival, reveal): a twoShot that keeps both readable — Stickman >= ~25 % tall and the object fully in frame */
 export const keyMoment = (t0: number, t1: number, hero: Subject, other: Subject, otherH: number, side = 0.35) => shotPreset("twoShot", t0, t1, { subject: hero, other, otherH, side });
+
+/* FOREGROUND-HERO shot (EP07 lesson): camera `dist` (~5) units behind/beside Stickman, looking past him at `target`.
+   Keeps Stickman 45-55 % of frame height while a big subject (giant, building, crowd) stays readable behind him. side: -1..1 swings the camera around him. */
+export function foregroundShot(hero: V3, target: V3, t0: number, t1: number, o: { side?: number; dist?: number; fov?: number; k?: number; lift?: number; push?: number } = {}): Key[] {
+  const side = o.side ?? 0.5, dist = o.dist ?? 5, fov = o.fov ?? 56, k = o.k ?? 0.4, lift = o.lift ?? 1.7, push = o.push ?? 0.92;
+  const dx = hero[0] - target[0], dz = hero[2] - target[2], n = Math.hypot(dx, dz) || 1, ux = dx / n, uz = dz / n, px = -uz, pz = ux;
+  const head: V3 = [hero[0], hero[1] + 1.8, hero[2]], look: V3 = [head[0] + (target[0] - head[0]) * k, head[1] + (target[1] - head[1]) * k, head[2] + (target[2] - head[2]) * k];
+  const cam = (d: number, sd: number): V3 => [hero[0] + ux * d + px * sd * d, hero[1] + lift, hero[2] + uz * d + pz * sd * d];
+  return [{ t: t0, pos: cam(dist, side), look, fov }, { t: t1, pos: cam(dist * push, side * 0.85), look, fov: fov - 2 }];
+}
+/* MEDIUM on Stickman alone, fixed distance (no subject): quick helper for reaction shots */
+export function heroShot(hero: V3, t0: number, t1: number, o: { yaw?: number; dist?: number; fov?: number; y?: number; push?: number } = {}): Key[] {
+  const yaw = o.yaw ?? 0.3, d = o.dist ?? 5, fov = o.fov ?? 52, y = o.y ?? 1.75, push = o.push ?? 0.9, look: V3 = [hero[0], hero[1] + 1.55, hero[2]];
+  const cam = (dd: number): V3 => [hero[0] + Math.sin(yaw) * dd, hero[1] + y, hero[2] + Math.cos(yaw) * dd];
+  return [{ t: t0, pos: cam(d), look, fov }, { t: t1, pos: cam(d * push), look, fov: fov - 2 }];
+}
