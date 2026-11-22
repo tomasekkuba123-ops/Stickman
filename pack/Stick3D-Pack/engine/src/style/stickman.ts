@@ -1,5 +1,5 @@
 // STICKMAN rig v2 — the channel's default hero. Layered 2D vector parts traced from the official model sheet
-// (02-videos/ep02/STICKMAN_FINAL_LOOK.png, 01_MAIN_CHARACTER_LATEST_MODEL_SHEET.png).
+// (MASTER reference: assets/reference/STICKMAN_REFERENCE_SHEET_v3.png).
 // Units: the character is 1000 units tall (hair tip ~0, sole baseline 1000). Proportions: head ~30 %, hoodie ~31 %,
 // visible legs ~25 %, sneakers ~10 %. Views: front, side (facing right; flip -> left), back.
 // Every joint is an explicit angle (FK) or a hand IK target; feet are auto-grounded to the baseline.

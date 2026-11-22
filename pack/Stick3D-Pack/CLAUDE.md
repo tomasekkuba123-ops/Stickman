@@ -22,3 +22,11 @@ Never ask the user for technical details. The user's only inputs: SCRIPT + VOICE
    - The last frame flows seamlessly into the first frame so the Short loops.
 
 Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (`--duration <s>`), deliver report.txt + contact_sheet.png, update ENGINE_CHANGELOG.md.
+
+## MASTER CHARACTER REFERENCE — v3 (replaces every older reference)
+- File: `assets/reference/STICKMAN_REFERENCE_SHEET_v3.png` (copy in `engine/public/ref/`). Older sheets are in `assets/reference/_superseded/` — never use them.
+- Build the puppet ONLY from the top row: FRONT, 3/4 FRONT, SIDE, 3/4 BACK, BACK (cropped in `assets/reference/views/`). Trace each view with OpenCV, measure, overlay on the crop and iterate until it matches.
+- Canonical design: round white head with 3 hair tufts, big glossy eyes, pink cheeks, white mitten hands with thumb, red hoodie with white drawstrings (+ front pocket), dark navy backpack, thin black legs, red sneakers with white soles, 6 px outline at 1080p, soft 3D shading lit from top-left. Head ≈ 1/4 of full height (full height ≈ 4 heads).
+- Exact palette (hex): hoodie #D62828 / shadow #A61E1E / highlight #F05454; backpack #2B2D42 / pocket #4A4E6E; skin, head, hands #FFFFFF; outline, hair, legs #1A1A1A; cheeks #FFB8A8; shoe #E53935 / sole #E0E0E0.
+- EXPRESSIONS row (happy, excited, surprised, scared, thinking, confused, angry, sad, laughing, wow, wink, sleepy) = the puppet's eye + mouth sets; the mouth shapes also drive Rhubarb lip sync.
+- ACTION POSES, VARIANTS (explorer, astronaut, diver, winter, builder, scientist, knight, wizard) and BACKGROUNDS = style guide only, never traced. Variants = costume layers on the same puppet, built only when an episode needs one.

@@ -27,9 +27,9 @@ export const RigSheet: React.FC = () => {
   return (<AbsoluteFill style={{ background: "#f7f8fc", padding: 36, flexDirection: "row", gap: 36 }}>
     <div style={{ width: 820, display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ ...lab, fontSize: 42 }}>REFERENCE</div>
-      <Img src={staticFile("ref/01_MAIN_CHARACTER_LATEST_MODEL_SHEET.png")} style={{ width: 820, borderRadius: 20, border: "3px solid #d5dbec" }} />
+      <Img src={staticFile("ref/STICKMAN_REFERENCE_SHEET_v3.png")} style={{ width: 820, borderRadius: 20, border: "3px solid #d5dbec" }} />
       <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-        <Img src={staticFile("ref/STICKMAN_FINAL_LOOK.png")} style={{ height: 470, borderRadius: 20, border: "3px solid #d5dbec" }} />
+        <Img src={staticFile("ref/STICKMAN_REFERENCE_SHEET_v3.png")} style={{ height: 470, borderRadius: 20, border: "3px solid #d5dbec" }} />
         <Img src={staticFile("ref/dragon_ref.png")} style={{ width: 500, borderRadius: 20, border: "3px solid #d5dbec" }} />
       </div>
     </div>
