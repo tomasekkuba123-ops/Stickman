@@ -5,11 +5,12 @@
 // Contact shadow is automatic (shrinks while airborne); rim light colour comes from the active <World> sky preset.
 import React, { createContext, useContext } from "react";
 import { Billboard, Shadow } from "../style/toon";
-import { drawStickman, Rig, POSES, Face, RigOut, WALK_STRIDE, RUN_STRIDE, Outfit } from "../style/stickman";
+import { drawStickman, Rig, POSES, Face, RigOut, WALK_STRIDE, RUN_STRIDE, Outfit, Mouth } from "../style/stickman";
 import { drawDragon, DragonPose } from "../style/dragon";
 import { drawPencil } from "../style/props2d";
 import { V3 } from "../style/kit";
 import { QC, maskify } from "./qc";
+import { mocapAt, MoSpec } from "./mocap";
 
 /* ---------------- scene light context (set by <World preset>) ---------------- */
 export type Look = { rim: string; shade: string; rimK: number };
@@ -118,9 +119,10 @@ export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig
 /* ---------------- Stickman component ---------------- */
 export type Prop2D = "pencil" | "chalk" | "pencilUp" | null;
 export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; speed?: number; dur?: number;
-  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number }> =
-  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0 }) => {
-  const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: { ...(outfit ? { outfit, backpack: false } : {}), ...(blinkSeed ? { blink: autoBlink(t, blinkSeed) } : {}), ...(rig ?? {}) }, speed, dur });
+  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number; lips?: LipCue[]; mo?: MoSpec[] }> =
+  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0, lips, mo }) => {
+  const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: { ...(outfit ? { outfit, backpack: false } : {}), ...(blinkSeed ? { blink: autoBlink(t, blinkSeed) } : {}), ...(lips ? { mouth: mouthAt(lips, t) } : {}), ...(rig ?? {}) }, speed, dur });
+  if (mo) { const m = mocapAt(mo, t, r.rig), m2 = mocapAt(mo, t - 0.08, r.rig); if (m.w > 0) { r.rig = { ...r.rig, ...m.over, ...(rig ?? {}), drag: [Math.max(-60, Math.min(60, -(m.dx - m2.dx) / 0.08 * 0.06 * dir)), (r.rig.drag ?? [0, 0])[1]] } as Rig; r.dx += m.dx; r.lift += m.dy; } }
   const k = h / 1000, x = p[0] + (move ? r.dx * k * dir : 0), y = p[1] + r.lift * k, gy = groundY ?? p[1];
   const rimC = rim ?? look.rim;
   return (<>
@@ -133,6 +135,10 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
     }} />
   </>);
 };
+
+/* LIP SYNC: Rhubarb cues (rhubarb -f json -> mouthCues) -> mouth shape at time t ("X" = rest, the expression mouth shows) */
+export type LipCue = { start: number; end: number; value: string };
+export function mouthAt(cues: LipCue[], t: number): Mouth { let lo = 0, hi = cues.length - 1; while (lo <= hi) { const m = (lo + hi) >> 1; if (cues[m].end <= t) lo = m + 1; else if (cues[m].start > t) hi = m - 1; else return cues[m].value as Mouth; } return "X"; }
 
 /* ---------------- baby dragon ---------------- */
 export type DragonAction = "idle" | "fly" | "happy" | "sneeze" | "scared" | "sleepy" | "wow";

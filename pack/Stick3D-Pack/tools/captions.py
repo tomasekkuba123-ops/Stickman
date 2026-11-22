@@ -9,15 +9,15 @@ STOP = set("a an the and or but if of to in on at by for with from into onto up 
 BAND = {"low": (1450, 1720), "high": (230, 500)}
 
 
-def groups_from(words, toks):
+def groups_from(words, toks, mx=2):
     G, cur = [], []
     def flush():
         nonlocal cur
         if cur:
-            G.append({"words": [re.sub(r"[.,!?;:…\"]+$", "", toks[i]).upper() for i in cur], "a": words[cur[0]]["start"], "e": words[cur[-1]]["end"]}); cur = []
+            G.append({"words": [re.sub(r"[.,!?;:…\"]+$", "", toks[i]).upper() for i in cur], "a": words[cur[0]]["start"], "e": words[cur[-1]]["end"], "ts": [[words[i]["start"], words[i]["end"]] for i in cur]}); cur = []
     for i in range(len(words)):
         cur.append(i)
-        if len(cur) == 2 or re.search(r"[.,!?;:…]$", toks[i]) or (i + 1 < len(words) and words[i + 1]["start"] - words[i]["end"] > 0.35):
+        if len(cur) == mx or re.search(r"[.,!?;:…]$", toks[i]) or (i + 1 < len(words) and words[i + 1]["start"] - words[i]["end"] > 0.35):
             flush()
     flush(); return G
 
@@ -41,12 +41,12 @@ def srt(G, path):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("words"); ap.add_argument("script"); ap.add_argument("out"); ap.add_argument("--mask"); ap.add_argument("--keywords", default=""); ap.add_argument("--high", default=""); ap.add_argument("--low", default="")
+    ap = argparse.ArgumentParser(); ap.add_argument("words"); ap.add_argument("script"); ap.add_argument("out"); ap.add_argument("--mask"); ap.add_argument("--keywords", default=""); ap.add_argument("--high", default=""); ap.add_argument("--low", default=""); ap.add_argument("--max", type=int, default=2)
     a = ap.parse_args(); os.makedirs(a.out, exist_ok=True)
     words = json.load(open(a.words))
     toks = json.load(open(a.script)) if a.script.endswith(".json") else open(a.script).read().split()
     if len(toks) != len(words): print(f"WARNING: {len(toks)} script tokens vs {len(words)} aligned words")
-    G = groups_from(words, toks)
+    G = groups_from(words, toks, a.max)
     kw = [k.strip().upper() for k in a.keywords.split(",") if k.strip()] or auto_keywords(toks)
     faces = []
     if a.mask and os.path.exists(a.mask):

@@ -1,0 +1,17 @@
+{
+ "iou": 0.823,
+ "reference": {
+  "head_width": 0.312,
+  "head_center_y": 0.203,
+  "body_width": 0.475,
+  "leg_gap_width": 0.085,
+  "shoe_width": 0.352
+ },
+ "puppet": {
+  "head_width": 0.312,
+  "head_center_y": 0.225,
+  "body_width": 0.458,
+  "leg_gap_width": 0.145,
+  "shoe_width": 0.362
+ }
+}

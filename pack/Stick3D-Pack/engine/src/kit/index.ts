@@ -6,3 +6,5 @@ export * from "./camera";
 export * from "./captions";
 export * from "./episode";
 export * from "./qc";
+export * from "./mocap";
+export * from "./envlib";

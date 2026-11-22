@@ -6,7 +6,7 @@ import React from "react";
 import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { QC, CLEAN } from "./qc";
 
-export type CapGroup = { words: string[]; a: number; e: number; band?: "low" | "high"; key?: boolean[] };
+export type CapGroup = { words: string[]; a: number; e: number; band?: "low" | "high"; key?: boolean[]; ts?: [number, number][] };
 export type CaptionData = { groups: CapGroup[]; keywords?: string[] };
 export const BAND_Y = { low: 1450, high: 230 }; // px top of the caption block in 1080x1920 (qc_check uses the same numbers)
 
@@ -25,4 +25,19 @@ export const Captions: React.FC<{ data: CaptionData; until?: number; fps?: numbe
   const band = g.band ?? bandAt?.(t) ?? "low";
   return <div style={{ position: "absolute", left: 40, right: 40, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: size, lineHeight: 1.05, WebkitTextStroke: "18px #000", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 12px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
     {g.words.map((w, i) => <span key={i} style={{ color: (g.key?.[i] ?? KEY.has(w)) ? "#ffd23a" : "#fff" }}>{(i ? " " : "") + w}</span>)}</div>;
+};
+
+/* v4 WORD-BY-WORD captions (CLAUDE.md retention rules): groups of up to 3 words from Whisper timings, the CURRENT word highlighted
+   (yellow + pop), big bold font, centre-lower; band from captions.py (never over the face). tools/captions.py ... --max 3 */
+export const WordCaptions: React.FC<{ data: CaptionData; until?: number; from?: number; fps?: number; size?: number; hi?: string }> = ({ data, until = 1e9, from = 0, fps = 30, size = 112, hi = "#ffd23a" }) => {
+  const t = useCurrentFrame() / fps; if (QC || CLEAN || t >= until || t < from) return null;
+  const G = data.groups; const idx = G.findIndex((g, i) => t >= g.a - 0.04 && t < (G[i + 1]?.a ?? 1e9) - 0.04); if (idx < 0) return null; const g = G[idx];
+  if (t > g.e + 0.6) return null;
+  const ts = g.ts ?? g.words.map(() => [g.a, g.e] as [number, number]);
+  let cur = 0; ts.forEach(([a], i) => { if (t >= a - 0.03) cur = i; });
+  const sc = interpolate(t - g.a, [0, 0.14], [0.8, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.4)) });
+  const band = g.band ?? "low";
+  return <div style={{ position: "absolute", left: 30, right: 30, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: size, lineHeight: 1.08, WebkitTextStroke: "16px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 10px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
+    {g.words.map((w, i) => { const on = i === cur, k = on ? interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
+      return <span key={i} style={{ display: "inline-block", margin: "0 0.2em", color: on ? hi : "#fff", opacity: i <= cur ? 1 : 0.72, transform: `scale(${k})` }}>{w}</span>; })}</div>;
 };

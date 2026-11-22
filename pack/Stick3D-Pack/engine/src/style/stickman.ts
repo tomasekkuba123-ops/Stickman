@@ -6,7 +6,9 @@
 
 export type View = "front" | "side" | "back";
 export type HandPose = "open" | "relaxed" | "fist" | "thumb" | "point" | "hold";
-export type Face = "smile" | "laugh" | "think" | "surprised" | "worried" | "determined" | "scared" | "neutral" | "grin" | "smirk";
+export type Face = "smile" | "laugh" | "think" | "surprised" | "worried" | "determined" | "scared" | "neutral" | "grin" | "smirk" | "happy" | "confused" | "sad";
+/* Rhubarb Lip Sync mouth shapes: A closed (M B P) · B slightly open (K S T) · C open (EH) · D wide (AA) · E rounded (AO ER) · F pucker (UW OO) · G F/V · H L · X rest */
+export type Mouth = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "X";
 export type Arm = { a: number; b: number }; // degrees: a = upper arm from hanging-down (+ outward in front view, + forward in side view); b = elbow bend (forearm = a + b)
 export type Leg = { a: number; b: number; f?: number; lift?: number }; // side: a thigh fwd+, b knee bend, f foot pitch (+ toe up). front: a outward+, lift raises the foot
 export type Rig = {
@@ -17,15 +19,18 @@ export type Rig = {
   handL?: HandPose; handR?: HandPose; handRotL?: number; handRotR?: number;
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
-  backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
+  mouth?: Mouth; /* lip-sync shape overrides the expression mouth */ backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
 };
 
-const INK = "#101018"; let RED = "#e2262c", RED_L = "#f2484a", RED_D = "#b51a22", RED_DD = "#8e121a";
+// MODEL v3 (assets/reference/STICKMAN_REFERENCE_SHEET_v3.png) — proportions fitted with tools/puppet_fit.py
+export const MODEL = { TSX: 1.2, TSY: 1.15, HIPY: 700, HEAD: -458, LEGK: 0.71, ARMK: 0.74, HR: 161, TUFTS: 3, LEGW: 30, HIPX: 62, SHOE: 1.06 };
+const INK = "#1A1A1A"; let RED = "#D62828", RED_L = "#F05454", RED_D = "#A61E1E", RED_DD = "#7e1414";
+const CHEEK = "#FFB8A8", SHOE = "#E53935";
 // v15 OUTFITS (townspeople): same rig, different hoodie colour + hat. Hoodie "#e2262c" = Stickman (default).
 export type Hat = "none" | "cap" | "chef" | "mail" | "beanie" | "bow";
 export type Outfit = { hoodie?: string; hat?: Hat; hatColor?: string };
 const shade = (hex: string, k: number) => { const n = parseInt(hex.slice(1), 16); const f = (v: number) => Math.max(0, Math.min(255, Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k)))); return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, "0")).join(""); };
-function setOutfit(o?: Outfit) { const h = o?.hoodie ?? "#e2262c"; RED = h; RED_L = shade(h, 0.18); RED_D = shade(h, -0.2); RED_DD = shade(h, -0.37); }
+function setOutfit(o?: Outfit) { const h = o?.hoodie; if (!h || h.toLowerCase() === "#d62828" || h.toLowerCase() === "#e2262c") { RED = "#D62828"; RED_L = "#F05454"; RED_D = "#A61E1E"; RED_DD = "#7e1414"; return; } RED = h; RED_L = shade(h, 0.18); RED_D = shade(h, -0.2); RED_DD = shade(h, -0.37); }
 function drawHat(c: CanvasRenderingContext2D, hx: number, hy: number, o: Outfit | undefined, side: boolean) {
   const hat = o?.hat ?? "none"; if (hat === "none") return; const col = o?.hatColor ?? "#3a6fd8", R = HR;
   c.save(); c.lineJoin = "round";
@@ -39,7 +44,7 @@ function drawHat(c: CanvasRenderingContext2D, hx: number, hy: number, o: Outfit 
   else if (hat === "bow") { for (const sx of [-1, 1]) { c.beginPath(); c.moveTo(hx + R * 0.45, hy - R * 0.8); c.lineTo(hx + R * 0.45 + sx * R * 0.38, hy - R * 1.0); c.lineTo(hx + R * 0.45 + sx * R * 0.38, hy - R * 0.6); c.closePath(); c.fillStyle = col; c.fill(); stroke(c, 6); } }
   c.restore();
 }
-const GLOVE = "#ffffff", GLOVE_S = "#c9d2ea", BAG = "#3b3c48", BAG_L = "#55566a", SOLE = "#ffffff";
+const GLOVE = "#FFFFFF", GLOVE_S = "#c9d2ea", BAG = "#2B2D42", BAG_L = "#4A4E6E", SOLE = "#E0E0E0";
 const LW = 9; // main outline width (units)
 const rad = (d: number) => (d * Math.PI) / 180;
 type P = [number, number];
@@ -48,7 +53,7 @@ const rot = (v: P, ang: number): P => [v[0] * Math.cos(ang) - v[1] * Math.sin(an
 const dirDown = (ang: number, sx: number): P => [Math.sin(ang) * sx, Math.cos(ang)]; // angle from straight down
 
 // segment lengths
-const UPPER = 138, FORE = 128, THIGH = 140, SHIN = 132;
+const UPPER = 138 * MODEL.ARMK, FORE = 128 * MODEL.ARMK, THIGH = 140 * MODEL.LEGK, SHIN = 132 * MODEL.LEGK;
 
 /* ---------- generic helpers ---------- */
 function stroke(c: CanvasRenderingContext2D, w = LW, col = INK) { c.lineWidth = w; c.strokeStyle = col; c.stroke(); }
@@ -132,7 +137,7 @@ export function drawGlove(c: CanvasRenderingContext2D, x: number, y: number, ang
 /* ---------- sneakers ---------- */
 // side profile, ankle at origin, toe to +x, sole bottom at y = +98
 function shoeSide(c: CanvasRenderingContext2D, dark: boolean) {
-  const up = dark ? RED_D : RED;
+  const up = dark ? "#b72a27" : SHOE;
   c.beginPath(); c.roundRect(-62, 66, 194, 32, 14); fillStroke(c, SOLE, 8);
   c.beginPath(); c.moveTo(-54, 84); c.lineTo(124, 84); stroke(c, 3, "#b8c0d8");
   c.beginPath(); c.moveTo(-52, -14); c.quadraticCurveTo(-68, 28, -60, 68); c.lineTo(124, 68); c.quadraticCurveTo(138, 36, 106, 20); c.quadraticCurveTo(66, 6, 34, -14); c.quadraticCurveTo(-8, -22, -52, -14); c.closePath();
@@ -150,7 +155,7 @@ function shoeFront(c: CanvasRenderingContext2D) {
   c.beginPath(); c.moveTo(-56, 78); c.lineTo(68, 84); c.quadraticCurveTo(100, 84, 108, 74); stroke(c, 3, "#b8c0d8");
   // red upper: heel/collar at back, instep sloping down to a big rounded toe
   c.beginPath(); c.moveTo(-44, -14); c.quadraticCurveTo(-70, 20, -60, 62); c.lineTo(100, 62); c.quadraticCurveTo(116, 40, 92, 22); c.quadraticCurveTo(58, 8, 30, -10); c.quadraticCurveTo(-6, -24, -44, -14); c.closePath();
-  const g = c.createLinearGradient(-60, -10, 100, 60); g.addColorStop(0, RED_L); g.addColorStop(0.6, RED); g.addColorStop(1, RED_D); fillStroke(c, g, 8);
+  const g = c.createLinearGradient(-60, -10, 100, 60); g.addColorStop(0, "#f26b67"); g.addColorStop(0.6, SHOE); g.addColorStop(1, "#b72a27"); fillStroke(c, g, 8);
   // white toe cap
   c.beginPath(); c.moveTo(56, 62); c.lineTo(100, 62); c.quadraticCurveTo(116, 42, 94, 26); c.quadraticCurveTo(64, 26, 56, 62); c.closePath(); fillStroke(c, SOLE, 6);
   // two white side stripes on the outer flank
@@ -164,15 +169,15 @@ function shoeFront(c: CanvasRenderingContext2D) {
 
 
 /* ---------- head + face ---------- */
-const HR = 172; const FK = HR / 150; // face scale
+const HR = MODEL.HR; const FK = HR / 150; // face scale
 function hair(c: CanvasRenderingContext2D, hx: number, hy: number, t: number, side: boolean) {
   // 3-4 thin curved strands from the crown
   const sway = Math.sin(t * 0.18) * (0.04 + ZG * 0.22) + ZG * Math.sin(t * 0.07) * 0.1 + DX * 0.006; const HL = 0.82 + ZG * 0.25;
-  const strands: [number, number, number, number][] = side ? [[-20, 78, -0.55, -1], [6, 104, -0.15, 1], [26, 84, 0.25, 1], [-42, 56, -0.9, -1]] : [[-34, 80, -0.5, -1], [-6, 108, -0.12, 1], [22, 92, 0.32, 1], [40, 60, 0.7, 1]];
+  const strands: [number, number, number, number][] = side ? [[-24, 84, -0.6, -1], [4, 108, -0.18, 1], [30, 86, 0.3, 1]] : [[-34, 88, -0.42, -1], [0, 112, 0, 1], [34, 88, 0.42, 1]];
   for (const [dx, len, ang, bend] of strands) {
     const bx = hx + dx, by = hy - Math.sqrt(Math.max(0, HR * HR - dx * dx)) + 6, a = ang + sway;
     const tx = bx + Math.sin(a) * len * HL, ty = by - Math.cos(a) * len * HL, mx = (bx + tx) / 2 + bend * 16 * Math.cos(a), my = (by + ty) / 2 + bend * 6;
-    c.beginPath(); c.moveTo(bx - 6, by + 4); c.quadraticCurveTo(mx - 4, my, tx, ty); c.quadraticCurveTo(mx + 5, my + 3, bx + 6, by + 4); c.closePath(); c.fillStyle = INK; c.fill(); stroke(c, 2);
+    c.beginPath(); c.moveTo(bx - 15, by + 6); c.quadraticCurveTo(mx - 8, my, tx, ty); c.quadraticCurveTo(mx + 9, my + 3, bx + 15, by + 6); c.closePath(); c.fillStyle = INK; c.fill(); stroke(c, 2);
   }
 }
 function headBall(c: CanvasRenderingContext2D, hx: number, hy: number, faceDir: number) {
@@ -205,17 +210,35 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
   if (f === "think") { brow(e0[0], e0[1], e0[2], -4, -4); brow(e1[0], e1[1], e1[2], 18, 6); }
   else if (f === "smirk") { brow(e0[0], e0[1], e0[2], -6, 10); brow(e1[0], e1[1], e1[2], 14, 4); }
   else if (f === "surprised" || f === "scared") { brow(e0[0], e0[1], e0[2], 20, 0); brow(e1[0], e1[1], e1[2], 20, 0); }
-  else if (f === "worried") { brow(e0[0], e0[1], e0[2], 6, -10); brow(e1[0], e1[1], e1[2], 6, 10); }
+  else if (f === "worried" || f === "sad") { brow(e0[0], e0[1], e0[2], 6, -10); brow(e1[0], e1[1], e1[2], 6, 10); }
+  else if (f === "confused") { brow(e0[0], e0[1], e0[2], -8, 8); brow(e1[0], e1[1], e1[2], 22, -4); }
   else if (f === "determined") { brow(e0[0], e0[1], e0[2], -6, 12); brow(e1[0], e1[1], e1[2], -6, -12); }
   else { brow(e0[0], e0[1], e0[2], f === "laugh" ? 10 : 2, 0); brow(e1[0], e1[1], e1[2], f === "laugh" ? 10 : 2, 0); }
+  // cheeks (v3: pink blush under the eyes)
+  c.fillStyle = CHEEK; c.globalAlpha = 0.8; for (const [ex, ey, sx] of eyes) { if (side && sx < 0.75) continue; c.beginPath(); c.ellipse(ex + (side ? 10 : (ex < hx ? -26 : 26)), ey + 62, 26 * sx, 15, 0, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1;
   // mouth
   const mx = side ? hx + 74 : hx, my = hy + 84;
   c.beginPath();
-  if (f === "laugh" || f === "grin") {
+  if (r.mouth && r.mouth !== "X") { // LIP SYNC (Rhubarb)
+    const M = r.mouth, dark = "#3a1222", open = (w: number, h: number, tongue = true, teeth = false) => { c.moveTo(mx - w, my); c.quadraticCurveTo(mx, my - 6, mx + w, my); c.quadraticCurveTo(mx + w * 0.8, my + h, mx, my + h + 2); c.quadraticCurveTo(mx - w * 0.8, my + h, mx - w, my); c.closePath(); c.fillStyle = dark; c.fill();
+      c.save(); c.clip(); if (tongue) { c.fillStyle = "#ff7d8e"; c.beginPath(); c.ellipse(mx + 3, my + h, w * 0.62, h * 0.38, 0, 0, Math.PI * 2); c.fill(); } if (teeth) { c.fillStyle = "#fff"; c.fillRect(mx - w, my - 8, w * 2, 13); } c.restore(); c.beginPath(); c.moveTo(mx - w, my); c.quadraticCurveTo(mx, my - 6, mx + w, my); c.quadraticCurveTo(mx + w * 0.8, my + h, mx, my + h + 2); c.quadraticCurveTo(mx - w * 0.8, my + h, mx - w, my); stroke(c, 7); };
+    if (M === "A") { c.moveTo(mx - 30, my + 8); c.quadraticCurveTo(mx, my + 16, mx + 30, my + 8); stroke(c, 7.5); }
+    else if (M === "B") open(30, 16, false, true);
+    else if (M === "C") open(34, 32, true, true);
+    else if (M === "D") open(40, 50, true, true);
+    else if (M === "E") { c.ellipse(mx, my + 14, 22, 26, 0, 0, Math.PI * 2); c.fillStyle = dark; c.fill(); stroke(c, 7); }
+    else if (M === "F") { c.ellipse(mx, my + 12, 13, 16, 0, 0, Math.PI * 2); c.fillStyle = dark; c.fill(); stroke(c, 7); }
+    else if (M === "G") { open(30, 18, false, false); c.beginPath(); c.fillStyle = "#fff"; c.fillRect(mx - 16, my - 2, 32, 11); c.strokeRect(mx - 16, my - 2, 32, 11); }
+    else if (M === "H") open(32, 30, true, false);
+    c.restore(); return;
+  }
+  if (f === "laugh" || f === "grin" || f === "happy") {
     const h = f === "laugh" ? 54 : 40; c.moveTo(mx - 40, my - 10); c.quadraticCurveTo(mx, my - 2, mx + 40, my - 10); c.quadraticCurveTo(mx + 34, my + h, mx, my + h + 2); c.quadraticCurveTo(mx - 34, my + h, mx - 40, my - 10); c.closePath(); c.fillStyle = "#3a1222"; c.fill();
     c.save(); c.clip(); c.fillStyle = "#ff7d8e"; c.beginPath(); c.ellipse(mx + 4, my + h, 26, 18, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = "#ffffff"; c.fillRect(mx - 34, my - 12, 68, 12); c.restore(); stroke(c, 7);
   } else if (f === "surprised" || f === "scared") { c.ellipse(mx, my + 10, 16, 22, 0, 0, Math.PI * 2); c.fillStyle = "#3a1222"; c.fill(); stroke(c, 7); }
   else if (f === "think") { c.ellipse(mx + 14, my + 6, 9, 11, 0, 0, Math.PI * 2); c.fillStyle = "#3a1222"; c.fill(); stroke(c, 6); }
+  else if (f === "sad") { c.moveTo(mx - 30, my + 22); c.quadraticCurveTo(mx, my - 4, mx + 30, my + 22); stroke(c, 7.5); }
+  else if (f === "confused") { c.moveTo(mx - 28, my + 12); c.quadraticCurveTo(mx - 10, my + 2, mx + 2, my + 10); c.quadraticCurveTo(mx + 14, my + 18, mx + 30, my + 4); stroke(c, 7); }
   else if (f === "worried") { c.moveTo(mx - 30, my + 14); c.quadraticCurveTo(mx - 10, my + 2, mx, my + 8); c.quadraticCurveTo(mx + 12, my + 14, mx + 30, my + 6); stroke(c, 7); }
   else if (f === "determined") { c.moveTo(mx - 28, my + 8); c.quadraticCurveTo(mx, my + 2, mx + 28, my + 8); stroke(c, 7); }
   else if (f === "neutral") { c.moveTo(mx - 22, my + 6); c.lineTo(mx + 22, my + 6); stroke(c, 7); }
@@ -238,18 +261,18 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
   const breath = (r.breath ?? 1) * Math.sin(t * 0.2) * 4;
   const lean = rad(r.lean ?? 0), sq = r.squash ?? 0;
   // ---- skeleton (pre-grounding) ----
-  const hip: P = [r.x ?? 0, 632 + (r.y ?? 0)];
-  const torsoPt = (p: P): P => { const v = rot([p[0] * (1 - sq * 0.5), p[1] * (1 + sq)], lean); return add(hip, v); }; // local torso offset (from hip) -> world
+  const hip: P = [r.x ?? 0, MODEL.HIPY + (r.y ?? 0)];
+  const torsoPt = (p: P): P => { const v = rot([p[0] * (1 - sq * 0.5) * MODEL.TSX, p[1] * (1 + sq) * MODEL.TSY], lean); return add(hip, v); }; // local torso offset (from hip) -> world
   const legs = (leg: Leg | undefined, sx: number): [P, P, P, number] => {
     const L = leg ?? { a: 0, b: 0 };
-    const h = side ? add(hip, [sx * -6, 0]) : add(hip, [sx * 46, 0]);
+    const h = side ? add(hip, [sx * -6, 0]) : add(hip, [sx * MODEL.HIPX, 0]);
     if (side) { const k = add(h, [Math.sin(rad(L.a)) * THIGH, Math.cos(rad(L.a)) * THIGH]); const sa = rad(L.a - L.b); const a: P = add(k, [Math.sin(sa) * SHIN, Math.cos(sa) * SHIN]); return [h, k, a, rad(L.f ?? 0)]; }
     const lift = L.lift ?? 0, ang = rad(L.a) * sx; const len = THIGH + SHIN - lift;
     const a: P = add(h, [Math.sin(ang) * len, Math.cos(ang) * len]); const k: P = [(h[0] + a[0]) / 2 + sx * lift * 0.35, (h[1] + a[1]) / 2]; return [h, k, a, 0];
   };
   const [hipL, kneeL, ankL, footL] = legs(r.legL, -1), [hipR, kneeR, ankR, footR] = legs(r.legR, 1);
   // grounding: lowest sole point touches y = 1000
-  const soleY = (a: P, f: number) => side ? Math.max(a[1] + rot([-60, 98], -f)[1], a[1] + rot([130, 98], -f)[1]) : a[1] + 98;
+  const soleY = (a: P, f: number) => side ? Math.max(a[1] + rot([-60, 98], -f)[1], a[1] + rot([130, 98], -f)[1]) : a[1] + 98 * MODEL.SHOE;
   let gy = 0; if (r.grounded !== false) gy = 1000 - Math.max(soleY(ankL, footL), soleY(ankR, footR));
   gy -= (r.air ?? 0);
   c.translate(0, gy);
@@ -264,7 +287,7 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
     return [e, w];
   };
   const [elL, wrL] = armPts(r.armL, shL, -1, r.ikL, r.ikKL ?? 1), [elR, wrR] = armPts(r.armR, shR, 1, r.ikR, r.ikKR ?? 1);
-  const head = torsoPt([side ? 14 : 0, -442 + breath * 0.5]);
+  const head = torsoPt([side ? 14 : 0, MODEL.HEAD + breath * 0.5]);
   const g: Geo = { hip, hipL, hipR, kneeL, kneeR, ankL, ankR, footL, footR, sh, shL, shR, elL, elR, wrL, wrR, head };
   if (view === "side") drawSide(c, r, g, breath, lean, sq, torsoPt); else drawFront(c, r, g, breath, lean, sq, torsoPt, view === "back");
   c.restore();
@@ -276,7 +299,7 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
 
 function legLine(c: CanvasRenderingContext2D, h: P, k: P, a: P, dark: boolean) {
   c.beginPath(); c.moveTo(h[0], h[1]); c.quadraticCurveTo(k[0], k[1], a[0], a[1]);
-  stroke(c, 19, dark ? "#05050a" : INK); c.beginPath(); c.moveTo(h[0] + 3, h[1]); c.quadraticCurveTo(k[0] + 3, k[1], a[0] + 3, a[1]); stroke(c, 3, "rgba(120,110,140,0.55)");
+  stroke(c, MODEL.LEGW, dark ? "#05050a" : INK); c.beginPath(); c.moveTo(h[0] + 5, h[1]); c.quadraticCurveTo(k[0] + 5, k[1], a[0] + 5, a[1]); stroke(c, 4, "rgba(120,110,140,0.55)");
 }
 function smoothArm(s: P, e: P, w: P, n = 12): P[] { // Catmull-Rom through shoulder, elbow, cuff start
   const pts: P[] = []; const q = [s, s, e, w, w];
@@ -379,7 +402,7 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   if (showBag && !back) backpackFront(c, T);
   // legs + shoes
   for (const [h, k, a, mir] of [[g.hipL, g.kneeL, g.ankL, true], [g.hipR, g.kneeR, g.ankR, false]] as [P, P, P, boolean][]) {
-    legLine(c, h, k, a, false); c.save(); c.translate(a[0], a[1]); if (mir) c.scale(-1, 1); c.translate(8, 0); shoeFront(c); c.restore();
+    legLine(c, h, k, a, false); c.save(); c.translate(a[0], a[1]); if (mir) c.scale(-1, 1); c.scale(MODEL.SHOE, MODEL.SHOE); c.translate(8, 0); shoeFront(c); c.restore();
   }
   hoodFront(c, T, back);
   hoodieFront(c, T, back, breath);
@@ -395,6 +418,7 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   if (!r.handsOverHead) arms();
   // head
   c.save(); c.translate(g.head[0], g.head[1]); c.rotate(rad(r.headTilt ?? 0)); c.translate(-g.head[0], -g.head[1]);
+  const nb = T([0, -280]); c.beginPath(); c.moveTo(nb[0], nb[1]); c.lineTo(g.head[0], g.head[1]); stroke(c, 36, INK); // v3 neck (dark stub between hood and head)
   headBall(c, g.head[0], g.head[1], 1); if ((r.outfit?.hat ?? "none") === "none" || r.outfit?.hat === "bow") hair(c, g.head[0], g.head[1], r.t, false);
   if (!back) face(c, g.head[0], g.head[1], r, false);
   drawHat(c, g.head[0], g.head[1], r.outfit, false);
@@ -436,6 +460,7 @@ function drawSide(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, l
   legLine(c, g.hipR, g.kneeR, g.ankR, false); c.save(); c.translate(g.ankR[0], g.ankR[1]); c.rotate(-g.footR); shoeSide(c, false); c.restore();
   // head
   c.save(); c.translate(g.head[0], g.head[1]); c.rotate(rad(r.headTilt ?? 0)); c.translate(-g.head[0], -g.head[1]);
+  const nb = T([0, -280]); c.beginPath(); c.moveTo(nb[0], nb[1]); c.lineTo(g.head[0], g.head[1]); stroke(c, 36, INK); // v3 neck (dark stub between hood and head)
   headBall(c, g.head[0], g.head[1], 1); if ((r.outfit?.hat ?? "none") === "none" || r.outfit?.hat === "bow") hair(c, g.head[0], g.head[1], r.t, true); face(c, g.head[0], g.head[1], r, true); drawHat(c, g.head[0], g.head[1], r.outfit, true);
   c.restore();
   // near arm
@@ -460,5 +485,5 @@ export const POSES = {
     return { view: "side", legR: leg(p), legL: leg(p + 0.5), armR: { a: -40 * s + 10, b: 82 }, armL: { a: 40 * s + 10, b: 82 }, air: 24 * Math.abs(Math.cos(p * Math.PI * 2)), lean: 12, handL: "fist", handR: "fist", face: "determined" };
   },
 };
-export const WALK_STRIDE = 300; // units travelled per walk cycle (feet do not slide at this ratio)
-export const RUN_STRIDE = 520;
+export const WALK_STRIDE = 300 * MODEL.LEGK; // units travelled per walk cycle (feet do not slide at this ratio)
+export const RUN_STRIDE = 520 * MODEL.LEGK;

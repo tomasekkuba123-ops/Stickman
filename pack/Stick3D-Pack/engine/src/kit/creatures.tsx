@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import * as THREE from "three";
 import { V3 } from "../style/kit";
 import { SGlow } from "../style/sky";
-import { INK } from "../style/toon";
+import { INK, Billboard } from "../style/toon";
 import { Extrude } from "../style/extra";
 
 const TAU = Math.PI * 2;
@@ -100,3 +100,11 @@ export function gulpAt(t: number, t0: number, t1: number, from: V3, mouth: V3, o
   const jaw = t < t0 - 0.8 ? 0 : t < t0 ? cl((t - (t0 - 0.8)) / 0.6) : inside ? 1 - (1 - (1 - shut) ** 2) : 1;
   return { pos, scale: 1 - 0.35 * e, rot: (o.spin ?? 2) * e, visible: !inside, jaw, bulge: inside ? cl((t - t1 - 0.2) / 1.2) : -1, squash: inside ? Math.sin(cl((t - t1 - 0.25) / 0.4) * Math.PI) * 0.06 : 0 };
 }
+
+/* v16 STORYBOOK CRITTERS (EP09): owl, wolf, crab as billboards — <Critter kind="owl" p={[..]} h={1.6} t={t} confused={k} /> */
+import { drawOwl, drawWolf, drawCrab, CritterPose } from "../style/critters";
+export const Critter: React.FC<{ kind: "owl" | "wolf" | "crab"; p: V3; h: number; t: number } & Partial<CritterPose>> = ({ kind, p, h, t, ...pose }) => {
+  const asp = kind === "owl" ? 1.25 : kind === "wolf" ? 1 : 0.75; const fn = kind === "owl" ? drawOwl : kind === "wolf" ? drawWolf : drawCrab;
+  const blink = (Math.floor(t * 30) + (kind === "owl" ? 11 : kind === "wolf" ? 37 : 5)) % 97 < 4;
+  return <Billboard p={p} h={h} res={512} aspect={asp} draw={(c, W, H) => fn(c, W, H, { t: t * 30, blink, ...pose })} />;
+};

@@ -1,0 +1,13 @@
+{
+ "walk":      {"file": "02_01.bvh",  "from": 0.3, "to": 2.8, "loop": true, "desc": "walk"},
+ "run":       {"file": "02_03.bvh",  "from": 0.1, "to": 1.4, "loop": true, "desc": "run/jog"},
+ "jump":      {"file": "02_04.bvh",  "from": 0.0, "to": 3.0, "desc": "jump, balance"},
+ "fall":      {"file": "90_16.bvh",  "from": 1.6, "to": 4.6, "desc": "fall on face"},
+ "wave":      {"file": "13_26.bvh",  "from": 1.8, "to": 5.8, "desc": "wave"},
+ "point":     {"file": "13_27.bvh",  "from": 0.4, "to": 4.4, "desc": "wave, point"},
+ "sit":       {"file": "13_01.bvh",  "from": 0.0, "to": 7.0, "desc": "sit on high stool, stand up"},
+ "scared":    {"file": "79_73.bvh",  "from": 0.0, "to": 3.2, "desc": "scared"},
+ "celebrate": {"file": "79_69.bvh",  "from": 0.4, "to": 5.4, "desc": "very happy"},
+ "flashlight":{"file": "77_05.bvh",  "from": 0.0, "to": 4.2, "desc": "look around with flashlight"},
+ "shrug":     {"file": "111_25.bvh", "from": 0.0, "to": 2.3, "desc": "shrug"}
+}
