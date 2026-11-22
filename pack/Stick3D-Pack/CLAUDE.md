@@ -30,3 +30,13 @@ Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (`--dura
 - Exact palette (hex): hoodie #D62828 / shadow #A61E1E / highlight #F05454; backpack #2B2D42 / pocket #4A4E6E; skin, head, hands #FFFFFF; outline, hair, legs #1A1A1A; cheeks #FFB8A8; shoe #E53935 / sole #E0E0E0.
 - EXPRESSIONS row (happy, excited, surprised, scared, thinking, confused, angry, sad, laughing, wow, wink, sleepy) = the puppet's eye + mouth sets; the mouth shapes also drive Rhubarb lip sync.
 - ACTION POSES, VARIANTS (explorer, astronaut, diver, winter, builder, scientist, knight, wizard) and BACKGROUNDS = style guide only, never traced. Variants = costume layers on the same puppet, built only when an episode needs one.
+
+## ANIMATION QUALITY (every episode, from now on)
+- Animation principles on every move: anticipation, ease-in/ease-out (never linear), overshoot and settle, follow-through + spring physics on hair tufts, hoodie strings and backpack, squash & stretch on jumps/landings, feet planted with IK (no foot sliding), subtle idle breathing and blinking.
+- Motion library: CMU Motion Capture Database (BVH, free for any use) -> small library of reusable motions (walk, run, jump, fall, wave, point, sit, scared, celebrate) retargeted to the puppet's joints. Stored in `assets/motion/`. Build ONCE, reuse in every episode.
+
+## ENVIRONMENTS (every episode, from now on)
+- CC0-only asset packs from kenney.nl and polyhaven.com -> reusable library of backgrounds + props matching the bright storybook style, stored in `assets/env/` with a LICENSES.md (source URL + CC0 for every pack). Build ONCE, reuse.
+- Every scene: 3-4 parallax layers, gentle camera moves, depth blur on far layers, particles (dust, light rays, sparkles), colour grading with a soft vignette (grading never tints Stickman's white head).
+
+Build libraries once and reuse them; spend credits sparingly.
