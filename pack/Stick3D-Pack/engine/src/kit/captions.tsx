@@ -37,10 +37,10 @@ export const WordCaptions: React.FC<{ data: CaptionData; until?: number; from?: 
   let cur = 0; ts.forEach(([a], i) => { if (t >= a - 0.03) cur = i; });
   const sc = interpolate(t - g.a, [0, 0.14], [0.8, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.4)) });
   const band = g.band ?? "low";
-  // max 2 lines: shrink the font until the greedy line-wrap needs <= 2 lines (Inter Black caps ~0.68 em per char)
-  let fs = size; const fits = (z: number) => { let lines = 1, w = 0; for (const x of g.words) { const ww = (x.length + 0.4) * z * 0.68; if (w > 0 && w + ww > 1000) { lines++; w = ww; } else w += ww; } return lines <= 2; };
-  while (!fits(fs) && fs > 60) fs -= 4;
+  // max 2 lines, laid out explicitly (no browser re-wrap): shrink the font until the greedy wrap gives <= 2 lines
+  const layout = (z: number) => { const L: number[][] = [[]]; let w = 0; g.words.forEach((x, i) => { const ww = (x.length * 0.74 + 0.5) * z; if (w > 0 && w + ww > 980) { L.push([]); w = 0; } L[L.length - 1].push(i); w += ww; }); return L; };
+  let fs = size; while (layout(fs).length > 2 && fs > 56) fs -= 4; const lines = layout(fs);
   return <div style={{ position: "absolute", left: 30, right: 30, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: fs, lineHeight: 1.08, WebkitTextStroke: "16px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 10px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
-    {g.words.map((w, i) => { const on = i === cur, k = on ? interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
-      return <span key={i} style={{ display: "inline-block", margin: "0 0.2em", color: on ? hi : "#fff", opacity: i <= cur ? 1 : 0.72, transform: `scale(${k})` }}>{w}</span>; })}</div>;
+    {lines.map((ln, li) => <div key={li} style={{ whiteSpace: "nowrap" }}>{ln.map((i) => { const w = g.words[i], on = i === cur, k = on ? interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
+      return <span key={i} style={{ display: "inline-block", margin: "0 0.2em", color: on ? hi : "#fff", opacity: i <= cur ? 1 : 0.72, transform: `scale(${k})` }}>{w}</span>; })}</div>)}</div>;
 };

@@ -7,9 +7,14 @@ import { V3 } from "../../style/kit";
 import { Stickman, LipCue } from "../../kit/character";
 import { Face } from "../../style/stickman";
 import { DepthPass } from "../../kit/envlib";
-import { NightField, MoonShore, SpaceDiorama, Earth3, RockPlatform } from "../../kit/sets4";
+import { NightField, MoonShore, SpaceDiorama, Earth3, RockPlatform, TorchBeam, ForestGlade, Branch, SeasonHill } from "../../kit/sets4";
+import { GroundHaze } from "../../kit/diorama";
+import { Critter } from "../../kit/creatures";
+import { KModel } from "../../kit/envlib";
+import { SGlow, Lightning } from "../../style/sky";
+import { RigOut } from "../../style/stickman";
 import { frameShot, framePose, worldAt, groundAt, screenDir, FULL, CLOSE, FrameOpts } from "../../kit/frame";
-import { GKey, beat, WWord, aim } from "../../kit/gesture";
+import { GKey, beat, WWord, aim, GEST, Pose2 } from "../../kit/gesture";
 import MOUTH from "../../../public/ep09/mouth.json";
 import WORDS from "../../../public/ep09/words.json";
 
@@ -106,3 +111,96 @@ export const S5 = ({ t }: Ctx) => { const w = wobbleAt(t), bob = Math.sin(t * 1.
       face={faceAt(t, [[25, "happy"], [27.5, "surprised"], [28.4, "scared"]])} rig={{ ...eyes(t, EY5), zeroG: 1, lean: 5 * Math.sin(w.ph) * w.env }} />
     <DepthPass focus={6.6} blur={2.0} />
   </SpaceDiorama>); };
+
+/* ================= helpers for held props ================= */
+/* camera basis of a pose (right, up, forward) */
+const basis = (pose: { pos: V3; look: V3 }) => { const f = [pose.look[0] - pose.pos[0], pose.look[1] - pose.pos[1], pose.look[2] - pose.pos[2]], fl = Math.hypot(f[0], f[2]) || 1; const F: V3 = [f[0] / fl, 0, f[2] / fl], R: V3 = [-F[2], 0, F[0]]; return { R, F }; };
+/* world position of the right glove for a front-view arm whose forearm points at rig angle th (deg from straight down, toward screen right) */
+const handWorld = (hero: V3, pose: { pos: V3; look: V3 }, th: number): V3 => { const { R } = basis(pose), a = (th * Math.PI) / 180, x = 0.4 + Math.sin(a) * 0.78, y = 1.7 - Math.cos(a) * 0.78; return [hero[0] + R[0] * x, hero[1] + y, hero[2] + R[2] * x]; };
+/* 2D flashlight held in the right glove, pointing along the forearm (rig angle th) */
+const torch = (on: number, th: number) => (c: CanvasRenderingContext2D, o: RigOut) => { c.save(); c.translate(o.gloveR[0], o.gloveR[1]); c.rotate(Math.PI - (th * Math.PI) / 180); c.scale(o.S / 0.9, o.S / 0.9);
+  c.fillStyle = "#3a3f5a"; c.beginPath(); c.roundRect(-14, -70, 28, 92, 8); c.fill(); c.lineWidth = 6; c.strokeStyle = "#1A1A1A"; c.stroke();
+  c.fillStyle = "#c9cfe0"; c.beginPath(); c.roundRect(-20, -92, 40, 26, 6); c.fill(); c.stroke(); if (on > 0) { c.fillStyle = `rgba(255,246,190,${on})`; c.beginPath(); c.ellipse(0, -94, 18, 6, 0, 0, Math.PI * 2); c.fill(); } c.restore(); };
+
+/* ================= S2 DARK NIGHT + FLASHLIGHT 3.0–9.7 ================= */
+const P2: V3 = [0, 0, 0];
+const O2A: FrameOpts = { frac: FULL, fov: 42, yaw: 0.25, camY: 1.3, sx: 0.42, sy: 0.37, drift: -0.05 };
+const O2B: FrameOpts = { frac: FULL, fov: 46, yaw: -0.2, camY: 0.55, sx: 0.45, sy: 0.4, drift: 0.05 };
+const O2C: FrameOpts = { frac: CLOSE, fov: 40, yaw: 0.05, camY: 1.6, sx: 0.5, sy: 0.36, push: 0.93, drift: 0.03 };
+const P2A = framePose(P2, O2A, 0.5), P2B = framePose(P2, O2B, 0.5), P2C = framePose(P2, O2C, 0.5);
+const K2: [number, Key[]][] = [[3.0, frameShot(P2, 3.0, 5.0, O2A)], [5.0, frameShot(P2, 5.0, 7.0, O2B)], [7.0, frameShot(P2, 7.0, 9.75, O2C)]];
+/* torch arm: firm grip, slow eased sweep + wrist rotation while he talks */
+const torchTh = (t: number) => t < 3.6 ? 40 : t < 5.0 ? 70 + 40 * sm(seg(t, 3.9, 4.9)) + 4 * Math.sin(t * 1.7) : t < 7.0 ? 120 + 22 * Math.sin((t - 5.0) * 1.1) + 3 * Math.sin(t * 2.3) : 150 + 3 * Math.sin(t * 1.9);
+const torchArm = (t: number) => { const th = torchTh(t); return t < 7.0 ? { a: th - 24, b: 24 } : { a: -6, b: 152 }; };
+const G2: GKey[] = [{ t: wt("notice", 3.5) + 0.04, g: "palmUpL" }, { t: wt("dark", 4) + 0.04, g: "chopL", hold: 0.2 }, { t: wt("no", 5) + 0.04, g: "present" },
+  { t: wt("stars", 5.9) + 0.04, g: aim(150), hold: 0.4 }, { t: wt("much", 7.3) + 0.04, g: "chopL", hold: 0.15 }, { t: wt("darker", 8) + 0.04, g: "palmUpL", hold: 0.6 }];
+const leftOnly = (keys: GKey[]): GKey[] => keys.map((k) => { const P = typeof k.g === "string" ? GEST[k.g] : k.g; return { ...k, g: { ...P, R: GEST.rest.R } as Pose2 }; });
+export const S2 = ({ t }: Ctx) => { const on = sm(seg(t, 3.72, 3.85)), th = torchTh(t), arm = torchArm(t), pose = t < 5 ? P2A : t < 7 ? P2B : P2C;
+  const hand = t < 7.0 ? handWorld(P2, pose, th) : [P2[0] + 0.15, 1.75, P2[2] + 0.35] as V3;
+  const { R, F } = basis(pose), a = (th * Math.PI) / 180, Ls = 5.5, Ld = 2.2; // mostly sideways in the frame so the cone reads as a cone
+  const to: V3 = t < 7.0 ? [hand[0] + R[0] * Math.sin(a) * Ls + F[0] * Ld, Math.max(0.05, hand[1] - Math.cos(a) * Ls), hand[2] + R[2] * Math.sin(a) * Ls + F[2] * Ld] : [hand[0], hand[1] + 4, hand[2] - 0.6];
+  return (<NightField t={t} dark={1} pitch={0.85} vanish={2} stars={1.6} fireflies={1.5} moonP={MOON_P} fore={t < 5 ? foreFor(P2A, [0.05, 0.25, 0.75, 0.95]) : []}>
+    <Cam t={t} keys={shot(t, K2)} />
+    <GroundHaze t={t} layers={[[-2, 0.25, 30], [-6, 0.35, 50], [-12, 0.5, 70]]} col="rgba(110,130,210,0.55)" o={0.7} speed={0.02} />
+    <TorchBeam from={hand} to={to} on={on * (t < 7 ? 1 : 0.55)} t={t} spread={t < 7 ? 0.22 : 0.12} />
+    <Stickman p={P2} t={t} action="idle" lips={LIPS} gest={leftOnly(G2)} extra={torch(on, t < 7.0 ? th : 210)}
+      face={faceAt(t, [[3.0, "worried"], [3.8, "surprised"], [4.4, "smile"], [5.2, "happy"], [7.0, "scared"], [8.0, "worried"]])}
+      rig={{ armR: arm, handR: "hold", handRotR: 0, ...eyes(t, [[3.0, -0.3, 0], [3.6, 0.5, 0.2], [5.0, 0.5, -0.8], [7.0, 0, -0.1]]), ...(t >= 7 ? { handsOverHead: true } : {}) }} />
+    <DepthPass focus={t < 7 ? 6.0 : 4.6} blur={2.6} />
+  </NightField>); };
+
+/* ================= S4 CONFUSED ANIMALS 16.4–25.0 ================= */
+const P4: V3 = [0, 0, 1.2];
+const O4A: FrameOpts = { frac: FULL, fov: 44, yaw: -0.05, camY: 1.4, sx: 0.36, sy: 0.38, drift: 0.04 };
+const O4B: FrameOpts = { frac: FULL, fov: 44, yaw: 0.05, camY: 1.1, sx: 0.62, sy: 0.38, drift: -0.03 };
+const O4C: FrameOpts = { frac: FULL, fov: 44, yaw: 0.05, camY: 1.6, sx: 0.5, sy: 0.36, drift: 0.02 };
+const O4D: FrameOpts = { frac: FULL * 0.8, fov: 48, yaw: 0.0, camY: 1.9, sx: 0.5, sy: 0.4, push: 0.95, drift: 0.02 };
+const P4A = framePose(P4, O4A, 0.5), P4B = framePose(P4, O4B, 0.5);
+const OWL: V3 = [2.3, 2.5, -3.2], WOLF: V3 = [-2.5, 0, -3.0]; // owl behind-right on a branch, wolf left on a rock — never in front of the hero
+const P4C: V3 = [0, 0, 3.4];
+const K4: [number, Key[]][] = [[16.4, frameShot(P4, 16.4, 18.4, O4A)], [18.4, frameShot(P4, 18.4, 20.3, O4B)], [20.3, frameShot(P4C, 20.3, 22.4, O4C)], [22.4, frameShot(P4, 22.4, 25.05, O4D)]];
+const G4: GKey[] = [{ t: wt("animals", 16.2) + 0.1, g: "present" }, { t: wt("hunt", 17) + 0.04, g: aim(screenDir(P4A, SHO(P4), [OWL[0], OWL[1] + 0.8, OWL[2]])), hold: 0.45 },
+  { t: 18.55, g: aim(screenDir(P4B, SHO(P4), [WOLF[0], 1.6, WOLF[2]])), hold: 0.45 }, ...beat(W, [["even", "palmUp"], ["spawn", "open2"], ["confused", "shrug", { hold: 0.6 }], ["whole", "palmUp2"], ["ecosystems", "chop"], ["shaken", "whoa", { hold: 0.7 }]], 18.9)];
+const EY4: [number, number, number][] = [[16.4, 0.2, 0], [wt("hunt", 17) - 0.25, 0.7, -0.8], [17.9, 0.3, -0.3], [18.3, -0.7, -0.3], [19.2, 0, 0], [20.3, 0.1, 0.6], [21.5, 0, 0], [22.4, 0, -0.1], [23.6, 0.4, 0]];
+const crabX = (t: number, i: number) => [-1.5, 1.4, 0.3, 2.6][i] + Math.sin(t * 1.6 + i * 1.7) * 0.55;
+export const S4 = ({ t }: Ctx) => { const shake = t > 23.75 && t < 24.9, beach = t >= 20.3 && t < 22.4;
+  const owlK = sm(seg(t, 17.35, 17.8)), howl = seg(t, 18.55, 18.85) * (1 - seg(t, 19.55, 19.8)), wolfK = sm(seg(t, 19.8, 20.2)), crabK = sm(seg(t, 20.85, 21.2));
+  const face = faceAt(t, [[16.4, "smile"], [17.4, "confused"], [18.4, "surprised"], [19.3, "happy"], [20.9, "confused"], [22.4, "worried"], [23.75, "scared"]]);
+  const hero = <Stickman p={beach ? P4C : P4} t={t} action={shake ? "scaredShake" : "idle"} lips={LIPS} gest={G4} face={face} rig={eyes(t, EY4)} />;
+  if (beach) return (<MoonShore t={t} tide={1} hero={P4C} lighthouse={[-30, 1, -70]} marker={[9, 0, -12]}>
+    <Cam t={t} keys={shot(t, K4)} />
+    {hero}
+    {[0, 1, 2, 3].map((i) => { const x = crabX(t, i), z = [1.6, 1.2, 0.6, 2.0][i]; return <React.Fragment key={i}><Critter kind="crab" p={[x, 0, z]} h={0.75} t={t} walk={t * 2.2 + i} confused={crabK} flip={i % 2 === 1} />
+      {[0, 1, 2].map((b) => { const u = ((t * 0.8 + b / 3 + i * 0.27) % 1); return <SGlow key={b} p={[x + 0.12 * (b - 1), 0.5 + u * 0.9, z + 0.1]} r={0.06 + 0.03 * u} color="#e6f6ff" o={0.8 * (1 - u)} />; })}</React.Fragment>; })}
+    {Array.from({ length: 40 }, (_, i) => <SGlow key={"pl" + i} p={[(Math.sin(i * 7.1) * 0.5) * 20, 0.04, -1.2 - Math.abs(Math.sin(i * 3.3)) * 9]} r={0.1 + 0.08 * Math.sin(i)} color="#5afff0" o={0.4 + 0.5 * Math.max(0, Math.sin(t * 2.5 + i * 1.9))} />)}
+    <DepthPass focus={6.5} blur={2.4} />
+  </MoonShore>);
+  return (<ForestGlade t={t} dark={0.5}>
+    <Cam t={t} keys={shot(t, K4)} quake={shake ? 0.05 * Math.sin((t - 23.75) / 1.15 * Math.PI) : 0} />
+    <KModel name="tree_detailed" p={[OWL[0] + 2.4, 0, OWL[2] - 0.5]} s={3.8} tint="#7c8ad0" t={t} sway={1} />
+    <Branch p={[OWL[0] - 0.9, OWL[1] + 0.02, OWL[2]]} len={3.3} t={t} />
+    <Critter kind="owl" p={OWL} h={1.7} t={t} confused={t > 22.4 ? 1 : owlK} turn={Math.sin(t * 0.9) * 0.8 * (1 - owlK * 0.5)} ruffle={sm(seg(t, 16.9, 17.2)) * (1 - sm(seg(t, 17.5, 17.9))) + (shake ? 1 : 0)} />
+    <KModel name="rock_tallA" p={[WOLF[0], 0, WOLF[2] - 0.2]} s={1.6} tint="#8890c0" />
+    <Critter kind="wolf" p={[WOLF[0], 0.95, WOLF[2]]} h={2.6} t={t} howl={howl} confused={t > 22.4 ? 1 : wolfK} ear={Math.max(0, Math.sin(t * 2.7)) ** 8} flip />
+    {howl > 0.3 ? Array.from({ length: 5 }, (_, i) => { const u = ((t * 0.9 + i / 5) % 1); return <SGlow key={i} p={[WOLF[0] + 0.5 + u * 0.4, 3.0 + u * 1.1, WOLF[2] + 0.2]} r={0.12 + u * 0.35} color="#dfe8ff" o={0.45 * (1 - u) * howl} />; }) : null}
+    {t > 22.4 ? [[-1.6, 2.6], [1.8, 2.8]].map(([x, z], i) => <Critter key={i} kind="crab" p={[x + Math.sin(t * 1.6 + i) * 0.4, 0, z]} h={0.6} t={t} walk={t * 2 + i} confused={1} flip={i === 1} />) : null}
+    {hero}
+    <DepthPass focus={t < 22.4 ? 6.2 : 8.0} blur={2.4} />
+  </ForestGlade>); };
+
+/* ================= S6 SEASONS MONTAGE 29.25–32.7: one fixed spot, whip-pan morph every ~0.5 s, weather chaos ================= */
+const P6: V3 = [0, 0, 1.0];
+const O6: FrameOpts = { frac: FULL, fov: 44, yaw: -0.12, camY: 1.5, sx: 0.4, sy: 0.37, push: 0.94, drift: 0.05 };
+export const SEASON_CUTS: [number, number, number][] = [[29.25, 0, 0], [29.75, 1, 0], [30.22, 2, 0], [30.7, 3, 0], [31.2, 1, 1], [31.85, 2, 0], [32.3, 0, 0]]; // [t, season, chaos]
+export const seasonAt = (t: number) => { let c = SEASON_CUTS[0]; for (const x of SEASON_CUTS) if (t >= x[0]) c = x; return c; };
+const G6: GKey[] = [...beat(W, [["making", "palmUp"], ["seasons", "open2"], ["wild", "whoa"], ["unpredictable", "shrug", { hold: 0.6 }]], 29.0), { t: 31.95, g: "chopL" }];
+export const S6 = ({ t }: Ctx) => { const [t0, season, chaos] = seasonAt(t), kick = Math.exp(-(t - t0) * 14) * (t0 > 29.3 ? 1 : 0);
+  const flash = chaos ? Math.max(0, Math.sin((t - 31.2) * 20)) ** 6 * (t < 31.7 ? 1 : 0) : 0;
+  const keys = frameShot(P6, 29.25, 32.75, O6).map((k) => ({ ...k, look: [k.look[0] + kick * 1.2, k.look[1], k.look[2]] as V3 }));
+  return (<SeasonHill t={t} season={season} chaos={chaos} flash={flash}>
+    <Cam t={t} keys={keys} />
+    {chaos && flash > 0.2 ? <Lightning p={[4, 9, -18]} s={[5, 14]} seed={Math.floor(t * 8)} o={flash} /> : null}
+    <Stickman p={P6} t={t} action={chaos ? "scaredShake" : "idle"} lips={LIPS} gest={G6} face={(["happy", "laugh", "surprised", "worried"] as Face[])[season] ?? "confused"}
+      rig={{ ...eyes(t, [[29.25, 0.3, -0.2], [30.0, -0.3, -0.4], [30.7, 0.4, -0.6], [31.3, 0.0, -0.8], [31.9, -0.2, 0]]) }} />
+    <DepthPass focus={6.0} blur={2.2} />
+  </SeasonHill>); };

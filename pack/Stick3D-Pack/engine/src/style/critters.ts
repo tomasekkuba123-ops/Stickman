@@ -1,6 +1,6 @@
 // STORYBOOK CRITTERS (2D canvas, same line style as Stickman: thick #1A1A1A outline, big glossy eyes, soft shading top-left)
 // owl, wolf, crab — each with `confused` (head tilt, mismatched brows, "?"), `blink`, simple idle motion. Draw into a billboard canvas.
-export type CritterPose = { t: number; confused?: number; /* 0..1 */ blink?: boolean; howl?: number; /* wolf 0..1 */ walk?: number; /* crab sideways phase */ look?: number; flip?: boolean };
+export type CritterPose = { t: number; confused?: number; /* 0..1 */ blink?: boolean; howl?: number; /* wolf 0..1 */ walk?: number; /* crab sideways phase */ look?: number; flip?: boolean; turn?: number; /* owl head turn -1..1 */ ruffle?: number; /* feather ruffle 0..1 */ ear?: number; /* wolf ear twitch 0..1 */ };
 const INK = "#1A1A1A";
 const st = (c: CanvasRenderingContext2D, w = 9) => { c.lineWidth = w; c.strokeStyle = INK; c.lineJoin = "round"; c.lineCap = "round"; c.stroke(); };
 const fs = (c: CanvasRenderingContext2D, f: string | CanvasGradient, w = 9) => { c.fillStyle = f; c.fill(); st(c, w); };
@@ -21,16 +21,18 @@ export function drawOwl(c: CanvasRenderingContext2D, W: number, H: number, p: Cr
   c.clearRect(0, 0, W, H); c.save(); c.scale(W / 512, H / 640); const k = p.confused ?? 0, t = p.t;
   c.beginPath(); c.roundRect(-20, 560, 552, 46, 22); fs(c, "#7a5233"); // branch
   c.save(); c.translate(256, 400); c.rotate(Math.sin(t * 0.05) * 0.02);
+  const rf = p.ruffle ?? 0; c.scale(1 + 0.06 * rf * (1 + Math.sin(t * 1.6)) / 2, 1 - 0.03 * rf);
   c.beginPath(); c.ellipse(0, 40, 150, 175, 0, 0, Math.PI * 2); fs(c, shade(c, 0, 40, 160, "#b98a5e", "#7c5536")); // body
+  if (rf > 0.05) for (let i = 0; i < 9; i++) { const a = -1.2 + i * 0.3, r = 160 + 10 * Math.sin(t * 1.2 + i); c.beginPath(); c.moveTo(Math.cos(a) * r * 0.95, 40 + Math.sin(a + 1.57) * r * 0.2 - 60); c.lineTo(Math.cos(a) * (r + 18 * rf), 40 + Math.sin(a + 1.57) * r * 0.2 - 70); st(c, 6); } // ruffled feather tips
   c.beginPath(); c.ellipse(0, 80, 95, 115, 0, 0, Math.PI * 2); c.fillStyle = "#e8cfa4"; c.fill(); // belly
   for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(-50 + (i % 3) * 50, 40 + Math.floor(i / 3) * 46, 16, 0.1 * Math.PI, 0.9 * Math.PI); st(c, 5); } // feather marks
   for (const s of [-1, 1]) { c.beginPath(); c.ellipse(s * 140, 60, 45, 110, s * 0.18, 0, Math.PI * 2); fs(c, "#8d6240"); } // wings
   for (const s of [-1, 1]) { c.beginPath(); c.ellipse(s * 40, 208, 26, 14, 0, 0, Math.PI * 2); fs(c, "#f2a53a", 6); } // feet
   // head (tilts when confused)
-  c.save(); c.translate(0, -120); c.rotate(-0.28 * k + Math.sin(t * 0.2) * 0.03 * k);
+  const tn = p.turn ?? 0; c.save(); c.translate(tn * 40, -120); c.rotate(-0.28 * k + Math.sin(t * 0.2) * 0.03 * k); c.scale(1 - 0.18 * Math.abs(tn), 1);
   c.beginPath(); c.moveTo(-130, -40); c.lineTo(-120, -150); c.lineTo(-60, -95); c.quadraticCurveTo(0, -110, 60, -95); c.lineTo(120, -150); c.lineTo(130, -40); c.quadraticCurveTo(150, 90, 0, 100); c.quadraticCurveTo(-150, 90, -130, -40); c.closePath(); fs(c, shade(c, 0, -20, 140, "#c99a6c", "#86603e"));
-  for (const s of [-1, 1]) { c.beginPath(); c.arc(s * 58, -18, 62, 0, Math.PI * 2); c.fillStyle = "#f3e2c0"; c.fill(); eye(c, s * 58, -18, 46, (p.look ?? 0) + (k ? -0.6 : 0), !!p.blink, "#2a1608", "#ffe27a"); }
-  c.beginPath(); c.moveTo(-16, 28); c.lineTo(16, 28); c.lineTo(0, 62); c.closePath(); fs(c, "#f2a53a", 6); // beak
+  for (const s of [-1, 1]) { c.beginPath(); c.arc(s * 58, -18, 62, 0, Math.PI * 2); c.fillStyle = "#f3e2c0"; c.fill(); eye(c, s * 58 + tn * 30, -18, 46, (p.look ?? 0) + tn * 0.9 + (k ? -0.6 : 0), !!p.blink, "#2a1608", "#ffe27a"); }
+  c.beginPath(); c.moveTo(-16 + tn * 40, 28); c.lineTo(16 + tn * 40, 28); c.lineTo(tn * 44, 62); c.closePath(); fs(c, "#f2a53a", 6); // beak
   // brows: confused = one up, one down
   for (const s of [-1, 1]) { c.beginPath(); c.moveTo(s * 20, -88 + (s > 0 ? -18 * k : 10 * k)); c.lineTo(s * 100, -76 + (s > 0 ? -30 * k : 16 * k)); st(c, 10); }
   c.restore(); c.restore();
@@ -47,7 +49,7 @@ export function drawWolf(c: CanvasRenderingContext2D, W: number, H: number, p: C
   for (const x of [300, 400]) { c.beginPath(); c.roundRect(x - 26, 500, 52, 110, 22); fs(c, fur); c.beginPath(); c.ellipse(x, 606, 36, 18, 0, 0, Math.PI * 2); fs(c, furL, 7); } // legs
   // head
   c.save(); c.translate(380, 300); c.rotate(-0.75 * hw + 0.22 * k + Math.sin(t * 0.12) * 0.02);
-  for (const s of [-1, 1]) { c.beginPath(); c.moveTo(-40 + s * 50, -60); c.lineTo(-30 + s * 70, -150); c.lineTo(10 + s * 50, -70); c.closePath(); fs(c, furD); } // ears
+  const er = p.ear ?? 0; for (const s of [-1, 1]) { const tw = s > 0 ? er * 0.35 : 0; c.save(); c.translate(-20 + s * 55, -65); c.rotate(tw); c.beginPath(); c.moveTo(-20, 5); c.lineTo(-10 + s * 15, -85); c.lineTo(30, -5); c.closePath(); fs(c, furD); c.restore(); } // ears (right one twitches)
   c.beginPath(); c.ellipse(0, 0, 105, 92, 0, 0, Math.PI * 2); fs(c, shade(c, 0, 0, 110, furL, fur)); // skull
   c.beginPath(); c.moveTo(40, -10); c.quadraticCurveTo(150, -14, 185, 20); c.quadraticCurveTo(170, 60, 60, 66); c.closePath(); fs(c, "#d9deea"); // snout
   c.beginPath(); c.arc(184, 18, 16, 0, Math.PI * 2); fs(c, INK, 4); // nose
