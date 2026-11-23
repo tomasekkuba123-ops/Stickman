@@ -64,15 +64,13 @@ Všechny efekty (gong výtahu, svist portálu, vláček a píšťalka, bubliny, 
 
 **Opraveno** (podrobnosti v `subtitles/TEXT_CHANGES.md`):
 * **SCENE_03:** šedé/hnědé boty jsou přebarvené na červené tenisky. Stínování zůstává, bílé podrážky a tkaničky taky. Skript je `tools/fix_scene03_shoes.py`, originál se uchová jako `images/SCENE_03_original.jpg`.
-* **Scéna 10:** text „across the toy room“ je změněn na „at the end of the street“, protože obrázek je ulice.
+* **Scéna 10:** nový text převzatý z OPRAVY_PRO_CLAUDE_KONTROLA.txt („The giant bedroom suddenly began folding around him…“) a vizuální přechod „gold warp“ na hranici 09→10 (02:24).
 * **Scéna 22:** maják na mapě není, takže text mluví o zářícím hradu a skrytém světě s vodopády a krystaly.
 * **Scéna 27:** text „turned the key“ je změněn na „pressed the key into the lock“, protože klíč v obrázku vidět není.
 * Hlas Kokoro i titulky jsou pro upravené věty vygenerované znovu. Původní texty zůstávají v `source_text/`.
 
 **Neopraveno** (oprava by vyžadovala překreslit postavu nebo celý obrázek):
 * **Batoh:** ve scénách 1, 2, 4 a 6–10 je vidět, od scény 11 chybí. Text batoh nikde nezmiňuje.
-* **Scéna 10** je stále ulice, zatímco scéna 9 je dětský pokoj, takže skok prostředí v obraze zůstává.
-* **SCENE_05:** výtah má jiný design (kamenný rám, symbol ∞).
-* **SCENE_07:** spodní část působí spíš jako dlouhé kalhoty než jako kraťasy.
+* **SCENE_05:** výtah má jiný design (kamenný rám, symbol ∞). Návrh opravy jsem zamítl kvůli 2D stylu, viz `subtitles/TEXT_CHANGES.md`.
 * **SCENE_03:** oči jsou kreslené jinak (velké, obtažené).
 * Tvar obličeje se mezi generacemi obrázků mírně liší.

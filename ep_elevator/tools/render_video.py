@@ -21,6 +21,11 @@ W, H, FPS = 1920, 1080, 30
 SCENE_LEN = 16.0
 N_SCENES = 30
 XFADE = 0.6  # total dissolve length, centred on each boundary
+# special transitions: boundary index (scene N -> N+1) -> total length in s, centred on the boundary
+#  9 -> 10: "gold warp" (bedroom zooms into a golden flash, street resolves out of it) bridges the
+#           change of location; 50 % point still lands exactly on 02:24.000
+SPECIAL = {9: 1.6}
+GOLD = np.array([70, 200, 255], np.float32)  # BGR warm gold
 
 # Camera plan per scene: (kind, params)
 #  ("in",  fx, fy)      zoom 1.02 -> 1.06 towards focus point (normalised image coords)
@@ -127,25 +132,54 @@ class Motes:
         return lay
 
 
+def radial(f, zoom, blur):
+    """Zoom about the centre plus a radial (zoom) blur made of several scaled copies."""
+    if zoom <= 1.0001 and blur <= 0.001:
+        return f
+    acc = np.zeros_like(f); k = 7
+    for i in range(k):
+        z = zoom * (1 + blur * i / (k - 1))
+        M = np.array([[z, 0, W / 2 * (1 - z)], [0, z, H / 2 * (1 - z)]], np.float64)
+        acc += cv2.warpAffine(f, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+    return acc / k
+
+
 def frame_at(t, cache):
     """Compose the frame at absolute time t (seconds)."""
     s = min(int(t // SCENE_LEN), N_SCENES - 1)
     local = t - s * SCENE_LEN
     parts = [(s + 1, local, 1.0)]
-    half = XFADE / 2
+    nb = s + 1 if local >= SCENE_LEN / 2 else s           # nearest boundary index (scene nb -> nb+1)
+    half = SPECIAL.get(nb, XFADE) / 2
+    special = nb in SPECIAL
     if local > SCENE_LEN - half and s + 1 < N_SCENES:      # dissolve into next
-        w = ease((local - (SCENE_LEN - half)) / XFADE)
-        parts = [(s + 1, local, 1 - w), (s + 2, local - SCENE_LEN, w)]
+        p = (local - (SCENE_LEN - half)) / (2 * half)
+        parts = [(s + 1, local, None), (s + 2, local - SCENE_LEN, None)]
     elif local < half and s > 0:                             # dissolve from previous
-        w = ease((local + half) / XFADE)
-        parts = [(s, local + SCENE_LEN, 1 - w), (s + 1, local, w)]
+        p = (local + half) / (2 * half)
+        parts = [(s, local + SCENE_LEN, None), (s + 1, local, None)]
+    else:
+        p = None
     out = np.zeros((H, W, 3), np.float32)
-    for sc, lt, wgt in parts:
+    for idx, (sc, lt, _) in enumerate(parts):
         img, motes = cache(sc)
         f = render_scene(img, sc, lt).astype(np.float32)
         m = motes.layer(lt)[..., None]
         f = f + (motes.col - f) * m  # screen-ish tint towards mote colour
-        out += f * wgt
+        if p is None:
+            out += f; continue
+        if special:
+            if idx == 0:   # outgoing: accelerate into the picture
+                f = radial(f, 1 + 0.30 * p ** 2, 0.10 * p)
+            else:          # incoming: settle out of the zoom
+                f = radial(f, 1 + 0.22 * (1 - p) ** 2, 0.10 * (1 - p))
+            w = ease(min(max((p - 0.35) / 0.30, 0), 1))     # quick swap hidden inside the flash
+        else:
+            w = ease(p)
+        out += f * ((1 - w) if idx == 0 else w)
+    if p is not None and special:
+        fl = math.sin(math.pi * p) ** 2 * 0.78                # golden flash peaking on the boundary
+        out = out * (1 - fl) + (GOLD * 0.55 + out * 0.45 + 90) * fl
     return np.clip(out + 0.5, 0, 255).astype(np.uint8)
 
 

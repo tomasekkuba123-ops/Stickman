@@ -239,6 +239,10 @@ cue(464.3, 30, "bedroom room tone", ambience(15.5, 100, 500), -38)
 cue(476.0, 30, "ticket blinks", shimmer(1.6, 18, 3000, 7000), -26, -.1)
 cue(477.6, 30, "closing chime", bell(1568, 2.0), -30)
 
+# added after review: gold-warp transition 09 -> 10 (appended last so earlier random cues stay identical)
+cue(142.9, 10, "gold warp whoosh (bedroom folds)", whoosh(1.8, 250, 6000), -22)
+cue(143.6, 10, "gold warp shimmer", shimmer(1.6, 24, 2500, 7000), -26)
+
 st = np.stack([L, R], 1)
 st[-int(SR * .05):] *= np.linspace(1, 0, int(SR * .05))[:, None]
 peak = np.abs(st).max(); lim = 10 ** (-12 / 20)

@@ -40,6 +40,7 @@ def main():
     ap.add_argument("--speed", type=float, default=1.0)
     ap.add_argument("--offset", type=float, default=0.15)
     ap.add_argument("--model-dir", default="/root/kokoro")
+    ap.add_argument("--scenes", help="comma list, e.g. 10 - regenerate only these scenes and patch their cues into the existing out/SUBTITLES_EN_SYNCED.srt")
     a = ap.parse_args()
     md = pathlib.Path(a.model_dir)
     k = Kokoro(str(md / "kokoro-v1.0.onnx"), str(md / "voices-v1.0.bin"))
@@ -49,7 +50,8 @@ def main():
     out = ROOT / "out" / "voice_kokoro"; out.mkdir(parents=True, exist_ok=True)
     cues, rep = [], []
     budget = SLOT - a.offset - TAIL_SAFETY
-    for sc in range(30):
+    only = sorted(int(x) for x in a.scenes.split(',')) if a.scenes else None
+    for sc in ([x - 1 for x in only] if only else range(30)):
         sents = lines[4 * sc: 4 * sc + 4]
         speed = a.speed
         while True:
@@ -73,7 +75,21 @@ def main():
             cues.append((base + max(0, s0 - 0.08), base + min(s1 + 0.30, nxt - 0.08 - 0.04), sents[i]))
         rep.append((sc + 1, speed, round(dur, 2), round(SLOT - a.offset - dur, 2)))
         print(f"VOICE_{sc+1:02d}  speed {speed:.3f}  {dur:5.2f} s  spare {SLOT - a.offset - dur:5.2f} s", flush=True)
-    (ROOT / "out" / "SUBTITLES_EN_SYNCED.srt").write_text(
+    synced = ROOT / "out" / "SUBTITLES_EN_SYNCED.srt"
+    if only:
+        def ts(x): h, m, r = x.replace(",", ".").split(":"); return int(h) * 3600 + int(m) * 60 + float(r)
+        old = []
+        for blk in synced.read_text(encoding="utf-8-sig").strip().split("\n\n"):
+            l = blk.split("\n"); x, y = l[1].split(" --> "); old.append((ts(x), ts(y), " ".join(l[2:])))
+        it = iter(cues)
+        for sc in only:
+            for k in range(4 * (sc - 1), 4 * sc): old[k] = next(it)
+        cues = old
+        rp = out / "report.csv"; prev = list(csv.reader(open(rp)))[1:] if rp.exists() else []
+        d = {int(r[0]): r for r in prev}
+        for r in rep: d[r[0]] = list(r)
+        rep = [d[k] for k in sorted(d)]
+    synced.write_text(
         "".join(f"{n}\n{fmt(s)} --> {fmt(e)}\n{t}\n\n" for n, (s, e, t) in enumerate(cues, 1)), encoding="utf-8")
     with open(out / "report.csv", "w", newline="") as f:
         w = csv.writer(f); w.writerow(["scene", "speed", "clip_s", "spare_s"]); w.writerows(rep)
