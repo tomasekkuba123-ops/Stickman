@@ -1,11 +1,22 @@
 # What If Stickman Entered the Wrong Elevator? (8min vizuální střih)
 
-Klasické horizontální YouTube video, 1920×1080, 16:9, 30 fps, H.264 MP4. **Bez hlasu**, připravené na vložení anglického vypravěče.
+Klasické horizontální YouTube video, 1920×1080, 16:9, 30 fps, H.264 MP4. Existují dvě verze: **s anglickým hlasem Kokoro** a **bez hlasu**.
+
+## Hlas Kokoro
+
+* Model Kokoro-82M v1.0 (licence Apache-2.0), běží přes `kokoro-onnx`, hlas `af_heart`, rychlost 1.0. Skript je `tools/make_voice_kokoro.py`.
+* Model je potřeba stáhnout do `/root/kokoro/`: soubory `kokoro-v1.0.onnx` a `voices-v1.0.bin` z github.com/thewh1teagle/kokoro-onnx (release model-files-v1.0).
+* Hlas se generuje po jednotlivých větách s pauzou 0,32 s. Díky tomu má každý titulek přesný čas začátku i konce věty (`subtitles/SUBTITLES_EN_KOKORO_SYNCED.srt`).
+* Všech 30 klipů se vešlo do 16s slotu bez zrychlování: mají 11,1–13,9 s a rezervu aspoň 1,9 s (`timeline/KOKORO_VOICE_REPORT.csv`).
+* Ověření přepisem řeči (Whisper base.en): shoda s textem průměrně 98,9 %. Jediné podezřelé místo je scéna 14 (3:32), kde přepis slyšel „Our glasses… Medair“ místo „Hourglasses… midair“, a je potřeba si ho poslechnout.
+* Jiný hlas: `python3 tools/make_voice_kokoro.py --voice am_michael` (dál např. bm_george, am_fenrir), potom `python3 tools/add_voice.py --voices out/voice_kokoro --srt out/SUBTITLES_EN_SYNCED.srt`.
+* Výsledný mix má -15,8 LUFS a true peak -1,2 dBFS. Efekty se pod hlasem automaticky ztiší (ducking).
 
 ## Výstupy (složka `out/`, do gitu se necommitují, viz `.gitignore`)
 
 | Soubor | Co to je |
 |---|---|
+| `WHAT_IF_STICKMAN_WRONG_ELEVATOR_8min_KOKORO_VOICE.mp4` | Finální verze: obraz, hlas Kokoro, efekty a titulky vypálené podle skutečné řeči. |
 | `WHAT_IF_STICKMAN_WRONG_ELEVATOR_8min_NO_VOICE.mp4` | Hotový vizuální střih: obraz, vypálené anglické titulky a decentní zvukové efekty. Bez hlasu. |
 | `master_clean.mp4` | Stejný obraz **bez titulků a bez zvuku**. Používá ho `add_voice.py`, který z něj po dodání hlasu vyrobí finální verzi. |
 | `SFX_STEM.wav` | Samostatná stopa zvukových efektů, 48 kHz stereo, přesně 480 s, kolem -31 LUFS. |
@@ -20,7 +31,7 @@ V gitu jsou: `subtitles/SUBTITLES_EN.srt` (samostatné titulky pro YouTube), `ti
 * Pohyb dělá jen kamera: Ken Burns zoom o 4 % (1,02→1,06), případně pomalý boční posun při zoomu 1,05, s plynulým náběhem a doběhem. Obrázek se zvětšuje pouze rovnoměrně, takže Stickman ani jeho červená mikina se nikdy nedeformují.
 * Paralaxa: v popředí je jemná vrstva rozostřených světelných částic, která se pohybuje 2,5× rychleji než kamera. Skutečné rozdělení malby do hloubkových vrstev se nedělalo, protože by vyžadovalo vyřezávání a dokreslování postav a pozadí, a to by porušilo podmínku nedeformovat Stickmana.
 
-## Vložení hlasu (až dodáš nahrávky)
+## Vložení vlastního (lidského) hlasu místo Kokoro
 
 1. Nahraj 30 klipů `VOICE_01.wav` až `VOICE_30.wav` (jde i mp3/m4a/flac). Jeden klip na scénu, text je ve `source_text/VOICEOVER_EN_TIMECODED.txt`.
 2. Spusť:

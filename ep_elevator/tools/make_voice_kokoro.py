@@ -70,7 +70,7 @@ def main():
         base = sc * SLOT + a.offset; dur = len(y) / sr
         for i, (s0, s1) in enumerate(times):
             nxt = times[i + 1][0] if i < 3 else SLOT - a.offset - 0.05
-            cues.append((base + max(0, s0 - 0.08), base + min(s1 + 0.30, nxt - 0.04), sents[i]))
+            cues.append((base + max(0, s0 - 0.08), base + min(s1 + 0.30, nxt - 0.08 - 0.04), sents[i]))
         rep.append((sc + 1, speed, round(dur, 2), round(SLOT - a.offset - dur, 2)))
         print(f"VOICE_{sc+1:02d}  speed {speed:.3f}  {dur:5.2f} s  spare {SLOT - a.offset - dur:5.2f} s", flush=True)
     (ROOT / "out" / "SUBTITLES_EN_SYNCED.srt").write_text(

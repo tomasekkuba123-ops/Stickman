@@ -130,7 +130,7 @@ def main():
         f";{vlabels}amix=inputs={len(clips)}:normalize=0,apad=whole_dur=480,atrim=0:480,"
         "loudnorm=I=-16:TP=-1.5:LRA=11,asplit=2[vo][sc];"
         "[0:a][sc]sidechaincompress=threshold=0.03:ratio=5:attack=25:release=350[duck];"
-        "[vo][duck]amix=inputs=2:normalize=0,alimiter=limit=0.89,atrim=0:480[mix]")
+        "[vo][duck]amix=inputs=2:normalize=0,alimiter=limit=0.89,apad=whole_dur=480,atrim=0:480[mix]")
     mix = ROOT / "out" / "MIX_voice_sfx.wav"
     run(["ffmpeg", "-y", "-hide_banner", *inputs, "-filter_complex", fc, "-map", "[mix]", "-ar", "48000", str(mix)])
     print(f"wrote {mix}")
@@ -144,7 +144,7 @@ def main():
         run([sys.executable, str(ROOT / "tools" / "make_subs.py"), str(synced), str(ass)])
         final = ROOT / "out" / "FINAL_with_voice.mp4"
         run(["ffmpeg", "-y", "-hide_banner", "-i", str(nosubs), "-vf", f"ass={ass}:fontsdir=/usr/share/fonts/opentype/inter",
-             "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-c:a", "copy",
+             "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-pix_fmt", "yuv420p", "-profile:v", "high", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-c:a", "copy",
              "-movflags", "+faststart", str(final)])
         print(f"wrote {final}")
 
