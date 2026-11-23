@@ -3,7 +3,8 @@
 //   (sy = vertical centre of the body, 0 = top), so the feet stay above the caption safe zone (62-72 % of the height).
 import { Key } from "../style/extra";
 import { V3 } from "../style/kit";
-export const FULL = 0.46, CLOSE = 0.56, HERO_H = 3;
+export const FULL = 0.58, CLOSE = 0.68, HERO_H = 3; // v18: size A (every normal shot) / size B (hook + ending only)
+export const SY_A = 0.535, SY_B = 0.55; // body centre on screen -> head top ~25 %, feet ~82 % (A); feet ~89 % (B, behind foreground plants)
 const ASPECT = 1080 / 1920;
 export type FrameOpts = { frac?: number; fov?: number; yaw?: number; camY?: number; sx?: number; sy?: number; push?: number; drift?: number; h?: number };
 export function framePose(hero: V3, o: FrameOpts = {}, k = 0): Key & { pos: V3; look: V3 } {

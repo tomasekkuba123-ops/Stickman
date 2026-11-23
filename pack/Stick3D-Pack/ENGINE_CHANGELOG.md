@@ -5,6 +5,25 @@ Newest entries on top.
 
 ---
 
+## v18 — EP09 round 3 (HD quality, richer environments, body acting)
+**Learned**
+- Transparent additive meshes (torch beam) do not write depth, so the DOF pass blurred them with the far background -> the beam vanished. Beam now writes depth.
+- 3D grass blades right in front of the camera become giant dark triangles: keep tall grass behind the hero, use a thin short lawn in front, and a vector front bed for the bottom edge.
+- In dark scenes stickmask.py split the head from the body (rim shading gap) -> measured only the head; bridged with a 5 px dilate before grouping (fixed in EP09 v17 delivery).
+- Rig: armL is the SCREEN-LEFT arm; hand-on-head poses need ik targets around y 1000-1090 + handsOverHead.
+**Changed**
+- Final = 2160x3840 supersampled render (--scale=2), Lanczos downscale + light unsharp + temporal grain dither, H.264 High CRF 15 / AAC 192k (pipeline/final4k.sh, resumable 60-frame parts).
+- canvasTex draws every texture at 2x (TEX_K); hero billboard canvas 2560 px (HERO_RES); low-res previews switch both down with --props '{"lowres":true}'.
+- kit/frame.ts: size A = 58 % (FULL), size B = 68 % (CLOSE, hook + ending only), SY_A / SY_B lower the hero so the bottom is ground + foreground.
+- kit/acting.ts (new): body acting keys — head turn (new rig.headTurn), tilt, lean, hip shift, knee dip, startled step back (world), foot lift, shiver; continuous weight shift.
+- style/critters2.ts + kit/animals.tsx (new): HD vector wolf on its rock (timber colours, fur strokes, howl), owl with feather rows + head swivel, crab with snapping pincers, fish, coral, "?" pop, fish school, coral spawn.
+- kit/frontbed.tsx (new): vector front bed (layered smooth blades with rim light, rocks, flowers, shells, starfish, snow) per scene kind; can be lit by the torch.
+- world.tsx Grass: smooth curved tapered blades with vertex shading (no black cone spikes), lum + beam glow; Kenney grass tufts render as blades.
+- whip2 transitions + season changes: no blur on the frame, crisp motion streaks instead (Streaks in ep02/common.tsx).
+- captions: fixed size for every chunk (no shrink), group split when a chunk would need 3 lines, active word = colour + small scale pulse only.
+- sets4: NightField glow/lum/ghost (Moon returns as a ghost before it pops back), seasons chaos 1 = snow in summer, 2 = lightning storm; TorchBeam bright + depth.
+- tools/qc_frames.py (new): a frame every 0.5 s -> blur / cropped / empty bottom / scale-jump checks + grid image.
+
 ## v17 — EP09 rebuild after 2 preview rounds (richer environments + smooth hand acting)
 **Learned**
 - Depth-of-field post pass at full resolution cost ~15 s/frame on the CPU renderer -> render DOF at low resolution (resolutionScale 0.25).

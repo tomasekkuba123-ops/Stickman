@@ -17,8 +17,9 @@ import { SetDressing } from "../kit/dressing";
 const TAU = Math.PI * 2;
 const ramp = (() => { const d = new Uint8Array([110, 185, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
 const texCache = new Map<string, THREE.CanvasTexture>();
+export let TEX_K = 2; export const setTexK = (k: number) => { TEX_K = k; };
 export function canvasTex(key: string, w: number, h: number, draw: (c: CanvasRenderingContext2D, W: number, H: number) => void, repeat?: [number, number]) {
-  const hit = texCache.get(key); if (hit) return hit; const cv = document.createElement("canvas"); cv.width = w; cv.height = h; draw(cv.getContext("2d")!, w, h);
+  const hit = texCache.get(key); if (hit) return hit; const cv = document.createElement("canvas"); const k = TEX_K && Math.max(w, h) <= 1024 ? TEX_K : 1; cv.width = w * k; cv.height = h * k; const g2 = cv.getContext("2d")!; g2.scale(k, k); draw(g2, w, h); // v18: textures drawn at 2x (HD, 4K supersampled final)
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...repeat); } texCache.set(key, t); return t;
 }
 

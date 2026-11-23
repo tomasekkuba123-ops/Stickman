@@ -14,7 +14,7 @@ export type Leg = { a: number; b: number; f?: number; lift?: number }; // side: 
 export type Rig = {
   t: number; view?: View; flip?: boolean; face?: Face; lookX?: number; lookY?: number; blink?: number;
   x?: number; y?: number; /* body offset in units (y up = negative) */ air?: number; /* extra height above the ground */
-  lean?: number; /* deg, + forward/right */ headTilt?: number; squash?: number; /* + stretch, - squash */ breath?: number;
+  lean?: number; /* deg, + forward/right */ headTilt?: number; headTurn?: number; /* v18: -1..1 face features slide toward screen left/right (2D head turn) */ squash?: number; /* + stretch, - squash */ breath?: number;
   armL?: Arm; armR?: Arm; ikL?: [number, number]; ikR?: [number, number]; ikKL?: number; ikKR?: number; ikBendL?: number; ikBendR?: number; /* override elbow side (+1/-1) */ /* hand targets (units, x from body centre, y from baseline up) */
   handL?: HandPose | HandShape; handR?: HandPose | HandShape; handRotL?: number; handRotR?: number; /* deg */ ghostL?: Arm[]; ghostR?: Arm[]; /* v17 motion-blur trail of earlier arm angles (fast moves) */
   legL?: Leg; legR?: Leg; grounded?: boolean;
@@ -193,7 +193,8 @@ function headBall(c: CanvasRenderingContext2D, hx: number, hy: number, faceDir: 
   c.beginPath(); c.arc(hx, hy, HR, 0, Math.PI * 2); stroke(c, 11);
 }
 function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side: boolean) {
-  c.save(); c.translate(hx, hy); c.scale(FK, FK); c.translate(-hx, -hy);
+  const tn = side ? 0 : Math.max(-1, Math.min(1, r.headTurn ?? 0));
+  c.save(); c.translate(hx + tn * 58, hy); c.scale(FK * (1 - 0.16 * Math.abs(tn)), FK); c.translate(-hx, -hy);
   const f = r.face ?? "smile", lx = (r.lookX ?? 0) * 8, ly = (r.lookY ?? 0) * 8, bl = (r.blink ?? 0) > 0.5;
   const eyes: [number, number, number][] = side ? [[hx + 26, hy - 2, 0.8], [hx + 96, hy - 2, 0.66]] : [[hx - 52, hy - 4, 1]].concat([[hx + 52, hy - 4, 1]]) as [number, number, number][];
   const big = f === "surprised" || f === "scared" ? 1.18 : 1;

@@ -7,6 +7,7 @@ import { Ep02 } from "./videos/Ep02";
 import { RigSheet } from "./videos/RigSheet";
 import { PuppetFit } from "./videos/PuppetFit";
 import { GestureTest } from "./videos/GestureTest";
+import { ArmTest } from "./videos/ArmTest";
 import { MotionSheet } from "./videos/MotionSheet";
 import { Ep04 } from "./videos/Ep04";
 import { Ep05 } from "./videos/Ep05";
@@ -26,6 +27,7 @@ export const Root: React.FC = () => <>
   <Composition id="Ep02" component={Ep02} width={1080} height={1920} fps={30} durationInFrames={3000} />
   <Composition id="MotionSheet" component={MotionSheet} width={1340} height={3300} fps={30} durationInFrames={1} />
   <Composition id="PuppetFit" component={PuppetFit} width={1200} height={800} fps={30} durationInFrames={1} />
+  <Composition id="ArmTest" component={ArmTest} width={1080} height={1920} fps={30} durationInFrames={10} />
   <Composition id="GestureTest" component={GestureTest} width={1080} height={1920} fps={30} durationInFrames={160} />
   <Composition id="RigSheet" component={RigSheet} width={2950} height={2050} fps={30} durationInFrames={30} />
   <Composition id="Ep04" component={Ep04} width={1080} height={1920} fps={30} durationInFrames={3000} />

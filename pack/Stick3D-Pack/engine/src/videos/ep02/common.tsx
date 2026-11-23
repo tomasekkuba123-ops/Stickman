@@ -44,7 +44,7 @@ export const Scene: React.FC<{ start: number; end: number; first?: boolean; tran
 const Inner: React.FC<{ from: number; first?: boolean; trans: Trans; exit?: Trans; endF?: number; bg: string; fog?: [string, number, number]; children: (c: Ctx) => React.ReactNode }> = ({ from, first, trans, exit, endF = 1e9, bg, fog, children }) => {
   const f = useCurrentFrame(), t = (f + from) / FPS;
   const W2 = 5, kin = !first && trans === "whip2" ? Easing.out(Easing.cubic)(clamp(f / W2)) : 1, kout = exit === "whip2" ? Easing.in(Easing.cubic)(clamp((f + from - (endF - W2)) / W2)) : 0;
-  const wp = (1 - kin) - kout, wpx = wp * 230, wsc = 1 + Math.abs(wp) * 0.5, wbl = Math.abs(wp) * 28;
+  const wp = (1 - kin) - kout, wpx = wp * 230, wsc = 1 + Math.abs(wp) * 0.12, wbl = 0; // v18: no blur on the frame (character stays sharp) -> motion streaks instead
   const k = first || trans === "cut" || trans === "whip2" ? 1 : clamp(f / (LEAD + 2)), ke = Easing.out(Easing.cubic)(k);
   const iris = !first && trans === "iris" && k < 1 ? `circle(${(Easing.inOut(Easing.cubic)(k) * 1300).toFixed(0)}px at 50% 40%)` : undefined;
   const sc = !first && trans === "zoom" ? lerp(1.35, 1, ke) : 1;
@@ -57,6 +57,7 @@ const Inner: React.FC<{ from: number; first?: boolean; trans: Trans; exit?: Tran
         {fog ? <fog attach="fog" args={fog} /> : null}
         {children({ t, f })}
       </ThreeCanvas>
+      {Math.abs(wp) > 0.02 ? <Streaks k={Math.abs(wp)} dir={Math.sign(wp)} f={f} /> : null}
       {!first && trans === "flash" ? <AbsoluteFill style={{ background: "#fff", opacity: 1 - clamp(f / 8) }} /> : null}
       {!first && trans === "whipL" ? <ChalkSwoosh k={clamp(f / 12)} /> : null}
     </AbsoluteFill>
@@ -205,3 +206,13 @@ export const Kingdom: React.FC<KingdomProps> = ({ t, storm = 0, sun = 0, lurch =
   </>);
 };
 void Lightning; void Sparkles; void Cyl; void HeldKey;
+
+/* v18 whip-pan motion streaks: crisp horizontal speed lines over the frame (no blur on the character) */
+export const Streaks: React.FC<{ k: number; dir: number; f: number; col?: string }> = ({ k, dir, f, col = "255,255,255" }) => (
+  <svg width={1080} height={1920} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+    <defs><linearGradient id="stk" x1="0" x2="1"><stop offset="0" stopColor={`rgba(${col},0)`} /><stop offset="0.5" stopColor={`rgba(${col},1)`} /><stop offset="1" stopColor={`rgba(${col},0)`} /></linearGradient></defs>
+    {Array.from({ length: 34 }, (_, i) => { const r = (n: number) => { const x = Math.sin((i * 7.3 + n) * 127.1) * 43758.5; return x - Math.floor(x); };
+      const y = r(1) * 1920, L = 260 + r(2) * 760, x = ((r(3) * 1500 + dir * f * 140 * (0.6 + r(4))) % 1700 + 1700) % 1700 - 400, h = 2 + r(5) * 9;
+      return <rect key={i} x={x} y={y} width={L * (0.4 + k)} height={h} rx={h / 2} fill="url(#stk)" opacity={k * (0.25 + 0.5 * r(6))} />; })}
+  </svg>
+);

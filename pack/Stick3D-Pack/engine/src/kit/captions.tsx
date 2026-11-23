@@ -29,18 +29,18 @@ export const Captions: React.FC<{ data: CaptionData; until?: number; fps?: numbe
 
 /* v4 WORD-BY-WORD captions (CLAUDE.md retention rules): groups of up to 3 words from Whisper timings, the CURRENT word highlighted
    (yellow + pop), big bold font, centre-lower; band from captions.py (never over the face). tools/captions.py ... --max 3 */
-export const WordCaptions: React.FC<{ data: CaptionData; until?: number; from?: number; fps?: number; size?: number; hi?: string }> = ({ data, until = 1e9, from = 0, fps = 30, size = 112, hi = "#ffd23a" }) => {
+export const WordCaptions: React.FC<{ data: CaptionData; until?: number; from?: number; fps?: number; size?: number; hi?: string; fixed?: boolean }> = ({ data, until = 1e9, from = 0, fps = 30, size = 112, hi = "#ffd23a", fixed = false }) => {
   const t = useCurrentFrame() / fps; if (QC || CLEAN || t >= until || t < from) return null;
   const G = data.groups; const idx = G.findIndex((g, i) => t >= g.a - 0.04 && t < (G[i + 1]?.a ?? 1e9) - 0.04); if (idx < 0) return null; const g = G[idx];
   if (t > g.e + 0.6) return null;
   const ts = g.ts ?? g.words.map(() => [g.a, g.e] as [number, number]);
   let cur = 0; ts.forEach(([a], i) => { if (t >= a - 0.03) cur = i; });
-  const sc = interpolate(t - g.a, [0, 0.14], [0.8, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.4)) });
+  const sc = fixed ? 1 : interpolate(t - g.a, [0, 0.14], [0.8, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.4)) }); // v18 fixed: no group pop, same size for every chunk
   const band = g.band ?? "low";
   // max 2 lines, laid out explicitly (no browser re-wrap): shrink the font until the greedy wrap gives <= 2 lines
   const layout = (z: number) => { const L: number[][] = [[]]; let w = 0; g.words.forEach((x, i) => { const ww = (x.length * 0.74 + 0.5) * z; if (w > 0 && w + ww > 980) { L.push([]); w = 0; } L[L.length - 1].push(i); w += ww; }); return L; };
-  let fs = size; while (layout(fs).length > 2 && fs > 56) fs -= 4; const lines = layout(fs);
+  let fs = size; while (!fixed && layout(fs).length > 2 && fs > 56) fs -= 4; const lines = layout(fs);
   return <div style={{ position: "absolute", left: 30, right: 30, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: fs, lineHeight: 1.08, WebkitTextStroke: "16px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 10px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
-    {lines.map((ln, li) => <div key={li} style={{ whiteSpace: "nowrap" }}>{ln.map((i) => { const w = g.words[i], on = i === cur, k = on ? interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
+    {lines.map((ln, li) => <div key={li} style={{ whiteSpace: "nowrap" }}>{ln.map((i) => { const w = g.words[i], on = i === cur, k = on ? (fixed ? interpolate(t - ts[i][0], [0, 0.09, 0.2], [1, 1.07, 1.03], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })) : 1;
       return <span key={i} style={{ display: "inline-block", margin: "0 0.2em", color: on ? hi : "#fff", opacity: i <= cur ? 1 : 0.72, transform: `scale(${k})` }}>{w}</span>; })}</div>)}</div>;
 };

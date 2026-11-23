@@ -121,8 +121,8 @@ export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig
 /* ---------------- Stickman component ---------------- */
 export type Prop2D = "pencil" | "chalk" | "pencilUp" | null;
 export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; speed?: number; dur?: number;
-  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number; lips?: LipCue[]; mo?: MoSpec[]; gest?: GKey[]; gestRest?: Pose2; hold?: number }> =
-  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0, lips, mo, gest, gestRest, hold = 1 }) => {
+  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number; lips?: LipCue[]; mo?: MoSpec[]; gest?: GKey[]; gestRest?: Pose2; hold?: number; res?: number }> =
+  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0, lips, mo, gest, gestRest, hold = 1, res }) => {
   const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: { ...(outfit ? { outfit, backpack: false } : {}), ...(blinkSeed ? { blink: autoBlink(t, blinkSeed) } : {}), ...(lips ? { mouth: mouthAt(lips, t) } : {}), ...(rig ?? {}) }, speed, dur });
   if (mo) { const m = mocapSG(mo, t, r.rig), m2 = mocapAt(mo, t - 0.08, r.rig); if (m.w > 0) { r.rig = { ...r.rig, ...m.over, ...(rig ?? {}), drag: [Math.max(-60, Math.min(60, -(m.dx - m2.dx) / 0.08 * 0.06 * dir)), (r.rig.drag ?? [0, 0])[1]] } as Rig; r.dx += m.dx; r.lift += m.dy; } }
   if (gest) { const A = armsAt(gest, t, { rest: gestRest, hold }); // v17 speech gestures own the arms (rig prop overrides still win, e.g. a held torch)
@@ -132,7 +132,7 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
   const rimC = rim ?? look.rim;
   return (<>
     {shadow ? <Shadow p={[x, gy, p[2]]} r={h * 0.3 / (1 + r.lift * k * 0.5)} o={0.5 / (1 + r.lift * k * 0.6)} /> : null}
-    <Billboard p={[x, y, p[2]]} h={h} res={980} aspect={1.0} draw={(c, W, H) => {
+    <Billboard p={[x, y, p[2]]} h={h} res={res ?? (QC ? 980 : HERO_RES)} aspect={1.0} draw={(c, W, H) => {
       const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK, look.dim ?? 0);
       if (prop === "pencil" || prop === "chalk" || prop === "pencilUp") { const L = H * 0.13, a = prop === "pencilUp" ? Math.PI + 0.3 : 0.5, bx = Math.sin(a), by = -Math.cos(a); drawPencil(c, out.gloveR[0] - bx * L * 0.42, out.gloveR[1] - by * L * 0.42, L, a, prop === "chalk" ? 0.6 : 0); }
       if (extra) extra(c, out, W, H);
@@ -141,6 +141,8 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
   </>);
 };
 
+/* v18 HD: hero billboard canvas — the body is ~0.62 of the canvas; at size B (68 % of a 3840 px internal frame) the canvas needs ~2600 px for >= 1:1 texels */
+export let HERO_RES = 2560; export const setHeroRes = (r: number) => { HERO_RES = r; };
 /* Savitzky-Golay (5 taps, quadratic) smoothing of the retargeted mocap joint curves -> no jitter */
 const SGW = [-3, 12, 17, 12, -3].map((w) => w / 35);
 function mocapSG(mo: MoSpec[], t: number, base: Rig) {

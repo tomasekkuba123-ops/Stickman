@@ -60,13 +60,18 @@ export const Terrain: React.FC<{ size?: number; color?: string; color2?: string;
 };
 
 /* instanced grass blades with wind sway (updated each frame) */
-export const Grass: React.FC<{ t: number; area?: [number, number]; c?: V3; n?: number; wind?: number; amp?: number; colors?: string[]; h?: number }> = ({ t, area = [30, 24], c = [0, 0, -4], n = 2500, wind = 1, amp = 1, colors = ["#3fbf4a", "#5ad65a", "#2fa04a"], h = 0.38 }) => {
-  const ref = useRef<THREE.InstancedMesh>(null); const geo = useMemo(() => { const g = new THREE.ConeGeometry(0.05, 1, 3); g.translate(0, 0.5, 0); return g; }, []);
+export const Grass: React.FC<{ t: number; area?: [number, number]; c?: V3; n?: number; wind?: number; amp?: number; colors?: string[]; h?: number; lum?: number; glow?: [number, number, number, number]; wd?: number }> = ({ t, area = [30, 24], c = [0, 0, -4], n = 2500, wind = 1, amp = 1, colors = ["#3fbf4a", "#5ad65a", "#2fa04a"], h = 0.38, lum = 1, glow, wd = 1 }) => {
+  const ref = useRef<THREE.InstancedMesh>(null); const geo = useMemo(() => bladeGeo(), []);
   const data = useMemo(() => Array.from({ length: n }, (_, i) => { const x = c[0] + (rnd(i) - 0.5) * area[0], z = c[2] + (rnd(i * 3 + 1) - 0.5) * area[1]; return { x, z, y: terrainY(x, z, amp), s: h * (0.6 + rnd(i * 7) * 0.8), r: rnd(i * 5) * TAU, col: colors[i % colors.length] }; }), [n, area[0], area[1], c[0], c[2], amp]);
   const m = useMemo(() => new THREE.Object3D(), []);
-  useLayoutEffect(() => { const im = ref.current; if (!im) return; data.forEach((d, i) => { const sw = Math.sin(t * 2.2 + d.x * 0.6 + d.z * 0.4) * 0.22 * wind + 0.08 * wind; m.position.set(d.x, d.y, d.z); m.rotation.set(sw * 0.4, d.r, sw); m.scale.set(1, d.s, 1); m.updateMatrix(); im.setMatrixAt(i, m.matrix); im.setColorAt(i, new THREE.Color(d.col)); }); im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; });
-  return <instancedMesh ref={ref} args={[geo, undefined, n]}><meshToonMaterial gradientMap={ramp} /></instancedMesh>;
+  useLayoutEffect(() => { const im = ref.current; if (!im) return; data.forEach((d, i) => { const sw = Math.sin(t * 2.2 + d.x * 0.6 + d.z * 0.4) * 0.22 * wind + 0.08 * wind; m.position.set(d.x, d.y, d.z); m.rotation.set(sw * 0.4, d.r, sw); m.scale.set(wd, d.s, wd); m.updateMatrix(); im.setMatrixAt(i, m.matrix); const cc = new THREE.Color(d.col).multiplyScalar(lum); if (glow) { const q = Math.max(0, 1 - Math.hypot(d.x - glow[0], d.z - glow[1]) / glow[2]) ** 1.5 * glow[3]; if (q > 0) cc.lerp(new THREE.Color("#fff1c0"), Math.min(0.85, q)).multiplyScalar(1 + q * 0.6); } im.setColorAt(i, cc); }); im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; });
+  return <instancedMesh ref={ref} args={[geo, undefined, n]}><meshBasicMaterial vertexColors side={THREE.DoubleSide} /></instancedMesh>;
 };
+/* v18 smooth grass blade: curved, tapered, 5 segments; vertex shade dark base -> lit tip with a pale rim on the top third (never a black spike) */
+export function bladeGeo() { const g = new THREE.BufferGeometry(), N = 5, pos: number[] = [], col: number[] = [], idx: number[] = [];
+  for (let i = 0; i <= N; i++) { const u = i / N, w = 0.055 * (1 - u) ** 0.8 + 0.004, bend = 0.22 * u * u, sh = 0.42 + 0.58 * u + (u > 0.66 ? 0.35 * (u - 0.66) / 0.34 : 0);
+    pos.push(-w, u, bend, w, u, bend); col.push(sh, sh, sh * 1.05, sh * 0.92, sh * 0.92, sh); if (i < N) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3)); g.setIndex(idx); g.computeVertexNormals(); return g; }
 /* instanced flowers (stem + head) */
 export const Flowers: React.FC<{ t: number; area?: [number, number]; c?: V3; n?: number; amp?: number; colors?: string[] }> = ({ t, area = [24, 18], c = [0, 0, -4], n = 220, amp = 1, colors = ["#ff6aa8", "#ffd23a", "#ffffff", "#b88cff", "#ff8a3a"] }) => {
   const heads = useRef<THREE.InstancedMesh>(null), stems = useRef<THREE.InstancedMesh>(null);

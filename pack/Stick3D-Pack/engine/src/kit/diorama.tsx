@@ -58,14 +58,15 @@ const moonTex = () => canvasTex("moon17", 512, 512, (c, W, H) => { const g = c.c
   for (let i = 0; i < 6; i++) { c.fillStyle = "rgba(190,180,150,0.22)"; c.beginPath(); c.ellipse(rnd(i * 11) * W, rnd(i * 13) * H, 60 + rnd(i) * 80, 40 + rnd(i * 2) * 50, rnd(i * 3) * 3, 0, TAU); c.fill(); } });
 const raysTex = () => canvasTex("rays17", 512, 512, (c, W, H) => { c.translate(W / 2, H / 2); for (let i = 0; i < 18; i++) { const a = (i / 18) * TAU + rnd(i) * 0.2, w = 0.04 + rnd(i * 3) * 0.06, L = W * (0.32 + rnd(i * 5) * 0.18);
   const g = c.createLinearGradient(0, 0, Math.cos(a) * L, Math.sin(a) * L); g.addColorStop(0, "rgba(255,255,255,0.0)"); g.addColorStop(0.25, "rgba(255,255,255,0.55)"); g.addColorStop(1, "rgba(255,255,255,0)"); c.fillStyle = g; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, L, a - w, a + w); c.closePath(); c.fill(); } });
-export const BigMoon: React.FC<{ p: V3; r: number; t: number; vanish?: number; back?: number; halo?: number; color?: string }> = ({ p, r, t, vanish = 0, back = 0, halo = 1, color = "#fff3c8" }) => {
+export const BigMoon: React.FC<{ p: V3; r: number; t: number; vanish?: number; back?: number; halo?: number; color?: string; ghost?: number }> = ({ p, r, t, vanish = 0, back = 0, halo = 1, color = "#fff3c8", ghost = 0 }) => {
   const { camera } = useThree(); const ray = useRef<THREE.Mesh>(null);
   useLayoutEffect(() => { if (ray.current) { ray.current.quaternion.copy(camera.quaternion); ray.current.rotateZ(t * 0.05); } });
   const v = vanish; // 0..1: 0-0.22 swell (anticipation), 0.22-0.8 shrink + fade, burst 0.55-1
   let s = v <= 0 ? 1 : v < 0.22 ? 1 + 0.14 * sm(v / 0.22) : 1.14 * (1 - sm((v - 0.22) / 0.58));
   if (back > 0) s = Math.max(s, back < 0.6 ? 1.12 * sm(back / 0.6) : 1.12 - 0.12 * sm((back - 0.6) / 0.4));
-  const fade = v > 0.22 ? 1 - sm((v - 0.3) / 0.5) : 1, o = back > 0 ? Math.max(fade, sm(back / 0.5)) : fade;
-  const burst = v > 0.5 && v < 1.6 ? (v - 0.5) / 1.1 : 0;
+  const fade = v > 0.22 ? 1 - sm((v - 0.3) / 0.5) : 1; let o = back > 0 ? Math.max(fade, sm(back / 0.5)) : fade;
+  if (ghost > 0 && o < ghost * 0.4) { o = ghost * 0.4; s = Math.max(s, 0.9 + 0.1 * ghost); } // v18: the Moon slowly returning as a faint ghost before it pops back
+  const burst = v > 0.5 && v < 1.6 && !ghost ? (v - 0.5) / 1.1 : 0;
   return (<group position={p}>
     {s > 0.01 ? <>
       <mesh rotation={[0.25, 0.4 + t * 0.03, 0]} scale={r * s}><sphereGeometry args={[1, 48, 32]} /><meshBasicMaterial map={moonTex()} transparent opacity={o} fog={false} /></mesh>
@@ -145,9 +146,11 @@ export const Motes: React.FC<{ t: number; n?: number; c?: V3; area?: V3; color?:
 );
 
 /* ---------------- mid-ground prop placement with wind (Kenney CC0 models, tinted per scene) ---------------- */
+/* v18: Kenney low-poly grass tufts render as smooth layered blades (dark teal/blue, lit tips) instead of black spikes */
+export const GRASS_TEAL = ["#1f5560", "#2a6a72", "#1a4a5e", "#357a80", "#24606e"];
 export type PropSpec = [KenneyName, number, number, number /* scale */, number? /* rotY */];
-export const Props: React.FC<{ list: PropSpec[]; t: number; tint?: string; sway?: number; y?: number }> = ({ list, t, tint, sway = 1, y = 0 }) => (
-  <>{list.map(([name, x, z, s, ry], i) => <KModel key={i} name={name} p={[x, y, z]} s={s} ry={ry ?? rnd(i * 3) * 6.28} tint={tint} t={t} sway={/tree|bush|grass|flower|palm/.test(name) ? sway * (0.8 + rnd(i) * 0.6) : 0} />)}</>
+export const Props: React.FC<{ list: PropSpec[]; t: number; tint?: string; sway?: number; y?: number; lum?: number; glow?: [number, number, number, number] }> = ({ list, t, tint, sway = 1, y = 0, lum = 1, glow }) => (
+  <>{list.map(([name, x, z, s, ry], i) => /^grass/.test(name) ? <Grass key={i} t={t} c={[x, y, z]} area={[s * 1.3, s * 1.0]} n={60} h={0.3 * s} amp={0} colors={GRASS_TEAL} lum={lum} glow={glow} /> : <KModel key={i} name={name} p={[x, y, z]} s={s} ry={ry ?? rnd(i * 3) * 6.28} tint={tint} t={t} sway={/tree|bush|grass|flower|palm/.test(name) ? sway * (0.8 + rnd(i) * 0.6) : 0} />)}</>
 );
 /* wooden sign post (story prop) */
 export const WoodSign: React.FC<{ p: V3; ry?: number; s?: number; t?: number; color?: string; text?: string }> = ({ p, ry = 0, s = 1, t = 0, color = "#a8774a", text = "" }) => {

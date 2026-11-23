@@ -22,12 +22,12 @@ const NF_PROPS: PropSpec[] = [
   ["plant_bushLarge", -4.6, -4.2, 1.9], ["plant_bushDetailed", 5.2, -5.5, 1.8], ["plant_bush", -6.5, -2.2, 1.5], ["plant_bush", 6.8, -1.6, 1.4], ["plant_bushLarge", 9.5, -6.5, 2.0],
   ["rock_largeA", 3.6, -3.4, 1.4], ["rock_smallC", -3.0, -1.0, 1.3], ["stone_largeA", -8.5, -5.5, 1.6], ["rock_tallA", 10.5, -9, 1.4],
   ["mushroom_redGroup", -2.4, -2.6, 1.3], ["mushroom_red", 2.6, -1.2, 1.2], ["flower_purpleA", -1.6, -1.2, 1.3], ["flower_yellowA", 1.9, -2.2, 1.3], ["flower_redA", -4.2, -0.6, 1.2], ["flower_purpleA", 4.4, -0.4, 1.2],
-  ["stump_round", -5.8, -6.6, 1.4], ["log", 6.2, -3.3, 1.3], ["grass_large", -2.0, 0.6, 1.4], ["grass_leafsLarge", 2.4, 0.4, 1.4], ["grass_large", 3.4, -0.6, 1.3],
+  ["stump_round", -5.8, -6.6, 1.4], ["log", 6.2, -3.3, 1.3], ["grass_large", -3.2, -0.8, 1.4], ["grass_leafsLarge", 3.6, -1.2, 1.4], ["grass_large", 4.4, -2.6, 1.3],
 ];
 const FENCE: PropSpec[] = Array.from({ length: 7 }, (_, i) => ["fence_simple", -13 + i * 1.95, -7.5 - i * 0.25, 1.6, 0.12] as PropSpec);
 /* dark 0 = moonlit silver-blue, 1 = deep dark blue (no Moon). moon = vanish progress (0..1+), back = pop-back (loop). */
-export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; fore?: V3[]; pitch?: number; children?: React.ReactNode }> = ({ t, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, fore = [], pitch = 0, children }) => {
-  const d = cl(dark), pk = 1 - 0.8 * cl(pitch); // pitch: extra darkness (pitch-black night, only the torch reveals the field)
+export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; fore?: V3[]; pitch?: number; glow?: [number, number, number, number]; ghost?: number; children?: React.ReactNode }> = ({ t, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, fore = [], pitch = 0, glow, ghost = 0, children }) => {
+  const d = cl(dark), pk = 1 - 0.8 * cl(pitch), lum = (1 - 0.45 * d) * (0.3 + 0.7 * pk); // pitch: extra darkness (pitch-black night, only the torch reveals the field)
   const look = { rim: d < 0.5 ? "190,215,255" : "140,165,255", shade: "4,6,30", rimK: lerp(0.6, 0.62, d), dim: 0.24 * d }; // dark: body drops, a soft blue rim keeps him readable
   return (<Lights amb={lerp(0.62, 0.16, d) * pk} keyL={[[NF_MOON[0], NF_MOON[1], NF_MOON[2] + 20], mixC("#d6e4ff", "#5a6ab8", d), lerp(1.25, 0.12, d) * pk]} fill={[[-12, 6, 10], "#3a4aa8", lerp(0.4, 0.22, d) * pk]} look={look} fog={[mixC(mixC("#22336e", "#070b26", d), "#010208", 1 - pk), 14, 90]}>
     <SkyGrad a={["#0f1a52", "#2a3d88", "#6b7fc4"]} b={["#02040f", "#050a26", "#0d1640"]} k={d} horizon="rgba(190,200,255,0.55)" hk={0.6 * (1 - d)} />
@@ -35,7 +35,7 @@ export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; b
     <ShootingStar t={t} t0={0.35} from={[-40, 70, -110]} to={[-75, 48, -100]} />
     <ShootingStar t={t} t0={5.6} from={[30, 75, -110]} to={[-5, 58, -115]} />
     <ShootingStar t={t} t0={33.9} from={[-20, 80, -110]} to={[-55, 62, -105]} />
-    {vanish < 1.6 || back > 0 ? <BigMoon p={moonP} r={4.4} t={t} vanish={vanish} back={back} /> : null}
+    {vanish < 1.6 || back > 0 || ghost > 0 ? <BigMoon p={moonP} r={4.4} t={t} vanish={ghost > 0 && back <= 0 ? 1 : vanish} back={back} ghost={ghost} /> : null}
     <CloudStrips t={t} n={5} y={30} z={-58} span={140} speed={1.1} o={1 - 0.5 * d} />
     {/* 3 far silhouette layers (3 tones) + village with warm lit windows */}
     <HillLayer p={[0, 6.5, -96]} s={[300, 70]} o={{ seed: 1, tone: mixC(mixC("#2d3f86", "#0c1236", d), "#02030c", 1 - pk), rim: "rgba(190,205,255,0.5)", top: 0.42, amp: 0.12, trees: 60 }} />
@@ -44,10 +44,11 @@ export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; b
     <GroundHaze t={t} layers={[[-36, 1.2, 140], [-58, 2.2, 190], [-84, 3.6, 260]]} col={d > 0.5 ? "rgba(60,80,150,0.5)" : "rgba(150,170,235,0.5)"} o={0.55} />
     {/* mid ground: varied Kenney trees, bushes, rocks, flowers, mushrooms, fence, sign */}
     <PaintedGround a="#23524f" b="#2f6a5e" c2="#1b4044" z={-30} r={95} />
-    <Props list={NF_PROPS} t={t} tint="#8fa0e0" />
+    <Props list={NF_PROPS} t={t} tint="#8fa0e0" lum={lum} glow={glow} />
     <Props list={FENCE} t={t} tint="#9aa4d8" sway={0} />
     <WoodSign p={[-6.2, 0, -3.2]} ry={0.5} s={1.3} t={t} text="→ MOON" />
-    <Grass t={t} area={[18, 9]} c={[0, 0, -2.5]} n={900} colors={["#2f6a5e", "#3c7f6c", "#24584e", "#4a8f78"]} h={0.42} />
+    <Grass t={t} area={[24, 11]} c={[0, 0, -5.6]} n={1500} colors={["#2a6470", "#357a80", "#1f5560", "#45908c", "#2c5f7a"]} h={0.4} lum={lum} glow={glow} />
+    <Grass t={t} area={[16, 3.2]} c={[0, 0, 1.5]} n={1400} colors={["#2a6470", "#357a80", "#1f5560", "#45908c"]} h={0.13} wd={0.4} lum={lum} glow={glow} /> {/* short lawn in front of the hero (never covers him) */}
     {fireflies > 0 ? <FireflyTrails t={t} n={22} c={[0, 1.5, -3]} area={[12, 2.2, 8]} o={fireflies} size={0.045} trail={7} /> : null}
     <Motes t={t} n={26} c={[0, 2, 0]} area={[8, 3, 5]} color="#cfdcff" o={0.35 * (1 - d)} />
     {/* bottom-edge foreground props (near the camera): rocks, mushrooms, flowers, grass tufts */}
@@ -270,18 +271,18 @@ void KModel; void noise1;
 const coneTex = () => canvasTex("cone17", 128, 256, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(0.6, "rgba(255,255,255,0.35)"); g.addColorStop(1, "rgba(255,255,255,0.9)"); c.fillStyle = g; c.fillRect(0, 0, W, H);
   const h = c.createLinearGradient(0, 0, W, 0); h.addColorStop(0, "rgba(0,0,0,1)"); h.addColorStop(0.5, "rgba(0,0,0,0)"); h.addColorStop(1, "rgba(0,0,0,1)"); c.globalCompositeOperation = "destination-out"; c.globalAlpha = 0.5; c.fillStyle = h; c.fillRect(0, 0, W, H); });
 /* real cone of light: soft volumetric cone + spot light (only lights what it sweeps) + dust motes lit inside it + hot spot */
-export const TorchBeam: React.FC<{ from: V3; to: V3; on?: number; t: number; spread?: number }> = ({ from, to, on = 1, t, spread = 0.2 }) => {
+export const TorchBeam: React.FC<{ from: V3; to: V3; on?: number; t: number; spread?: number; bright?: number }> = ({ from, to, on = 1, t, spread = 0.2, bright = 1 }) => {
   const d = new THREE.Vector3(to[0] - from[0], to[1] - from[1], to[2] - from[2]), L = d.length(), u = d.clone().normalize(), q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, -1, 0), u);
   const tgt = useMemo(() => new THREE.Object3D(), []); tgt.position.set(...to);
   if (on <= 0.01) return null;
   const inCone = (p: V3) => { const v = new THREE.Vector3(p[0] - from[0], p[1] - from[1], p[2] - from[2]), a = v.dot(u); if (a < 0.2 || a > L) return 0; const r = v.clone().sub(u.clone().multiplyScalar(a)).length(); return cl(1 - r / (a * spread * 1.1)); };
   const mid: V3 = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2];
   return (<group>
-    <mesh position={mid} quaternion={q}><coneGeometry args={[L * spread, L, 40, 1, true]} /><meshBasicMaterial map={coneTex()} color="#fff4c8" transparent opacity={0.32 * on} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} /></mesh>
-    <mesh position={mid} quaternion={q} scale={[0.5, 1, 0.5]}><coneGeometry args={[L * spread, L, 32, 1, true]} /><meshBasicMaterial map={coneTex()} color="#fffbe8" transparent opacity={0.25 * on} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} /></mesh>
+    <mesh position={mid} quaternion={q}><coneGeometry args={[L * spread, L, 40, 1, true]} /><meshBasicMaterial map={coneTex()} color="#fff4c8" transparent opacity={Math.min(1, 0.32 * on * bright)} side={THREE.DoubleSide} depthWrite={bright > 1} /* v18: beam writes depth so the DOF pass keeps it sharp */ blending={THREE.AdditiveBlending} fog={false} /></mesh>
+    <mesh position={mid} quaternion={q} scale={[0.5, 1, 0.5]}><coneGeometry args={[L * spread, L, 32, 1, true]} /><meshBasicMaterial map={coneTex()} color="#fffbe8" transparent opacity={Math.min(1, 0.25 * on * bright)} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} /></mesh>
     <primitive object={tgt} />
-    <spotLight position={from} target={tgt} angle={Math.atan(spread) * 1.15} penumbra={0.5} intensity={140 * on} distance={L * 2.2} decay={1.2} color="#fff2c8" />
-    <SGlow p={from} r={0.35} color="#fffbe0" o={on} />
+    <spotLight position={from} target={tgt} angle={Math.atan(spread) * 1.15} penumbra={0.5} intensity={(bright > 1 ? 55 : 140) * on} distance={L * 2.2} decay={1.2} color="#fff2c8" />
+    <SGlow p={from} r={0.2} color="#fffbe0" o={on} />
     <SGlow p={to} r={L * spread * 0.9} color="#fff6c8" o={0.28 * on} />
     <Motes t={t} n={70} c={mid} area={[L * 0.9, L * 0.6, L * 0.9]} color="#fff6d8" size={0.03} o={0.9 * on} lit={inCone} />
   </group>);
@@ -348,12 +349,12 @@ export const SeasonFall: React.FC<{ t: number; kind: "petals" | "leaves" | "snow
     return <mesh key={i} position={p} rotation={[t * 2 + i, t * 1.3 + i, Math.sin(t * 2 + i)]}><circleGeometry args={[kind === "petals" ? 0.07 : 0.11, 6]} /><meshBasicMaterial color={colors[i % colors.length]} side={THREE.DoubleSide} /></mesh>; })}</>
 );
 export const SeasonHill: React.FC<{ t: number; season: number; chaos?: number; flash?: number; children?: React.ReactNode }> = ({ t, season, chaos = 0, flash = 0, children }) => {
-  const S = SEASONS[season]; const look = { rim: S.rim, shade: "30,20,60", rimK: 0.45, dim: 0 };
+  const S = SEASONS[season]; const look = { rim: S.rim, shade: "30,20,60", rimK: 0.45, dim: chaos > 1.5 ? 0.18 * (1 - flash) : 0 };
   const sunP: V3 = season === 2 ? [-30, 6, -70] : [30, 40, -70];
-  return (<Lights amb={S.amb + flash * 1.5} keyL={[sunP, S.sun, 1.3 + flash]} fill={[[-10, 6, 10], "#9ab0ff", 0.4]} look={look} fog={[S.fog, 30, 140]}>
-    <SkyGrad a={chaos > 0.5 ? ["#2a2a4a", "#5a5a7a", "#9a9ab8"] : S.sky} />
-    <SGlow p={sunP} r={season === 2 ? 16 : 10} color={S.sun} o={chaos > 0.5 ? 0.1 : 0.85} />
-    {season !== 3 && chaos < 0.5 ? <CloudStrips t={t} n={5} y={20} z={-70} span={120} speed={1.4} tone="rgba(255,255,255,0.7)" rim="rgba(255,255,255,0.5)" /> : null}
+  return (<Lights amb={(chaos > 1.5 ? 0.55 : S.amb) + flash * 1.5} keyL={[sunP, S.sun, 1.3 + flash]} fill={[[-10, 6, 10], "#9ab0ff", 0.4]} look={look} fog={[S.fog, 30, 140]}>
+    <SkyGrad a={chaos > 1.5 ? ["#1c1c3a", "#3e3e62", "#6a6a8c"] : S.sky} />{/* v18 chaos: 1 = snow in summer (summer sky), 2 = lightning storm */}
+    <SGlow p={sunP} r={season === 2 ? 16 : season === 1 ? 14 : 10} color={S.sun} o={chaos > 1.5 ? 0.1 : 0.85} />{season === 1 && chaos < 1.5 ? <SGlow p={sunP} r={34} color="#fff6c8" o={0.35} /> : null}
+    {season !== 3 && chaos < 1.5 ? <CloudStrips t={t} n={5} y={20} z={-70} span={120} speed={1.4} tone="rgba(255,255,255,0.7)" rim="rgba(255,255,255,0.5)" /> : null}
     <HillLayer p={[0, 4, -70]} s={[220, 44]} o={{ seed: 41, tone: mixC(S.g, "#6a7ab0", 0.45), rim: "rgba(255,255,255,0.4)", top: 0.42, amp: 0.12, trees: 50 }} />
     <PaintedGround a={S.g} b={S.g2} z={-20} r={90} seed={11} />
     {/* the fixed spot: hill mound + tree + pond + fence */}
@@ -366,7 +367,7 @@ export const SeasonHill: React.FC<{ t: number; season: number; chaos?: number; f
     {season === 0 ? <SeasonFall t={t} kind="petals" n={70} colors={["#ffb3d1", "#ffd6e6", "#ffffff"]} /> : null}
     {season === 1 ? <><SeasonFall t={t} kind="pollen" n={40} /><Butterflies2 t={t} /></> : null}
     {season === 2 ? <SeasonFall t={t} kind="leaves" n={60} colors={["#f08a2c", "#d9541e", "#f2c14e"]} /> : null}
-    {season === 3 || chaos > 0.5 ? <SeasonFall t={t} kind="snow" n={130} /> : null}
+    {season === 3 || (chaos > 0.5 && chaos < 1.5) ? <SeasonFall t={t} kind="snow" n={170} /> : null}{chaos > 1.5 ? <SeasonFall t={t * 6} kind="snow" n={160} area={[14, 8, 8]} /> : null}
     {children}
   </Lights>);
 };
