@@ -5,6 +5,22 @@ Newest entries on top.
 
 ---
 
+## v17 — EP09 rebuild after 2 preview rounds (richer environments + smooth hand acting)
+**Learned**
+- Depth-of-field post pass at full resolution cost ~15 s/frame on the CPU renderer -> render DOF at low resolution (resolutionScale 0.25).
+- The puppet billboard canvas was too narrow (640x960): outstretched arms were clipped -> "flat red tube without a hand". Canvas is now square.
+- User feedback: plain gradients and triangle trees look cheap; stripe sea; T-pose / symmetric straight arms; points that don't aim; empty bottom third; cross-fade ghosting; a floating half-sphere shell looked like a stray sprite; the lighthouse jumped between shots.
+**Changed**
+- kit/gesture.ts: speech-driven GESTURE ENGINE — joint-angle keyframes with cubic ease, elbow/wrist springs (overlap + overshoot), moving holds, motion-blur arm trail, asymmetric gesture set, aim() = point at a world target (screenDir), beat() = gestures from Whisper words (never the same twice in a row).
+- style/stickman.ts: continuous HandShape morphing glove (open/relaxed/point/fist/thumb/hold), ghost arms.
+- kit/character.tsx: `gest` prop, Savitzky-Golay smoothing of mocap curves, LookContext `dim` (body darkens, head stays white).
+- kit/frame.ts: consistent character scale (FULL / CLOSE), framePose/frameShot, worldAt (place Moon/Sun/Earth in the composition), groundAt (bottom-edge foreground props), screenDir.
+- kit/diorama.tsx: SkyGrad, shader StarField, ShootingStar, BigMoon (halo, rays, vanish burst), CloudStrips, painted HillLayer (+ village windows), GroundHaze, FireflyTrails, Motes, Props, WoodSign, PaintedGround, ForeFrame (grass, reeds, rocks, seaweed, crab, flowers, branches, space debris), Grain, Vignette, Iris, Lights.
+- kit/sets4.tsx: NightField, MoonShore (layered crests, tide waterline + wet band + marker post, shells, starfish, driftwood, footprints, lighthouse), SpaceDiorama (nebula layers, star-dust layers, planets, Sun + lens flare), Earth3 (cloud layer, atmosphere, wobbling axis), RockPlatform, TorchBeam (volumetric cone + lit dust), ForestGlade, Branch, SeasonHill (4 seasons, particles, chaos).
+- Captions: "safe" band (62-72 %), max 2 lines laid out explicitly; captions.py --safe; qc_check knows the band.
+- Transitions: "cut", "iris", "whip2" (clean whip-pan, no double exposure) in Scene; season whip = backdrop blur.
+- Critters: owl head turn + feather ruffle, wolf ear twitch; 24-fps preview composition (<Id>P24).
+
 ## v16 — EP09 "What If the Moon Disappeared?" (first episode on the v4 workflow, CLAUDE.md)
 **Learned**
 - The old puppet drifted from the master sheet: legs too long/thin, hoodie too narrow, 4 thin hair strands, no cheeks, colours off. Measured overlay IoU 0.748.
