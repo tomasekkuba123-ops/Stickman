@@ -6,13 +6,23 @@ import { SafeGrade } from "../kit/world";
 import { WordCaptions, CaptionData } from "../kit/captions";
 import { QC } from "../kit/qc";
 import * as S from "./ep09/scenes";
+import * as N from "./ep09/scenes17";
+import { ForeFrame, Grain, Vignette } from "../kit/diorama";
 import CAP from "../../public/ep09/captions.json";
 
 export const SECONDS = 38;
-export const CUTS = [0, 3.0, 9.7, 16.4, 25.0, 32.7, 38];
-const SC = [S.S1, S.S2, S.S3, S.S4, S.S5, S.S6];
-const BG = ["#122060", "#0a1240", "#122060", "#122060", "#05060f", "#122060"];
-const TR = ["ghost", "flash", "whip", "whip", "zoom", "flash"] as const;
+// v17: 7 scenes — 1 hook, 2 dark night, 3 ocean, 4 animals, 5 Earth, 6 seasons, 7 ending (= hook set). Clean transitions only (cut / whip / iris).
+export const CUTS = [0, 3.0, 9.7, 16.4, 25.0, 29.25, 32.7, 38];
+const SC = [N.S1, S.S2, N.S3, S.S4, N.S5, S.S5, N.S7];
+const BG = ["#0f1a52", "#0a1240", "#0b1548", "#122060", "#020210", "#9fd6ff", "#0f1a52"];
+const TR = ["cut", "cut", "whip", "whip", "iris", "whip", "cut"] as const;
+/* 2D layers above the 3D canvas per scene: foreground framing (blurred, parallax + wind) */
+const Fore: React.FC<{ t: number }> = ({ t }) => {
+  if (QC) return null; const px = Math.sin(t * 0.35) * 26 - (t % 6) * 3;
+  if (t < 3.0 || t >= 32.7) return <ForeFrame t={t} kind={["grass", "branchR"]} tone="#0b1830" tone2="#102340" rim="rgba(185,205,255,0.6)" blur={6} px={px} h={0.85} />;
+  if (t >= 9.7 && t < 16.4) return <ForeFrame t={t} kind={["reeds", "rocks"]} tone="#16203e" tone2="#1d2a4c" rim="rgba(200,215,255,0.5)" blur={7} px={px} h={0.6} />;
+  return null;
+};
 
 /* HOOK text: on screen at frame 0 (and again on the last frames so the Short loops seamlessly) */
 const WhatIf: React.FC<{ t: number }> = ({ t }) => {
@@ -32,9 +42,11 @@ export const Ep09: React.FC = () => {
       <Audio src={staticFile("ep09/mix.wav")} />
       {SC.map((Sc, i) => <Scene key={i} first={i === 0} start={CUTS[i]} end={CUTS[i + 1]} bg={BG[i]} trans={TR[i]}>{(c) => <Sc {...c} />}</Scene>)}
       <Dark t={t} />
-      <SafeGrade k={0.38} />
+      <Fore t={t} />
+      {!QC ? <Vignette k={t >= 25 && t < 29.25 ? 0.55 : 0.42} col={t >= 25 && t < 29.25 ? "2,2,16" : "5,8,30"} /> : null}
+      {!QC ? <Grain f={useCurrentFrame()} o={0.06} /> : null}
       <WhatIf t={t} />
-      <WordCaptions data={CAP as CaptionData} from={0.25} until={37.2} size={108} />
+      <WordCaptions data={CAP as CaptionData} from={0.25} until={37.2} size={100} />
     </AbsoluteFill>
   );
 };

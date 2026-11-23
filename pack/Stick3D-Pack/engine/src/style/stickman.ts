@@ -16,7 +16,7 @@ export type Rig = {
   x?: number; y?: number; /* body offset in units (y up = negative) */ air?: number; /* extra height above the ground */
   lean?: number; /* deg, + forward/right */ headTilt?: number; squash?: number; /* + stretch, - squash */ breath?: number;
   armL?: Arm; armR?: Arm; ikL?: [number, number]; ikR?: [number, number]; ikKL?: number; ikKR?: number; ikBendL?: number; ikBendR?: number; /* override elbow side (+1/-1) */ /* hand targets (units, x from body centre, y from baseline up) */
-  handL?: HandPose; handR?: HandPose; handRotL?: number; handRotR?: number;
+  handL?: HandPose | HandShape; handR?: HandPose | HandShape; handRotL?: number; handRotR?: number; /* deg */ ghostL?: Arm[]; ghostR?: Arm[]; /* v17 motion-blur trail of earlier arm angles (fast moves) */
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
   mouth?: Mouth; /* lip-sync shape overrides the expression mouth */ backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
@@ -105,32 +105,33 @@ function cuff(c: CanvasRenderingContext2D) {
 function palmBall(c: CanvasRenderingContext2D, rx = 36, ry = 33, cy = 52) {
   c.beginPath(); c.ellipse(0, cy, rx, ry, 0, 0, Math.PI * 2); const g = c.createRadialGradient(-10, cy - 14, 4, 0, cy, rx * 1.2); g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#dfe5f5"); fillStroke(c, g, 7);
 }
-export function drawGlove(c: CanvasRenderingContext2D, x: number, y: number, ang: number, pose: HandPose, mirror: boolean, s = 1.28) {
+/* v17 HAND SHAPES: every pose is a point in a continuous shape space, so hands MORPH (open <-> relaxed <-> point <-> fist) instead of snapping.
+   spread 0..1 fan of the fingers · curl 0..1 fingers folded into the palm · idx 0..1 index finger extended (pointing) · up 0..1 thumb up · grip 0..1 wrapped around a handle */
+export type HandShape = { spread: number; curl: number; idx: number; up: number; grip: number };
+export const HAND: Record<HandPose, HandShape> = {
+  open: { spread: 1, curl: 0, idx: 0, up: 0, grip: 0 }, relaxed: { spread: 0.25, curl: 0.28, idx: 0, up: 0, grip: 0 }, fist: { spread: 0, curl: 1, idx: 0, up: 0, grip: 0 },
+  point: { spread: 0, curl: 1, idx: 1, up: 0, grip: 0 }, thumb: { spread: 0, curl: 1, idx: 0, up: 1, grip: 0 }, hold: { spread: 0, curl: 0.85, idx: 0, up: 0, grip: 1 },
+};
+export const mixHand = (a: HandShape, b: HandShape, k: number): HandShape => ({ spread: a.spread + (b.spread - a.spread) * k, curl: a.curl + (b.curl - a.curl) * k, idx: a.idx + (b.idx - a.idx) * k, up: a.up + (b.up - a.up) * k, grip: a.grip + (b.grip - a.grip) * k });
+export function drawGlove(c: CanvasRenderingContext2D, x: number, y: number, ang: number, pose: HandPose | HandShape, mirror: boolean, s = 1.28) {
+  const H = typeof pose === "string" ? HAND[pose] : pose, L = (a: number, b: number, k: number) => a + (b - a) * k;
   c.save(); c.translate(x, y); c.rotate(ang); c.scale(mirror ? -s : s, s);
   cuff(c);
-  if (pose === "open" || pose === "relaxed") {
-    const k = pose === "open" ? 1 : 0.25;
-    palmBall(c, 38, 34, 50);
-    // 4 fingers fanning out from the far edge of the palm (pinky side = -x)
-    const F: [number, number, number, number][] = [[-24, 66, 22, 34], [-8, 72, 7, 42], [8, 72, -7, 42], [24, 66, -22, 36]];
-    for (const [fx, fy, fa, fl] of F) sausage(c, fx * (0.85 + 0.15 * k), fy, rad(fa * k), fl * (pose === "relaxed" ? 0.85 : 1), 20);
-    sausage(c, 32, 36, rad(-58 * k - 30), 32, 22); // thumb
-    c.beginPath(); c.arc(-2, 40, 16, rad(30), rad(150)); stroke(c, 3, GLOVE_S);
-  } else if (pose === "hold") {
-    palmBall(c, 36, 34, 48);
-    for (let i = 0; i < 4; i++) { c.save(); c.translate(-18, 30 + i * 15); c.beginPath(); c.roundRect(-14, -8, 44, 17, 8.5); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); } // 4 curled fingers wrapping
-    sausage(c, 30, 30, rad(-40), 30, 21); // thumb
-  } else if (pose === "thumb") {
-    palmBall(c, 36, 36, 46);
-    for (let i = 0; i < 4; i++) { c.save(); c.translate(-6, 20 + i * 15); c.beginPath(); c.roundRect(-26, -8, 50, 17, 8.5); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); } // 4 curled fingers stacked
-    sausage(c, 14, 74, rad(-4), 44, 24); // thumb up
-  } else {
-    palmBall(c, 38, 36, 48);
-    if (pose === "point") sausage(c, -16, 66, rad(4), 58, 20);
-    const n = pose === "point" ? 3 : 4, x0 = pose === "point" ? 2 : -24;
-    for (let i = 0; i < n; i++) { c.beginPath(); c.ellipse(x0 + i * 16, 74 + Math.abs(i - (n - 1) / 2) * 3, 10, 13, 0, 0, Math.PI * 2); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); } // curled finger tips
-    c.save(); c.translate(26, 34); c.rotate(rad(56)); c.beginPath(); c.roundRect(-10, -6, 20, 46, 10); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); // thumb folded across
-  }
+  const cu = Math.min(1, Math.max(0, H.curl)), sp = H.spread * (1 - cu * 0.8);
+  palmBall(c, L(38, 37, cu), L(34, 35, cu), L(50, 48, cu));
+  // 4 fingers, pinky (-x) .. index (+x). Curling shortens each finger into a rounded knuckle tucked onto the palm.
+  const F: [number, number, number, number][] = [[-24, 66, 22, 34], [-8, 72, 7, 42], [8, 72, -7, 42], [24, 66, -22, 36]];
+  F.forEach(([fx, fy, fa, fl], i) => {
+    const ext = i === 3 ? Math.min(1, Math.max(0, H.idx)) * cu : 0; // pointing index finger (only meaningful while the others are curled)
+    const ci = cu * (1 - ext), gi = H.grip * (1 - ext);
+    if (ext > 0.01) { sausage(c, L(fx, 18, ext), L(fy, 66, ext), rad(L(fa * sp, 4, ext)), L(L(fl, 13, ci), 58, ext), 20); return; }
+    sausage(c, fx * (0.85 + 0.15 * sp), L(fy, 68 + Math.abs(i - 1.5) * 3, ci) - gi * 6, rad(fa * sp), Math.max(11, L(fl, 13, ci)), L(20, 21, ci), ci < 0.5);
+  });
+  // thumb: open (fanned out) -> folded across the palm (fist) -> straight up (thumbs-up)
+  const tx = L(L(32, 26, cu), 14, H.up), ty = L(L(36, 34, cu), 74, H.up), ta = L(L(-58 * H.spread - 30, 56, cu), -4, H.up), tl = L(L(32, 40, cu), 44, H.up);
+  if (cu > 0.5 && H.up < 0.5) { c.save(); c.translate(tx, ty); c.rotate(rad(ta)); c.beginPath(); c.roundRect(-10, -6, 20, tl, 10); c.fillStyle = GLOVE; c.fill(); stroke(c, 5.5); c.restore(); }
+  else sausage(c, tx, ty, rad(ta), tl, L(22, 24, H.up));
+  if (cu < 0.4) { c.beginPath(); c.arc(-2, 40, 16, rad(30), rad(150)); stroke(c, 3, GLOVE_S); }
   c.restore();
 }
 
@@ -248,7 +249,7 @@ function face(c: CanvasRenderingContext2D, hx: number, hy: number, r: Rig, side:
 }
 
 /* ---------- main ---------- */
-type Geo = { hip: P; hipL: P; hipR: P; kneeL: P; kneeR: P; ankL: P; ankR: P; footL: number; footR: number; sh: P; shL: P; shR: P; elL: P; elR: P; wrL: P; wrR: P; head: P };
+type Geo = { ghL: [P, P][]; ghR: [P, P][]; hip: P; hipL: P; hipR: P; kneeL: P; kneeR: P; ankL: P; ankR: P; footL: number; footR: number; sh: P; shL: P; shR: P; elL: P; elR: P; wrL: P; wrR: P; head: P };
 export type RigOut = { gloveR: [number, number]; gloveL: [number, number]; head: [number, number]; headR: number; S: number };
 export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, r: Rig): RigOut {
   ZG = r.zeroG ?? 0; DX = r.drag?.[0] ?? 0; DY = r.drag?.[1] ?? 0; setOutfit(r.outfit);
@@ -288,7 +289,8 @@ export function drawStickman(c: CanvasRenderingContext2D, W: number, H: number, 
   };
   const [elL, wrL] = armPts(r.armL, shL, -1, r.ikL, r.ikKL ?? 1), [elR, wrR] = armPts(r.armR, shR, 1, r.ikR, r.ikKR ?? 1);
   const head = torsoPt([side ? 14 : 0, MODEL.HEAD + breath * 0.5]);
-  const g: Geo = { hip, hipL, hipR, kneeL, kneeR, ankL, ankR, footL, footR, sh, shL, shR, elL, elR, wrL, wrR, head };
+  const ghL = (r.ghostL ?? []).map((a) => armPts(a, shL, -1)), ghR = (r.ghostR ?? []).map((a) => armPts(a, shR, 1));
+  const g: Geo = { ghL, ghR, hip, hipL, hipR, kneeL, kneeR, ankL, ankR, footL, footR, sh, shL, shR, elL, elR, wrL, wrR, head };
   if (view === "side") drawSide(c, r, g, breath, lean, sq, torsoPt); else drawFront(c, r, g, breath, lean, sq, torsoPt, view === "back");
   c.restore();
   // geometry out (canvas px): glove centres + head centre, for props held in the hands
@@ -411,6 +413,9 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   if (!back) { strings(c, T, r.t, [-20, 20]); if (showBag) strapFront(c, T); }
   if (r.hug) r.hug(c, T([0, -180])[0], T([0, -180])[1]);
   const arms = () => {
+    // v17 motion blur: faint trail of the last arm positions on fast moves (drawn first, under the real arm)
+    const ghost = (gs: [P, P][], s: P, sx: number, hand: HandPose | HandShape) => gs.forEach(([e, w], i) => { c.save(); c.globalAlpha = 0.16 * (1 - i / Math.max(1, gs.length)); sleeve(c, s, e, w, false, -sx); drawGlove(c, w[0], w[1], Math.atan2(w[1] - e[1], w[0] - e[0]) - Math.PI / 2, hand, sx < 0); c.restore(); });
+    ghost(g.ghL, g.shL, -1, r.handL ?? "relaxed"); ghost(g.ghR, g.shR, 1, r.handR ?? "relaxed");
     sleeve(c, g.shL, g.elL, g.wrL, false, 1); sleeve(c, g.shR, g.elR, g.wrR, false, -1);
     const angL = Math.atan2(g.wrL[1] - g.elL[1], g.wrL[0] - g.elL[0]) - Math.PI / 2 + rad(r.handRotL ?? 0), angR = Math.atan2(g.wrR[1] - g.elR[1], g.wrR[0] - g.elR[0]) - Math.PI / 2 + rad(r.handRotR ?? 0);
     drawGlove(c, g.wrL[0], g.wrL[1], angL, r.handL ?? "relaxed", true); drawGlove(c, g.wrR[0], g.wrR[1], angR, r.handR ?? "relaxed", false);

@@ -45,6 +45,6 @@ export const RigSheet: React.FC = () => {
 // close-up of a glove pose (drawn directly, fingers up)
 const Crop: React.FC<{ rig: Rig }> = ({ rig }) => {
   const ref = useRef<HTMLCanvasElement>(null);
-  useLayoutEffect(() => { const c = ref.current!.getContext("2d")!; c.clearRect(0, 0, 600, 420); c.lineCap = "round"; c.lineJoin = "round"; drawGlove(c, 300, 330, Math.PI, rig.handR as HandPose, false, 2.6); });
+  useLayoutEffect(() => { const c = ref.current!.getContext("2d")!; c.clearRect(0, 0, 600, 420); c.lineCap = "round"; c.lineJoin = "round"; drawGlove(c, 300, 330, Math.PI, rig.handR ?? "relaxed", false, 2.6); });
   return <canvas ref={ref} width={600} height={420} style={{ width: 300, height: 210, ...card }} />;
 };

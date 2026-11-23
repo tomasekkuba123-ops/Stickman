@@ -11,9 +11,10 @@ import { drawPencil } from "../style/props2d";
 import { V3 } from "../style/kit";
 import { QC, maskify } from "./qc";
 import { mocapAt, MoSpec } from "./mocap";
+import { armsAt, GKey, Pose2 } from "./gesture";
 
 /* ---------------- scene light context (set by <World preset>) ---------------- */
-export type Look = { rim: string; shade: string; rimK: number };
+export type Look = { rim: string; shade: string; rimK: number; dim?: number /* 0..1 darkens the body (never the head) when the scene light drops */ };
 export const LookContext = createContext<Look>({ rim: "255,220,170", shade: "20,10,40", rimK: 0.45 });
 export const useLook = () => useContext(LookContext);
 
@@ -104,11 +105,12 @@ export function rigAt(name: ActionName, t: number, t0 = 0, o: ActOpts & { face?:
 
 /* ---------------- hero painter: rig + rim light + ground shade, HEAD KEPT WHITE (grading never tints his face) ---------------- */
 let clean: HTMLCanvasElement | null = null;
-export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig: Rig, rim: string, shade: string, rimK: number) {
+export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig: Rig, rim: string, shade: string, rimK: number, dim = 0) {
   const out = drawStickman(c, W, H, rig);
   if (!clean || clean.width !== W || clean.height !== H) { clean = document.createElement("canvas"); clean.width = W; clean.height = H; }
   const cc = clean.getContext("2d")!; cc.clearRect(0, 0, W, H); cc.drawImage(c.canvas, 0, 0);
   c.save(); c.globalCompositeOperation = "source-atop";
+  if (dim > 0) { c.fillStyle = `rgba(${shade},${0.5 * dim})`; c.fillRect(0, 0, W, H); }
   const g = c.createLinearGradient(W * 0.6, 0, W * 0.95, 0); g.addColorStop(0, `rgba(${rim},0)`); g.addColorStop(1, `rgba(${rim},${rimK})`); c.fillStyle = g; c.fillRect(0, 0, W, H);
   const g2 = c.createLinearGradient(0, H * 0.7, 0, H); g2.addColorStop(0, `rgba(${shade},0)`); g2.addColorStop(1, `rgba(${shade},0.2)`); c.fillStyle = g2; c.fillRect(0, 0, W, H); c.restore();
   // restore the head (face, eyes, hair) from the untinted copy
@@ -119,22 +121,33 @@ export function paintHero(c: CanvasRenderingContext2D, W: number, H: number, rig
 /* ---------------- Stickman component ---------------- */
 export type Prop2D = "pencil" | "chalk" | "pencilUp" | null;
 export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionName; t0?: number; face?: Face; dir?: 1 | -1; move?: boolean; rig?: Partial<Rig>; speed?: number; dur?: number;
-  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number; lips?: LipCue[]; mo?: MoSpec[] }> =
-  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0, lips, mo }) => {
+  prop?: Prop2D; extra?: (c: CanvasRenderingContext2D, out: RigOut, W: number, H: number) => void; shadow?: boolean; groundY?: number; rim?: string; hero?: boolean; outfit?: Outfit; blinkSeed?: number; lips?: LipCue[]; mo?: MoSpec[]; gest?: GKey[]; gestRest?: Pose2; hold?: number }> =
+  ({ p, t, h = 3, action = "idle", t0 = 0, face, dir = 1, move = true, rig, speed, dur, prop = null, extra, shadow = true, groundY, rim, hero = true, outfit, blinkSeed = 0, lips, mo, gest, gestRest, hold = 1 }) => {
   const look = useLook(); const r = rigAt(action, t, t0, { dir, face, over: { ...(outfit ? { outfit, backpack: false } : {}), ...(blinkSeed ? { blink: autoBlink(t, blinkSeed) } : {}), ...(lips ? { mouth: mouthAt(lips, t) } : {}), ...(rig ?? {}) }, speed, dur });
-  if (mo) { const m = mocapAt(mo, t, r.rig), m2 = mocapAt(mo, t - 0.08, r.rig); if (m.w > 0) { r.rig = { ...r.rig, ...m.over, ...(rig ?? {}), drag: [Math.max(-60, Math.min(60, -(m.dx - m2.dx) / 0.08 * 0.06 * dir)), (r.rig.drag ?? [0, 0])[1]] } as Rig; r.dx += m.dx; r.lift += m.dy; } }
+  if (mo) { const m = mocapSG(mo, t, r.rig), m2 = mocapAt(mo, t - 0.08, r.rig); if (m.w > 0) { r.rig = { ...r.rig, ...m.over, ...(rig ?? {}), drag: [Math.max(-60, Math.min(60, -(m.dx - m2.dx) / 0.08 * 0.06 * dir)), (r.rig.drag ?? [0, 0])[1]] } as Rig; r.dx += m.dx; r.lift += m.dy; } }
+  if (gest) { const A = armsAt(gest, t, { rest: gestRest, hold }); // v17 speech gestures own the arms (rig prop overrides still win, e.g. a held torch)
+    r.rig = { ...r.rig, armL: A.armL, armR: A.armR, handL: A.handL, handR: A.handR, handRotL: A.handRotL, handRotR: A.handRotR, ghostL: A.ghostL, ghostR: A.ghostR, ikL: undefined, ikR: undefined,
+      lean: (r.rig.lean ?? 0) + A.lean, headTilt: (r.rig.headTilt ?? 0) + A.headTilt, drag: [(r.rig.drag ?? [0, 0])[0] + A.drag[0], (r.rig.drag ?? [0, 0])[1]], ...(rig ?? {}) } as Rig; }
   const k = h / 1000, x = p[0] + (move ? r.dx * k * dir : 0), y = p[1] + r.lift * k, gy = groundY ?? p[1];
   const rimC = rim ?? look.rim;
   return (<>
     {shadow ? <Shadow p={[x, gy, p[2]]} r={h * 0.3 / (1 + r.lift * k * 0.5)} o={0.5 / (1 + r.lift * k * 0.6)} /> : null}
-    <Billboard p={[x, y, p[2]]} h={h} res={640} aspect={1.5} draw={(c, W, H) => {
-      const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK);
+    <Billboard p={[x, y, p[2]]} h={h} res={980} aspect={1.0} draw={(c, W, H) => {
+      const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK, look.dim ?? 0);
       if (prop === "pencil" || prop === "chalk" || prop === "pencilUp") { const L = H * 0.13, a = prop === "pencilUp" ? Math.PI + 0.3 : 0.5, bx = Math.sin(a), by = -Math.cos(a); drawPencil(c, out.gloveR[0] - bx * L * 0.42, out.gloveR[1] - by * L * 0.42, L, a, prop === "chalk" ? 0.6 : 0); }
       if (extra) extra(c, out, W, H);
       if (QC && hero) maskify(c, out.head, out.headR, W, H);
     }} />
   </>);
 };
+
+/* Savitzky-Golay (5 taps, quadratic) smoothing of the retargeted mocap joint curves -> no jitter */
+const SGW = [-3, 12, 17, 12, -3].map((w) => w / 35);
+function mocapSG(mo: MoSpec[], t: number, base: Rig) {
+  const M = [-2, -1, 0, 1, 2].map((k) => mocapAt(mo, t + k / 60, base)); const m = M[2]; if (m.w <= 0) return m;
+  const arm = (key: "armL" | "armR" | "legL" | "legR") => { const o = { ...(m.over[key] as object) } as Record<string, number>; for (const f of ["a", "b", "f", "lift"]) if (typeof o[f] === "number") o[f] = M.reduce((s, x, i) => s + SGW[i] * (((x.over[key] as Record<string, number> | undefined)?.[f]) ?? o[f]), 0); return o; };
+  return { ...m, over: { ...m.over, armL: arm("armL"), armR: arm("armR"), legL: arm("legL"), legR: arm("legR"), lean: M.reduce((s, x, i) => s + SGW[i] * (x.over.lean ?? m.over.lean ?? 0), 0) } as Partial<Rig> };
+}
 
 /* LIP SYNC: Rhubarb cues (rhubarb -f json -> mouthCues) -> mouth shape at time t ("X" = rest, the expression mouth shows) */
 export type LipCue = { start: number; end: number; value: string };

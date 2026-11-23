@@ -16,6 +16,8 @@ export const EpisodeCompositions: React.FC<{ id: string; component: React.FC; se
     <Composition id={id} component={component} width={1080} height={1920} fps={30} durationInFrames={Math.round(seconds * 30)} />
     {/* declared length = 30-fps frame count (Remotion clamps frozen frames to the composition length); render ONLY frames 0..seconds*12-1 */}
     <Composition id={`${id}Animatic`} component={animaticOf(component)} width={1080} height={1920} fps={ANIMATIC_FPS} durationInFrames={Math.round(seconds * 30)} />
+    {/* v17 24-fps low-res preview (render with --scale=0.5 and --frames in 24-fps units) */}
+    <Composition id={`${id}P24`} component={animaticOf(component, 30, 24)} width={1080} height={1920} fps={24} durationInFrames={Math.round(seconds * 30)} />
     {/* QC mask pass: 6 fps is enough to measure visibility gaps / size / caption-vs-face, and renders 2x faster than the animatic */}
     <Composition id={`${id}QC`} component={animaticOf(component, 30, QC_FPS)} width={1080} height={1920} fps={QC_FPS} durationInFrames={Math.round(seconds * 30)} />
   </>

@@ -6,7 +6,7 @@ writes out_dir/captions.json (read by kit/captions.tsx) and out_dir/CAPTIONS.srt
 import sys, os, re, json, argparse
 
 STOP = set("a an the and or but if of to in on at by for with from into onto up down out off over under then than so it its he his him she her they them we you your i me my is was were be been are do did does not no yes very just what would could should can will this that these those there here when who whom which how why all any some one two three as".split())
-BAND = {"low": (1450, 1720), "high": (230, 500)}
+BAND = {"low": (1450, 1720), "high": (230, 500), "safe": (1195, 1425)}  # v17 safe = 62-72 % (kit/captions.tsx)
 
 
 def groups_from(words, toks, mx=2):
@@ -41,7 +41,7 @@ def srt(G, path):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("words"); ap.add_argument("script"); ap.add_argument("out"); ap.add_argument("--mask"); ap.add_argument("--keywords", default=""); ap.add_argument("--high", default=""); ap.add_argument("--low", default=""); ap.add_argument("--max", type=int, default=2)
+    ap = argparse.ArgumentParser(); ap.add_argument("words"); ap.add_argument("script"); ap.add_argument("out"); ap.add_argument("--mask"); ap.add_argument("--keywords", default=""); ap.add_argument("--high", default=""); ap.add_argument("--low", default=""); ap.add_argument("--max", type=int, default=2); ap.add_argument("--safe", action="store_true", help="v17: every caption in the fixed safe zone (62-72 %%)")
     a = ap.parse_args(); os.makedirs(a.out, exist_ok=True)
     words = json.load(open(a.words))
     toks = json.load(open(a.script)) if a.script.endswith(".json") else open(a.script).read().split()
@@ -65,6 +65,8 @@ def main():
                 if face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20: cost[b] += 10      # face: never
                 if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body/hands): avoid
         g["band"] = min(cost, key=cost.get)
+    if a.safe:
+        for g in G: g["band"] = "safe"
     json.dump({"groups": G, "keywords": kw}, open(os.path.join(a.out, "captions.json"), "w"), indent=0)
     srt(G, os.path.join(a.out, "CAPTIONS.srt"))
     print(f"captions: {len(G)} groups, {sum(g['band'] == 'high' for g in G)} high / {sum(g['band'] == 'low' for g in G)} low, keywords: {', '.join(kw[:12])}...")

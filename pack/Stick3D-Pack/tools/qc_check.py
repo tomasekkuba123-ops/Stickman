@@ -16,7 +16,7 @@ On FAIL the report lists the time ranges to fix and the final.sh --redo ranges."
 import sys, os, json, argparse, subprocess, re
 import numpy as np
 
-BAND = {"low": (1450, 1450 + 2 * 135), "high": (230, 230 + 2 * 135)}  # px in 1920 (kit/captions.tsx BAND_Y, 2 lines max)
+BAND = {"low": (1450, 1450 + 2 * 135), "high": (230, 230 + 2 * 135), "safe": (1195, 1195 + 2 * 135)}  # px in 1920 (kit/captions.tsx BAND_Y, 2 lines max)
 
 
 def sh(*a):

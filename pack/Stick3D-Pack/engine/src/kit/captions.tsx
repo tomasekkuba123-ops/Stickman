@@ -6,9 +6,9 @@ import React from "react";
 import { useCurrentFrame, interpolate, Easing } from "remotion";
 import { QC, CLEAN } from "./qc";
 
-export type CapGroup = { words: string[]; a: number; e: number; band?: "low" | "high"; key?: boolean[]; ts?: [number, number][] };
+export type CapGroup = { words: string[]; a: number; e: number; band?: "low" | "high" | "safe"; key?: boolean[]; ts?: [number, number][] };
 export type CaptionData = { groups: CapGroup[]; keywords?: string[] };
-export const BAND_Y = { low: 1450, high: 230 }; // px top of the caption block in 1080x1920 (qc_check uses the same numbers)
+export const BAND_Y = { low: 1450, high: 230, safe: 1195 }; // v17 "safe" = 62-72 % of the height (feet stay above it) // px top of the caption block in 1080x1920 (qc_check uses the same numbers)
 
 export function groupWords(words: { start: number; end: number }[], script: string[]): CapGroup[] {
   const g: CapGroup[] = []; let cur: number[] = [];
@@ -37,7 +37,10 @@ export const WordCaptions: React.FC<{ data: CaptionData; until?: number; from?: 
   let cur = 0; ts.forEach(([a], i) => { if (t >= a - 0.03) cur = i; });
   const sc = interpolate(t - g.a, [0, 0.14], [0.8, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.back(2.4)) });
   const band = g.band ?? "low";
-  return <div style={{ position: "absolute", left: 30, right: 30, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: size, lineHeight: 1.08, WebkitTextStroke: "16px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 10px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
+  // max 2 lines: shrink the font until the greedy line-wrap needs <= 2 lines (Inter Black caps ~0.68 em per char)
+  let fs = size; const fits = (z: number) => { let lines = 1, w = 0; for (const x of g.words) { const ww = (x.length + 0.4) * z * 0.68; if (w > 0 && w + ww > 1000) { lines++; w = ww; } else w += ww; } return lines <= 2; };
+  while (!fits(fs) && fs > 60) fs -= 4;
+  return <div style={{ position: "absolute", left: 30, right: 30, top: BAND_Y[band], textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: fs, lineHeight: 1.08, WebkitTextStroke: "16px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${sc})`, textShadow: "0 10px 0 rgba(0,0,0,.35)", letterSpacing: 1 }}>
     {g.words.map((w, i) => { const on = i === cur, k = on ? interpolate(t - ts[i][0], [0, 0.1, 0.22], [1, 1.16, 1.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1;
       return <span key={i} style={{ display: "inline-block", margin: "0 0.2em", color: on ? hi : "#fff", opacity: i <= cur ? 1 : 0.72, transform: `scale(${k})` }}>{w}</span>; })}</div>;
 };

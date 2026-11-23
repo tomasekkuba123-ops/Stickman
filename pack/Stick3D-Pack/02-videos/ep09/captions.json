@@ -27,7 +27,7 @@ false,
 false,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -54,9 +54,9 @@ false
 "key": [
 true,
 true,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -71,9 +71,9 @@ false
 ]
 ],
 "key": [
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -98,11 +98,11 @@ false
 ]
 ],
 "key": [
-false,
+true,
 true,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -119,7 +119,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -140,9 +140,9 @@ true
 ],
 "key": [
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -165,7 +165,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -192,9 +192,9 @@ true
 "key": [
 false,
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -215,9 +215,9 @@ false
 ],
 "key": [
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -237,10 +237,10 @@ false
 ]
 ],
 "key": [
-false,
+true,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -269,7 +269,7 @@ false,
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -284,9 +284,9 @@ true
 ]
 ],
 "key": [
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -313,9 +313,9 @@ false
 "key": [
 false,
 true,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -340,11 +340,11 @@ false
 ]
 ],
 "key": [
-false,
+true,
 false,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -361,7 +361,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -387,10 +387,10 @@ true
 ],
 "key": [
 false,
-false,
-false
+true,
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -416,10 +416,10 @@ false
 ],
 "key": [
 false,
-false,
+true,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -436,7 +436,7 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -463,9 +463,9 @@ true
 "key": [
 true,
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -480,9 +480,9 @@ false
 ]
 ],
 "key": [
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -508,10 +508,10 @@ false
 ],
 "key": [
 false,
-false,
-false
+true,
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -537,10 +537,10 @@ false
 ],
 "key": [
 false,
-false,
+true,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -563,7 +563,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -588,11 +588,11 @@ true
 ]
 ],
 "key": [
-false,
-false,
+true,
+true,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -615,7 +615,7 @@ false
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -642,9 +642,9 @@ true
 "key": [
 false,
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -665,9 +665,9 @@ false
 ],
 "key": [
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -696,7 +696,7 @@ true,
 true,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -721,11 +721,11 @@ false
 ]
 ],
 "key": [
-false,
+true,
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -750,11 +750,11 @@ true
 ]
 ],
 "key": [
-false,
+true,
 false,
 true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -781,9 +781,9 @@ true
 "key": [
 true,
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -800,7 +800,7 @@ false
 "key": [
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -829,7 +829,7 @@ false,
 false,
 false
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -856,9 +856,9 @@ false
 "key": [
 true,
 true,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -885,9 +885,9 @@ false
 "key": [
 false,
 false,
-false
+true
 ],
-"band": "low"
+"band": "safe"
 },
 {
 "words": [
@@ -904,26 +904,49 @@ false
 "key": [
 true
 ],
-"band": "low"
+"band": "safe"
 }
 ],
 "keywords": [
 "MOON",
 "VANISHED",
+"TONIGHT",
+"NOTICE",
+"MOONLIGHT",
+"MUCH",
+"EVEN",
+"FIRST",
+"YOU'D",
 "DARK",
 "STARS",
+"NIGHTS",
 "DARKER",
 "OCEANS",
+"CHANGE",
+"CAUSES",
+"MOST",
 "TIDES",
+"THEY'D",
+"SHRINK",
+"LESS",
 "HALF",
 "ANIMALS",
+"HUNT",
+"MIGRATE",
+"SPAWN",
 "CONFUSED",
+"WHOLE",
+"ECOSYSTEMS",
 "SHAKEN",
+"MILLIONS",
+"YEARS",
 "EARTH'S",
 "TILT",
+"START",
 "WOBBLE",
+"MAKING",
 "SEASONS",
 "WILD",
-"NOTICE"
+"UNPREDICTABLE"
 ]
 }
