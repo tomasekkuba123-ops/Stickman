@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/node_modules/**)",
+      "Read(**/*.mp4)",
+      "Read(**/*.wav)",
+      "Read(**/*.zip)",
+      "Read(pack/Stick3D-Pack/engine/out/**/parts/**)",
+      "Read(pack/Stick3D-Pack/engine/out/**/parts4k/**)",
+      "Read(pack/Stick3D-Pack/engine/out/**/frames/**)",
+      "Read(pack/Stick3D-Pack/assets/env/packs/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard_libs.sh\"",
+            "timeout": 10,
+            "statusMessage": "Checking the asset-library guard"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_render.sh\"",
+            "timeout": 900,
+            "statusMessage": "Post-render check: resolution, -14 LUFS, qc_check.py"
+          }
+        ]
+      }
+    ]
+  }
+}

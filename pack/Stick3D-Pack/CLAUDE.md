@@ -4,7 +4,17 @@ Never ask the user for technical details. The user's only inputs: SCRIPT + VOICE
 
 **Mandatory: `STYLE_RULES.md` + `WORLD_RULES.md`, build with the engine kit (`ENGINE.md`), pipeline animatic -> final -> qc_check (must PASS) -> publish kit (MASTER-PROMPT section 00).**
 
-**After every render: `python3 tools/qc_check.py video.mp4 --duration <s>` must PASS before sending; include qc/report.txt + qc/contact_sheet.png. After every episode update `ENGINE_CHANGELOG.md`.**
+**Enforced by hooks (`/home/user/Stickman/.claude/settings.json`, scripts in `.claude/hooks/`) — not optional, no need to repeat them by hand:**
+- after every final render: output must be 1080x1920 @ 30 fps, audio re-normalised to -14 LUFS if it drifted, `tools/qc_check.py` runs (pipeline/final4k.sh calls the same script for background renders);
+- deleting or moving `assets/character|motion|env|reference|voice` is blocked.
+Deliver `qc/report.txt` + `qc/contact_sheet.png` with every video. After every episode update `ENGINE_CHANGELOG.md`.
+
+## EPISODE WORKFLOW (v18)
+1. **Plan first:** for every new episode write a short plan (scenes + timing, assets to reuse, assets to build, risks) and WAIT for the user's OK. If a render goes wrong, re-plan the affected part instead of patching repeatedly.
+2. Build -> low-res preview (`--props '{"lowres":true}'`, 540p 24 fps) -> final (`pipeline/final4k.sh`: 2160x3840 supersampled, Lanczos to 1080x1920, CRF 15, AAC 192k).
+3. **Verify loop:** `qc_check.py video --duration s --captions captions.json --cuts <size changes> --fit assets/character/fit.json` = A-H + V (a frame every 0.5 s: hero fully in frame, scale consistent, no captions over face/hands, no blur/ghosting, bottom third filled, no stray sprites, loop frame = first frame) + P (puppet vs reference sheet proportion error). Fix and re-run until PASS. Re-render the QC mask (`pipeline/qcmask.sh`) whenever the puppet changes.
+4. **Fresh-eyes review:** after PASS, a verifier subagent with a clean context looks only at `qc/contact_sheet.png` + `qc/frames_grid.png` and lists visual problems (hands, scale, captions, empty areas, stray sprites). Fix them before showing the user.
+5. **Token saving:** noisy work (downloads, frame extraction, long logs) goes to subagents; renders/previews/frames are Read-denied (settings.json, mirrored in `.claudeignore`); `/clear` between episodes; skills kept: humanizer only (+ built-ins).
 
 ## STANDARD WORKFLOW — every "WHAT IF STICKMAN" episode from EP09 on (Stick3D-Pack v4). EP08 is finished with the old workflow. Use it every time; the user will not repeat it.
 **This section overrides older defaults above/in MASTER-PROMPT where they differ (episode length, voice source, music/SFX = self-synthesized).**
@@ -17,11 +27,11 @@ Never ask the user for technical details. The user's only inputs: SCRIPT + VOICE
 6. **Format:** episodes **max 40 s**, vertical 9:16 (1080x1920, 30 fps). Use credits sparingly: reuse saved assets, don't rebuild what already exists.
 7. **Retention (every episode):**
    - Word-by-word animated captions from the Whisper timestamps (current word highlighted, big bold font, center-lower screen, never covering the character's face).
-   - Normalize audio with ffmpeg loudnorm to **-14 LUFS**; background music synthesized by us with `tools/music_bed.py` (no downloads), ducked under the voice. No AI music with non-commercial licenses.
+   - Audio at **-14 LUFS** (mix normalised by the pipeline, re-checked/fixed by the post-render hook); background music synthesized by us with `tools/music_bed.py` (no downloads), ducked under the voice. No AI music with non-commercial licenses.
    - Hook in the first **1.5 s**: show the "WHAT IF...?" question as big text with action immediately.
    - The last frame flows seamlessly into the first frame so the Short loops.
 
-Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (`--duration <s>`), deliver report.txt + contact_sheet.png, update ENGINE_CHANGELOG.md.
+Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (the hook runs it), deliver report.txt + contact_sheet.png, update ENGINE_CHANGELOG.md.
 
 ## MASTER CHARACTER REFERENCE — v3 (replaces every older reference)
 - File: `assets/reference/STICKMAN_REFERENCE_SHEET_v3.png` (copy in `engine/public/ref/`). Older sheets are in `assets/reference/_superseded/` — never use them.

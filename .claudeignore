@@ -1,0 +1,14 @@
+# Token saving: render output, previews, extracted frames and downloaded asset packs.
+# NOTE: Claude Code does not read .claudeignore itself; the same paths are enforced as Read deny rules in .claude/settings.json.
+pack/Stick3D-Pack/engine/out/**/parts/
+pack/Stick3D-Pack/engine/out/**/parts4k/
+pack/Stick3D-Pack/engine/out/**/frames/
+pack/Stick3D-Pack/engine/out/*p*/
+renders/
+previews/
+frames/
+**/node_modules/
+**/*.mp4
+**/*.wav
+**/*.zip
+pack/Stick3D-Pack/assets/env/packs/

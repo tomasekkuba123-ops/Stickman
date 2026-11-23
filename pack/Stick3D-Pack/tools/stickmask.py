@@ -28,7 +28,8 @@ def scan(v):
         # exact key colours (magenta #ff00ff body, green #00ff00 face) with a tight RGB tolerance — scene greens/pinks never match
         body = (r > 205) & (b_ > 205) & (g < 60)
         face = (g > 215) & (r < 50) & (b_ < 50)
-        allm = (body | face).astype(np.uint8)
+        hand = (b_ > 205) & (r < 60) & (g < 60)  # v18: gloves (blue)
+        allm = (body | face | hand).astype(np.uint8)
         # keep only the hero blob: the connected component(s) touching the green face (else the largest blob)
         opn = cv2.morphologyEx(allm, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
         # bridge thin outline/dim gaps (dark-scene rim shading) between head and body before grouping blobs
@@ -36,11 +37,18 @@ def scan(v):
         keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
         allm = (np.isin(lab, list(keep)) & (opn > 0)) if keep else np.zeros_like(face)
+        # v18 stray sprites: other hero-coloured blobs not connected to the hero (duplicate puppets, leftover billboards)
+        stray = int(sum(1 for k in range(1, nc) if k not in keep and st[k, 4] > W * H * 0.002)) if nc > 1 else 0
+        hand = hand & allm
         face = face & allm
         if face.any():  # keep only the largest face blob (the hero's head)
             nf, fl, fs, _ = cv2.connectedComponentsWithStats(face.astype(np.uint8), 8)
             if nf > 2: face = fl == (int(np.argmax(fs[1:, 4])) + 1)
-        rec = {"t": round(i / fps, 3), "vis": False, "body": None, "face": None, "hf": 0.0, "cut": False}
+        rec = {"t": round(i / fps, 3), "vis": False, "body": None, "face": None, "hf": 0.0, "cut": False, "hands": [], "stray": stray}
+        if hand.any():
+            nh, hl, hs, _ = cv2.connectedComponentsWithStats(hand.astype(np.uint8), 8)
+            for k in range(1, nh):
+                if hs[k, 4] > W * H * 0.0002: x, y, w, h = hs[k, :4]; rec["hands"].append([round(x / W, 4), round(y / H, 4), round((x + w) / W, 4), round((y + h) / H, 4)])
         if allm.sum() > W * H * 0.0015:
             ys, xs = np.nonzero(allm)
             x0, x1, y0, y1 = xs.min() / W, (xs.max() + 1) / W, ys.min() / H, (ys.max() + 1) / H

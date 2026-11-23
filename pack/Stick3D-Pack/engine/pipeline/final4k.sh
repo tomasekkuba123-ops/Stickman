@@ -17,3 +17,5 @@ ffmpeg -v error -y -i "$OUT/video4k.mp4" -i "$MIX" -map 0:v -map 1:a \
   -c:v libx264 -profile:v high -preset slow -crf 15 -maxrate 20M -bufsize 40M -pix_fmt yuv420p \
   -c:a aac -b:a 192k -ar 48000 -t $(python3 -c "print($N/30)") -movflags +faststart "$OUT/final.mp4"
 echo "FINAL: $OUT/final.mp4"
+# verify loop (same script as the project PostToolUse hook): resolution, -14 LUFS, qc_check.py -> <outdir>/qc/report.txt
+bash /home/user/Stickman/.claude/hooks/post_render.sh --file "$PWD/$OUT/final.mp4" | jq -r '.hookSpecificOutput.additionalContext // empty'

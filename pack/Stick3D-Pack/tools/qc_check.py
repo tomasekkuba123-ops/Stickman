@@ -12,6 +12,8 @@ Checks (STYLE_RULES.md):
   E  no caption over his face (captions.json bands vs face box per frame)
   F  loudness -14 LUFS (+-1), true peak <= -1.0 dBTP
   G  1-fps contact sheet saved (contact_1fps.png)
+  V  v18 frame checks every 0.5 s (tools/qc_frames.py): blur, cropped, empty bottom, scale jumps, ghosting, stray sprites, captions over hands, loop frame
+  P  puppet vs reference sheet (--fit fit.json from tools/puppet_fit.py): IoU + proportion error
 On FAIL the report lists the time ranges to fix and the final.sh --redo ranges."""
 import sys, os, json, argparse, subprocess, re
 import numpy as np
@@ -37,7 +39,7 @@ def ranges(ts, step, minlen=0.0):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("video"); ap.add_argument("--duration", "--seconds", dest="seconds", type=float, required=True); ap.add_argument("--mask"); ap.add_argument("--captions"); ap.add_argument("--out")
+    ap = argparse.ArgumentParser(); ap.add_argument("video"); ap.add_argument("--duration", "--seconds", dest="seconds", type=float, required=True); ap.add_argument("--mask"); ap.add_argument("--captions"); ap.add_argument("--out"); ap.add_argument("--cuts", default="", help="shot cut times (s) for the scale-jump check"); ap.add_argument("--fit", help="puppet_fit.py fit.json -> proportion error vs the reference sheet"); ap.add_argument("--no-frames", action="store_true")
     a = ap.parse_args(); vdir = os.path.dirname(os.path.abspath(a.video)); a.out = a.out or os.path.join(vdir, "qc"); os.makedirs(a.out, exist_ok=True)
     approx = False
     if not a.mask:
@@ -144,6 +146,23 @@ def main():
     R["F_audio"] = {"lufs": I, "true_peak": TP}
     if not (-15 <= I <= -13): fails.append(f"F: loudness {I} LUFS (target -14 +-1)")
     if TP > -1.0: fails.append(f"F: true peak {TP} dBTP (max -1.0)")
+    # V v18 VERIFY LOOP: a frame every 0.5 s (blur, cropped, empty bottom, scale jumps, ghosting, stray sprites, captions over hands, loop frame)
+    if a.mask and not approx and not a.no_frames:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import qc_frames
+        I, n, med = qc_frames.run(a.video, a.mask, a.out, [float(x) for x in a.cuts.split(",") if x], a.captions)
+        R["V_frames"] = {"samples": n, **{k: v for k, v in I.items()}}
+        for k in ("blur", "cropped", "bottom", "scale", "ghost", "stray", "loop"):
+            if I[k]: fails.append(f"V-{k}: " + "; ".join(I[k][:6]) + (f" (+{len(I[k]) - 6} more)" if len(I[k]) > 6 else ""))
+        hp = I.get("hands_pct", 0.0)
+        if hp > 20: fails.append(f"V-hands: {I['hands'][0]}")
+        elif I["hands"]: warns.append(f"V-hands: {I['hands'][0]}")
+    # P puppet vs reference sheet (tools/puppet_fit.py)
+    if a.fit and os.path.exists(a.fit):
+        F = json.load(open(a.fit)); err = {k: round(abs(F["puppet"][k] - F["reference"][k]) / max(1e-6, F["reference"][k]) * 100, 1) for k in F["reference"]}
+        R["P_puppet_fit"] = {"iou": F["iou"], "error_pct": err, "mean_error_pct": round(float(np.mean(list(err.values()))), 1)}
+        if F["iou"] < 0.8: fails.append(f"P: puppet silhouette IoU {F['iou']} vs the reference sheet (< 0.80)")
+        big = {k: v for k, v in err.items() if v > 15 and k != "leg_gap_width"}
+        if big: warns.append(f"P: proportion error > 15 % for {big}")
     # G contact sheet
     cs = os.path.join(a.out, "contact_sheet.png")
     sh("ffmpeg", "-v", "error", "-y", "-i", a.video, "-vf", f"fps=1,scale=108:192,tile=20x{max(1, int(np.ceil(a.seconds / 20)))}", "-frames:v", "1", cs)

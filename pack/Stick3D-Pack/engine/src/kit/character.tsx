@@ -136,7 +136,7 @@ export const Stickman: React.FC<{ p: V3; t: number; h?: number; action?: ActionN
       const out = paintHero(c, W, H, r.rig, rimC, look.shade, look.rimK, look.dim ?? 0);
       if (prop === "pencil" || prop === "chalk" || prop === "pencilUp") { const L = H * 0.13, a = prop === "pencilUp" ? Math.PI + 0.3 : 0.5, bx = Math.sin(a), by = -Math.cos(a); drawPencil(c, out.gloveR[0] - bx * L * 0.42, out.gloveR[1] - by * L * 0.42, L, a, prop === "chalk" ? 0.6 : 0); }
       if (extra) extra(c, out, W, H);
-      if (QC && hero) maskify(c, out.head, out.headR, W, H);
+      if (QC && hero) maskify(c, out.head, out.headR, W, H, [out.gloveL, out.gloveR]);
     }} />
   </>);
 };
