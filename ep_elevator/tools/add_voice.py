@@ -84,6 +84,7 @@ def main():
     ap.add_argument("--voices", required=True)
     ap.add_argument("--offset", type=float, default=0.15, help="seconds after each scene start (default 0.15)")
     ap.add_argument("--no-burn", action="store_true")
+    ap.add_argument("--srt", help="use this already-synced SRT instead of automatic re-timing (e.g. from make_voice_kokoro.py)")
     a = ap.parse_args()
     vdir = pathlib.Path(a.voices)
     master = ROOT / "out" / "master_clean.mp4"; sfx = ROOT / "out" / "SFX_STEM.wav"
@@ -102,7 +103,7 @@ def main():
     if problems: sys.exit("Cannot continue:\n  " + "\n  ".join(problems))
 
     cues, report = [], []
-    for i, p, d in clips:
+    for i, p, d in ([] if a.srt else clips):
         texts = lines[4 * (i - 1): 4 * i]
         segs, method = split_scene(texts, p, d)
         base = (i - 1) * SCENE + a.offset
@@ -110,7 +111,12 @@ def main():
             cues.append((base + s, min(base + e, i * SCENE + 0.5), t))
         report.append(f"VOICE_{i:02d}  {d:5.2f} s  free {SCENE - a.offset - d:5.2f} s  sync={method}")
     synced = ROOT / "out" / "SUBTITLES_EN_SYNCED.srt"
-    synced.write_text("".join(f"{k}\n{fmt(s)} --> {fmt(e)}\n{t}\n\n" for k, (s, e, t) in enumerate(cues, 1)), encoding="utf-8")
+    if a.srt:
+        src_srt = pathlib.Path(a.srt).read_text(encoding="utf-8-sig")
+        if pathlib.Path(a.srt).resolve() != synced.resolve(): synced.write_text(src_srt, encoding="utf-8")
+        report = [f"VOICE_{i:02d}  {d:5.2f} s  free {SCENE - a.offset - d:5.2f} s  sync=given SRT" for i, p, d in clips]
+    else:
+      synced.write_text("".join(f"{k}\n{fmt(s)} --> {fmt(e)}\n{t}\n\n" for k, (s, e, t) in enumerate(cues, 1)), encoding="utf-8")
     print("\n".join(report)); print(f"wrote {synced}")
 
     # audio mix
