@@ -1,0 +1,106 @@
+time_s,timecode,scene,effect,gain_db,pan
+0.000,00:00.000,1,evening street ambience,-34,0.0
+12.600,00:12.600,1,magic glow shimmer,-30,0.4
+16.200,00:16.200,2,elevator warm hum,-36,0.3
+16.400,00:16.400,2,glow shimmer,-32,0.3
+32.300,00:32.300,3,interior shimmer,-34,0.0
+44.200,00:44.200,3,button press click,-22,0.3
+44.500,00:44.500,3,elevator ding,-24,0.2
+48.100,00:48.100,4,door flash whoosh,-24,0.0
+49.000,00:49.000,4,portal swirl,-28,0.0
+52.500,00:52.500,4,floor shake rumble,-24,0.0
+60.500,01:00.500,4,jump into portal whoosh,-22,0.0
+64.200,01:04.200,5,floating city wind,-32,0.0
+70.000,01:10.000,5,drifting cars swoosh,-30,-0.5
+80.100,01:20.100,6,thrown upward whoosh,-23,0.0
+84.500,01:24.500,6,tumble wind,-30,0.0
+100.200,01:40.200,7,leap whoosh,-24,0.3
+104.300,01:44.300,7,shoe scrape,-32,0.2
+108.100,01:48.100,7,doors slam,-20,0.0
+112.200,01:52.200,8,elevator ding,-22,-0.6
+124.400,02:04.400,8,tiny toy whistle,-32,0.6
+128.000,02:08.000,9,toy train chug,-24,-0.3
+128.600,02:08.600,9,train whistle,-27,-0.5
+144.500,02:24.500,10,train thunder,-24,-0.5
+154.400,02:34.400,10,golden flash shimmer,-26,0.0
+156.500,02:36.500,10,jump whoosh,-26,0.0
+160.200,02:40.200,11,elevator ding,-26,-0.6
+160.400,02:40.400,11,underwater bubbles,-32,0.0
+160.400,02:40.400,11,underwater low ambience,-30,0.0
+176.300,02:56.300,12,bubbles,-32,0.0
+176.300,02:56.300,12,octopus deep rumble,-22,0.5
+188.000,03:08.000,12,octopus lunge swoosh,-26,0.4
+192.300,03:12.300,13,metal creak,-27,-0.5
+196.000,03:16.000,13,sparks,-28,-0.5
+197.500,03:17.500,13,walkway crack,-24,0.0
+200.000,03:20.000,13,blue portal swirl,-28,0.5
+204.500,03:24.500,13,flying leap whoosh,-23,0.3
+208.300,03:28.300,14,timeless airy hum,-38,0.0
+208.500,03:28.500,14,frozen-time shimmer,-34,0.0
+224.300,03:44.300,15,straining clock creak,-30,0.0
+232.000,03:52.000,15,golden sparks,-28,0.0
+236.000,03:56.000,15,gear clunk,-24,0.0
+236.600,03:56.600,15,clock tick,-24,0.2
+237.600,03:57.600,15,clock tick,-27,0.2
+238.600,03:58.600,15,clock tick,-24,0.2
+239.600,03:59.600,15,clock tick,-27,0.2
+240.100,04:00.100,16,elevator cracks,-20,0.0
+240.500,04:00.500,16,cosmic storm wind,-28,0.0
+240.600,04:00.600,16,clock tick (storm),-32,0.0
+241.600,04:01.600,16,clock tick (storm),-32,0.0
+242.600,04:02.600,16,clock tick (storm),-32,0.0
+243.600,04:03.600,16,clock tick (storm),-32,0.0
+244.600,04:04.600,16,clock tick (storm),-32,0.0
+245.600,04:05.600,16,clock tick (storm),-32,0.0
+246.600,04:06.600,16,clock tick (storm),-32,0.0
+247.600,04:07.600,16,clock tick (storm),-32,0.0
+248.000,04:08.000,16,debris whoosh,-28,0.6
+248.600,04:08.600,16,clock tick (storm),-32,0.0
+249.600,04:09.600,16,clock tick (storm),-32,0.0
+250.600,04:10.600,16,clock tick (storm),-32,0.0
+251.600,04:11.600,16,clock tick (storm),-32,0.0
+252.600,04:12.600,16,clock tick (storm),-32,0.0
+253.600,04:13.600,16,clock tick (storm),-32,0.0
+254.600,04:14.600,16,clock tick (storm),-32,0.0
+256.500,04:16.500,17,crawl scrape,-34,0.0
+260.000,04:20.000,17,crackling wires,-30,0.5
+264.400,04:24.400,17,crystal clicks in,-22,0.4
+268.200,04:28.200,17,power-up shimmer,-27,0.0
+270.000,04:30.000,17,doors light up hum,-32,0.0
+272.200,04:32.200,18,elevator ding,-26,-0.6
+272.500,04:32.500,18,doorway ambience shimmer,-34,0.0
+288.500,04:48.500,19,reaching shimmer,-30,0.4
+292.000,04:52.000,19,doorway bursts open,-22,0.0
+300.200,05:00.200,19,run-in whoosh,-27,0.0
+304.200,05:04.200,20,soft landing thump,-28,0.0
+304.500,05:04.500,20,quiet bedroom room tone,-38,0.0
+312.200,05:12.200,20,quiet ding from wardrobe,-30,0.6
+320.300,05:20.300,21,golden ticket appears,-26,0.3
+336.200,05:36.200,22,map unfolds swoosh,-26,0.0
+336.800,05:36.800,22,map glow shimmer,-32,0.0
+352.400,05:52.400,23,elevator descending hum,-30,0.0
+352.500,05:52.500,23,descend swoosh,-30,0.0
+368.200,06:08.200,24,elevator ding,-26,-0.6
+368.600,06:08.600,24,airy kingdom shimmer,-34,0.0
+385.000,06:25.000,25,page step,-30,-0.3
+387.200,06:27.200,25,page step,-30,-0.18
+389.100,06:29.100,25,page step,-30,-0.06
+391.600,06:31.600,25,page step,-30,0.06
+394.300,06:34.300,25,page step,-30,0.18
+396.500,06:36.500,25,page step,-30,0.3
+400.300,06:40.300,26,key shoots out whoosh,-23,0.4
+400.500,06:40.500,26,key shimmer,-28,0.4
+408.200,06:48.200,26,jump whoosh,-28,0.0
+416.300,06:56.300,27,catch key click,-25,0.0
+420.000,07:00.000,27,machine energy hum,-32,0.4
+424.100,07:04.100,27,key turns in lock,-22,0.4
+424.400,07:04.400,27,machine awakens,-24,0.4
+427.500,07:07.500,27,rings connect shimmer,-27,0.0
+432.200,07:12.200,28,doorways open whoosh,-26,0.0
+433.500,07:13.500,28,objects fly home chimes,-28,0.0
+448.300,07:28.300,29,final doorway opens,-26,0.5
+449.000,07:29.000,29,doorway glow,-32,0.5
+460.000,07:40.000,29,run into sunlight whoosh,-28,0.4
+464.300,07:44.300,30,bedroom room tone,-38,0.0
+476.000,07:56.000,30,ticket blinks,-26,-0.1
+477.600,07:57.600,30,closing chime,-30,0.0

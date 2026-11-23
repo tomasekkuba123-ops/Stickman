@@ -1,0 +1,244 @@
+WHAT IF STICKMAN ENTERED THE WRONG ELEVATOR?
+30 x 16 seconds = 08:00 total
+Read each 4-second segment at the marked time. Timings are targets, not verified against a recording.
+
+OBRÁZEK 01 | 00:00:00.000 až 00:00:16.000 | VEČERNÍ PROCHÁZKA
+OBRÁZEK: SCENE_01.jpg
+HLAS (samostatný soubor VOICE_01.txt):
+   00:00:00.000 – 00:00:04.000  Stickman was taking his usual walk home after sunset.
+   00:00:04.000 – 00:00:08.000  The shops were closing, and the streetlights were flickering.
+   00:00:08.000 – 00:00:12.000  He expected another quiet evening, with absolutely no surprises.
+   00:00:12.000 – 00:00:16.000  But around the next corner, a strange glow appeared.
+
+OBRÁZEK 02 | 00:00:16.000 až 00:00:32.000 | ZLATÝ VÝTAH NA ULICI
+OBRÁZEK: SCENE_02.jpg
+HLAS (samostatný soubor VOICE_02.txt):
+   00:00:16.000 – 00:00:20.000  A golden elevator stood in the middle of the sidewalk.
+   00:00:20.000 – 00:00:24.000  No building surrounded it. No cables reached the roof.
+   00:00:24.000 – 00:00:28.000  Warm light spilled out across the wet pavement.
+   00:00:28.000 – 00:00:32.000  Stickman stepped closer, wondering who could have put it there.
+
+OBRÁZEK 03 | 00:00:32.000 až 00:00:48.000 | ZÁHADNÁ TLAČÍTKA
+OBRÁZEK: SCENE_03.jpg
+HLAS (samostatný soubor VOICE_03.txt):
+   00:00:32.000 – 00:00:36.000  Inside, the buttons looked nothing like normal elevator buttons.
+   00:00:36.000 – 00:00:40.000  There was a glowing zero, and even impossible floors.
+   00:00:40.000 – 00:00:44.000  One little circle blinked as if it knew his name.
+   00:00:44.000 – 00:00:48.000  Before he could think twice, Stickman pressed zero.
+
+OBRÁZEK 04 | 00:00:48.000 až 00:01:04.000 | CESTA PORTÁLEM
+OBRÁZEK: SCENE_04.jpg
+HLAS (samostatný soubor VOICE_04.txt):
+   00:00:48.000 – 00:00:52.000  The doors flashed, and a swirling purple tunnel appeared.
+   00:00:52.000 – 00:00:56.000  The floor began to shake beneath his sneakers.
+   00:00:56.000 – 00:01:00.000  He tried to step backward, but the light pulled harder.
+   00:01:00.000 – 00:01:04.000  With a shout, he ran straight into the portal.
+
+OBRÁZEK 05 | 00:01:04.000 až 00:01:20.000 | MĚSTO VZHŮRU NOHAMA
+OBRÁZEK: SCENE_05.jpg
+HLAS (samostatný soubor VOICE_05.txt):
+   00:01:04.000 – 00:01:08.000  Suddenly, the city was floating in every direction.
+   00:01:08.000 – 00:01:12.000  Buildings hung upside down, and cars drifted through the sky.
+   00:01:12.000 – 00:01:16.000  Even the roads seemed to twist into impossible shapes.
+   00:01:16.000 – 00:01:20.000  Stickman stared in disbelief. Where had the elevator taken him?
+
+OBRÁZEK 06 | 00:01:20.000 až 00:01:36.000 | ZTRACENÁ GRAVITACE
+OBRÁZEK: SCENE_06.jpg
+HLAS (samostatný soubor VOICE_06.txt):
+   00:01:20.000 – 00:01:24.000  Then gravity changed its mind and threw him upward.
+   00:01:24.000 – 00:01:28.000  He tumbled past flying cars and glowing windows.
+   00:01:28.000 – 00:01:32.000  The whole city spun beneath his dangling feet.
+   00:01:32.000 – 00:01:36.000  He needed the elevator, before the sky swallowed him forever.
+
+OBRÁZEK 07 | 00:01:36.000 až 00:01:52.000 | ÚNIK ZPĚT DO VÝTAHU
+OBRÁZEK: SCENE_07.jpg
+HLAS (samostatný soubor VOICE_07.txt):
+   00:01:36.000 – 00:01:40.000  He spotted those familiar golden doors just ahead.
+   00:01:40.000 – 00:01:44.000  With one desperate leap, he grabbed the glowing frame.
+   00:01:44.000 – 00:01:48.000  His shoes scraped against the edge as he pulled himself in.
+   00:01:48.000 – 00:01:52.000  The doors slammed shut, and the wild city disappeared.
+
+OBRÁZEK 08 | 00:01:52.000 až 00:02:08.000 | OBŘÍ POKOJ HRAČEK
+OBRÁZEK: SCENE_08.jpg
+HLAS (samostatný soubor VOICE_08.txt):
+   00:01:52.000 – 00:01:56.000  Ding! The elevator opened inside an enormous bedroom.
+   00:01:56.000 – 00:02:00.000  A teddy bear towered over him like a mountain.
+   00:02:00.000 – 00:02:04.000  Colorful toy blocks stretched as high as houses.
+   00:02:04.000 – 00:02:08.000  Then, somewhere behind the toys, a tiny whistle sounded.
+
+OBRÁZEK 09 | 00:02:08.000 až 00:02:24.000 | PRONÁSLEDOVÁNÍ VLÁČKEM
+OBRÁZEK: SCENE_09.jpg
+HLAS (samostatný soubor VOICE_09.txt):
+   00:02:08.000 – 00:02:12.000  A toy train came roaring around the bend.
+   00:02:12.000 – 00:02:16.000  Only it was much bigger than Stickman expected.
+   00:02:16.000 – 00:02:20.000  He sprinted between blocks while its headlight followed him.
+   00:02:20.000 – 00:02:24.000  The little engine was getting closer with every second.
+
+OBRÁZEK 10 | 00:02:24.000 až 00:02:40.000 | SKOK PŘED VLAKEM
+OBRÁZEK: SCENE_10.jpg
+HLAS (samostatný soubor VOICE_10.txt):
+   00:02:24.000 – 00:02:28.000  There! The elevator was waiting across the toy room.
+   00:02:28.000 – 00:02:32.000  Stickman scrambled over the last pile of blocks.
+   00:02:32.000 – 00:02:36.000  The locomotive thundered behind him, almost catching his shoes.
+   00:02:36.000 – 00:02:40.000  He jumped for the doorway, and everything went golden.
+
+OBRÁZEK 11 | 00:02:40.000 až 00:02:56.000 | PODMOŘSKÉ KRÁLOVSTVÍ
+OBRÁZEK: SCENE_11.jpg
+HLAS (samostatný soubor VOICE_11.txt):
+   00:02:40.000 – 00:02:44.000  The next floor opened beneath a brilliant blue ocean.
+   00:02:44.000 – 00:02:48.000  Somehow, Stickman could breathe in this magical underwater city.
+   00:02:48.000 – 00:02:52.000  Glowing jellyfish floated above bridges, towers, and ancient ruins.
+   00:02:52.000 – 00:02:56.000  For a moment, he forgot to be afraid.
+
+OBRÁZEK 12 | 00:02:56.000 až 00:03:12.000 | OBŘÍ CHOBOTNICE
+OBRÁZEK: SCENE_12.jpg
+HLAS (samostatný soubor VOICE_12.txt):
+   00:02:56.000 – 00:03:00.000  Then an enormous purple octopus rose behind the ruins.
+   00:03:00.000 – 00:03:04.000  Its eyes narrowed, and its tentacles filled the water.
+   00:03:04.000 – 00:03:08.000  Stickman froze as the creature blocked his way.
+   00:03:08.000 – 00:03:12.000  One angry movement told him it was time to run.
+
+OBRÁZEK 13 | 00:03:12.000 až 00:03:28.000 | PODMOŘSKÝ PORTÁL
+OBRÁZEK: SCENE_13.jpg
+HLAS (samostatný soubor VOICE_13.txt):
+   00:03:12.000 – 00:03:16.000  The octopus wrapped its tentacles around the golden elevator.
+   00:03:16.000 – 00:03:20.000  Metal bent, sparks flashed, and the walkway began to break.
+   00:03:20.000 – 00:03:24.000  Across the ruins, Stickman spotted a glowing blue portal.
+   00:03:24.000 – 00:03:28.000  He made one flying leap, and escaped just in time.
+
+OBRÁZEK 14 | 00:03:28.000 až 00:03:44.000 | SVĚT ZASTAVENÉHO ČASU
+OBRÁZEK: SCENE_14.jpg
+HLAS (samostatný soubor VOICE_14.txt):
+   00:03:28.000 – 00:03:32.000  He landed among floating clocks and enormous golden gears.
+   00:03:32.000 – 00:03:36.000  Hourglasses hung in midair, with their sand completely still.
+   00:03:36.000 – 00:03:40.000  Far ahead, a glowing path wound through the clouds.
+   00:03:40.000 – 00:03:44.000  This strange world had somehow stopped time itself.
+
+OBRÁZEK 15 | 00:03:44.000 až 00:04:00.000 | ROZBĚHNUTÍ HODIN
+OBRÁZEK: SCENE_15.jpg
+HLAS (samostatný soubor VOICE_15.txt):
+   00:03:44.000 – 00:03:48.000  A gigantic clock hand was stuck across the path.
+   00:03:48.000 – 00:03:52.000  Stickman planted his feet and pushed with all his strength.
+   00:03:52.000 – 00:03:56.000  Golden sparks flew as the heavy hand began moving.
+   00:03:56.000 – 00:04:00.000  The gears awakened, and time started ticking again.
+
+OBRÁZEK 16 | 00:04:00.000 až 00:04:16.000 | PORUCHA VÝTAHU
+OBRÁZEK: SCENE_16.jpg
+HLAS (samostatný soubor VOICE_16.txt):
+   00:04:00.000 – 00:04:04.000  But starting time again came with a terrible price.
+   00:04:04.000 – 00:04:08.000  The elevator cracked apart above a swirling cosmic storm.
+   00:04:08.000 – 00:04:12.000  Stickman clung to the broken platform as debris flew past.
+   00:04:12.000 – 00:04:16.000  If he fell now, no floor could save him.
+
+OBRÁZEK 17 | 00:04:16.000 až 00:04:32.000 | OPRAVA VÝTAHU
+OBRÁZEK: SCENE_17.jpg
+HLAS (samostatný soubor VOICE_17.txt):
+   00:04:16.000 – 00:04:20.000  He crawled toward an open panel of wires and gears.
+   00:04:20.000 – 00:04:24.000  A glowing crystal flickered inside the damaged mechanism.
+   00:04:24.000 – 00:04:28.000  With shaking hands, he pushed the crystal back into place.
+   00:04:28.000 – 00:04:32.000  The golden doors flickered, then finally lit up again.
+
+OBRÁZEK 18 | 00:04:32.000 až 00:04:48.000 | TŘI KOUZELNÉ BRÁNY
+OBRÁZEK: SCENE_18.jpg
+HLAS (samostatný soubor VOICE_18.txt):
+   00:04:32.000 – 00:04:36.000  The repaired elevator delivered him to three magical doorways.
+   00:04:36.000 – 00:04:40.000  One showed the ocean. Another showed a giant hourglass.
+   00:04:40.000 – 00:04:44.000  The third doorway glowed with a tiny golden house.
+   00:04:44.000 – 00:04:48.000  For the first time, Stickman knew exactly which to choose.
+
+OBRÁZEK 19 | 00:04:48.000 až 00:05:04.000 | BRÁNA DOMŮ
+OBRÁZEK: SCENE_19.jpg
+HLAS (samostatný soubor VOICE_19.txt):
+   00:04:48.000 – 00:04:52.000  He reached toward the bright symbol of home.
+   00:04:52.000 – 00:04:56.000  The golden doorway burst open, flooding everything with light.
+   00:04:56.000 – 00:05:00.000  Behind it, he could almost see his own bedroom.
+   00:05:00.000 – 00:05:04.000  Stickman ran forward, certain the adventure was finally over.
+
+OBRÁZEK 20 | 00:05:04.000 až 00:05:20.000 | VÝTAH VE SKŘÍNI
+OBRÁZEK: SCENE_20.jpg
+HLAS (samostatný soubor VOICE_20.txt):
+   00:05:04.000 – 00:05:08.000  He stumbled onto his bedroom carpet, safe at last.
+   00:05:08.000 – 00:05:12.000  His bed and window were just where he remembered.
+   00:05:12.000 – 00:05:16.000  Then a quiet ding sounded from inside the wardrobe.
+   00:05:16.000 – 00:05:20.000  He turned around. The elevator had followed him home.
+
+OBRÁZEK 21 | 00:05:20.000 až 00:05:36.000 | ZLATÁ JÍZDENKA
+OBRÁZEK: SCENE_21.jpg
+HLAS (samostatný soubor VOICE_21.txt):
+   00:05:20.000 – 00:05:24.000  Before he could close the doors, a golden ticket appeared.
+   00:05:24.000 – 00:05:28.000  It floated out of the elevator and stopped in midair.
+   00:05:28.000 – 00:05:32.000  A tiny magical picture shimmered across its surface.
+   00:05:32.000 – 00:05:36.000  Stickman reached for it, unable to resist one more mystery.
+
+OBRÁZEK 22 | 00:05:36.000 až 00:05:52.000 | TAJEMNÁ MAPA
+OBRÁZEK: SCENE_22.jpg
+HLAS (samostatný soubor VOICE_22.txt):
+   00:05:36.000 – 00:05:40.000  The ticket unfolded a glowing map across his bedroom.
+   00:05:40.000 – 00:05:44.000  It showed a distant lighthouse above floating islands.
+   00:05:44.000 – 00:05:48.000  Beneath the lighthouse, forgotten objects filled an endless world.
+   00:05:48.000 – 00:05:52.000  A golden path pointed directly back to the elevator.
+
+OBRÁZEK 23 | 00:05:52.000 až 00:06:08.000 | JÍZDA DO PATRA MINUS JEDNA
+OBRÁZEK: SCENE_23.jpg
+HLAS (samostatný soubor VOICE_23.txt):
+   00:05:52.000 – 00:05:56.000  Stickman stepped inside, holding the ticket above his head.
+   00:05:56.000 – 00:06:00.000  The golden elevator began descending into a hidden world.
+   00:06:00.000 – 00:06:04.000  Through its windows, he saw ancient arches and shimmering waterfalls.
+   00:06:04.000 – 00:06:08.000  This time, he had a mission instead of a mistake.
+
+OBRÁZEK 24 | 00:06:08.000 až 00:06:24.000 | SVĚT ZTRACENÝCH VĚCÍ
+OBRÁZEK: SCENE_24.jpg
+HLAS (samostatný soubor VOICE_24.txt):
+   00:06:08.000 – 00:06:12.000  The doors opened on a kingdom made from lost belongings.
+   00:06:12.000 – 00:06:16.000  Keys, toys, umbrellas, and clocks floated above the clouds.
+   00:06:16.000 – 00:06:20.000  In the distance, a bright lighthouse watched over everything.
+   00:06:20.000 – 00:06:24.000  But none of these forgotten treasures had found its way home.
+
+OBRÁZEK 25 | 00:06:24.000 až 00:06:40.000 | CESTA PO KNIHÁCH
+OBRÁZEK: SCENE_25.jpg
+HLAS (samostatný soubor VOICE_25.txt):
+   00:06:24.000 – 00:06:28.000  A winding path of giant books led toward the lighthouse.
+   00:06:28.000 – 00:06:32.000  Stickman stepped carefully from one floating page to another.
+   00:06:32.000 – 00:06:36.000  Around him, teddy bears and missing letters drifted past.
+   00:06:36.000 – 00:06:40.000  He followed the trail, searching for the return machine.
+
+OBRÁZEK 26 | 00:06:40.000 až 00:06:56.000 | LETÍCÍ KLÍČ
+OBRÁZEK: SCENE_26.jpg
+HLAS (samostatný soubor VOICE_26.txt):
+   00:06:40.000 – 00:06:44.000  Suddenly, a magical key shot out of the swirling air.
+   00:06:44.000 – 00:06:48.000  Without it, the return machine could never be opened.
+   00:06:48.000 – 00:06:52.000  Stickman jumped, stretching his fingers as far as possible.
+   00:06:52.000 – 00:06:56.000  For one breathless moment, the key hovered beyond his reach.
+
+OBRÁZEK 27 | 00:06:56.000 až 00:07:12.000 | AKTIVACE NÁVRATOVÉHO STROJE
+OBRÁZEK: SCENE_27.jpg
+HLAS (samostatný soubor VOICE_27.txt):
+   00:06:56.000 – 00:07:00.000  He caught the key and raced to a golden machine.
+   00:07:00.000 – 00:07:04.000  At its center, an empty lock spun with magical energy.
+   00:07:04.000 – 00:07:08.000  Stickman turned the key, and the whole machine awakened.
+   00:07:08.000 – 00:07:12.000  Brilliant rings began connecting every lost object to its owner.
+
+OBRÁZEK 28 | 00:07:12.000 až 00:07:28.000 | VĚCI LETÍ ZPĚT DOMŮ
+OBRÁZEK: SCENE_28.jpg
+HLAS (samostatný soubor VOICE_28.txt):
+   00:07:12.000 – 00:07:16.000  Across the sky, hundreds of golden doorways opened.
+   00:07:16.000 – 00:07:20.000  Teddy bears, clocks, hats, and letters lifted into the air.
+   00:07:20.000 – 00:07:24.000  Each lost treasure followed a shining path back home.
+   00:07:24.000 – 00:07:28.000  Stickman watched the forgotten kingdom come alive with joy.
+
+OBRÁZEK 29 | 00:07:28.000 až 00:07:44.000 | ZÁVĚREČNÝ PORTÁL
+OBRÁZEK: SCENE_29.jpg
+HLAS (samostatný soubor VOICE_29.txt):
+   00:07:28.000 – 00:07:32.000  At last, one final doorway opened beside the lighthouse.
+   00:07:32.000 – 00:07:36.000  Beyond the golden light stood a familiar little house.
+   00:07:36.000 – 00:07:40.000  The elevator waited behind him, ready for another adventure.
+   00:07:40.000 – 00:07:44.000  But Stickman chose home, and ran toward the sunlight.
+
+OBRÁZEK 30 | 00:07:44.000 až 00:08:00.000 | ZÁVĚR V POKOJI
+OBRÁZEK: SCENE_30.jpg
+HLAS (samostatný soubor VOICE_30.txt):
+   00:07:44.000 – 00:07:48.000  Back in his bedroom, Stickman held the golden ticket.
+   00:07:48.000 – 00:07:52.000  The strange elevator still waited quietly inside his wardrobe.
+   00:07:52.000 – 00:07:56.000  He smiled, proud of every lost thing he had saved.
+   00:07:56.000 – 00:08:00.000  Then the ticket blinked again. What floor comes next?
+
