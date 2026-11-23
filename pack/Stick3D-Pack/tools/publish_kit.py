@@ -86,7 +86,7 @@ def main():
     if os.path.exists(hp): tags = open(hp).read().split()
     lp = os.path.join(ep, "logline.txt")  # optional middle line of the description
     logline = open(lp).read().strip() if os.path.exists(lp) else f"This time it was a {obj.lower()}... and things got out of hand. ✏️"
-    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. {logline}\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
+    desc = f"{T[0]}\n\n{logline}\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
     b = best_frame(video, mask, caps)
     thp = os.path.join(ep, "thumb.txt")  # optional "<seconds> [WORD]": force the thumbnail frame (e.g. the hook) and word
     th = open(thp).read().split() if os.path.exists(thp) else []

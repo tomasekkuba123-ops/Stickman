@@ -1,0 +1,11 @@
+QC PASS  engine/out/ep09/final.mp4  (target 38 s)
+WARN D: longest stretch without a hard cut 5.3 s (rule: new angle/action every 2-3 s)
+
+A_duration: {"frames": 1140, "expected": 1140, "duration": 38.0, "size": "1080x1920", "fps": "30/1"}
+B_visible: {"percent": 100.0, "gaps": []}
+C_size: {"big_enough": 92.1, "median_height": 0.454, "in_40_60_band": 92.1, "fully_in_frame": 99.1, "too_small_ranges": [], "too_big_ranges": []}
+E_captions: {"face_overlap_times": []}
+H_face_white: {"white_percent": 95.2, "tinted_at": []}
+D_motion: {"cuts": 20, "static_over_3s": [], "longest_shot_s": 5.3, "mean_shot_s": 1.8}
+F_audio: {"lufs": -14.1, "true_peak": -1.2}
+contact sheet: /home/user/Stickman/pack/Stick3D-Pack/engine/out/ep09/qc/contact_sheet.png

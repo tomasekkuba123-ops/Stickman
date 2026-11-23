@@ -30,10 +30,12 @@ def scan(v):
         face = (g > 215) & (r < 50) & (b_ < 50)
         allm = (body | face).astype(np.uint8)
         # keep only the hero blob: the connected component(s) touching the green face (else the largest blob)
-        nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.morphologyEx(allm, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8)), 8)
+        opn = cv2.morphologyEx(allm, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+        # bridge thin outline/dim gaps (dark-scene rim shading) between head and body before grouping blobs
+        nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.dilate(opn, np.ones((5, 5), np.uint8)), 8)
         keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
-        allm = np.isin(lab, list(keep)) if keep else np.zeros_like(face)
+        allm = (np.isin(lab, list(keep)) & (opn > 0)) if keep else np.zeros_like(face)
         face = face & allm
         if face.any():  # keep only the largest face blob (the hero's head)
             nf, fl, fs, _ = cv2.connectedComponentsWithStats(face.astype(np.uint8), 8)
