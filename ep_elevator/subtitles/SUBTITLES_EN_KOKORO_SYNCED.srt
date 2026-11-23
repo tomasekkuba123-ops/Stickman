@@ -143,19 +143,19 @@ He sprinted between blocks while its headlight followed him.
 The little engine was getting closer with every second.
 
 37
-00:02:24,150 --> 00:02:27,060
-There! The elevator was waiting across the toy room.
+00:02:24,150 --> 00:02:27,056
+There! The elevator was waiting at the end of the street.
 
 38
-00:02:27,100 --> 00:02:29,813
+00:02:27,096 --> 00:02:29,809
 Stickman scrambled over the last pile of blocks.
 
 39
-00:02:29,853 --> 00:02:33,594
+00:02:29,849 --> 00:02:33,590
 The locomotive thundered behind him, almost catching his shoes.
 
 40
-00:02:33,634 --> 00:02:36,692
+00:02:33,630 --> 00:02:36,689
 He jumped for the doorway, and everything went golden.
 
 41
@@ -255,7 +255,7 @@ Stickman clung to the broken platform as debris flew past.
 If he fell now, no floor could save him.
 
 65
-00:04:16,150 --> 00:04:19,184
+00:04:16,150 --> 00:04:19,183
 He crawled toward an open panel of wires and gears.
 
 66
@@ -339,15 +339,15 @@ Stickman reached for it, unable to resist one more mystery.
 The ticket unfolded a glowing map across his bedroom.
 
 86
-00:05:39,510 --> 00:05:42,608
-It showed a distant lighthouse above floating islands.
+00:05:39,510 --> 00:05:42,432
+It showed a shining castle above floating islands.
 
 87
-00:05:42,648 --> 00:05:46,402
-Beneath the lighthouse, forgotten objects filled an endless world.
+00:05:42,472 --> 00:05:46,473
+Far below, a hidden world glowed with waterfalls and crystals.
 
 88
-00:05:46,442 --> 00:05:49,841
+00:05:46,513 --> 00:05:49,912
 A golden path pointed directly back to the elevator.
 
 89
@@ -423,11 +423,11 @@ He caught the key and raced to a golden machine.
 At its center, an empty lock spun with magical energy.
 
 107
-00:07:02,459 --> 00:07:05,507
-Stickman turned the key, and the whole machine awakened.
+00:07:02,459 --> 00:07:05,978
+Stickman pressed the key into the lock, and the machine awakened.
 
 108
-00:07:05,547 --> 00:07:09,567
+00:07:06,018 --> 00:07:10,037
 Brilliant rings began connecting every lost object to its owner.
 
 109

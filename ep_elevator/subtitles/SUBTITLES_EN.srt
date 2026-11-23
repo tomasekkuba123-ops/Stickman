@@ -144,7 +144,7 @@ The little engine was getting closer with every second.
 
 37
 00:02:24,000 --> 00:02:28,000
-There! The elevator was waiting across the toy room.
+There! The elevator was waiting at the end of the street.
 
 38
 00:02:28,000 --> 00:02:32,000
@@ -340,11 +340,11 @@ The ticket unfolded a glowing map across his bedroom.
 
 86
 00:05:40,000 --> 00:05:44,000
-It showed a distant lighthouse above floating islands.
+It showed a shining castle above floating islands.
 
 87
 00:05:44,000 --> 00:05:48,000
-Beneath the lighthouse, forgotten objects filled an endless world.
+Far below, a hidden world glowed with waterfalls and crystals.
 
 88
 00:05:48,000 --> 00:05:52,000
@@ -424,7 +424,7 @@ At its center, an empty lock spun with magical energy.
 
 107
 00:07:04,000 --> 00:07:08,000
-Stickman turned the key, and the whole machine awakened.
+Stickman pressed the key into the lock, and the machine awakened.
 
 108
 00:07:08,000 --> 00:07:12,000

@@ -60,16 +60,19 @@ Potřeba: python3 + numpy, opencv-python-headless, scipy; ffmpeg s libass; font 
 
 Všechny efekty (gong výtahu, svist portálu, vláček a píšťalka, bubliny, hluboké dunění chobotnice, tikání hodin, jiskry, vrzání kovu, otáčení stránek, třpyt) jsou **syntetizované přímo skriptem `tools/make_sfx.py`**. Nejsou použité žádné cizí nahrávky, takže nehrozí licence, vodoznaky ani poplatky. Seznam 105 efektů s časy a hlasitostí je v `timeline/SFX_CUES.csv`. Hudba v projektu není.
 
-## Kontrola kontinuity obrázků (zjištěno při prohlídce všech 30 snímků)
+## Kontrola kontinuity obrázků a provedené opravy
 
-Obrázky se do videa používají tak, jak jsou, nic se v nich nepřekresluje. Rozdíly níže je potřeba případně opravit ve zdrojových obrázcích:
+**Opraveno** (podrobnosti v `subtitles/TEXT_CHANGES.md`):
+* **SCENE_03:** šedé/hnědé boty jsou přebarvené na červené tenisky. Stínování zůstává, bílé podrážky a tkaničky taky. Skript je `tools/fix_scene03_shoes.py`, originál se uchová jako `images/SCENE_03_original.jpg`.
+* **Scéna 10:** text „across the toy room“ je změněn na „at the end of the street“, protože obrázek je ulice.
+* **Scéna 22:** maják na mapě není, takže text mluví o zářícím hradu a skrytém světě s vodopády a krystaly.
+* **Scéna 27:** text „turned the key“ je změněn na „pressed the key into the lock“, protože klíč v obrázku vidět není.
+* Hlas Kokoro i titulky jsou pro upravené věty vygenerované znovu. Původní texty zůstávají v `source_text/`.
 
-* **SCENE_03:** Stickman má **tmavě šedé/hnědé boty** místo červených tenisek a nemá batoh. Oči jsou kreslené jinak (velké, obtažené).
-* **SCENE_07:** spodní část působí spíš jako dlouhé černé kalhoty než jako kraťasy.
-* **Batoh:** ve scénách 1, 2, 4 a 6–10 je batoh vidět, ve 03 a 05 vidět není a od scény 11 dál ho Stickman nemá.
-* **SCENE_10:** text říká „across the toy room“, ale obrázek ukazuje noční ulici s obřími kostkami a vláčkem, ne dětský pokoj.
-* **SCENE_05:** výtah má jiný design (kamenný rám s břečťanem, symbol ∞) než zlatý výtah ve scénách 2, 4, 6 a 8.
-* **SCENE_22:** text zmiňuje maják nad létajícími ostrovy, na mapě v obrázku maják není (je tam podmořský hrad).
-* **SCENE_27:** text „turned the key“, v obrázku klíč v ruce vidět není.
-* **Scény 26–29:** svět ztracených věcí je zčásti „podmořský“ (medúzy, korály), ve 24–25 je nad mraky. Stylově to drží, jen pro informaci.
-* Tvar obličeje (obočí, velikost očí) se mezi generacemi obrázků mírně liší, ale postava, červená mikina, bílé rukavice a červené tenisky drží (kromě scény 03).
+**Neopraveno** (oprava by vyžadovala překreslit postavu nebo celý obrázek):
+* **Batoh:** ve scénách 1, 2, 4 a 6–10 je vidět, od scény 11 chybí. Text batoh nikde nezmiňuje.
+* **Scéna 10** je stále ulice, zatímco scéna 9 je dětský pokoj, takže skok prostředí v obraze zůstává.
+* **SCENE_05:** výtah má jiný design (kamenný rám, symbol ∞).
+* **SCENE_07:** spodní část působí spíš jako dlouhé kalhoty než jako kraťasy.
+* **SCENE_03:** oči jsou kreslené jinak (velké, obtažené).
+* Tvar obličeje se mezi generacemi obrázků mírně liší.
