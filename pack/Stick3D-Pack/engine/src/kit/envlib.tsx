@@ -5,7 +5,7 @@
 import React, { useMemo, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { continueRender, delayRender, staticFile } from "remotion";
+import { continueRender, delayRender, getInputProps, staticFile } from "remotion";
 import { useThree } from "@react-three/fiber";
 import { EffectComposer, DepthOfField } from "@react-three/postprocessing";
 import { V3 } from "../style/kit";
@@ -43,9 +43,12 @@ export const KScatter: React.FC<{ names: KenneyName[]; n: number; area: [number,
     return out; }, [n, seed]);
   return <>{items.map((it, i) => <KModel key={i} {...it} tint={tint} t={t} sway={sway} />)}</>;
 };
+/* fast-render switch: --props '{"nopost":true}' disables DepthPass + BloomPass */
+export const noPost = (): boolean => { try { return !!(getInputProps() as { nopost?: boolean }).nopost; } catch { return false; } };
 /* DEPTH LAYERS: real depth-of-field — the subject plane at `focus` (world units from camera) stays sharp, far layers blur. */
 export const DepthPass: React.FC<{ focus: number; range?: number; blur?: number }> = ({ focus, range = 6, blur = 3 }) => {
   const { camera } = useThree(); const cam = camera as THREE.PerspectiveCamera; const span = cam.far - cam.near;
+  if (noPost()) return null; // --props '{"nopost":true}' skips post effects (fast render)
   return (<EffectComposer multisampling={0}><DepthOfField focusDistance={(focus - cam.near) / span} focalLength={range / span} bokehScale={blur} resolutionScale={0.25} height={240} /></EffectComposer>);
 };
 /* tinted photo texture (Poly Haven) for ground planes */

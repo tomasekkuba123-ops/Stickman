@@ -7,6 +7,7 @@ import { useThree } from "@react-three/fiber";
 import { EffectComposer, Bloom as BloomFx } from "@react-three/postprocessing";
 import { Box, Cyl, Ball, CanvasPlane, INK } from "../style/toon";
 import { V3 } from "../style/kit";
+import { noPost } from "./envlib";
 import { SGlow } from "../style/sky";
 import { GradientDome, Cloud3D, canvasTex, Bedroom, DrawingPaper, PAPER } from "../style/set3d";
 import { LookContext, Look } from "./character";
@@ -41,7 +42,7 @@ export const World: React.FC<{ preset: SkyName; t: number; fog?: boolean; bloom?
     {preset === "space" && backdrop ? <SpaceBackdrop t={t} /> : null}
     {rays > 0 ? <GodRays from={P.sun.pos} t={t} o={rays} color={P.sun.color} /> : null}
     {children}
-    {bloom > 0 ? <BloomPass k={bloom} /> : null}
+    {bloom > 0 && !noPost() ? <BloomPass k={bloom} /> : null}
   </LookContext.Provider>);
 };
 // real bloom (postprocessing); bright emissive / additive parts glow
