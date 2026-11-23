@@ -11,3 +11,4 @@ ep03_src/
 pack/Stick3D-Pack/99-exports/ep03/*.wav
 ep04_src/
 pack/Stick3D-Pack/99-exports/*/*.wav
+__pycache__/
