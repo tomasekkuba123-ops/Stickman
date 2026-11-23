@@ -33,3 +33,14 @@ export function worldAt(pose: { pos: V3; look: V3; fov?: number }, sx: number, s
 const sub = (a: V3, b: V3): V3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const cross = (a: V3, b: V3): V3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const norm = (a: V3): V3 => { const n = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / n, a[1] / n, a[2] / n]; };
+/* ground point (y = 0) seen at screen (sx, sy) from a camera pose -> place foreground props exactly at the bottom edge */
+export function groundAt(pose: { pos: V3; look: V3; fov?: number }, sx: number, sy: number, y = 0): V3 {
+  const far = worldAt(pose, sx, sy, 1), d: V3 = [far[0] - pose.pos[0], far[1] - pose.pos[1], far[2] - pose.pos[2]];
+  const k = d[1] < -1e-4 ? (y - pose.pos[1]) / d[1] : 6; return [pose.pos[0] + d[0] * k, y, pose.pos[2] + d[2] * k];
+}
+/* screen direction (deg, 0 = right, 90 = up) from the hero's shoulder to a world target, for aimed pointing */
+export function screenDir(pose: { pos: V3; look: V3; fov?: number }, from: V3, to: V3): number {
+  const f = norm(sub(pose.look, pose.pos)), r = norm(cross(f, [0, 1, 0])), u = cross(r, f);
+  const P = (q: V3) => { const v = sub(q, pose.pos), z = v[0] * f[0] + v[1] * f[1] + v[2] * f[2]; return [(v[0] * r[0] + v[1] * r[1] + v[2] * r[2]) / z, (v[0] * u[0] + v[1] * u[1] + v[2] * u[2]) / z]; };
+  const a = P(from), b = P(to); return (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
+}

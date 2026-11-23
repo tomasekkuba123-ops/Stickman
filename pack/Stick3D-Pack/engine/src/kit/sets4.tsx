@@ -26,9 +26,9 @@ const NF_PROPS: PropSpec[] = [
 ];
 const FENCE: PropSpec[] = Array.from({ length: 7 }, (_, i) => ["fence_simple", -13 + i * 1.95, -7.5 - i * 0.25, 1.6, 0.12] as PropSpec);
 /* dark 0 = moonlit silver-blue, 1 = deep dark blue (no Moon). moon = vanish progress (0..1+), back = pop-back (loop). */
-export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; children?: React.ReactNode }> = ({ t, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, children }) => {
+export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; fore?: V3[]; children?: React.ReactNode }> = ({ t, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, fore = [], children }) => {
   const d = cl(dark);
-  const look = { rim: d < 0.5 ? "190,215,255" : "120,140,220", shade: "6,8,34", rimK: lerp(0.6, 0.18, d), dim: 0.5 * d };
+  const look = { rim: d < 0.5 ? "190,215,255" : "140,165,255", shade: "4,6,30", rimK: lerp(0.6, 0.62, d), dim: 0.24 * d }; // dark: body drops, a soft blue rim keeps him readable
   return (<Lights amb={lerp(0.62, 0.16, d)} keyL={[[NF_MOON[0], NF_MOON[1], NF_MOON[2] + 20], mixC("#d6e4ff", "#5a6ab8", d), lerp(1.25, 0.12, d)]} fill={[[-12, 6, 10], "#3a4aa8", lerp(0.4, 0.22, d)]} look={look} fog={[mixC("#22336e", "#070b26", d), 22, 130]}>
     <SkyGrad a={["#0f1a52", "#2a3d88", "#6b7fc4"]} b={["#02040f", "#050a26", "#0d1640"]} k={d} horizon="rgba(190,200,255,0.55)" hk={0.6 * (1 - d)} />
     <StarField t={t} n={240} bright={stars * (0.75 + 0.6 * d)} />
@@ -50,6 +50,8 @@ export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; b
     <Grass t={t} area={[18, 9]} c={[0, 0, -2.5]} n={900} colors={["#2f6a5e", "#3c7f6c", "#24584e", "#4a8f78"]} h={0.42} />
     {fireflies > 0 ? <FireflyTrails t={t} n={22} c={[0, 1.5, -3]} area={[12, 2.2, 8]} o={fireflies} size={0.045} trail={7} /> : null}
     <Motes t={t} n={26} c={[0, 2, 0]} area={[8, 3, 5]} color="#cfdcff" o={0.35 * (1 - d)} />
+    {/* bottom-edge foreground props (near the camera): rocks, mushrooms, flowers, grass tufts */}
+    {fore.map((q, i) => <KModel key={"f" + i} name={(["rock_smallC", "mushroom_redGroup", "flower_purpleA", "stone_smallA", "mushroom_red", "flower_redA", "flower_yellowA", "rock_smallA"] as const)[i % 8]} p={q} s={0.9 + rnd(i) * 0.5} ry={rnd(i * 3) * 6} tint="#8fa0e0" t={t} sway={1} />)}
     {children}
   </Lights>);
 };
@@ -73,7 +75,7 @@ export const Lighthouse: React.FC<{ p: V3; t: number; s?: number }> = ({ p, t, s
     <mesh position={[0, 6.95, 0]}><coneGeometry args={[0.6, 0.7, 16]} /><meshToonMaterial color="#2a2f4a" gradientMap={toonRamp} /></mesh>
     <SGlow p={[0, 6.3, 0.3]} r={1.4 + 3 * face} color="#fff0b0" o={0.8 + 0.2 * face} />
     <group position={[0, 6.3, 0]} rotation={[0, a, 0]}>
-      {[0, Math.PI].map((r, i) => <mesh key={i} rotation={[0, r, Math.PI / 2]} position={[i ? -9 : 9, 0, 0]}><coneGeometry args={[2.2, 18, 24, 1, true]} /><meshBasicMaterial map={beamTex()} color="#fff2b8" transparent opacity={0.22} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} fog={false} /></mesh>)}
+      {[0, Math.PI].map((r, i) => <mesh key={i} rotation={[0, r, Math.PI / 2]} position={[i ? -9 : 9, 0, 0]}><coneGeometry args={[1.3, 18, 24, 1, true]} /><meshBasicMaterial map={beamTex()} color="#fff2b8" transparent opacity={0.1} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} fog={false} /></mesh>)}
     </group>
   </group>);
 };
@@ -85,42 +87,89 @@ export const Gulls: React.FC<{ t: number; n?: number; c?: V3; r?: number }> = ({
       <mesh scale={[1, 0.8, 1.8]}><sphereGeometry args={[0.1, 8, 6]} /><meshBasicMaterial color="#ffffff" /></mesh></group>; })}</>
 );
 /* tide 1 = normal high water reaching near the hero, 0 = retreated far out (Moonless). ghost = 0..1 translucent Moon (illustration) */
-export const SHORE_HI = -0.6, SHORE_LO = -12;
-export const waterline = (t: number, tide: number) => lerp(SHORE_LO, SHORE_HI, tide) + 0.55 * Math.sin(t * 1.25) + 0.2 * Math.sin(t * 2.7 + 1);
-export const MoonShore: React.FC<{ t: number; tide: number; ghost?: number; dark?: number; ghostP?: V3; children?: React.ReactNode }> = ({ t, tide, ghost = 0, dark = 0.15, ghostP = [10, 26, -80], children }) => {
-  const sand = usePHTex("coast_sand_01", 10); const zw = waterline(t, tide), zHi = SHORE_HI + 0.75;
-  const look = { rim: "175,205,255", shade: "6,10,36", rimK: 0.5, dim: 0.12 };
-  return (<Lights amb={0.85 - 0.2 * dark} keyL={[[10, 30, -30], "#dfe8ff", 1.0]} fill={[[-10, 5, 12], "#4a5ac0", 0.45]} look={look} fog={["#1a2a62", 30, 160]}>
+export const SHORE_HI = -0.4, SHORE_LO = -9.5;
+export const waterline = (t: number, tide: number) => lerp(SHORE_LO, SHORE_HI, tide) + 0.45 * Math.sin(t * 1.25) + 0.15 * Math.sin(t * 2.7 + 1);
+/* scalloped wave-crest texture: rows of small rounded crests with foam caps (replaces the old stripe look) */
+const crestTex = (base: string, crest: string) => canvasTex("crest17|" + base + crest, 512, 512, (c, W, H) => { c.fillStyle = base; c.fillRect(0, 0, W, H);
+  for (let row = 0; row < 16; row++) { const y = row * 32 + 10; for (let i = 0; i < 10; i++) { const x = ((i * 54 + row * 27) % W) + rnd(row * 10 + i) * 10, w = 34 + rnd(row * 13 + i) * 26;
+    c.fillStyle = "rgba(0,20,60,0.22)"; c.beginPath(); c.ellipse(x, y + 7, w * 0.55, 5, 0, 0, Math.PI); c.fill();
+    c.strokeStyle = crest; c.lineWidth = 3; c.beginPath(); c.arc(x, y + 10, w * 0.5, Math.PI * 1.12, Math.PI * 1.88); c.stroke();
+    if (rnd(row * 7 + i) > 0.55) { c.fillStyle = "rgba(255,255,255,0.55)"; c.beginPath(); c.ellipse(x, y + 1, w * 0.18, 2.5, 0, 0, TAU); c.fill(); } } } }, [1, 1]);
+const crestRowTex = () => canvasTex("crestrow17", 1024, 96, (c, W, H) => { for (let i = 0; i < 26; i++) { const x = i * 40 + rnd(i) * 20, w = 50 + rnd(i * 3) * 40;
+  c.fillStyle = "rgba(10,40,90,0.35)"; c.beginPath(); c.ellipse(x, 62, w * 0.6, 14, 0, 0, Math.PI); c.fill();
+  const g = c.createLinearGradient(0, 24, 0, 60); g.addColorStop(0, "rgba(255,255,255,0.95)"); g.addColorStop(1, "rgba(200,230,255,0.15)"); c.fillStyle = g; c.beginPath(); c.ellipse(x, 52, w * 0.55, 18, 0, Math.PI, TAU); c.fill(); } }, [1, 1]);
+const shallowTex = () => canvasTex("shallow17", 8, 256, (c, W, H) => { const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#1f5a9a"); g.addColorStop(0.7, "#3f8ccc"); g.addColorStop(1, "#8fd0ee"); c.fillStyle = g; c.fillRect(0, 0, W, H); });
+const sandDecal = () => canvasTex("sanddecal17", 1024, 1024, (c, W, H) => { // ripples, speckles, patches
+  for (let i = 0; i < 70; i++) { const y = rnd(i) * H, x = rnd(i * 3) * W, w = 60 + rnd(i * 5) * 160; c.strokeStyle = i % 2 ? "rgba(150,120,80,0.35)" : "rgba(255,250,230,0.45)"; c.lineWidth = 3; c.beginPath(); c.moveTo(x, y); c.bezierCurveTo(x + w * 0.3, y - 8, x + w * 0.6, y + 8, x + w, y); c.stroke(); }
+  for (let i = 0; i < 900; i++) { c.fillStyle = rnd(i * 7) > 0.5 ? "rgba(120,95,70,0.5)" : "rgba(255,255,255,0.6)"; c.fillRect(rnd(i * 11) * W, rnd(i * 13) * H, 2 + rnd(i) * 2, 2 + rnd(i * 2) * 2); }
+  for (let i = 0; i < 18; i++) { const x = rnd(i * 17) * W, y = rnd(i * 19) * H, r = 50 + rnd(i * 23) * 120; const g = c.createRadialGradient(x, y, 1, x, y, r); g.addColorStop(0, "rgba(255,245,215,0.35)"); g.addColorStop(1, "rgba(0,0,0,0)"); c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); } });
+const scallopTex = (col: string) => canvasTex("scallop17|" + col, 128, 128, (c, W, H) => { c.fillStyle = col; c.beginPath(); c.moveTo(W / 2, H * 0.92); c.arc(W / 2, H * 0.92, W * 0.46, Math.PI * 1.1, Math.PI * 1.9); c.closePath(); c.fill(); c.strokeStyle = "rgba(120,70,60,0.5)"; c.lineWidth = 3;
+  for (let i = 0; i < 7; i++) { const a = Math.PI * (1.15 + i * 0.1); c.beginPath(); c.moveTo(W / 2, H * 0.92); c.lineTo(W / 2 + Math.cos(a) * W * 0.44, H * 0.92 + Math.sin(a) * W * 0.44); c.stroke(); } c.strokeStyle = "#1a1a1a"; c.lineWidth = 4; c.beginPath(); c.moveTo(W / 2, H * 0.92); c.arc(W / 2, H * 0.92, W * 0.46, Math.PI * 1.1, Math.PI * 1.9); c.closePath(); c.stroke(); });
+const starfishGeo = (() => { let g: THREE.ExtrudeGeometry | null = null; return () => { if (g) return g; const sh = new THREE.Shape(); for (let i = 0; i <= 10; i++) { const a = (i / 10) * TAU + Math.PI / 2, r = i % 2 ? 0.07 : 0.2; i ? sh.lineTo(Math.cos(a) * r, Math.sin(a) * r) : sh.moveTo(Math.cos(a) * r, Math.sin(a) * r); } g = new THREE.ExtrudeGeometry(sh, { depth: 0.04, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2 }); return g; }; })();
+/* little beach objects */
+export const Shell: React.FC<{ p: V3; s?: number; ry?: number; col?: string }> = ({ p, s = 1, ry = 0, col = "#ffd6c4" }) => (
+  <mesh position={[p[0], 0.012, p[2]]} rotation={[-Math.PI / 2, 0, ry]} scale={s}><planeGeometry args={[0.36, 0.36]} /><meshBasicMaterial map={scallopTex(col)} transparent alphaTest={0.3} /></mesh>);
+export const Conch: React.FC<{ p: V3; s?: number; ry?: number }> = ({ p, s = 1, ry = 0 }) => (
+  <group position={[p[0], 0.07 * s, p[2]]} rotation={[0, ry, Math.PI / 2]} scale={s}><mesh><coneGeometry args={[0.08, 0.3, 10]} /><meshToonMaterial color="#ffe2c8" gradientMap={toonRamp} /></mesh><mesh position={[0, -0.12, 0]}><sphereGeometry args={[0.09, 10, 8]} /><meshToonMaterial color="#ffb8a8" gradientMap={toonRamp} /></mesh></group>);
+export const Starfish: React.FC<{ p: V3; s?: number; ry?: number; col?: string }> = ({ p, s = 1, ry = 0, col = "#ff8a5a" }) => (
+  <mesh geometry={starfishGeo()} position={[p[0], 0.02, p[2]]} rotation={[-Math.PI / 2, 0, ry]} scale={s}><meshToonMaterial color={col} gradientMap={toonRamp} /></mesh>);
+export const Driftwood: React.FC<{ p: V3; s?: number; ry?: number }> = ({ p, s = 1, ry = 0 }) => (
+  <group position={[p[0], 0.06 * s, p[2]]} rotation={[0, ry, 0]} scale={s}><mesh rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.07, 0.1, 1.6, 8]} /><meshToonMaterial color="#b7a184" gradientMap={toonRamp} /></mesh>
+    <mesh position={[0.35, 0.08, 0.15]} rotation={[0.9, 0.4, Math.PI / 2.6]}><cylinderGeometry args={[0.03, 0.05, 0.6, 6]} /><meshToonMaterial color="#a89274" gradientMap={toonRamp} /></mesh></group>);
+const Footprints: React.FC<{ from: V3; to: V3; n?: number }> = ({ from, to, n = 9 }) => { const dx = to[0] - from[0], dz = to[2] - from[2], L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, a = Math.atan2(dx, dz);
+  return <>{Array.from({ length: n }, (_, i) => { const u = (i + 0.5) / n, side = i % 2 ? 1 : -1; return <mesh key={i} rotation={[-Math.PI / 2, 0, a]} position={[from[0] + dx * u - uz * side * 0.14, 0.008, from[2] + dz * u + ux * side * 0.14]}><circleGeometry args={[0.1, 14]} /><meshBasicMaterial color="#7a6448" transparent opacity={0.45} depthWrite={false} /></mesh>; })}</>; };
+/* tide marker: wooden post + rock; the sea covers its lower half at high tide, then it stands dry with a dark wet stain */
+const TideMarker: React.FC<{ p: V3; zw: number; t: number }> = ({ p, zw, t }) => { const sub = sm((zw - p[2] + 0.2) / 0.9), wet = cl((zw - p[2] + 0.6) / 0.6 + 0.0) > 0 ? 1 : 0.6;
+  return (<group position={p}>
+    <mesh position={[0, 0.65, 0]} rotation={[0.05, 0, 0.06]}><cylinderGeometry args={[0.09, 0.11, 1.3, 10]} /><meshToonMaterial color="#9a6a3a" gradientMap={toonRamp} /></mesh>
+    <mesh position={[0, 0.33, 0]} rotation={[0.05, 0, 0.06]}><cylinderGeometry args={[0.115, 0.115, 0.62, 10]} /><meshBasicMaterial color="#4a3a2a" transparent opacity={0.55 * wet} /></mesh>
+    <mesh position={[0, 0.78, 0.0]} rotation={[0.05, 0, 0.06]}><boxGeometry args={[0.5, 0.06, 0.06]} /><meshToonMaterial color="#8a5a2a" gradientMap={toonRamp} /></mesh>
+    <mesh position={[0.45, 0.16, 0.15]} scale={[0.42, 0.3, 0.36]}><dodecahedronGeometry args={[1, 1]} /><meshToonMaterial color="#8a8ea8" gradientMap={toonRamp} /></mesh>
+    {sub > 0.02 ? <><mesh position={[0.15, 0.3 * sub, 0]}><cylinderGeometry args={[0.75, 0.75, 0.6 * sub, 28]} /><meshBasicMaterial color="#4f9ad2" transparent opacity={0.82} /></mesh>
+      <mesh position={[0.15, 0.6 * sub + 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[0.13, 0.32 + 0.05 * Math.sin(t * 4), 28]} /><meshBasicMaterial color="#ffffff" transparent opacity={0.8 * sub} /></mesh></> : null}
+  </group>); };
+export const MoonShore: React.FC<{ t: number; tide: number; ghost?: number; dark?: number; ghostP?: V3; lighthouse?: V3; marker?: V3; hero?: V3; fore?: V3[]; children?: React.ReactNode }> = ({ t, tide, ghost = 0, dark = 0.15, ghostP = [10, 26, -80], lighthouse = [-26, 1, -70], marker = [1.9, 0, -0.9], hero = [0, 0, 3.4], fore = [], children }) => {
+  const sand = usePHTex("coast_sand_01", 10); const zw = waterline(t, tide), zHi = SHORE_HI + 0.6;
+  const look = { rim: "175,205,255", shade: "6,10,36", rimK: 0.5, dim: 0.1 };
+  const reflX = ghostP[0] * 0.05;
+  return (<Lights amb={0.9 - 0.2 * dark} keyL={[[10, 30, -30], "#e4ecff", 1.05]} fill={[[-10, 5, 12], "#4a5ac0", 0.45]} look={look} fog={["#1a2a62", 34, 170]}>
     <SkyGrad a={["#0b1548", "#22368a", "#5a74c4"]} horizon="rgba(200,215,255,0.7)" hk={0.7} />
-    <StarField t={t} n={180} bright={0.8} seed={3} />
+    <StarField t={t} n={200} bright={0.85} seed={3} />
     <ShootingStar t={t} t0={12.6} from={[-30, 70, -120]} to={[-62, 52, -115]} />
     {ghost > 0.01 ? <BigMoon p={ghostP} r={7.5} t={t} back={sm(ghost)} halo={0.8 * ghost} /> : null}
     <CloudStrips t={t} n={4} y={24} z={-90} span={160} speed={1.0} />
     <HillLayer p={[40, 3.2, -118]} s={[150, 30]} o={{ seed: 13, tone: "#1c2a64", rim: "rgba(190,205,255,0.45)", top: 0.52, amp: 0.14, trees: 18 }} />
-    <Lighthouse p={[-26, 1, -70]} t={t} s={1.4} />
-    {/* layered sea: far deep plane + near lighter plane, each scrolling at its own speed */}
-    <Scroll tex={waveTex("#163e7a", "rgba(130,170,240,0.45)")} rep={[16, 8]} off={[t * 0.004, t * 0.012]}>{(tx) => <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, -90]}><planeGeometry args={[320, 160]} /><meshToonMaterial map={tx} gradientMap={toonRamp} /></mesh>}</Scroll>
-    <Scroll tex={waveTex("#2a66a8", "rgba(170,210,255,0.5)")} rep={[10, 5]} off={[-t * 0.006, t * 0.03]}>{(tx) => <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, zw - 22]}><planeGeometry args={[160, 44]} /><meshToonMaterial map={tx} gradientMap={toonRamp} transparent opacity={0.97} /></mesh>}</Scroll>
-    {/* rolling foam crests toward the shore */}
-    {[0, 1, 2, 3].map((i) => { const u = ((t * 0.22 + i * 0.25) % 1), z = lerp(zw - 16, zw - 0.6, u); return <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[Math.sin(i * 2) * 3, 0.014 + 0.002 * i, z]}><planeGeometry args={[110, 0.25 + 0.3 * u]} /><meshBasicMaterial map={foamTex()} transparent opacity={0.5 * Math.sin(u * Math.PI)} depthWrite={false} /></mesh>; })}
-    {/* shallow swash + moving foam edge at the waterline */}
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, zw - 1.6]}><planeGeometry args={[160, 3.4]} /><meshBasicMaterial color="#6ab6e4" transparent opacity={0.6} depthWrite={false} /></mesh>
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, zw + 0.05]}><planeGeometry args={[160, 0.7]} /><meshBasicMaterial map={foamTex()} transparent opacity={0.95} depthWrite={false} /></mesh>
-    {/* wet sand band left behind by the retreating water (darker, glossy) */}
-    {zHi - zw > 0.1 ? <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.008, (zHi + zw) / 2]}><planeGeometry args={[160, zHi - zw]} /><meshBasicMaterial color="#4a4466" transparent opacity={0.6} depthWrite={false} /></mesh> : null}
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.009, zHi]}><planeGeometry args={[160, 0.18]} /><meshBasicMaterial color="#3d6a46" transparent opacity={0.8} depthWrite={false} /></mesh>
-    {/* sand */}
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 4]}><planeGeometry args={[160, 36]} /><meshToonMaterial map={sand} color="#fff0c8" gradientMap={toonRamp} /></mesh>
-    {/* reflections + sparkles on the water and wet sand */}
-    {Array.from({ length: 26 }, (_, i) => { const z = zw - 1 - rnd(i) * 30, x = (rnd(i * 3) - 0.5) * 30; return <SGlow key={i} p={[x, 0.05, z]} r={0.12 + rnd(i * 5) * 0.2} color="#ffffff" o={Math.max(0, Math.sin(t * (3 + rnd(i) * 4) + i * 2)) ** 3} />; })}
-    {ghost > 0.01 ? Array.from({ length: 16 }, (_, i) => { const u = i / 15, z = lerp(-70, zw - 1, u), x = lerp(ghostP[0] * 0.7, 1.2, u); return <SGlow key={"m" + i} p={[x + Math.sin(t * 3 + i) * 0.4 * (1 + u * 2), 0.06, z]} r={0.8 + u * 1.2} color="#fff2c0" o={ghost * 0.5 * (0.6 + 0.4 * Math.sin(t * 5 + i * 1.7))} />; }) : null}
-    {/* beach props: rocks, shells, seaweed, tide pools */}
-    <Props list={[["rock_largeA", -6.5, 1.2, 1.8], ["rock_largeB", 7.2, 0.4, 2.1], ["stone_largeA", -9, -1.5, 1.7], ["rock_tallA", 10, -2, 1.8], ["rock_smallC", 3.3, 2.5, 1.2], ["rock_smallA", -3.6, 3.2, 1.0], ["stone_smallA", 5, 4.5, 1.1]]} t={t} tint="#8e94c8" />
-    {[[-2.2, 3.6, "#ffd0c0"], [1.4, 4.4, "#ffe8b0"], [-4.4, 5.2, "#f0c8ff"], [3.6, 2.2, "#ffffff"], [-1.0, 1.4, "#ffc8b8"], [5.8, 5.6, "#ffe0c0"]].map(([x, z, col], i) =>
-      <group key={i} position={[x as number, 0.06, z as number]} rotation={[0, rnd(i) * 6, 0]}><mesh rotation={[-Math.PI / 2 + 0.25, 0, 0]} scale={[1, 1.2, 0.45]}><sphereGeometry args={[0.15, 12, 8, 0, TAU, 0, Math.PI / 2]} /><meshToonMaterial color={col as string} gradientMap={toonRamp} /></mesh></group>)}
-    {[[-5, 0.3], [4.2, 0.9], [8.5, 2.5]].map(([x, z], i) => <mesh key={i} rotation={[-Math.PI / 2, 0, rnd(i) * 3]} position={[x, 0.03, z]}><planeGeometry args={[1.6, 0.8]} /><meshBasicMaterial map={weedTex()} transparent depthWrite={false} /></mesh>)}
-    {[[-3.2, 0.8, 1.5], [6.2, 3.0, 1.1]].map(([x, z, r], i) => <group key={i} position={[x, 0.025, z]}><mesh rotation={[-Math.PI / 2, 0, 0]} scale={[r, r * 0.55, 1]}><circleGeometry args={[1, 32]} /><meshBasicMaterial color="#3a78b8" transparent opacity={0.8} /></mesh>
+    <Lighthouse p={lighthouse} t={t} s={1.5} />
+    {/* layered sea: deep far plane (small crests) -> rows of rolling crests -> shallow gradient -> foam edge */}
+    <Scroll tex={crestTex("#163e7a", "rgba(170,205,255,0.7)")} rep={[40, 14]} off={[t * 0.004, t * 0.02]}>{(tx) => <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, -95]}><planeGeometry args={[320, 170]} /><meshToonMaterial map={tx} gradientMap={toonRamp} /></mesh>}</Scroll>
+    <Scroll tex={crestTex("#21579a", "rgba(190,225,255,0.75)")} rep={[22, 6]} off={[-t * 0.006, t * 0.045]}>{(tx) => <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, zw - 22]}><planeGeometry args={[160, 44]} /><meshToonMaterial map={tx} gradientMap={toonRamp} /></mesh>}</Scroll>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.009, zw - 3]}><planeGeometry args={[160, 6]} /><meshBasicMaterial map={shallowTex()} transparent opacity={0.85} depthWrite={false} /></mesh>
+    {Array.from({ length: 7 }, (_, i) => { const u = ((t * 0.2 + i / 7) % 1), z = lerp(zw - 26, zw - 0.5, u * u); return <mesh key={i} rotation={[-Math.PI / 2, 0, 0]} position={[Math.sin(i * 2.3) * 4, 0.012 + 0.001 * i, z]}><planeGeometry args={[120, 0.35 + 0.55 * u]} /><meshBasicMaterial map={crestRowTex()} transparent opacity={0.9 * Math.sin(u * Math.PI)} depthWrite={false} /></mesh>; })}
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.016, zw + 0.05]}><planeGeometry args={[160, 0.8]} /><meshBasicMaterial map={foamTex()} transparent opacity={0.95} depthWrite={false} /></mesh>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0.7, 0.015, zw - 1.0 - 0.3 * Math.sin(t * 1.25)]}><planeGeometry args={[160, 0.4]} /><meshBasicMaterial map={foamTex()} transparent opacity={0.6} depthWrite={false} /></mesh>
+    {/* wet sand left behind (darker, glossy, with star / Moon glints) + high-tide line of seaweed */}
+    {zHi - zw > 0.05 ? <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, (zHi + zw) / 2]}><planeGeometry args={[160, zHi - zw]} /><meshBasicMaterial color="#4a4060" transparent opacity={0.55} depthWrite={false} /></mesh> : null}
+    {Array.from({ length: 22 }, (_, i) => { const z = lerp(zw + 0.3, zHi, rnd(i * 5)); if (z <= zw + 0.2) return null; return <SGlow key={"w" + i} p={[reflX + (rnd(i) - 0.5) * 6, 0.03, z]} r={0.08 + rnd(i * 3) * 0.12} color="#fff6d0" o={(0.4 + 0.6 * Math.max(0, Math.sin(t * (2 + rnd(i) * 3) + i))) * 0.8} />; })}
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.007, zHi]}><planeGeometry args={[160, 0.2]} /><meshBasicMaterial color="#3d6a46" transparent opacity={0.8} depthWrite={false} /></mesh>
+    {/* sand + painted detail decal */}
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 3]}><planeGeometry args={[160, 30]} /><meshToonMaterial map={sand} color="#fff3d2" gradientMap={toonRamp} /></mesh>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.003, 4.5]}><planeGeometry args={[40, 16]} /><meshBasicMaterial map={sandDecal()} transparent depthWrite={false} /></mesh>
+    {/* sea sparkles + Moon reflection column */}
+    {Array.from({ length: 34 }, (_, i) => { const z = zw - 1 - rnd(i) * 34, x = (rnd(i * 3) - 0.5) * 34; return <SGlow key={i} p={[x, 0.05, z]} r={0.12 + rnd(i * 5) * 0.22} color="#ffffff" o={Math.max(0, Math.sin(t * (3 + rnd(i) * 4) + i * 2)) ** 3} />; })}
+    {Array.from({ length: 18 }, (_, i) => { const u = i / 17, z = lerp(-80, zw - 0.8, u), x = lerp(ghostP[0] * 0.75, reflX, u); return <SGlow key={"m" + i} p={[x + Math.sin(t * 3 + i) * 0.4 * (1 + u * 2), 0.06, z]} r={0.6 + u * 1.1} color="#fff2c0" o={(0.15 + 0.5 * ghost) * (0.6 + 0.4 * Math.sin(t * 5 + i * 1.7))} />; })}
+    {/* fixed beach dressing (same in every shot) */}
+    <Props list={[["rock_largeA", -5.8, 0.6, 1.8], ["rock_largeB", 6.6, -0.4, 2.1], ["stone_largeA", -8.5, -2.2, 1.7], ["rock_tallA", 9.4, -2.6, 1.8], ["rock_smallC", 3.4, 2.0, 1.1], ["rock_smallA", -3.4, 2.6, 0.9], ["stone_smallA", 4.6, 4.6, 1.0], ["rock_smallC", -1.6, 5.6, 0.8]]} t={t} tint="#8e94c8" />
+    <TideMarker p={marker} zw={zw} t={t} />
+    <Driftwood p={[-3.0, 0, 1.2]} ry={0.4} s={1.1} /><Driftwood p={[3.4, 0, 4.2]} ry={-0.9} s={0.8} />
+    {[[-1.8, 4.6, 0.3, "#ffd0c0"], [1.3, 5.2, 1.4, "#ffe8b0"], [-3.9, 4.1, 2.1, "#f0c8ff"], [2.9, 2.6, 0.9, "#ffffff"], [-0.9, 2.2, 2.6, "#ffc8b8"], [0.6, 6.4, 1.0, "#ffe0c0"]].map(([x, z, r, col], i) => <Shell key={i} p={[x as number, 0, z as number]} ry={r as number} col={col as string} s={0.9 + rnd(i) * 0.5} />)}
+    <Conch p={[2.2, 0, 5.4]} ry={0.6} /><Conch p={[-2.6, 0, 3.4]} ry={2.2} s={0.8} />
+    <Starfish p={[1.2, 0, 3.0]} ry={0.3} /><Starfish p={[-1.5, 0, 6.2]} ry={1.2} col="#ffb03a" s={0.9} /><Starfish p={[4.2, 0, 1.6]} ry={2} col="#ff6a7a" s={0.8} />
+    <Footprints from={[-6, 0, 7.5]} to={[hero[0] - 0.4, 0, hero[2] + 0.2]} n={12} />
+    {[[-5, 0.3], [4.2, 0.9], [8.5, 2.5], [-2.2, 0.6]].map(([x, z], i) => <mesh key={i} rotation={[-Math.PI / 2, 0, rnd(i) * 3]} position={[x, 0.01, z]}><planeGeometry args={[1.6, 0.8]} /><meshBasicMaterial map={weedTex()} transparent depthWrite={false} /></mesh>)}
+    {[[-3.6, 1.0, 1.2], [6.0, 2.4, 1.0]].map(([x, z, r], i) => <group key={i} position={[x, 0.012, z]}><mesh rotation={[-Math.PI / 2, 0, 0]} scale={[r, r * 0.55, 1]}><circleGeometry args={[1, 32]} /><meshBasicMaterial color="#3a78b8" transparent opacity={0.8} /></mesh>
       <SGlow p={[0.3, 0.05, 0]} r={0.25} color="#ffffff" o={0.5 + 0.5 * Math.sin(t * 2 + i)} /><mesh rotation={[-Math.PI / 2, 0, 0]} scale={[r, r * 0.55, 1]}><ringGeometry args={[0.92, 1, 32]} /><meshBasicMaterial color="#cfe6ff" transparent opacity={0.5} /></mesh></group>)}
+    {/* near-camera foreground props (bottom edge framing): rocks + seaweed + a crab */}
+    {fore.map((q, i) => i % 3 === 0 ? <KModel key={"f" + i} name={i % 2 ? "rock_smallC" : "rock_largeB"} p={q} s={0.9 + rnd(i) * 0.5} ry={rnd(i * 3) * 6} tint="#7a80b0" /> : i % 3 === 1 ? <mesh key={"f" + i} rotation={[-Math.PI / 2, 0, rnd(i) * 3]} position={[q[0], 0.012, q[2]]}><planeGeometry args={[1.4, 0.7]} /><meshBasicMaterial map={weedTex()} transparent depthWrite={false} /></mesh> : <Starfish key={"f" + i} p={q} ry={rnd(i) * 6} col="#ff8a5a" s={1.3} />)}
     <Gulls t={t} n={4} c={[2, 8, -20]} r={12} />
     <Motes t={t} n={22} c={[0, 1.6, 2]} area={[9, 3, 5]} color="#dfe8ff" o={0.35} />
     {children}
@@ -161,6 +210,31 @@ export const LensFlare: React.FC<{ src: V3; o?: number }> = ({ src, o = 1 }) => 
   return <group ref={g}>{F.map(([, sz, col], i) => <mesh key={i}><circleGeometry args={[sz * (i ? 0.5 : 0.9), 32]} /><meshBasicMaterial color={col} transparent opacity={(i ? 0.16 : 0.35) * o} blending={THREE.AdditiveBlending} depthWrite={false} depthTest={false} fog={false} /></mesh>)}</group>;
 };
 export const SPACE_SUN: V3 = [-70, 26, -95];
+/* star-dust layer: points in a slab at a given depth (several layers = real parallax when the camera drifts) */
+export const DustLayer: React.FC<{ t: number; z: number; w: number; h: number; n?: number; size?: number; col?: string; seed?: number; drift?: number }> = ({ t, z, w, h, n = 160, size = 2.2, col = "#cfd8ff", seed = 1, drift = 0.05 }) => {
+  const { geo, mat } = useMemo(() => { const g = new THREE.BufferGeometry(); const pos: number[] = []; for (let i = 0; i < n; i++) pos.push((rnd(i * 3 + seed) - 0.5) * w, (rnd(i * 5 + seed) - 0.5) * h, (rnd(i * 7 + seed) - 0.5) * 4);
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); const m = new THREE.PointsMaterial({ color: col, size, sizeAttenuation: false, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }); return { geo: g, mat: m }; }, [n, w, h, seed, col, size]);
+  mat.opacity = 0.55 + 0.25 * Math.sin(t * 1.3 + seed); return <points geometry={geo} material={mat} position={[t * drift, 0, z]} frustumCulled={false} />;
+};
+/* a small distant planet (optional ring) */
+export const Planet: React.FC<{ p: V3; r: number; col: string; col2?: string; ring?: string; t: number }> = ({ p, r, col, col2 = "#ffffff", ring, t }) => {
+  const tex = canvasTex("planet17|" + col + col2, 256, 128, (c, W, H) => { c.fillStyle = col; c.fillRect(0, 0, W, H); for (let i = 0; i < 9; i++) { c.fillStyle = i % 2 ? col2 : col; c.globalAlpha = 0.35; c.fillRect(0, (i / 9) * H + rnd(i) * 6, W, 6 + rnd(i * 3) * 10); } c.globalAlpha = 1; });
+  return (<group position={p}><mesh rotation={[0.3, t * 0.1, 0.2]}><sphereGeometry args={[r, 32, 20]} /><meshToonMaterial map={tex} gradientMap={toonRamp} /></mesh>
+    {ring ? <mesh rotation={[1.25, 0.2, 0.3]}><ringGeometry args={[r * 1.4, r * 2.1, 48]} /><meshBasicMaterial color={ring} transparent opacity={0.6} side={THREE.DoubleSide} /></mesh> : null}
+    <SGlow p={[0, 0, -r * 0.2]} r={r * 1.8} color={col} o={0.25} /></group>);
+};
+/* floating asteroid platform the hero stands on (toon rock, craters, soft under-glow, contact shadow on top) */
+export const RockPlatform: React.FC<{ p: V3; t: number; s?: number }> = ({ p, t, s = 1 }) => {
+  const geo = useMemo(() => { const g = new THREE.DodecahedronGeometry(1, 2); const P = g.attributes.position as THREE.BufferAttribute; for (let i = 0; i < P.count; i++) { const x = P.getX(i), y = P.getY(i), z = P.getZ(i), k = 1 + 0.12 * Math.sin(x * 5 + z * 3) + 0.08 * Math.sin(y * 7);
+    P.setXYZ(i, x * k, y > 0.2 ? 0.2 + (y - 0.2) * 0.25 : y * k, z * k); } g.computeVertexNormals(); return g; }, []);
+  return (<group position={p} rotation={[0.05 * Math.sin(t * 0.8), t * 0.08, 0.04 * Math.sin(t * 0.6)]} scale={s}>
+    <mesh geometry={geo} scale={[1.25, 0.75, 1.0]} position={[0, -0.2, 0]}><meshToonMaterial color="#8c7fa8" gradientMap={toonRamp} /></mesh>
+    {[[0.4, 0.3], [-0.5, -0.2], [0.1, -0.5]].map(([x, z], i) => <mesh key={i} position={[x, 0.005, z]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[0.16 + i * 0.04, 16]} /><meshBasicMaterial color="#6a5f86" /></mesh>)}
+    <mesh position={[0, 0.01, 0.05]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[0.55, 24]} /><meshBasicMaterial color="#000010" transparent opacity={0.35} depthWrite={false} /></mesh>
+    <SGlow p={[0, -0.7, 0]} r={1.6} color="#9a7aff" o={0.35} />
+    {Array.from({ length: 5 }, (_, i) => <mesh key={"d" + i} position={[Math.cos(i * 1.3 + t * 0.4) * 1.7, -0.3 + Math.sin(t + i) * 0.15, Math.sin(i * 1.3 + t * 0.4) * 1.2]} scale={0.08 + rnd(i) * 0.08}><dodecahedronGeometry args={[1, 0]} /><meshToonMaterial color="#7a6f98" gradientMap={toonRamp} /></mesh>)}
+  </group>);
+};
 export const SpaceDiorama: React.FC<{ t: number; sun?: V3; children?: React.ReactNode }> = ({ t, sun = SPACE_SUN, children }) => {
   const look = { rim: "255,225,180", shade: "2,2,24", rimK: 0.55, dim: 0.05 };
   return (<Lights amb={0.35} keyL={[sun, "#fff2dc", 1.6]} fill={[[30, -10, 20], "#5a4ad8", 0.4]} look={look}>
@@ -177,6 +251,16 @@ export const SpaceDiorama: React.FC<{ t: number; sun?: V3; children?: React.Reac
     {/* drifting asteroids, far */}
     {Array.from({ length: 7 }, (_, i) => <mesh key={i} position={[(rnd(i * 3) - 0.5) * 50 + t * 0.15 * (rnd(i) - 0.5), 2 + (rnd(i * 5) - 0.5) * 22, -25 - rnd(i * 7) * 30]} rotation={[t * 0.2 * rnd(i), t * 0.3 * rnd(i * 2), 0]} scale={[0.5 + rnd(i) * 0.9, 0.4 + rnd(i * 2) * 0.6, 0.5 + rnd(i * 4) * 0.7]}><dodecahedronGeometry args={[1, 0]} /><meshToonMaterial color="#8a7f9a" gradientMap={toonRamp} /></mesh>)}
     <Motes t={t} n={50} c={[0, 2, 0]} area={[14, 8, 10]} color="#cfd8ff" size={0.03} o={0.5} />
+    {/* 3 star-dust layers at different depths + distant planets + shooting stars */}
+    <DustLayer t={t} z={-14} w={50} h={30} n={140} size={2.0} seed={2} drift={0.06} />
+    <DustLayer t={t} z={-30} w={80} h={50} n={200} size={1.6} col="#ffd8f0" seed={5} drift={0.03} />
+    <DustLayer t={t} z={-55} w={140} h={80} n={260} size={1.2} col="#bfe0ff" seed={9} drift={0.015} />
+    <Planet p={[26, 12, -70]} r={2.6} col="#e8a86a" col2="#fff0d0" ring="#f0d8b0" t={t} />
+    <Planet p={[-30, -14, -80]} r={1.6} col="#6ad0c8" t={t} />
+    <Planet p={[8, 24, -110]} r={1.1} col="#c88aff" t={t} />
+    <ShootingStar t={t} t0={25.5} from={[30, 40, -90]} to={[0, 28, -95]} color="#dfe8ff" />
+    <ShootingStar t={t} t0={27.1} from={[-10, 50, -100]} to={[-45, 36, -95]} color="#ffe0f0" />
+    <ShootingStar t={t} t0={28.7} from={[40, 20, -90]} to={[12, 8, -95]} />
     {children}
   </Lights>);
 };

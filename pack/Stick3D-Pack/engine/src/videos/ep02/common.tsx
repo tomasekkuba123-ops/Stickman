@@ -13,7 +13,7 @@ import SCRIPT from "../../../public/ep02/script.json";
 
 export const FPS = 30, LEAD = 6, TAIL = 8, WALK = 3.4, VW = 1080, VH = 1920, HH = 3.4;
 export type Ctx = { t: number; f: number };
-export type Trans = "ghost" | "zoom" | "flash" | "whip" | "whipL" | "cut" | "iris"; // v17: "cut" = hard cut, "iris" = circle opens over the previous shot (no double exposure)
+export type Trans = "ghost" | "zoom" | "flash" | "whip" | "whipL" | "cut" | "iris" | "whip2"; // whip2 = clean whip-pan: hard cut hidden inside a fast blurred pan (outgoing pans out, incoming pans in, never both visible) // v17: "cut" = hard cut, "iris" = circle opens over the previous shot (no double exposure)
 export { seg, lerp, clamp };
 export type { V3 };
 export const ease = { io: Easing.inOut(Easing.cubic), o: Easing.out(Easing.cubic), i: Easing.in(Easing.quad), sin: Easing.inOut(Easing.sin), back: Easing.out(Easing.back(2.2)), lin: Easing.linear };
@@ -37,19 +37,21 @@ export const yawTo = (cam: V3, p: V3) => Math.atan2(cam[0] - p[0], cam[2] - p[2]
 export const toWorld = (p: V3, loc: V3, cam: V3): V3 => { const y = yawTo(cam, p); return [p[0] + loc[0] * Math.cos(y) + loc[2] * Math.sin(y), p[1] + loc[1], p[2] - loc[0] * Math.sin(y) + loc[2] * Math.cos(y)]; };
 
 /* ---------- scene wrapper ---------- */
-export const Scene: React.FC<{ start: number; end: number; first?: boolean; trans?: Trans; bg: string; fog?: [string, number, number]; children: (c: Ctx) => React.ReactNode }> = ({ start, end, first, trans = "ghost", bg, fog, children }) => {
-  const from = Math.round(start * FPS) - (first || trans === "cut" ? 0 : LEAD), dur = Math.min(3000, Math.round(end * FPS) + TAIL) - from;
-  return <Sequence from={from} durationInFrames={dur} layout="none"><Inner from={from} first={first} trans={trans} bg={bg} fog={fog} children={children} /></Sequence>;
+export const Scene: React.FC<{ start: number; end: number; first?: boolean; trans?: Trans; exit?: Trans; bg: string; fog?: [string, number, number]; children: (c: Ctx) => React.ReactNode }> = ({ start, end, first, trans = "ghost", exit, bg, fog, children }) => {
+  const from = Math.round(start * FPS) - (first || trans === "cut" || trans === "whip2" ? 0 : LEAD), dur = Math.min(3000, Math.round(end * FPS) + TAIL) - from;
+  return <Sequence from={from} durationInFrames={dur} layout="none"><Inner from={from} first={first} trans={trans} exit={exit} endF={Math.round(end * FPS)} bg={bg} fog={fog} children={children} /></Sequence>;
 };
-const Inner: React.FC<{ from: number; first?: boolean; trans: Trans; bg: string; fog?: [string, number, number]; children: (c: Ctx) => React.ReactNode }> = ({ from, first, trans, bg, fog, children }) => {
+const Inner: React.FC<{ from: number; first?: boolean; trans: Trans; exit?: Trans; endF?: number; bg: string; fog?: [string, number, number]; children: (c: Ctx) => React.ReactNode }> = ({ from, first, trans, exit, endF = 1e9, bg, fog, children }) => {
   const f = useCurrentFrame(), t = (f + from) / FPS;
-  const k = first || trans === "cut" ? 1 : clamp(f / (LEAD + 2)), ke = Easing.out(Easing.cubic)(k);
+  const W2 = 5, kin = !first && trans === "whip2" ? Easing.out(Easing.cubic)(clamp(f / W2)) : 1, kout = exit === "whip2" ? Easing.in(Easing.cubic)(clamp((f + from - (endF - W2)) / W2)) : 0;
+  const wp = (1 - kin) - kout, wpx = wp * 230, wsc = 1 + Math.abs(wp) * 0.5, wbl = Math.abs(wp) * 28;
+  const k = first || trans === "cut" || trans === "whip2" ? 1 : clamp(f / (LEAD + 2)), ke = Easing.out(Easing.cubic)(k);
   const iris = !first && trans === "iris" && k < 1 ? `circle(${(Easing.inOut(Easing.cubic)(k) * 1300).toFixed(0)}px at 50% 40%)` : undefined;
   const sc = !first && trans === "zoom" ? lerp(1.35, 1, ke) : 1;
   const whip = !first && (trans === "whip" || trans === "whipL");
-  const tx = whip ? (1 - ke) * VW * (trans === "whipL" ? -1 : 1) : 0, blur = whip ? (1 - ke) * 20 : 0;
+  const tx = (whip ? (1 - ke) * VW * (trans === "whipL" ? -1 : 1) : 0) + wpx, blur = (whip ? (1 - ke) * 20 : 0) + wbl;
   return (
-    <AbsoluteFill style={{ clipPath: iris, opacity: first || trans === "flash" || trans === "cut" || trans === "iris" || whip ? 1 : k, transform: `translateX(${tx}px) scale(${sc})`, background: bg, filter: `saturate(1.25) contrast(1.06)${blur > 0.2 ? ` blur(${blur.toFixed(1)}px)` : ""}` }}>
+    <AbsoluteFill style={{ clipPath: iris, opacity: first || trans === "flash" || trans === "cut" || trans === "iris" || trans === "whip2" || whip ? 1 : k, transform: `translateX(${tx}px) scale(${sc * wsc})`, background: bg, filter: `saturate(1.25) contrast(1.06)${blur > 0.2 ? ` blur(${blur.toFixed(1)}px)` : ""}` }}>
       <ThreeCanvas width={VW} height={VH} flat camera={{ fov: 55, position: [0, 2, 8], near: 0.1, far: 400 }} gl={{ antialias: true }}>
         <color attach="background" args={[bg]} />
         {fog ? <fog attach="fog" args={fog} /> : null}

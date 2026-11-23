@@ -15,12 +15,13 @@ export const SECONDS = 38;
 export const CUTS = [0, 3.0, 9.7, 16.4, 25.0, 29.25, 32.7, 38];
 const SC = [N.S1, S.S2, N.S3, S.S4, N.S5, S.S5, N.S7];
 const BG = ["#0f1a52", "#0a1240", "#0b1548", "#122060", "#020210", "#9fd6ff", "#0f1a52"];
-const TR = ["cut", "cut", "whip", "whip", "iris", "whip", "cut"] as const;
+const TR = ["cut", "cut", "whip2", "whip2", "iris", "whip2", "cut"] as const; // whip2 = clean whip-pan (no seam, no double exposure)
 /* 2D layers above the 3D canvas per scene: foreground framing (blurred, parallax + wind) */
 const Fore: React.FC<{ t: number }> = ({ t }) => {
   if (QC) return null; const px = Math.sin(t * 0.35) * 26 - (t % 6) * 3;
-  if (t < 3.0 || t >= 32.7) return <ForeFrame t={t} kind={["grass", "branchR"]} tone="#0b1830" tone2="#102340" rim="rgba(185,205,255,0.6)" blur={6} px={px} h={0.85} />;
-  if (t >= 9.7 && t < 16.4) return <ForeFrame t={t} kind={["reeds", "rocks"]} tone="#16203e" tone2="#1d2a4c" rim="rgba(200,215,255,0.5)" blur={7} px={px} h={0.6} />;
+  if (t < 3.0 || t >= 32.7) return <ForeFrame t={t} kind={["grass", "flowers", "branchR"]} tone="#0b1830" tone2="#102340" rim="rgba(185,205,255,0.6)" blur={6} px={px} h={0.85} />;
+  if (t >= 9.7 && t < 16.4) return <ForeFrame t={t} kind={["seaweed", "rocks", "crab"]} tone="#1a2446" tone2="#222f55" rim="rgba(200,215,255,0.5)" blur={5} px={px} h={0.6} />;
+  if (t >= 25.0 && t < 29.25) return <ForeFrame t={t} kind={["debris"]} tone="#2a2244" tone2="#2a2244" rim="rgba(255,220,180,0.55)" blur={8} px={px} />;
   return null;
 };
 
@@ -32,6 +33,8 @@ const WhatIf: React.FC<{ t: number }> = ({ t }) => {
 };
 const seg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));
 /* "much, much darker": darkness closes in around the flashlight-lit face */
+const HookGrade: React.FC<{ t: number }> = ({ t }) => { if (QC) return null; const k = t < 3.05 ? seg(t, 1.35, 2.4) : t >= 32.7 ? 1 - seg(t, 36.7, 37.3) : 0; if (k <= 0) return null;
+  return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse 330px 560px at 40% 37%, rgba(2,4,22,0) 70%, rgba(2,4,22,${0.62 * k}) 100%), linear-gradient(rgba(4,8,40,${0.35 * k}), rgba(4,8,40,${0.35 * k}))`, WebkitMaskImage: "radial-gradient(ellipse 300px 520px at 40% 37%, transparent 75%, black 100%)" }} />; };
 const Dark: React.FC<{ t: number }> = ({ t }) => { if (QC || t < 7.3 || t > 9.75) return null; const k = 0.5 * seg(t, 7.35, 7.6) + 0.35 * seg(t, 7.9, 8.2);
   return <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle at 50% 34%, rgba(0,0,8,0) 0, rgba(0,0,8,0) 230px, rgba(0,0,8,${k}) 470px)` }} />; };
 
@@ -40,8 +43,9 @@ export const Ep09: React.FC = () => {
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       <Audio src={staticFile("ep09/mix.wav")} />
-      {SC.map((Sc, i) => <Scene key={i} first={i === 0} start={CUTS[i]} end={CUTS[i + 1]} bg={BG[i]} trans={TR[i]}>{(c) => <Sc {...c} />}</Scene>)}
+      {SC.map((Sc, i) => <Scene key={i} first={i === 0} start={CUTS[i]} end={CUTS[i + 1]} bg={BG[i]} trans={TR[i]} exit={TR[i + 1]}>{(c) => <Sc {...c} />}</Scene>)}
       <Dark t={t} />
+      <HookGrade t={t} />
       <Fore t={t} />
       {!QC ? <Vignette k={t >= 25 && t < 29.25 ? 0.55 : 0.42} col={t >= 25 && t < 29.25 ? "2,2,16" : "5,8,30"} /> : null}
       {!QC ? <Grain f={useCurrentFrame()} o={0.06} /> : null}

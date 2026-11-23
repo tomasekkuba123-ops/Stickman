@@ -9,28 +9,36 @@ import { Arm, HandShape, HAND, HandPose, mixHand } from "../style/stickman";
 export type ArmPose = { a: number; b: number; rot?: number; hand: HandPose | HandShape };
 export type Pose2 = { L: ArmPose; R: ArmPose; lean?: number; tilt?: number };
 export type GName = "rest" | "palmUp" | "palmUpL" | "palmUp2" | "chop" | "chopL" | "shrug" | "point" | "pointUp" | "pointL" | "open2" | "fist" | "count" | "whoa" | "chin" | "wave" | "hips" | "reach" | "present";
-const REST: ArmPose = { a: 7, b: 8, rot: 0, hand: "relaxed" };
-export const GEST: Record<GName, Pose2> = {
-  rest: { L: REST, R: REST },
-  palmUp: { L: REST, R: { a: 30, b: 62, rot: -30, hand: "open" }, tilt: 3 },
-  palmUpL: { L: { a: 30, b: 62, rot: -30, hand: "open" }, R: REST, tilt: -3 },
-  palmUp2: { L: { a: 32, b: 58, rot: -28, hand: "open" }, R: { a: 32, b: 58, rot: -28, hand: "open" } },
-  chop: { L: REST, R: { a: 22, b: 78, rot: 10, hand: { spread: 0, curl: 0.05, idx: 0, up: 0, grip: 0 } }, lean: 3 },
-  chopL: { L: { a: 22, b: 78, rot: 10, hand: { spread: 0, curl: 0.05, idx: 0, up: 0, grip: 0 } }, R: REST, lean: 3 },
-  shrug: { L: { a: 46, b: 34, rot: -40, hand: "open" }, R: { a: 46, b: 34, rot: -40, hand: "open" }, tilt: 7 },
-  point: { L: REST, R: { a: 78, b: 6, rot: 0, hand: "point" } },
-  pointL: { L: { a: 78, b: 6, rot: 0, hand: "point" }, R: REST },
-  pointUp: { L: REST, R: { a: 128, b: 8, rot: 0, hand: "point" }, tilt: -4 },
-  open2: { L: { a: 58, b: 22, rot: -10, hand: "open" }, R: { a: 58, b: 22, rot: -10, hand: "open" } },
-  fist: { L: REST, R: { a: 26, b: 96, rot: 0, hand: "fist" }, lean: 2 },
-  count: { L: { a: 20, b: 84, rot: 0, hand: "open" }, R: { a: 24, b: 92, rot: 0, hand: "point" } },
-  whoa: { L: { a: 34, b: 112, rot: 0, hand: "open" }, R: { a: 34, b: 112, rot: 0, hand: "open" }, lean: -4 },
+const REST: ArmPose = { a: 8, b: 18, rot: 0, hand: "relaxed" };
+export const GEST: Record<GName, Pose2> = { // v17.2: asymmetric (different height / bend per arm), elbows always bent
+  rest: { L: REST, R: { a: 9, b: 14, rot: 0, hand: "relaxed" } },
+  palmUp: { L: { a: 10, b: 18, rot: 0, hand: "relaxed" }, R: { a: 30, b: 66, rot: -30, hand: "open" }, tilt: 3 },
+  palmUpL: { L: { a: 32, b: 60, rot: -30, hand: "open" }, R: { a: 12, b: 22, rot: 0, hand: "relaxed" }, tilt: -3 },
+  palmUp2: { L: { a: 24, b: 74, rot: -24, hand: "open" }, R: { a: 38, b: 48, rot: -34, hand: "open" }, tilt: 2 },
+  chop: { L: { a: 12, b: 26, rot: 0, hand: "relaxed" }, R: { a: 22, b: 82, rot: 10, hand: { spread: 0, curl: 0.05, idx: 0, up: 0, grip: 0 } }, lean: 3 },
+  chopL: { L: { a: 22, b: 82, rot: 10, hand: { spread: 0, curl: 0.05, idx: 0, up: 0, grip: 0 } }, R: { a: 12, b: 26, rot: 0, hand: "relaxed" }, lean: 3 },
+  shrug: { L: { a: 40, b: 42, rot: -40, hand: "open" }, R: { a: 52, b: 28, rot: -44, hand: "open" }, tilt: 7 },
+  point: { L: { a: 14, b: 30, rot: 0, hand: "relaxed" }, R: { a: 74, b: 18, rot: 0, hand: "point" } },
+  pointL: { L: { a: 74, b: 18, rot: 0, hand: "point" }, R: { a: 14, b: 30, rot: 0, hand: "relaxed" } },
+  pointUp: { L: { a: 12, b: 34, rot: 0, hand: "relaxed" }, R: { a: 124, b: 16, rot: 0, hand: "point" }, tilt: -4 },
+  open2: { L: { a: 46, b: 50, rot: -10, hand: "open" }, R: { a: 62, b: 30, rot: -14, hand: "open" } },
+  fist: { L: { a: 12, b: 24, rot: 0, hand: "relaxed" }, R: { a: 26, b: 100, rot: 0, hand: "fist" }, lean: 2 },
+  count: { L: { a: 20, b: 84, rot: 0, hand: "open" }, R: { a: 26, b: 98, rot: 0, hand: "point" } },
+  whoa: { L: { a: 30, b: 122, rot: 0, hand: "open" }, R: { a: 42, b: 98, rot: 0, hand: "open" }, lean: -4 },
   chin: { L: { a: 14, b: 70, rot: 0, hand: "relaxed" }, R: { a: -8, b: 150, rot: 0, hand: "point" }, tilt: 6 },
-  wave: { L: REST, R: { a: 140, b: -20, rot: 0, hand: "open" } },
+  wave: { L: { a: 12, b: 24, rot: 0, hand: "relaxed" }, R: { a: 140, b: -20, rot: 0, hand: "open" } },
   hips: { L: { a: 38, b: -70, rot: 0, hand: "fist" }, R: { a: 38, b: -70, rot: 0, hand: "fist" } },
-  reach: { L: REST, R: { a: 100, b: 4, rot: 0, hand: "open" } },
-  present: { L: { a: 50, b: 40, rot: -20, hand: "open" }, R: REST },
+  reach: { L: { a: 14, b: 30, rot: 0, hand: "relaxed" }, R: { a: 96, b: 20, rot: 0, hand: "open" } },
+  present: { L: { a: 48, b: 46, rot: -20, hand: "open" }, R: { a: 12, b: 26, rot: 0, hand: "relaxed" } },
 };
+/* AIMED point: screen direction in degrees (0 = right, 90 = up, 180 = left). Uses the arm on the target's side, elbow slightly bent,
+   the other arm relaxed at a different height. */
+export function aim(dirDeg: number, hand: HandPose = "point"): Pose2 {
+  const d = ((dirDeg % 360) + 360) % 360, right = d <= 90 || d >= 270;
+  const up = right ? (d >= 270 ? d - 360 : d) : 180 - d; // elevation above horizontal on that side
+  const P: ArmPose = { a: Math.max(20, Math.min(165, 90 + up)), b: 12, rot: 0, hand }, O: ArmPose = { a: 13, b: 34, rot: 0, hand: "relaxed" };
+  return right ? { L: O, R: P, tilt: -up * 0.05 } : { L: P, R: O, tilt: up * 0.05 };
+}
 /* one gesture beat: hits its pose at `t` (stressed word onset), in = attack time, hold = hold, then eases back to rest (or straight into the next beat) */
 export type GKey = { t: number; g: GName | Pose2; in?: number; hold?: number; out?: number; amp?: number };
 
@@ -71,8 +79,8 @@ export function armsAt(keys: GKey[], t: number, o: { rest?: Pose2; hold?: number
   const T = (s: number) => targetAt(keys, s, rest);
   const ch = (side: "L" | "R", s: number) => { const P = T(s)[side]; return P; };
   const arm = (side: "L" | "R", tt: number) => {
-    const a = ch(side, tt).a + hk * 2.2 * noise(tt, sd + (side === "L" ? 1 : 5)); // shoulder leads (+ moving hold sway)
-    const b = spring((s) => ch(side, s).b, tt, 420, 30) + hk * 3 * noise(tt * 0.8, sd + (side === "L" ? 9 : 13)); // elbow follows ~2-3 frames later
+    const a = ch(side, tt).a + hk * 3.4 * noise(tt, sd + (side === "L" ? 1 : 5)); // shoulder leads (+ moving hold sway)
+    const b = spring((s) => ch(side, s).b, tt, 420, 30) + hk * 4.5 * noise(tt * 0.8, sd + (side === "L" ? 9 : 13)); // elbow follows ~2-3 frames later
     return { a, b };
   };
   // wrist: the hand's angle follows the forearm through a soft spring (lag 3-4 frames, slight overshoot, settle). Canvas sign: R arm +rig = -canvas.
