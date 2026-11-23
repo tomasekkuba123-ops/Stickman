@@ -1,9 +1,9 @@
-# ENV REPORT (2026-11-18T08:40:39Z)
+# ENV REPORT (2026-11-23T19:00:21Z)
 ## System
 cores: 4
-Mem:           16087         539       15365          12         438       15548
-/dev/vda        252G  9.5G   30G  25% /
-Linux 6.18.44-fc-v595
+Mem:           16087         685       14874          12         765       15401
+/dev/vda        252G   15G   55G  21% /
+Linux 6.18.44-fc-v726
 ## GPU
 no NVIDIA GPU detected -> assume CPU-only rendering
 ## Tools
@@ -17,16 +17,16 @@ git: git version 2.43.0
 ## Python libs
 numpy ok
 PIL ok
-cv2 missing
+cv2 ok
 librosa missing
-scipy missing
+scipy ok
 ## Network (HTTP status; 000 = blocked/unreachable)
 registry.npmjs.org -> 200
 pypi.org -> 200
 raw.githubusercontent.com -> 301
 github.com -> 400
 fonts.googleapis.com -> 404
-huggingface.co -> 000
+huggingface.co -> 200
 ## Chromium
 /opt/pw-browsers/chromium
 /opt/pw-browsers/chromium-1243
