@@ -5,6 +5,18 @@ Newest entries on top.
 
 ---
 
+## v19 — EP11 "Stickman's hoodie came alive" (story episode, continues EP10's cliffhanger)
+**Learned**
+- HOME.hero stands behind the desk: in a size-B front shot the desk hides his chest (and anything drawn on the hoodie). EP11 stands him 1.9 m in front of HOME.hero.
+- PuffRing at r > 1 / size > 0.4 close to the camera turns into big dark-outlined smears over the face. Keep r <= 0.9, size <= 0.3, life <= 1 s and put the ring behind the hero.
+- A screen-placed sky object (worldAt) needs sy >= 0.17 for a 1.5-1.8 m prop or its top is cut off.
+- Kokoro + Whisper: "T-shirt" and "ACHOO" come back as two words each; merge them before mapping Whisper times onto the script tokens.
+**Changed**
+- style/stickman.ts: `Outfit.tee` (T-shirt: short sleeves, bare stick arms, crew neck, no hood/strings/pocket; the backpack stays), `rig.hoodieFace` (eyes + grin on the chest, wink, look, moods happy/sad/shock/sneaky), `rig.bagFace` (growling backpack face, front strip + big in side view).
+- kit/hoodie.tsx (new): `LivingHoodie` (the hoodie as a character: hood up with eyes in the dark opening, sleeves as arms, wiggle), `hoodieCuff()` (sleeve-end world point for strings), `Kite`, `Rope`.
+- kit/world.tsx: `HomeSet` takes children (so the hero inside gets the room's rim light).
+- sfx/wind.wav (synthesized gust).
+
 ## v18 — EP09 round 3 (HD quality, richer environments, body acting)
 **Learned**
 - Transparent additive meshes (torch beam) do not write depth, so the DOF pass blurred them with the far background -> the beam vanished. Beam now writes depth.
