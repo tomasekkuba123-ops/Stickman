@@ -1,0 +1,492 @@
+[
+{
+"word": "What",
+"start": 0.0,
+"end": 0.38
+},
+{
+"word": "if",
+"start": 0.38,
+"end": 0.48
+},
+{
+"word": "Stickman",
+"start": 0.48,
+"end": 0.88
+},
+{
+"word": "drew",
+"start": 0.88,
+"end": 1.08
+},
+{
+"word": "a",
+"start": 1.08,
+"end": 1.24
+},
+{
+"word": "pause",
+"start": 1.24,
+"end": 1.48
+},
+{
+"word": "button?",
+"start": 1.48,
+"end": 1.98
+},
+{
+"word": "He",
+"start": 2.48,
+"end": 2.58
+},
+{
+"word": "pressed",
+"start": 2.58,
+"end": 2.86
+},
+{
+"word": "it.",
+"start": 2.86,
+"end": 3.2
+},
+{
+"word": "Click.",
+"start": 3.74,
+"end": 3.98
+},
+{
+"word": "A",
+"start": 4.84,
+"end": 4.94
+},
+{
+"word": "bird",
+"start": 4.94,
+"end": 5.2
+},
+{
+"word": "froze",
+"start": 5.2,
+"end": 5.54
+},
+{
+"word": "in",
+"start": 5.54,
+"end": 5.9
+},
+{
+"word": "midair.",
+"start": 5.9,
+"end": 6.3
+},
+{
+"word": "A",
+"start": 6.76,
+"end": 6.96
+},
+{
+"word": "soccer",
+"start": 6.96,
+"end": 7.2
+},
+{
+"word": "ball",
+"start": 7.2,
+"end": 7.64
+},
+{
+"word": "stopped",
+"start": 7.64,
+"end": 7.94
+},
+{
+"word": "one",
+"start": 7.94,
+"end": 8.32
+},
+{
+"word": "inch",
+"start": 8.32,
+"end": 8.64
+},
+{
+"word": "from",
+"start": 8.64,
+"end": 8.82
+},
+{
+"word": "a",
+"start": 8.82,
+"end": 8.9
+},
+{
+"word": "window.",
+"start": 8.9,
+"end": 9.22
+},
+{
+"word": "The",
+"start": 9.66,
+"end": 9.82
+},
+{
+"word": "whole",
+"start": 9.82,
+"end": 9.98
+},
+{
+"word": "world",
+"start": 9.98,
+"end": 10.42
+},
+{
+"word": "was",
+"start": 10.42,
+"end": 10.68
+},
+{
+"word": "on",
+"start": 10.68,
+"end": 10.84
+},
+{
+"word": "hold.",
+"start": 10.84,
+"end": 11.18
+},
+{
+"word": "Stickman",
+"start": 11.86,
+"end": 12.3
+},
+{
+"word": "grinned.",
+"start": 12.3,
+"end": 12.54
+},
+{
+"word": "He",
+"start": 13.4,
+"end": 13.54
+},
+{
+"word": "borrowed",
+"start": 13.54,
+"end": 13.74
+},
+{
+"word": "a",
+"start": 13.74,
+"end": 13.98
+},
+{
+"word": "fry",
+"start": 13.98,
+"end": 14.2
+},
+{
+"word": "from",
+"start": 14.2,
+"end": 14.6
+},
+{
+"word": "a",
+"start": 14.6,
+"end": 14.68
+},
+{
+"word": "frozen",
+"start": 14.68,
+"end": 14.96
+},
+{
+"word": "dog,",
+"start": 14.96,
+"end": 15.44
+},
+{
+"word": "and",
+"start": 15.44,
+"end": 15.98
+},
+{
+"word": "gave",
+"start": 15.98,
+"end": 16.18
+},
+{
+"word": "a",
+"start": 16.18,
+"end": 16.32
+},
+{
+"word": "pigeon",
+"start": 16.32,
+"end": 16.7
+},
+{
+"word": "tiny",
+"start": 16.7,
+"end": 17.06
+},
+{
+"word": "sunglasses.",
+"start": 17.06,
+"end": 17.56
+},
+{
+"word": "Then",
+"start": 18.54,
+"end": 18.66
+},
+{
+"word": "he",
+"start": 18.66,
+"end": 18.74
+},
+{
+"word": "pressed",
+"start": 18.74,
+"end": 18.94
+},
+{
+"word": "the",
+"start": 18.94,
+"end": 19.14
+},
+{
+"word": "button",
+"start": 19.14,
+"end": 19.4
+},
+{
+"word": "again.",
+"start": 19.4,
+"end": 19.58
+},
+{
+"word": "Nothing",
+"start": 20.16,
+"end": 20.48
+},
+{
+"word": "happened.",
+"start": 20.48,
+"end": 20.9
+},
+{
+"word": "Pause",
+"start": 21.72,
+"end": 22.02
+},
+{
+"word": "buttons",
+"start": 22.02,
+"end": 22.34
+},
+{
+"word": "only",
+"start": 22.34,
+"end": 22.76
+},
+{
+"word": "pause.",
+"start": 22.76,
+"end": 23.1
+},
+{
+"word": "So",
+"start": 24.04,
+"end": 24.16
+},
+{
+"word": "he",
+"start": 24.16,
+"end": 24.26
+},
+{
+"word": "drew",
+"start": 24.26,
+"end": 24.42
+},
+{
+"word": "a",
+"start": 24.42,
+"end": 24.56
+},
+{
+"word": "play",
+"start": 24.56,
+"end": 24.76
+},
+{
+"word": "button.",
+"start": 24.76,
+"end": 25.14
+},
+{
+"word": "Everything",
+"start": 25.56,
+"end": 26.1
+},
+{
+"word": "rushed",
+"start": 26.1,
+"end": 26.4
+},
+{
+"word": "back",
+"start": 26.4,
+"end": 26.74
+},
+{
+"word": "at",
+"start": 26.74,
+"end": 26.94
+},
+{
+"word": "once.",
+"start": 26.94,
+"end": 27.16
+},
+{
+"word": "The",
+"start": 27.7,
+"end": 27.82
+},
+{
+"word": "ball",
+"start": 27.82,
+"end": 28.02
+},
+{
+"word": "smashed",
+"start": 28.02,
+"end": 28.38
+},
+{
+"word": "the",
+"start": 28.38,
+"end": 28.76
+},
+{
+"word": "window.",
+"start": 28.76,
+"end": 29.06
+},
+{
+"word": "The",
+"start": 29.48,
+"end": 29.74
+},
+{
+"word": "pigeon",
+"start": 29.74,
+"end": 30.1
+},
+{
+"word": "hit",
+"start": 30.1,
+"end": 30.34
+},
+{
+"word": "a",
+"start": 30.34,
+"end": 30.48
+},
+{
+"word": "lamp",
+"start": 30.48,
+"end": 30.7
+},
+{
+"word": "post.",
+"start": 30.7,
+"end": 31.12
+},
+{
+"word": "And",
+"start": 31.62,
+"end": 31.82
+},
+{
+"word": "the",
+"start": 31.82,
+"end": 31.94
+},
+{
+"word": "dog",
+"start": 31.94,
+"end": 32.24
+},
+{
+"word": "wanted",
+"start": 32.24,
+"end": 32.58
+},
+{
+"word": "its",
+"start": 32.58,
+"end": 32.8
+},
+{
+"word": "fry",
+"start": 32.8,
+"end": 33.04
+},
+{
+"word": "back.",
+"start": 33.04,
+"end": 33.44
+},
+{
+"word": "Stickman",
+"start": 34.04,
+"end": 34.4
+},
+{
+"word": "ran,",
+"start": 34.4,
+"end": 34.6
+},
+{
+"word": "grabbed",
+"start": 34.86,
+"end": 35.06
+},
+{
+"word": "his",
+"start": 35.06,
+"end": 35.32
+},
+{
+"word": "pencil,",
+"start": 35.32,
+"end": 35.66
+},
+{
+"word": "and",
+"start": 35.66,
+"end": 35.86
+},
+{
+"word": "drew...",
+"start": 35.86,
+"end": 36.08
+},
+{
+"word": "a",
+"start": 36.08,
+"end": 36.74
+},
+{
+"word": "pause",
+"start": 36.74,
+"end": 37.0
+},
+{
+"word": "button.",
+"start": 37.0,
+"end": 37.54
+}
+]

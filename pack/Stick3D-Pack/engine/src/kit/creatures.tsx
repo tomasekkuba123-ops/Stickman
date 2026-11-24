@@ -102,9 +102,11 @@ export function gulpAt(t: number, t0: number, t1: number, from: V3, mouth: V3, o
 }
 
 /* v16 STORYBOOK CRITTERS (EP09): owl, wolf, crab as billboards — <Critter kind="owl" p={[..]} h={1.6} t={t} confused={k} /> */
-import { drawOwl, drawWolf, drawCrab, CritterPose } from "../style/critters";
-export const Critter: React.FC<{ kind: "owl" | "wolf" | "crab"; p: V3; h: number; t: number } & Partial<CritterPose>> = ({ kind, p, h, t, ...pose }) => {
-  const asp = kind === "owl" ? 1.25 : kind === "wolf" ? 1 : 0.75; const fn = kind === "owl" ? drawOwl : kind === "wolf" ? drawWolf : drawCrab;
-  const blink = (Math.floor(t * 30) + (kind === "owl" ? 11 : kind === "wolf" ? 37 : 5)) % 97 < 4;
+import { drawOwl, drawWolf, drawCrab, drawDog, drawPigeon, drawBird, CritterPose } from "../style/critters";
+type CKind = "owl" | "wolf" | "crab" | "dog" | "pigeon" | "bird";
+const CK: Record<CKind, [number, typeof drawOwl, number]> = { owl: [1.25, drawOwl, 11], wolf: [1, drawWolf, 37], crab: [0.75, drawCrab, 5], dog: [1, drawDog, 23], pigeon: [1, drawPigeon, 41], bird: [0.75, drawBird, 59] };
+export const Critter: React.FC<{ kind: CKind; p: V3; h: number; t: number } & Partial<CritterPose>> = ({ kind, p, h, t, ...pose }) => {
+  const [asp, fn, sd] = CK[kind];
+  const blink = (Math.floor(t * 30) + sd) % 97 < 4;
   return <Billboard p={p} h={h} res={512} aspect={asp} draw={(c, W, H) => fn(c, W, H, { t: t * 30, blink, ...pose })} />;
 };

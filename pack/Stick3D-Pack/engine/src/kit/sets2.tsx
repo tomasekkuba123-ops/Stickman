@@ -145,7 +145,7 @@ export const PriceBoard: React.FC<{ p: V3; t: number; t0: number; t1: number; fr
 /* ---------------- STREET (origin = road centre; road along x; shops on the north side z<0, houses on the south side z>0) ---------------- */
 export type StreetMood = "morning" | "day" | "dinner" | "night";
 export const STREET = { pizza: [0, 0, -9] as V3, home: [-14, 0, -9] as V3, sidewalk: 4.8 };
-export const Street: React.FC<{ t: number; mood?: StreetMood; sold?: number; neon?: number; noPizza?: boolean }> = ({ t, mood = "morning", sold = 0, neon, noPizza }) => {
+export const Street: React.FC<{ t: number; mood?: StreetMood; sold?: number; neon?: number; noPizza?: boolean; noBikes?: boolean }> = ({ t, mood = "morning", sold = 0, neon, noPizza, noBikes }) => {
   const night = mood === "night", lit = mood === "dinner" || night ? 0.75 : 0.25;
   const shops: [number, string, string][] = [[-21, "#7a5ab0", "BOOKS"], [-7, "#3a8fe0", "TOYS"], [7, "#2fa04a", "MARKET"], [14, "#e58a3a", "BAKERY"], [21, "#ff6aa8", "FLOWERS"]];
   return (<>
@@ -170,7 +170,7 @@ export const Street: React.FC<{ t: number; mood?: StreetMood; sold?: number; neo
     {[-18, -10, -2, 6, 14, 22].map((x, i) => <StreetLamp key={i} p={[x, 0.24, -4.2]} h={4.6} on={mood === "dinner" || night ? 1 : 0} />)}
     {[-24, -12, 4, 18].map((x, i) => <WindTree key={"t" + i} p={[x, 0.24, 5.6]} t={t} s={1.1} seed={i + 4} kind={i % 2 ? "round" : "blossom"} />)}
     {[-5, 10].map((x, i) => <Bench key={"b" + i} p={[x, 0.24, -4.6]} rotY={0} />)}
-    {[-3.4, 11.6].map((x, i) => <Bike key={"k" + i} p={[x, 0.24, -4.3]} color={i ? "#3a6fd8" : "#e5483f"} />)}
+    {noBikes ? null : [-3.4, 11.6].map((x, i) => <Bike key={"k" + i} p={[x, 0.24, -4.3]} color={i ? "#3a6fd8" : "#e5483f"} />)}
     {[-20, 3, 20].map((x, i) => <Bush key={"bu" + i} p={[x, 0.24, 6.2]} t={t} seed={i + 2} flowers={i % 2 ? "#ffd23a" : "#ff6aa8"} />)}
     <Flowers t={t} c={[0, 0.24, 7.2]} area={[40, 1.2]} n={90} amp={0} />
     {[[-30, -30, 30], [10, -45, 40], [40, -30, 26]].map(([x, z, r], i) => <mesh key={"h" + i} position={[x, -r * 0.6, z]}><sphereGeometry args={[r, 32, 16]} /><Toon color={night ? "#2a4a5a" : "#4cb070"} /></mesh>)}
