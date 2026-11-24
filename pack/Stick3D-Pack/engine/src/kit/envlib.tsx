@@ -43,12 +43,13 @@ export const KScatter: React.FC<{ names: KenneyName[]; n: number; area: [number,
     return out; }, [n, seed]);
   return <>{items.map((it, i) => <KModel key={i} {...it} tint={tint} t={t} sway={sway} />)}</>;
 };
-/* fast-render switch: --props '{"nopost":true}' disables DepthPass + BloomPass */
-export const noPost = (): boolean => { try { return !!(getInputProps() as { nopost?: boolean }).nopost; } catch { return false; } };
+/* post effects (DepthPass + BloomPass) are OFF by default (user choice 2026-11: sharper image, ~22 % faster on the CPU renderer).
+   Turn them back on for one render with --props '{"postfx":true}'. */
+export const noPost = (): boolean => { try { return !(getInputProps() as { postfx?: boolean }).postfx; } catch { return true; } };
 /* DEPTH LAYERS: real depth-of-field — the subject plane at `focus` (world units from camera) stays sharp, far layers blur. */
 export const DepthPass: React.FC<{ focus: number; range?: number; blur?: number }> = ({ focus, range = 6, blur = 3 }) => {
   const { camera } = useThree(); const cam = camera as THREE.PerspectiveCamera; const span = cam.far - cam.near;
-  if (noPost()) return null; // --props '{"nopost":true}' skips post effects (fast render)
+  if (noPost()) return null; // off unless --props '{"postfx":true}'
   return (<EffectComposer multisampling={0}><DepthOfField focusDistance={(focus - cam.near) / span} focalLength={range / span} bokehScale={blur} resolutionScale={0.25} height={240} /></EffectComposer>);
 };
 /* tinted photo texture (Poly Haven) for ground planes */

@@ -37,7 +37,7 @@ Still mandatory: STYLE_RULES.md + WORLD_RULES.md, qc_check.py must PASS (`--dura
 
 ## ENVIRONMENTS (every episode, from now on)
 - CC0-only asset packs from kenney.nl and polyhaven.com -> reusable library of backgrounds + props matching the bright storybook style, stored in `assets/env/` with a LICENSES.md (source URL + CC0 for every pack). Build ONCE, reuse.
-- Every scene: 3-4 parallax layers, gentle camera moves, depth blur on far layers, particles (dust, light rays, sparkles), colour grading with a soft vignette (grading never tints Stickman's white head).
+- Every scene: 3-4 parallax layers, gentle camera moves, depth via parallax/fog/`<Foreground>` (NOT the DepthPass/Bloom post effects: they are OFF by default since 2026-11 — the user prefers the sharper image and they cost ~22 % render time; enable only on request with `--props '{"postfx":true}'`), particles (dust, light rays, sparkles), colour grading with a soft vignette (grading never tints Stickman's white head).
 
 Build libraries once and reuse them; spend credits sparingly.
 

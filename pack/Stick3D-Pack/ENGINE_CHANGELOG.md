@@ -5,6 +5,16 @@ Newest entries on top.
 
 ---
 
+## v17.4 — render speed (CPU-only cloud renderer)
+**Learned**
+- Benchmark on Ep09 (1080x1920, --gl=swangle, 4 cores): 8.2 s/frame baseline (~2.8 h per 40 s). concurrency 2 = 8.8, 3 = 8.4 (4 is best). 720x1280 only -7 % (pixels are not the bottleneck; scene/JS work on the CPU is). DepthPass/Bloom off = 6.4 s/frame (-22 %).
+- Side-by-side frame: without DepthPass the image is sharper (the 0.25-res DoF made backgrounds and crabs look pixelated). User chose the version without post effects.
+- Real speed-up only with a GPU (setup.sh then picks --gl=angle).
+**Changed**
+- kit/envlib.tsx noPost(): DepthPass + BloomPass are OFF by default; `--props '{"postfx":true}'` re-enables them. CLAUDE.md environment rule updated.
+
+---
+
 ## v17 — EP09 rebuild after 2 preview rounds (richer environments + smooth hand acting)
 **Learned**
 - Depth-of-field post pass at full resolution cost ~15 s/frame on the CPU renderer -> render DOF at low resolution (resolutionScale 0.25).
