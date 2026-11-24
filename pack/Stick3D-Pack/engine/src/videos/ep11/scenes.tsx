@@ -52,7 +52,7 @@ const ACT1: AKey[] = [{ t: 0, turn: 0.1 }, { t: 1.0, turn: 0, tilt: 10, dip: 0.3
 export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), wake = hoodieWake(t), wrig = t > 1.4 ? 0.6 + 0.4 * seg(t, 2.4, 2.7) : 0;
   const jit = wrig * (Math.sin(t * 38) * 7 + Math.sin(t * 23) * 4); // v19 QC: smaller wriggle so the gloves stay off the frame edge
   return (<HomeSet t={t} preset="morning">
-    <Cam t={t} keys={[...frameShot(PH, 0, 2.15, HOOK_O), ...frameShot(PH, 2.5, 3.7, { ...HOOK_O, frac: 0.6, push: 0.98 })]} impacts={[[1.47, 0.01]]} /> {/* v19 QC: eases back before the wriggle so the gloves stay in frame */}
+    <Cam t={t} keys={[...frameShot(PH, 0, 1.0, HOOK_O), ...frameShot(PH, 1.3, 3.7, { ...HOOK_O, frac: 0.59, push: 0.98 })]} impacts={[[1.47, 0.01]]} /> {/* v19 QC: eases back before the wriggle so the gloves stay in frame */}
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G1} face={faceAt(t, [[0, "smile"], [1.1, "surprised"], [2.0, "scared"]])}
       rig={{ ...a.rig, x: (a.rig.x ?? 0) + jit, squash: (a.rig.squash ?? 0) + wrig * 0.03 * Math.sin(t * 31), ...eyes(t, [[0, HOOK_LOOK.lookX, HOOK_LOOK.lookY], [1.0, 0, 0.9], [1.9, -0.3, 0.6], [2.5, 0.7, 0.2]]),
         hoodieFace: { open: wake, lookX: t < 1.9 ? 0 : Math.sin(t * 3), lookY: -0.6, mood: t > 2.4 ? "sneaky" : "happy" }, ...(t < 0.75 ? { blink: 0 } : {}) }} />
@@ -85,7 +85,7 @@ export const S2 = ({ t }: Ctx) => { const a = act(t, ACT2), off = t >= POP, h = 
 
 /* ================= PARK (S3–S8): flat lawn, trees, bench, the town's rooftops behind ================= */
 const TREES: [V3, number, "round" | "pine" | "blossom"][] = [[[-7, 0, -7], 1.2, "round"], [[6, 0, -8.5], 1.3, "blossom"], [[10, 0, -3.5], 1.0, "round"], [[-11, 0, -2], 1.1, "pine"], [[1.5, 0, -13], 1.2, "round"], [[-3.5, 0, -15], 1.0, "pine"], [[15, 0, -9], 1.2, "pine"], [[19, 0, -2], 1.1, "round"], [[24, 0, -7], 1.3, "blossom"]];
-export const Park: React.FC<{ t: number; wind?: number; children?: React.ReactNode }> = ({ t, wind = 1, children }) => (
+export const Park: React.FC<{ t: number; wind?: number; bfly?: boolean; children?: React.ReactNode }> = ({ t, wind = 1, bfly = true, children }) => (
   <World preset="day" t={t}>
     <Terrain amp={0} />
     <Grass t={t} area={[56, 34]} c={[8, 0, -8]} n={3600} wind={wind} amp={0} />
@@ -95,7 +95,7 @@ export const Park: React.FC<{ t: number; wind?: number; children?: React.ReactNo
     <Bench p={[-2.6, 0, -4.2]} rotY={0.25} /><Bench p={[14.2, 0, -3.4]} rotY={-0.3} />
     <Town c={[6, 0, -26]} t={t} n={18} seed={3} />
     <Clouds t={t} preset="day" />
-    <Butterflies t={t} c={[4, 1.3, -2]} area={9} />
+    {bfly ? <Butterflies t={t} c={[4, 1.3, -2]} area={9} /> : null}
     <Birds t={t} c={[6, 12, -30]} />
     {children}
   </World>
@@ -133,8 +133,8 @@ const hoodie4 = (t: number): { p: V3; pose: HoodiePose } => {
   return { p: [lerp(KID[0] - 0.1, k[0] - 0.4, hang * 0.5 + 0.5 * sm(seg(t, LIFT, 14))), y + Math.sin(t * 3) * 0.08, lerp(KID[2] + 0.2, k[2] + 1.0, sm(seg(t, GRAB, 14)))],
     pose: { armL: 20 + 20 * Math.sin(t * 4), armR: 172, bendR: -8, mood: "happy", lookX: -0.8, lookY: 0.8, tilt: 6 * Math.sin(t * 1.6), wiggle: 1 } };
 };
-const O4A = A({ yaw: 0.12, sx: 0.4, camY: 1.15, drift: 0.04 });
-const O4B = A({ yaw: -0.25, sx: 0.43, sy: 0.6, camY: 0.35, fov: 50, push: 0.96, drift: -0.04 });
+const O4A = A({ frac: 0.5, yaw: 0.12, sx: 0.38, camY: 1.15, drift: 0.04 });
+const O4B = A({ yaw: -0.25, sx: 0.43, sy: 0.6, camY: 0.7, fov: 50, push: 0.96, drift: -0.04 });
 const P4B = framePose(PK, O4B, 0);
 const K4: [number, Key[]][] = [[10.25, frameShot(PK, 10.25, 11.95, O4A)], [11.95, frameShot(PK, 11.95, 14.1, O4B)]];
 const ACT4: AKey[] = [{ t: 10.25, lean: -4, dip: 0.3, turn: 0.6 }, { t: GRAB + 0.05, turn: 0.7, back: 0.25, lean: -9, dip: 0.6, lift: 0.6, d: 0.14 }, { t: 11.5, back: 0.25, turn: 0.5, tilt: -10, dip: 0, d: 0.3 }, { t: 12.9, back: 0.25, turn: 0.3, tilt: -12, d: 0.3 }];
@@ -142,7 +142,7 @@ const G4: GKey[] = [{ t: 10.6, g: "point", in: 0.2, hold: 0.25 }, { t: GRAB + 0.
 export const S4 = ({ t }: Ctx) => { const a = act(t, ACT4, { seed: 4 }), h = hoodie4(t), k = kiteAt(t), kidHas = t < GRAB;
   const cam: V3 = t < 11.95 ? framePose(PK, O4A, 0).pos : P4B.pos, kidHand: V3 = [KID[0] + 0.45, 1.75, KID[2] + 0.1];
   const cuff = hoodieCuff(h.p, 1.5, h.pose.armR ?? 160, h.pose.bendR ?? 10, 1, cam);
-  return (<Park t={t}>
+  return (<Park t={t} bfly={false}> {/* v19: a butterfly crossed the low camera of shot B as a huge green triangle */}
     <Cam t={t} keys={shot(t, K4)} />
     <Kite p={k} t={t} s={1.15} />
     <Rope a={kidHas ? kidHand : cuff} b={k} />
