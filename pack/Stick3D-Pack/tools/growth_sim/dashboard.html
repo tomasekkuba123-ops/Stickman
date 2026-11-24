@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulátor růstu</title>
+<style>
+:root{--bg:#f6f6f4;--card:#fff;--ink:#1a1a1a;--mute:#6b6b6b;--line:#e3e3e0;--accent:#d62828;--blue:#2b6cb0;--warn:#fff4d6;--warnink:#7a5600}
+@media (prefers-color-scheme:dark){:root{--bg:#141414;--card:#1e1e1e;--ink:#ececec;--mute:#9a9a9a;--line:#2e2e2e;--accent:#f05454;--blue:#63a4e8;--warn:#3a3016;--warnink:#f0d48a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 4px}
+.banner{background:var(--warn);color:var(--warnink);padding:8px 12px;border-radius:8px;font-size:13px;margin:10px 0 18px}
+.grid{display:grid;gap:12px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.v{font-size:26px;font-weight:650;font-variant-numeric:tabular-nums}
+.s{font-size:13px;color:var(--mute)}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.two{grid-template-columns:2fr 1fr;margin-top:12px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--mute);margin:10px 0 3px}
+input,select{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+canvas{width:100%;height:260px;display:block}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--mute);margin-bottom:6px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+td{padding:5px 0;border-bottom:1px solid var(--line)}td:last-child{text-align:right}
+h2{font-size:15px;margin:0 0 8px}
+</style>
+</head>
+<body>
+<main>
+<h1>What If Stickman: simulátor růstu</h1>
+<div class="banner">Testovací prostředí: všechna čísla jsou fiktivní a žijí jen v lokálním souboru <code>sim_state.json</code>. Nic se neposílá na YouTube.</div>
+
+<section class="grid kpis">
+  <div class="card"><div class="k">Zhlédnutí</div><div class="v" id="views">0</div><div class="s" id="gv"></div><div class="bar"><i id="pv"></i></div></div>
+  <div class="card"><div class="k">Odběratelé</div><div class="v" id="subs">0</div><div class="s" id="gs"></div><div class="bar"><i id="ps"></i></div></div>
+  <div class="card"><div class="k">Posledních 24 h</div><div class="v" id="d24">0</div><div class="s" id="s24"></div></div>
+  <div class="card"><div class="k">Simulovaný čas</div><div class="v" id="time">0 h</div><div class="s" id="eta"></div></div>
+</section>
+
+<section class="grid two">
+  <div class="card">
+    <h2>Vývoj (posledních 30 dní)</h2>
+    <div class="legend"><span><b style="background:var(--blue)"></b>Zhlédnutí</span><span><b style="background:var(--accent)"></b>Odběratelé</span></div>
+    <canvas id="chart"></canvas>
+    <div class="row">
+      <button class="primary" id="toggle">Spustit</button>
+      <button data-step="1">+1 h</button><button data-step="24">+1 den</button><button data-step="168">+1 týden</button>
+    </div>
+    <label>Rychlost přehrávání: <span id="spdv"></span> sim. hodin / s</label>
+    <input type="range" id="speed" min="0" max="100" value="40">
+  </div>
+  <div class="card">
+    <h2>Nastavení</h2>
+    <form id="cfg">
+      <label>Cíl: přidat zhlédnutí</label><input name="target_views" type="number" min="0">
+      <label>Cíl: přidat odběratelů</label><input name="target_subs" type="number" min="0">
+      <label>Zhlédnutí za hodinu</label><input name="views_per_hour" type="number" min="0" step="any">
+      <label>Odběrů za hodinu</label><input name="subs_per_hour" type="number" min="0" step="any">
+      <label>Tvar růstu</label>
+      <select name="curve"><option value="linear">Lineární</option><option value="accelerating">Zrychlující</option><option value="logistic">S-křivka</option><option value="viral">Virální výkyvy</option></select>
+      <label>Zrychlení za den (%)</label><input name="accel_pct_per_day" type="number" step="any">
+      <label>Náhodný rozptyl (±%)</label><input name="noise_pct" type="number" min="0" max="100" step="any">
+      <div class="row"><button class="primary" type="submit">Použít</button><button type="button" id="reset">Reset</button></div>
+    </form>
+  </div>
+</section>
+
+<section class="card" style="margin-top:12px">
+  <h2>Zhlédnutí podle videí</h2>
+  <table id="vids"></table>
+</section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const nf = new Intl.NumberFormat('cs-CZ');
+let state = null, cfgFilled = false;
+
+async function api(body){
+  const r = body ? await fetch('/api/cmd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+                 : await fetch('/api/state');
+  const j = await r.json();
+  if (!r.ok) { alert(j.error); return; }
+  state = j; render();
+}
+const speedVal = x => +(0.5 * Math.pow(1.06, x)).toFixed(1);   // 0.5 .. ~170 h/s
+
+function render(){
+  const s = state.stats;
+  $('views').textContent = nf.format(s.views);
+  $('subs').textContent = nf.format(s.subs);
+  $('gv').textContent = `+${nf.format(s.gained_views)} · ${s.progress_views_pct} % cíle`;
+  $('gs').textContent = `+${nf.format(s.gained_subs)} · ${s.progress_subs_pct} % cíle`;
+  $('pv').style.width = s.progress_views_pct + '%';
+  $('ps').style.width = s.progress_subs_pct + '%';
+  $('d24').textContent = '+' + nf.format(s.views_last_24h);
+  $('s24').textContent = `+${nf.format(s.subs_last_24h)} odběrů · ${s.subs_per_1000_views} odběrů / 1000 zhl.`;
+  $('time').textContent = `${s.simulated_days} dní`;
+  $('eta').textContent = s.done ? 'Cíl splněn' : (s.eta_hours ? `Odhad do cíle: ${s.eta_hours} h` : `${s.simulated_hours} h`);
+  $('toggle').textContent = state.running ? 'Pozastavit' : 'Spustit';
+  $('spdv').textContent = state.hours_per_sec;
+  $('vids').innerHTML = s.top_videos.map(v => `<tr><td>${v.title}</td><td>${nf.format(v.views)}</td></tr>`).join('');
+  if (!cfgFilled){ for (const [k,v] of Object.entries(state.config)) { const el = $('cfg').elements[k]; if (el) el.value = v; } cfgFilled = true; }
+  draw();
+}
+
+function draw(){
+  const c = $('chart'), dpr = devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+  c.width = W*dpr; c.height = H*dpr;
+  const g = c.getContext('2d'); g.scale(dpr,dpr); g.clearRect(0,0,W,H);
+  const h = state.history, css = getComputedStyle(document.documentElement);
+  g.strokeStyle = css.getPropertyValue('--line'); g.lineWidth = 1;
+  for (let i=0;i<=4;i++){ const y = 8 + i*(H-16)/4; g.beginPath(); g.moveTo(0,y); g.lineTo(W,y); g.stroke(); }
+  if (h.length < 2) return;
+  const line = (key, color) => {
+    const vals = h.map(p => p[key]), lo = Math.min(...vals), hi = Math.max(...vals) || 1, span = (hi-lo) || 1;
+    g.strokeStyle = color; g.lineWidth = 2; g.beginPath();
+    vals.forEach((v,i) => { const x = i/(vals.length-1)*W, y = H-8-(v-lo)/span*(H-16); i ? g.lineTo(x,y) : g.moveTo(x,y); });
+    g.stroke();
+  };
+  line('views', css.getPropertyValue('--blue').trim());
+  line('subs', css.getPropertyValue('--accent').trim());
+}
+
+$('toggle').onclick = () => api({action: state.running ? 'stop' : 'start'});
+document.querySelectorAll('[data-step]').forEach(b => b.onclick = () => api({action:'step', hours:+b.dataset.step}));
+$('speed').oninput = e => api({action:'speed', hours_per_sec: speedVal(+e.target.value)});
+$('cfg').onsubmit = e => { e.preventDefault(); api({action:'config', config:Object.fromEntries(new FormData(e.target))}); };
+$('reset').onclick = () => {
+  const v = prompt('Počáteční zhlédnutí:', '0'); if (v === null) return;
+  const s = prompt('Počáteční odběratelé:', '0'); if (s === null) return;
+  api({action:'reset', views:+v||0, subs:+s||0});
+};
+addEventListener('resize', () => state && draw());
+api(); setInterval(api, 500);
+</script>
+</body>
+</html>
