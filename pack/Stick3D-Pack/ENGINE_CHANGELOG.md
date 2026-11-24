@@ -5,6 +5,24 @@ Newest entries on top.
 
 ---
 
+## v18 — EP10 "What If Stickman Drew a Pause Button?" (39 s, v4 workflow)
+**Learned**
+- QC numbers: PASS. Visible 96.6 %, captions 0 face overlaps, head white 95.5 %, 27 cuts (mean shot 1.39 s, longest 5.0 s = warn D), -14.1 LUFS / TP -1.2. Render 1170 frames ~1 h 45 min (no post effects).
+- Cutaways without the hero (ball, window smash) eat into the 95 % visibility rule: the first mask was 93.6 %. Keep hero-less cutaways under ~1 s each.
+- Street props (bench, bikes, taxi, kid, cottage roof) kept blocking the camera or crossing shots -> check stills of every camera key before the mask pass.
+- Kokoro flaps "it" after a vowel (sounds like "her") -> pass explicit phonemes; a one-word line ("Click.") must be its own TTS line or it merges with the previous phrase.
+- PuffRing in 3D read as a grey blob on the blue sky -> 2D overlay shockwave is cleaner.
+- captions.py --safe crashed with KeyError 'safe'; publish_kit split "drew... a pause button" into a fragment and used it as the CTA; a long topic.txt overflowed the thumbnail word.
+**Changed**
+- tools/ep_voice.py: one command for TTS per line -> exact-length VOICE.wav -> Whisper -> words.json/script.json (difflib mapping onto script words) -> Rhubarb mouth.json, copied to engine/public/<ep>/.
+- style/critters.ts + kit/creatures.tsx: new critters dog, pigeon, bird (poses fry, angry, run, glasses, dizzy, flap, fly) via a CK table.
+- kit/sets2.tsx Street: `noBikes` prop.
+- tools/make_sfx_time.py: tape_stop, tape_start, bark, bonk.
+- tools/captions.py: KeyError fix; --safe reports face clashes.
+- tools/publish_kit.py: sentence split only before a capital letter; optional cta.txt for the closing question.
+
+---
+
 ## v17.4 — render speed (CPU-only cloud renderer)
 **Learned**
 - Benchmark on Ep09 (1080x1920, --gl=swangle, 4 cores): 8.2 s/frame baseline (~2.8 h per 40 s). concurrency 2 = 8.8, 3 = 8.4 (4 is best). 720x1280 only -7 % (pixels are not the bottleneck; scene/JS work on the CPU is). DepthPass/Bloom off = 6.4 s/frame (-22 %).

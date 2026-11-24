@@ -80,13 +80,15 @@ def main():
     if os.path.exists(tp): T = [l.strip() for l in open(tp) if l.strip()][:3] + T[len([l for l in open(tp) if l.strip()][:3]):]
     op = os.path.join(ep, "topic.txt")   # optional main subject for the description/thumbnail word (e.g. "dragon")
     if os.path.exists(op): obj = open(op).read().strip().capitalize()
-    sents = [s.strip() for s in re.split(r"(?<=[.!?…])\s+", script.strip()) if s.strip()]
+    sents = [s.strip() for s in re.split(r"(?<=[.!?…])\s+(?=[A-Z\"])", script.strip()) if s.strip()]
     tags = ["#stickman", "#animation", "#shorts", "#whatif", f"#{obj.lower()}", "#cartoon", "#funny", "#story"] + [f"#{w}" for w in dict.fromkeys(re.sub(r"[^a-z]", "", x[2]) for x in nouns(script)[0]) if w and w not in (obj.lower(), "stickman", "window", "door", "morning", "night") and not w.endswith("s")][:4]
     hp = os.path.join(ep, "hashtags.txt")
     if os.path.exists(hp): tags = open(hp).read().split()
     lp = os.path.join(ep, "logline.txt")  # optional middle line of the description
     logline = open(lp).read().strip() if os.path.exists(lp) else f"This time it was a {obj.lower()}... and things got out of hand. ✏️"
-    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. {logline}\n\n{sents[-1]} Tell me in the comments! 👇\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
+    cp = os.path.join(ep, "cta.txt")  # optional closing question for the description
+    cta = open(cp).read().strip() if os.path.exists(cp) else f"{sents[-1]} Tell me in the comments! 👇"
+    desc = f"{T[0]}\n\nStickman has a magic pencil: whatever he draws becomes real. {logline}\n\n{cta}\nSubscribe for a new Stickman adventure every week.\n\n" + " ".join(dict.fromkeys(tags))
     b = best_frame(video, mask, caps)
     thp = os.path.join(ep, "thumb.txt")  # optional "<seconds> [WORD]": force the thumbnail frame (e.g. the hook) and word
     th = open(thp).read().split() if os.path.exists(thp) else []
