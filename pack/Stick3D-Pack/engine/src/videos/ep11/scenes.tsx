@@ -48,11 +48,11 @@ export const HOOK_LOOK = { lookX: 0.25, lookY: -0.15 };
 const hoodieWake = (t: number) => sm(seg(t, 0.78, 1.05));
 const G1: GKey[] = [{ t: 1.5, g: "whoa", in: 0.14, hold: 0.5 }, { t: 2.5, g: "palmUp2", in: 0.2, hold: 0.4 }];
 const ACT1: AKey[] = [{ t: 0, turn: 0.1 }, { t: 1.0, turn: 0, tilt: 10, dip: 0.3, d: 0.2 }, { t: 1.45, back: 0.25, lean: -8, dip: 0.6, lift: -0.6, tilt: 12, d: 0.14 }, { t: 1.9, back: 0.25, lean: -3, dip: 0.2, d: 0.3 },
-  { t: 2.55, back: 0.25, lean: 12, dx: 60, lift: 0.7, turn: 0.6, d: 0.16 }, { t: 2.95, back: 0.25, lean: -10, dx: -30, lift: -0.6, turn: -0.4, d: 0.18 }, { t: 3.35, back: 0.25, lean: 9, dx: 50, lift: 0.6, d: 0.16 }];
+  { t: 2.55, back: 0.25, lean: 12, lift: 0.7, turn: 0.6, d: 0.16 }, { t: 2.95, back: 0.25, lean: -10, lift: -0.6, turn: -0.4, d: 0.18 }, { t: 3.35, back: 0.25, lean: 9, lift: 0.6, d: 0.16 }];
 export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), wake = hoodieWake(t), wrig = t > 1.4 ? 0.6 + 0.4 * seg(t, 2.4, 2.7) : 0;
-  const jit = wrig * (Math.sin(t * 38) * 14 + Math.sin(t * 23) * 8);
+  const jit = wrig * (Math.sin(t * 38) * 7 + Math.sin(t * 23) * 4); // v19 QC: smaller wriggle so the gloves stay off the frame edge
   return (<HomeSet t={t} preset="morning">
-    <Cam t={t} keys={frameShot(PH, 0, 3.7, HOOK_O)} impacts={[[1.47, 0.01]]} />
+    <Cam t={t} keys={[...frameShot(PH, 0, 2.15, HOOK_O), ...frameShot(PH, 2.5, 3.7, { ...HOOK_O, frac: 0.6, push: 0.98 })]} impacts={[[1.47, 0.01]]} /> {/* v19 QC: eases back before the wriggle so the gloves stay in frame */}
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G1} face={faceAt(t, [[0, "smile"], [1.1, "surprised"], [2.0, "scared"]])}
       rig={{ ...a.rig, x: (a.rig.x ?? 0) + jit, squash: (a.rig.squash ?? 0) + wrig * 0.03 * Math.sin(t * 31), ...eyes(t, [[0, HOOK_LOOK.lookX, HOOK_LOOK.lookY], [1.0, 0, 0.9], [1.9, -0.3, 0.6], [2.5, 0.7, 0.2]]),
         hoodieFace: { open: wake, lookX: t < 1.9 ? 0 : Math.sin(t * 3), lookY: -0.6, mood: t > 2.4 ? "sneaky" : "happy" }, ...(t < 0.75 ? { blink: 0 } : {}) }} />
@@ -60,8 +60,8 @@ export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), wake = hoodieWake(t)
   </HomeSet>); };
 
 /* S2 3.65–6.75: wide room with the window; the hoodie pops off (puff), he is in a T-shirt, it hops onto the sill and slips out */
-const O2A = A({ yaw: -0.42, sx: 0.36, camY: 1.15, drift: 0.04 });
-const O2B = A({ yaw: -0.55, sx: 0.3, camY: 1.3, push: 0.97, drift: 0.03 });
+const O2A = A({ yaw: -0.42, sx: 0.46, camY: 1.15, drift: 0.04 });
+const O2B = A({ yaw: -0.55, sx: 0.44, camY: 1.3, push: 0.97, drift: 0.03 });
 const POP = 4.5, SILL = 5.75, GONE = 6.35;
 const WIN: V3 = [HOME.window[0], HOME.window[1] - 1.05, HOME.window[2] + 0.25];
 const hoodie2 = (t: number): { p: V3; s: number; pose: HoodiePose } => {
@@ -78,7 +78,7 @@ export const S2 = ({ t }: Ctx) => { const a = act(t, ACT2), off = t >= POP, h = 
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G2} face={faceAt(t, [[3.65, "scared"], [POP, "surprised"], [5.0, "confused"], [5.5, "surprised"], [6.3, "worried"]])}
       rig={{ ...a.rig, x: (a.rig.x ?? 0) + wr, ...(off ? { outfit: TEE } : { hoodieFace: { open: 1, mood: "sneaky", lookX: Math.sin(t * 4) } }), ...eyes(t, [[3.65, 0, 0.8], [4.95, -0.2, 0.9], [5.4, 0.8, -0.6]]) }} />
     {off && t < GONE ? <LivingHoodie p={h.p} t={t} h={h.s} pose={h.pose} shadow={false} /> : null}
-    <PuffRing c={[PH[0], 1.0, PH[2] - 0.2]} t={t} t0={POP} n={9} r={0.75} size={0.26} color="#ffffff" life={0.8} up={0.3} />
+    <PuffRing c={[PH[0], 2.0, PH[2] - 0.4]} t={t} t0={POP} n={7} r={0.55} size={0.16} color="#ffffff" life={0.6} up={0.4} />
     {t > SILL ? <PuffRing c={[WIN[0], WIN[1] + 0.6, WIN[2]]} t={t} t0={GONE - 0.12} n={7} r={0.5} size={0.3} color="#ffffff" /> : null}
     <DepthPass focus={7.2} blur={2.0} />
   </HomeSet>); };
@@ -106,8 +106,8 @@ const RUN0 = 6.85, RUN1 = 10.05, X0 = -5, ZR = 1.0;
 const RV = 2.6 * RUN_STRIDE * U; // m/s that matches the run stride (no foot sliding)
 const runX = (t: number) => X0 + RV * Math.max(0, Math.min(t, RUN1) - RUN0 - 0.18);
 export const XK = runX(RUN1); // where he stops = the kite spot
-const O3A = A({ yaw: 0.32, sx: 0.36, camY: 1.1, push: 1, drift: 0 });
-const O3B = A({ yaw: -0.38, sx: 0.4, camY: 0.75, push: 1, drift: 0 });
+const O3A = A({ yaw: 0.32, sx: 0.43, camY: 1.1, push: 1, drift: 0 });
+const O3B = A({ yaw: -0.38, sx: 0.46, camY: 0.75, push: 1, drift: 0 });
 const track = (t0: number, t1: number, o: FrameOpts): Key[] => { const ks: Key[] = []; for (let t = t0; t <= t1 + 1e-6; t += 1 / 30) ks.push({ ...framePose([runX(t), 0, ZR], o, 0), t }); return ks; };
 const K3: [number, Key[]][] = [[6.75, track(6.75, 8.6, O3A)], [8.6, track(8.6, 10.3, O3B)]];
 const hoodieRunX = (t: number) => runX(t) + 1.75 + 0.25 * Math.sin(t * 1.7);
@@ -122,7 +122,7 @@ export const S3 = ({ t }: Ctx) => { const hx = hoodieRunX(t), hop = Math.abs(Mat
 
 /* S4 10.25–14.05: a kid flies a kite; the hoodie snatches the string and floats away over the rooftops */
 export const PK: V3 = [XK, 0, ZR];
-const KID: V3 = [XK + 2.0, 0, ZR - 1.2];
+const KID: V3 = [XK + 1.65, 0, ZR - 1.2];
 const GRAB = 10.95, LIFT = 11.6;
 const kiteAt = (t: number): V3 => { const sw = Math.sin(t * 1.3) * 0.4; const base: V3 = [KID[0] + 1.6 + sw, 6.4 + Math.sin(t * 2) * 0.15, KID[2] - 2.5];
   const u = sm(seg(t, LIFT, 14.1)); return [base[0] + u * 2.2, base[1] + u * 4.5, base[2] - u * 9]; };
@@ -133,8 +133,8 @@ const hoodie4 = (t: number): { p: V3; pose: HoodiePose } => {
   return { p: [lerp(KID[0] - 0.1, k[0] - 0.4, hang * 0.5 + 0.5 * sm(seg(t, LIFT, 14))), y + Math.sin(t * 3) * 0.08, lerp(KID[2] + 0.2, k[2] + 1.0, sm(seg(t, GRAB, 14)))],
     pose: { armL: 20 + 20 * Math.sin(t * 4), armR: 172, bendR: -8, mood: "happy", lookX: -0.8, lookY: 0.8, tilt: 6 * Math.sin(t * 1.6), wiggle: 1 } };
 };
-const O4A = A({ yaw: 0.12, sx: 0.27, camY: 1.15, drift: 0.04 });
-const O4B = A({ yaw: -0.25, sx: 0.36, sy: 0.6, camY: 0.35, fov: 50, push: 0.96, drift: -0.04 });
+const O4A = A({ yaw: 0.12, sx: 0.4, camY: 1.15, drift: 0.04 });
+const O4B = A({ yaw: -0.25, sx: 0.43, sy: 0.6, camY: 0.35, fov: 50, push: 0.96, drift: -0.04 });
 const P4B = framePose(PK, O4B, 0);
 const K4: [number, Key[]][] = [[10.25, frameShot(PK, 10.25, 11.95, O4A)], [11.95, frameShot(PK, 11.95, 14.1, O4B)]];
 const ACT4: AKey[] = [{ t: 10.25, lean: -4, dip: 0.3, turn: 0.6 }, { t: GRAB + 0.05, turn: 0.7, back: 0.25, lean: -9, dip: 0.6, lift: 0.6, d: 0.14 }, { t: 11.5, back: 0.25, turn: 0.5, tilt: -10, dip: 0, d: 0.3 }, { t: 12.9, back: 0.25, turn: 0.3, tilt: -12, d: 0.3 }];
@@ -160,9 +160,10 @@ const DRAW0 = 14.35, DRAW1 = 15.5, STEP0 = 15.62, CLIMB0 = 15.85, CLIMB1 = 16.45
 export const HERO_LAD: V3 = [LAD[0], TOP, LAD[2] + 0.28];
 const hero5 = (t: number): V3 => { const s = sm(seg(t, STEP0, CLIMB0)), c = sm(seg(t, CLIMB0, CLIMB1)); return [lerp(PK[0], HERO_LAD[0], s), c * TOP, lerp(PK[2], HERO_LAD[2], s)]; };
 export const SKYH = (t: number): V3 => { const k = kiteAt(Math.min(t, 14.05)); return [k[0] - 0.4, k[1] - 3.3, k[2] + 1.0]; }; // hoodie hanging under the kite (frozen in the sky after S4)
-const O5A = A({ yaw: 0.2, sx: 0.36, camY: 1.1, drift: 0.04 });
+const O5A = A({ yaw: 0.2, sx: 0.44, camY: 1.1, drift: 0.04 });
 const O5B = A({ yaw: -0.15, sx: 0.42, sy: 0.6, camY: 0.6, fov: 48, push: 0.95, drift: 0.04 });
-const K5: [number, Key[]][] = [[14.05, frameShot(PK, 14.05, 15.75, O5A)], [15.75, frameShot(HERO_LAD, 15.75, 18.05, O5B)]];
+const climbTrack = (): Key[] => { const ks: Key[] = []; for (let t = 15.75; t <= CLIMB1 + 0.2; t += 1 / 30) { const p = hero5(t); ks.push({ ...framePose([p[0], p[1], p[2]], O5B, 0), t }); } return ks; };
+const K5: [number, Key[]][] = [[14.05, frameShot(PK, 14.05, 15.75, O5A)], [15.75, climbTrack()], [CLIMB1 + 0.2, frameShot(HERO_LAD, CLIMB1 + 0.2, 18.05, O5B)]]; // v19 QC: the camera rises with him on the ladder
 export const S5 = ({ t }: Ctx) => { const p = hero5(t), drawing = t >= DRAW0 - 0.2 && t < DRAW1 + 0.1, prog = sm(seg(t, DRAW0, DRAW1)), real = t >= DRAW1, climbing = t >= CLIMB0 && t < CLIMB1;
   const reach = t >= CLIMB1, hop = reach ? Math.max(0, Math.sin((t - CLIMB1) * 7)) * 0.08 * (1 - seg(t, 17.2, 17.6)) : 0;
   const pose5 = t < 15.75 ? framePose(PK, O5A, 0) : framePose(HERO_LAD, O5B, 0);
@@ -188,7 +189,7 @@ const Gust: React.FC<{ t: number; c: V3; k: number }> = ({ t, c, k }) => k <= 0.
   const ph = ((t * (0.55 + (i % 5) * 0.08) + i * 0.137) % 1), x = c[0] - 9 + ph * 18, y = c[1] + ((i * 0.61) % 1) * 4 + Math.sin(t * 6 + i) * 0.3, z = c[2] - 2 + ((i * 0.37) % 1) * 5;
   return <mesh key={i} position={[x, y, z]} rotation={[t * 7 + i, t * 5 + i * 2, t * 3]} scale={[0.16 * k, 0.08 * k, 0.02]}><sphereGeometry args={[1, 8, 6]} /><meshToonMaterial color={["#ff9a3a", "#ffd23a", "#e5483f", "#8ee06a"][i % 4]} /></mesh>; })}</>);
 const O6A = A({ yaw: 0.35, sx: 0.42, sy: 0.6, camY: 0.9, fov: 46, drift: -0.04 });
-const O6B = B({ yaw: -0.05, sx: 0.5, sy: 0.6, camY: 0.9, fov: 46, push: 0.95, drift: 0.03 });
+const O6B = B({ frac: 0.49, yaw: -0.05, sx: 0.58, sy: 0.6, camY: 0.9, fov: 46, push: 0.95, drift: 0.03 });
 const K6: [number, Key[]][] = [[18.0, frameShot(HERO_LAD, 18.0, 19.85, O6A)], [19.85, frameShot(HERO_LAD, 19.85, 22.05, O6B)]];
 export const gustAt = (t: number) => sm(seg(t, 18.2, 18.6)) * (1 - 0.6 * sm(seg(t, 20.0, 20.6)));
 const ACT6: AKey[] = [{ t: 18.0, turn: 0.2, tilt: -6 }, { t: 18.55, turn: -0.6, tilt: 8, lean: -6, shiver: 0.4, d: 0.25 }, { t: 19.3, turn: 0, tilt: 4, lean: -3, shiver: 1, d: 0.3 }, { t: 21.7, turn: 0.1, shiver: 0.7, d: 0.3 }];
@@ -202,7 +203,7 @@ export const S6 = ({ t }: Ctx) => { const g = gustAt(t), a = act(t, ACT6, { seed
       <Kite p={[sky[0] + 0.4, sky[1] + 3.3, sky[2] - 1]} t={t} s={1.15} /><Rope a={[sky[0] + 0.15, sky[1] + 1.05, sky[2]]} b={[sky[0] + 0.4, sky[1] + 3.3, sky[2] - 1]} /></> : null}
     <Stickman p={HERO_LAD} t={t} action={sneeze ? "sneezeReact" : "idle"} t0={SNEEZE} lips={LIPS} shadow={false} face={sneeze ? undefined : faceAt(t, [[18.0, "worried"], [18.6, "scared"], [19.3, "worried"]])}
       rig={{ ...a.rig, outfit: TEE, grounded: false, legL: { a: 4, b: 4 }, legR: { a: 4, b: 4 }, ...(sneeze ? {} : HUG(t)), ...eyes(t, [[18.0, 0.3, -0.4], [18.5, -0.8, -0.1], [19.3, 0, 0.2]]) }} />
-    <PuffRing c={[HERO_LAD[0] + 0.7, TOP + 2.4, HERO_LAD[2] + 0.3]} t={t} t0={blast} n={10} r={0.9} size={0.3} color="#eef4ff" up={0.2} life={1.0} />
+    <PuffRing c={[HERO_LAD[0] + 0.7, TOP + 2.4, HERO_LAD[2] + 0.3]} t={t} t0={blast} n={8} r={0.8} size={0.22} color="#eef4ff" up={0.2} life={0.9} />
     <DepthPass focus={6.6} blur={2.0} />
   </Park>); };
 

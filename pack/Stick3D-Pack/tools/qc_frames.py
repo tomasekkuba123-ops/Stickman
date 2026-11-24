@@ -13,6 +13,7 @@ A frame every 0.5 s (+ a 10 fps scan for ghosting) -> issues per category + fram
 import os, json, subprocess, argparse
 import numpy as np, cv2
 
+BAND_Y = {"low": 1450, "high": 230, "safe": 1195}  # kit/captions.tsx BAND_Y
 BAND_SAFE = (1195, 1195 + 2 * 112)  # kit/captions.tsx safe band, 2 lines at the fixed 96 px size
 
 
@@ -64,9 +65,10 @@ def run(video, mask, out, cuts=(), captions=None):
     if captions and os.path.exists(captions):
         G = json.load(open(captions))["groups"]; on = hit = 0; ht = []
         for f in mf:
-            if not any(g["a"] <= f["t"] <= g["e"] + 0.5 for g in G): continue
-            on += 1
-            if any(h[3] * 1920 > BAND_SAFE[0] + 15 and h[1] * 1920 < BAND_SAFE[1] - 15 for h in f.get("hands", [])): hit += 1; ht.append(f["t"])
+            act = [g for g in G if g["a"] <= f["t"] <= g["e"] + 0.5]
+            if not act: continue
+            on += 1; y0 = BAND_Y.get(act[-1].get("band", "safe"), BAND_SAFE[0]); y1 = y0 + 2 * 112  # v19: the group's own band (captions.py high/low/safe)
+            if any(h[3] * 1920 > y0 + 15 and h[1] * 1920 < y1 - 15 for h in f.get("hands", [])): hit += 1; ht.append(f["t"])
         if on and hit: I["hands"].append(f"caption band over a hand in {100 * hit / on:.0f} % of caption time (first {ht[0]:.1f}s)")
         I["hands_pct"] = round(100 * hit / on, 1) if on else 0.0
     # loop
