@@ -11,7 +11,13 @@ Newest entries on top.
 - PuffRing at r > 1 / size > 0.4 close to the camera turns into big dark-outlined smears over the face. Keep r <= 0.9, size <= 0.3, life <= 1 s and put the ring behind the hero.
 - A screen-placed sky object (worldAt) needs sy >= 0.17 for a 1.5-1.8 m prop or its top is cut off.
 - Kokoro + Whisper: "T-shirt" and "ACHOO" come back as two words each; merge them before mapping Whisper times onto the script tokens.
+- First final QC FAIL (cropped / scale / stray / hands). Root causes: (1) at FULL/CLOSE the spread arms span ~85-95 % of the frame width, so any sx off-centre (0.27-0.36) or a wide gesture (whoa, palmUp2, sneeze) puts a glove on the frame edge. Keep sx 0.4-0.6 and drop frac to ~0.5-0.6 for shots with wide arm gestures. (2) A static camera framed on the ladder top let him climb up from below the frame: track the camera with the climb. (3) A low camera (camY 0.35) inside the flower field showed a flower as a huge green triangle swinging past the lens: keep camY >= 0.7 in the park.
+- QC tool false alarms: a prop or puff in front of his body split the mask into pieces -> head-only height (fake scale jump) and "stray" blobs; the hands check always used the safe band although captions.py had put the captions high/low.
+- After a container reset opencv-python-headless is missing (stickmask / captions / qc / publish_kit need it): `pip install opencv-python-headless`.
 **Changed**
+- tools/stickmask.py: blobs whose centre lies inside the figure envelope measured from the face disc (±2.6 face heights, down to 4.8) are merged into the hero (occluded parts are not strays, height stays right).
+- tools/qc_frames.py: captions-over-hands check uses each caption group's own band (BAND_Y low/high/safe).
+- tools/captions.py: fixed KeyError 'safe' (cost loop only over the high/low bands).
 - style/stickman.ts: `Outfit.tee` (T-shirt: short sleeves, bare stick arms, crew neck, no hood/strings/pocket; the backpack stays), `rig.hoodieFace` (eyes + grin on the chest, wink, look, moods happy/sad/shock/sneaky), `rig.bagFace` (growling backpack face, front strip + big in side view).
 - kit/hoodie.tsx (new): `LivingHoodie` (the hoodie as a character: hood up with eyes in the dark opening, sleeves as arms, wiggle), `hoodieCuff()` (sleeve-end world point for strings), `Kite`, `Rope`.
 - kit/world.tsx: `HomeSet` takes children (so the hero inside gets the room's rim light).
