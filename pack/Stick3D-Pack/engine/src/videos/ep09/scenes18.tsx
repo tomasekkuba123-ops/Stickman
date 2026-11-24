@@ -45,7 +45,7 @@ const SCRATCH = (t: number) => ({ ikR: [165 + Math.sin(t * 22) * 14, 1060 + Math
 
 /* ================= S1 HOOK 0–3.0 (size B) ================= */
 export const PH: V3 = [0, 0, 0];
-export const HOOK_O: FrameOpts = B({ yaw: -0.22, sx: 0.42, push: 0.95, drift: 0.05 });
+export const HOOK_O: FrameOpts = B({ yaw: -0.22, sx: 0.47, push: 0.95, drift: 0.05 });
 const HP = framePose(PH, HOOK_O, 0);
 export const MOON_P = worldAt(HP, 0.8, 0.27, 70);
 export const HOOK_FACE = { lookX: 0.45, lookY: -0.7, headTilt: -6 };
@@ -63,13 +63,13 @@ export const S1 = ({ t }: Ctx) => { const v = vanishAt(t), dark = sm(seg(t, 1.3,
 void BEDP;
 
 /* ================= S7 ENDING 32.7–38.0: size B, hook framing; full night field + fireflies; the Moon returns (ghost -> pop) ================= */
-const O7A = B({ yaw: -0.3, sx: 0.46, push: 0.95, drift: 0.04 });
-const O7B = B({ yaw: -0.12, sx: 0.44, push: 0.96, drift: -0.04 });
+const O7A = B({ yaw: -0.3, sx: 0.5, push: 0.95, drift: 0.04 });
+const O7B = B({ yaw: -0.12, sx: 0.5, push: 0.96, drift: -0.04 });
 const G7: GKey[] = [{ t: wt("so", 32.5) + 0.04, g: "chin", in: 0.3, hold: 0.5 }, { t: wt("moon", 33) + 0.04, g: aim(screenDir(HP, SHO(PH), MOON_P) + 14), in: 0.3, hold: 0.35 },
   { t: wt("tonight", 33.9) + 0.04, g: "count", in: 0.25 }, { t: wt("would", 34.8) + 0.04, g: "palmUp" }, { t: wt("notice", 35.3) + 0.04, g: "shrug", hold: 0.9 }];
 const ACT7: AKey[] = [{ t: 32.7, turn: -0.1, tilt: 6 }, { t: 33.3, turn: 0.7, tilt: -8, d: 0.3 }, { t: 34.1, turn: 0.1, tilt: 2, d: 0.3 }, { t: 35.5, turn: -0.15, tilt: 7, dip: 0.3, d: 0.3 }, { t: 36.4, turn: 0.75, tilt: -9, dip: 0, d: 0.35 }, { t: 37.3, turn: 0.35, tilt: -6, d: 0.5 }];
 export const S7 = ({ t }: Ctx) => { const back = seg(t, 36.7, 37.4), ghost = sm(seg(t, 33.0, 35.8)) * (back > 0 ? 0 : 1), a = act(t, ACT7);
-  const end: Key[] = [{ ...framePose(PH, { ...HOOK_O, frac: CLOSE * 0.97 }, 0), t: 36.55 }, { ...HP, t: 38.0 }];
+  const end: Key[] = [{ ...framePose(PH, { ...HOOK_O, frac: CLOSE * 0.97 }, 0), t: 36.55 }, { ...HP, t: 37.55 }, { ...HP, t: 38.1 }];
   const cam = t < 34.9 ? frameShot(PH, 32.7, 34.9, O7A) : t < 36.55 ? frameShot(PH, 34.9, 36.55, O7B) : end;
   const lk = t > 37.0 ? HOOK_FACE : eyes(t, [[32.7, -0.2, -0.1], [33.4, 0.6, -0.8], [34.1, 0, 0], [36.35, 0.5, -0.8]]);
   const rig = t > 37.3 ? { ...a.rig, headTurn: 0.35, ...HOOK_FACE } : { ...a.rig, ...lk };
@@ -132,8 +132,8 @@ export const S5 = ({ t }: Ctx) => { const w = wobbleAt(t), bob = Math.sin(t * 1.
 
 /* ================= S2 DARK NIGHT + FLASHLIGHT 3.0–9.7: faint blue ambient, volumetric beam forward + slightly down, sweeping grass, fence, tree ================= */
 const P2: V3 = [0, 0, 0];
-const O2A = A({ yaw: 0.3, sx: 0.36, drift: -0.05 });
-const O2B = A({ yaw: 0.22, camY: 0.75, sx: 0.4, drift: 0.04 });
+const O2A = A({ yaw: 0.3, sx: 0.43, drift: -0.05 });
+const O2B = A({ yaw: 0.22, camY: 0.75, sx: 0.46, drift: 0.04 });
 const O2C = A({ yaw: 0.05, camY: 1.2, sx: 0.5, push: 0.93, drift: 0.03 });
 const P2A = framePose(P2, O2A, 0.5), P2B = framePose(P2, O2B, 0.5), P2C = framePose(P2, O2C, 0.5);
 const K2: [number, Key[]][] = [[3.0, frameShot(P2, 3.0, 5.0, O2A)], [5.0, frameShot(P2, 5.0, 7.0, O2B)], [7.0, frameShot(P2, 7.0, 9.75, O2C)]];
@@ -182,16 +182,16 @@ export const beamScreenX = (t: number) => (t >= 7 ? 540 : project(t < 5 ? P2A : 
 
 /* ================= S4 ANIMALS 16.4–25.0: owl close-up, wolf howling on its rock, tide pool (coral spawn, fish school, crabs), confusion, ecosystems shaken ================= */
 const P4: V3 = [0, 0, 1.2], P4C: V3 = [0, 0, 3.4];
-const O4A = A({ yaw: -0.05, sx: 0.32, drift: 0.04 });
-const O4B = A({ yaw: 0.12, sx: 0.79, drift: -0.03 });
-const O4C = A({ yaw: 0.05, camY: 1.15, sx: 0.64, drift: 0.02 });
+const O4A = A({ yaw: -0.05, sx: 0.37, drift: 0.04 });
+const O4B = A({ yaw: 0.12, sx: 0.67, drift: -0.03 });
+const O4C = A({ yaw: 0.05, camY: 1.15, sx: 0.57, drift: 0.02 });
 const O4D = A({ yaw: -0.08, camY: 1.15, sx: 0.4, drift: -0.02 });
 const O4E = A({ yaw: 0.0, camY: 1.3, sx: 0.5, push: 0.96, drift: 0.02 });
 const P4A = framePose(P4, O4A, 0), P4B = framePose(P4, O4B, 0), P4Cp = framePose(P4C, O4C, 0), P4Dp = framePose(P4C, O4D, 0), P4E = framePose(P4, O4E, 0);
 const K4: [number, Key[]][] = [[16.4, frameShot(P4, 16.4, 17.85, O4A)], [17.85, frameShot(P4, 17.85, 19.05, O4B)], [19.05, frameShot(P4C, 19.05, 20.6, O4C)], [20.6, frameShot(P4C, 20.6, 22.4, O4D)], [22.4, frameShot(P4, 22.4, 25.05, O4E)]];
 // close animals (placed in screen space so they are big, fully in frame and never in front of the hero)
-const OWL_H = 1.2, OWL_A = at(P4A, 0.79, 0.4, 4.0, OWL_H);
-const WOLF_H = 1.32, WOLF_B = at(P4B, 0.33, 0.58, 4.3, WOLF_H);
+const OWL_H = 1.2, OWL_A = at(P4A, 0.81, 0.4, 4.0, OWL_H);
+const WOLF_H = 1.55, WOLF_B = at(P4B, 0.24, 0.6, 3.9, WOLF_H);
 const CORAL_H = 0.95, CORAL_C = at(P4Cp, 0.22, 0.74, 3.6, CORAL_H), POOL_C = worldAt(P4Cp, 0.3, 0.82, 3.4);
 const CRAB_D = [at(P4Dp, 0.7, 0.86, 3.4, 0.5), at(P4Dp, 0.86, 0.8, 4.2, 0.45)];
 const POOL_D = worldAt(P4Dp, 0.66, 0.66, 5.2);
@@ -244,7 +244,7 @@ export const S4 = ({ t }: Ctx) => { const shake = t > 23.75 && t < 24.9, a = act
 
 /* ================= S6 SEASONS 28.65–32.7: one fixed spot, spring -> summer -> (snow in summer) -> autumn -> (lightning) -> winter ================= */
 const P6: V3 = [0, 0, 1.0];
-const O6 = A({ yaw: -0.12, sx: 0.42, push: 0.96, drift: 0.04 });
+const O6 = A({ yaw: -0.12, sx: 0.49, push: 0.96, drift: 0.04 });
 export const SEASON_CUTS: [number, number, number][] = [[28.65, 0, 0], [29.45, 1, 0], [30.0, 1, 1], [30.4, 2, 0], [31.0, 2, 2], [31.4, 3, 0]]; // [t, season, chaos 1 = snow in summer / 2 = storm]
 export const seasonAt = (t: number) => { let c = SEASON_CUTS[0]; for (const x of SEASON_CUTS) if (t >= x[0]) c = x; return c; };
 const G6: GKey[] = [{ t: 28.95, g: "palmUpL" }, { t: wt("making", 29.1) + 0.04, g: "wave", hold: 0.3 }, { t: wt("seasons", 29.6) + 0.04, g: "present" }, { t: wt("wild", 30) + 0.02, g: "pointUp", hold: 0.25 }, { t: 30.55, g: "reach", hold: 0.35 }, { t: 31.02, g: "whoa", in: 0.12, hold: 0.3 }];
@@ -252,7 +252,7 @@ const ACT6: AKey[] = [{ t: 28.65, turn: 0.4, tilt: 8, lean: 3 }, { t: 29.45, tur
   { t: 31.05, back: 0.3, lean: -9, dip: 0.6, lift: 0.7, turn: 0.3, d: 0.14 }, { t: 31.4, back: 0.3, lean: 0, dip: 0.55, lift: 0, turn: 0, shiver: 1, d: 0.25 }, { t: 32.7, back: 0.3, dip: 0.6, shiver: 1, d: 0.5 }];
 export const S6 = ({ t }: Ctx) => { const [t0, season, chaos] = seasonAt(t), kick = Math.exp(-(t - t0) * 14) * (t0 > 28.7 ? 1 : 0), a = act(t, ACT6, { seed: 6 });
   const flash = chaos === 2 ? Math.max(0, Math.sin((t - 31.0) * 22)) ** 6 : 0;
-  const keys = frameShot(P6, 28.65, 32.75, O6).map((k) => ({ ...k, look: [k.look[0] + kick * 1.2, k.look[1], k.look[2]] as V3 }));
+  const keys = frameShot(P6, 28.65, 32.75, O6).map((k) => ({ ...k, look: [k.look[0] + kick * 0.45, k.look[1], k.look[2]] as V3 }));
   const winter = season === 3, wipe = season === 1 && chaos === 0 && t > 29.6 && t < 29.95;
   return (<SeasonHill t={t} season={season} chaos={chaos} flash={flash}>
     <Cam t={t} keys={keys} />

@@ -25,7 +25,7 @@ const seg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a)
 const BED_SEASON: BedKind[] = ["spring", "summer", "autumn", "winter"];
 /* vector front bed (grass, rocks, flowers, shells...) filling the bottom of every shot, parallax with the camera drift */
 const Bed: React.FC<{ t: number }> = ({ t }) => {
-  if (QC) return null; const px = Math.sin(t * 0.35) * 22 - (t % 6) * 3;
+  if (QC) return null; const px = (Math.sin(t * 0.35) * 22 - (t % 6) * 3) * (t > 36 ? 1 - seg(t, 36.2, 37.5) : 1); // -> 0 at the end so the last frame = the first
   if (t < 3.0 || t >= 32.7) return <FrontBed t={t} kind="meadow" px={px} seed={1} dim={t < 3 ? 0.35 * seg(t, 1.3, 2.4) : 0.35 * (1 - seg(t, 36.7, 37.4))} />;
   if (t < 9.7) return <FrontBed t={t} kind="night" px={px} seed={2} light={{ x: N.beamScreenX(t), k: t < 7 ? 0.55 * seg(t, 3.72, 3.85) : 0 }} dim={t >= 7.3 ? 0.2 : 0} />;
   if (t < 16.4) return <FrontBed t={t} kind="beach" px={px} seed={3} />;
@@ -43,9 +43,9 @@ const WhatIf: React.FC<{ t: number }> = ({ t }) => {
 /* season changes: whip-pan motion streaks (no blur on the character) */
 const SeasonWhip: React.FC<{ t: number }> = ({ t }) => { if (QC) return null; let k = 0, dir = 1; for (const [c] of N.SEASON_CUTS.slice(1)) { const d = t - c; if (d > -0.08 && d < 0.12) { k = Math.max(k, 1 - Math.abs(d) / (d < 0 ? 0.08 : 0.12)); dir = d < 0 ? 1 : -1; } } if (k <= 0) return null;
   return <Streaks k={k} dir={dir} f={useCurrentFrame()} />; };
-/* hook: grade drops after the Moon vanishes (the hero keeps his rim light) */
+/* hook: grade drops after the Moon vanishes — sky and edges only, the hero stays clear */
 const HookGrade: React.FC<{ t: number }> = ({ t }) => { if (QC) return null; const k = t < 3.05 ? seg(t, 1.35, 2.4) : t >= 32.7 ? 1 - seg(t, 36.7, 37.3) : 0; if (k <= 0) return null;
-  return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `linear-gradient(rgba(4,8,40,${0.3 * k}), rgba(4,8,40,${0.12 * k}) 70%, rgba(4,8,40,0))` }} />; };
+  return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse 470px 820px at 50% 47%, rgba(4,8,40,0) 0, rgba(4,8,40,0) 62%, rgba(4,8,40,${0.34 * k}) 100%)` }} />; }; // the grade never touches the hero (white head)
 /* "much, much darker": darkness closes in around him, the ground stays faintly visible */
 const Dark: React.FC<{ t: number }> = ({ t }) => { if (QC || t < 7.3 || t > 9.75) return null; const k = 0.32 * seg(t, 7.35, 7.6) + 0.22 * seg(t, 7.9, 8.2);
   return <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse 420px 760px at 50% 52%, rgba(0,0,8,0) 0, rgba(0,0,8,0) 55%, rgba(0,0,8,${k}) 100%)` }} />; };

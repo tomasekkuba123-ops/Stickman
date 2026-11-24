@@ -4,8 +4,10 @@
 #   H.264 High, yuv420p, CRF 15 (cap 20 Mbps), AAC 192k, faststart. Audio = the -14 LUFS mix as is.
 # usage: pipeline/final4k.sh <Id> <frames> <outdir> <mix.wav> [part_frames=60] [concurrency=3]
 # Re-run to resume (finished parts are kept; a part takes < 1 h so every background run stays under the 2 h limit).
+# REDO="0 1 8" re-renders only those parts after a fix (the old ones are kept as parts4k/old_partN.mp4 until the new one exists).
 set -e; cd "$(dirname "$0")/.."; ID=$1; N=$2; OUT=$3; MIX=$4; P=${5:-60}; CC=${6:-3}; mkdir -p "$OUT/parts4k"; GL=$(cat ../.gl-flag)
 rm -f "$OUT"/parts4k/*.tmp.mp4
+for i in ${REDO:-}; do [ -s "$OUT/parts4k/part$i.mp4" ] && mv "$OUT/parts4k/part$i.mp4" "$OUT/parts4k/old_part$i.mp4"; done
 for ((i=0; i*P<N; i++)); do a=$((i*P)); b=$((a+P-1)); [ $b -ge $N ] && b=$((N-1)); f="$OUT/parts4k/part$i.mp4"
   [ -s "$f" ] && continue
   npx remotion render "$ID" "$f.tmp.mp4" --gl=$GL --scale=2 --concurrency=$CC --timeout=600000 --muted --crf=12 --frames=$a-$b --log=error && mv "$f.tmp.mp4" "$f" && echo "DONE 4k part $i ($a-$b) $(date +%T)"

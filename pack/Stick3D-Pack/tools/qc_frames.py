@@ -5,7 +5,7 @@ A frame every 0.5 s (+ a 10 fps scan for ghosting) -> issues per category + fram
   blur     contrast-normalised Laplacian inside the hero box < 30 % of the episode median
   cropped  hero box touches a frame edge
   bottom   bottom 20 % nearly empty (edge density + luminance spread)
-  scale    hero height jumps > 18 % between samples inside one shot
+  scale    hero size (head height, robust to legs lost in grass) jumps > 18 % between samples inside one shot
   ghost    a frame that is a 25-75 % blend of its neighbours (cross-fade / double exposure)
   stray    hero-coloured blobs not attached to the hero in the QC mask (duplicate / leftover sprites)
   hands    caption band over a hand (mask gloves) — share of caption time
@@ -39,7 +39,8 @@ def run(video, mask, out, cuts=(), captions=None):
             roi = g[max(0, y0):max(y0 + 2, y1), max(0, x0):max(x0 + 2, x1)]
             lv = float(cv2.Laplacian(roi, cv2.CV_64F).var()) / (float(roi.std()) ** 2 + 25) * 1000; lap.append(lv)
         bot = g[int(H * 0.8):, :]
-        rows.append({"t": t, "lap": lv, "hf": m["hf"] if m["vis"] else 0, "cut": bool(m["cut"]), "edge": float((cv2.Canny(bot, 40, 120) > 0).mean()), "spread": float(bot.std())})
+        fh = (m["face"][3] - m["face"][1]) * 4 if m["vis"] and m.get("face") else 0  # head height x4 ~ hero height; legs vanish in grass/dark, the head does not
+        rows.append({"t": t, "lap": lv, "hf": fh, "cut": bool(m["cut"]), "edge": float((cv2.Canny(bot, 40, 120) > 0).mean()), "spread": float(bot.std())})
     med = float(np.median(lap)) if lap else 1
     I = {k: [] for k in ("blur", "cropped", "bottom", "scale", "ghost", "stray", "hands", "loop")}
     for k, r in enumerate(rows):
