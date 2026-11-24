@@ -164,3 +164,40 @@ export function drawQ(c: C2, W: number, H: number, k: number, t: number) {
   c.font = "900 220px Inter, Arial"; c.textAlign = "center"; c.lineJoin = "round"; c.lineWidth = 26; c.strokeStyle = INK; c.strokeText("?", 0, 0); c.fillStyle = "#ffd23a"; c.fillText("?", 0, 0);
   c.lineWidth = 6; c.strokeStyle = "rgba(255,255,255,0.7)"; c.beginPath(); c.moveTo(-40, -130); c.quadraticCurveTo(-20, -160, 20, -158); c.stroke(); c.restore();
 }
+
+/* ================= DUCK (design 600 x 560), side view facing right — EP10. walk = waddle phase, tilt = peck (0 up .. 1 beak to the ground),
+   mouth = quack (beak open), wing = flap, look = pupil x, flip = facing left. White farm duck, orange beak + feet. ================= */
+export function drawDuck(c: C2, W: number, H: number, p: AnimalPose) {
+  c.clearRect(0, 0, W, H); c.save(); c.scale(W / 600, H / 560); if (p.flip) { c.translate(600, 0); c.scale(-1, 1); }
+  const ph = (p.walk ?? 0) * Math.PI * 2, pk = Math.max(0, Math.min(1, p.tilt ?? 0)), m = p.mouth ?? 0, wg = p.wing ?? 0, t = p.t;
+  const bob = Math.abs(Math.sin(ph)) * -10, rock = Math.sin(ph) * 0.06 + pk * 0.16; // waddle: body rocks side to side, bobs on each step
+  const OR = "#ff9a1f", ORD = "#d86a0a", ORL = "#ffc46a", WH = "#ffffff", WS = "#d9dce8";
+  // feet (behind the body), alternate lift
+  for (const s of [0, 1]) { const lift = Math.max(0, Math.sin(ph + s * Math.PI)) * 26, x = 270 + s * 40 + Math.sin(ph + s * Math.PI) * 18;
+    c.beginPath(); c.moveTo(x, 440); c.lineTo(x + 4, 520 - lift); ln(c, 22); c.beginPath(); c.moveTo(x, 440); c.lineTo(x + 4, 520 - lift); ln(c, 12, ORD);
+    c.beginPath(); c.moveTo(x - 30, 540 - lift); c.quadraticCurveTo(x + 10, 508 - lift, x + 52, 540 - lift); c.quadraticCurveTo(x + 10, 552 - lift, x - 30, 540 - lift); c.closePath(); fl(c, s ? OR : ORD, 7); }
+  c.save(); c.translate(300, 470 + bob); c.rotate(rock); c.translate(-300, -470);
+  // tail + body
+  c.beginPath(); c.moveTo(120, 330); c.quadraticCurveTo(70, 250, 92, 236); c.quadraticCurveTo(150, 280, 190, 300); c.closePath(); fl(c, rg(c, 110, 270, 60, WH, WS), 8);
+  c.beginPath(); c.moveTo(110, 330); c.bezierCurveTo(110, 240, 330, 250, 420, 310); c.bezierCurveTo(470, 350, 440, 470, 300, 470); c.bezierCurveTo(170, 470, 110, 420, 110, 330); c.closePath(); fl(c, rg(c, 260, 330, 190, WH, WS), 9);
+  c.beginPath(); c.moveTo(160, 430); c.quadraticCurveTo(290, 470, 410, 400); ln(c, 6, "rgba(150,160,190,0.55)"); // belly shade
+  // wing (flaps up)
+  c.save(); c.translate(320, 330); c.rotate(-0.15 - wg * 0.9 + Math.sin(t * 2) * 0.03);
+  c.beginPath(); c.moveTo(10, 0); c.bezierCurveTo(-60, -30, -190, 0, -200, 50); c.bezierCurveTo(-150, 90, -30, 80, 10, 0); c.closePath(); fl(c, rg(c, -80, 20, 120, WH, "#c8cce0"), 8);
+  for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(-60 - i * 40, 30 + i * 6); c.quadraticCurveTo(-90 - i * 40, 50, -120 - i * 30, 62); ln(c, 4, "rgba(140,150,180,0.7)"); }
+  c.restore();
+  // neck + head pivot (peck rotates forward/down)
+  c.save(); c.translate(380, 330); c.rotate(pk * 1.05);
+  c.beginPath(); c.moveTo(-50, 10); c.quadraticCurveTo(-40, -90, -10, -140); c.lineTo(60, -130); c.quadraticCurveTo(40, -60, 50, 0); c.closePath(); fl(c, WH, 0);
+  c.beginPath(); c.moveTo(-50, 10); c.quadraticCurveTo(-40, -90, -10, -140); ln(c, 9); c.beginPath(); c.moveTo(60, -130); c.quadraticCurveTo(40, -60, 50, 0); ln(c, 9);
+  c.beginPath(); c.arc(20, -175, 80, 0, Math.PI * 2); fl(c, rg(c, 20, -175, 80, WH, WS), 9); // head
+  for (const k of [0, 1]) { const op = k ? m * 26 : 0; // beak: upper (k=0) and lower (k=1, opens)
+    c.beginPath(); if (!k) { c.moveTo(80, -190); c.quadraticCurveTo(160, -205, 190, -172); c.quadraticCurveTo(150, -160, 86, -158); } else { c.moveTo(86, -160); c.quadraticCurveTo(150, -150 + op, 180, -158 + op); c.quadraticCurveTo(140, -132 + op, 84, -142); }
+    c.closePath(); fl(c, lg(c, 90, -200, 90, -130, [[0, ORL], [1, k ? ORD : OR]]), 7); }
+  if (m > 0.2) { c.beginPath(); c.ellipse(120, -160 + m * 10, 26, 8 * m, 0, 0, Math.PI * 2); c.fillStyle = "#7a2a1a"; c.fill(); }
+  c.beginPath(); c.arc(118, -186, 3, 0, Math.PI * 2); c.fillStyle = INK; c.fill(); // nostril
+  eye(c, 40, -200, 26, 0.4 + (p.look ?? 0), 0.1, p.blink ? 1 : 0);
+  c.beginPath(); c.ellipse(-4, -150, 18, 10, 0, 0, Math.PI * 2); c.fillStyle = "rgba(255,170,160,0.55)"; c.fill(); // cheek
+  c.beginPath(); c.moveTo(-10, -250); c.quadraticCurveTo(-30, -280, -6, -292); ln(c, 7); c.beginPath(); c.moveTo(4, -252); c.quadraticCurveTo(10, -290, 30, -286); ln(c, 6); // head feather tufts
+  c.restore(); c.restore(); c.restore();
+}

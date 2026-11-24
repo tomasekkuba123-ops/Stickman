@@ -1,9 +1,9 @@
-# ENV REPORT (2026-11-18T08:40:39Z)
+# ENV REPORT (2026-11-24T14:59:02Z)
 ## System
 cores: 4
-Mem:           16087         539       15365          12         438       15548
-/dev/vda        252G  9.5G   30G  25% /
-Linux 6.18.44-fc-v595
+Mem:           16087         477       15450          12         374       15609
+/dev/vda        252G  9.5G   60G  14% /
+Linux 6.18.44-fc-v819
 ## GPU
 no NVIDIA GPU detected -> assume CPU-only rendering
 ## Tools
@@ -26,7 +26,7 @@ pypi.org -> 200
 raw.githubusercontent.com -> 301
 github.com -> 400
 fonts.googleapis.com -> 404
-huggingface.co -> 000
+huggingface.co -> 200
 ## Chromium
 /opt/pw-browsers/chromium
 /opt/pw-browsers/chromium-1243
