@@ -26,7 +26,8 @@ const NF_PROPS: PropSpec[] = [
 ];
 const FENCE: PropSpec[] = Array.from({ length: 7 }, (_, i) => ["fence_simple", -13 + i * 1.95, -7.5 - i * 0.25, 1.6, 0.12] as PropSpec);
 /* dark 0 = moonlit silver-blue, 1 = deep dark blue (no Moon). moon = vanish progress (0..1+), back = pop-back (loop). */
-export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; fore?: V3[]; pitch?: number; glow?: [number, number, number, number]; ghost?: number; children?: React.ReactNode }> = ({ t, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, fore = [], pitch = 0, glow, ghost = 0, children }) => {
+export const NightField: React.FC<{ t: number; bgT?: number; dark?: number; vanish?: number; back?: number; fireflies?: number; stars?: number; moonP?: V3; fore?: V3[]; pitch?: number; glow?: [number, number, number, number]; ghost?: number; children?: React.ReactNode }> = ({ t, bgT, dark = 0, vanish = 0, back = 0, fireflies = 1, stars = 1, moonP = NF_MOON, fore = [], pitch = 0, glow, ghost = 0, children }) => {
+  const b = bgT ?? t; // ambient-motion time (moon/clouds/haze/sway/fireflies): overridable so a scene ending the loop can phase-match t=0; StarField/ShootingStar (scripted) always use real t
   const d = cl(dark), pk = 1 - 0.8 * cl(pitch), lum = (1 - 0.45 * d) * (0.3 + 0.7 * pk); // pitch: extra darkness (pitch-black night, only the torch reveals the field)
   const look = { rim: d < 0.5 ? "190,215,255" : "140,165,255", shade: "4,6,30", rimK: lerp(0.6, 0.62, d), dim: 0.24 * d }; // dark: body drops, a soft blue rim keeps him readable
   return (<Lights amb={lerp(0.62, 0.16, d) * pk} keyL={[[NF_MOON[0], NF_MOON[1], NF_MOON[2] + 20], mixC("#d6e4ff", "#5a6ab8", d), lerp(1.25, 0.12, d) * pk]} fill={[[-12, 6, 10], "#3a4aa8", lerp(0.4, 0.22, d) * pk]} look={look} fog={[mixC(mixC("#22336e", "#070b26", d), "#010208", 1 - pk), 14, 90]}>
@@ -35,24 +36,24 @@ export const NightField: React.FC<{ t: number; dark?: number; vanish?: number; b
     <ShootingStar t={t} t0={0.35} from={[-40, 70, -110]} to={[-75, 48, -100]} />
     <ShootingStar t={t} t0={5.6} from={[30, 75, -110]} to={[-5, 58, -115]} />
     <ShootingStar t={t} t0={33.9} from={[-20, 80, -110]} to={[-55, 62, -105]} />
-    {vanish < 1.6 || back > 0 || ghost > 0 ? <BigMoon p={moonP} r={4.4} t={t} vanish={ghost > 0 && back <= 0 ? 1 : vanish} back={back} ghost={ghost} /> : null}
-    <CloudStrips t={t} n={5} y={30} z={-58} span={140} speed={1.1} o={1 - 0.5 * d} />
+    {vanish < 1.6 || back > 0 || ghost > 0 ? <BigMoon p={moonP} r={4.4} t={b} vanish={ghost > 0 && back <= 0 ? 1 : vanish} back={back} ghost={ghost} /> : null}
+    <CloudStrips t={b} n={5} y={30} z={-58} span={140} speed={1.1} o={1 - 0.5 * d} />
     {/* 3 far silhouette layers (3 tones) + village with warm lit windows */}
     <HillLayer p={[0, 6.5, -96]} s={[300, 70]} o={{ seed: 1, tone: mixC(mixC("#2d3f86", "#0c1236", d), "#02030c", 1 - pk), rim: "rgba(190,205,255,0.5)", top: 0.42, amp: 0.12, trees: 60 }} />
-    <HillLayer p={[6, 3.4, -66]} s={[200, 46]} t={t} windows={18} o={{ seed: 5, tone: mixC(mixC("#1f2c66", "#090e2c", d), "#02030c", 1 - pk), rim: "rgba(170,190,255,0.5)", top: 0.45, amp: 0.1, trees: 44, village: true, roof: mixC("#2b2a66", "#0c0c2c", d) }} />
+    <HillLayer p={[6, 3.4, -66]} s={[200, 46]} t={b} windows={18} o={{ seed: 5, tone: mixC(mixC("#1f2c66", "#090e2c", d), "#02030c", 1 - pk), rim: "rgba(170,190,255,0.5)", top: 0.45, amp: 0.1, trees: 44, village: true, roof: mixC("#2b2a66", "#0c0c2c", d) }} />
     <HillLayer p={[-4, 1.8, -40]} s={[130, 30]} o={{ seed: 9, tone: mixC(mixC("#152050", "#060a20", d), "#010208", 1 - pk), rim: "rgba(150,175,255,0.45)", top: 0.46, amp: 0.13, trees: 30 }} />
-    <GroundHaze t={t} layers={[[-36, 1.2, 140], [-58, 2.2, 190], [-84, 3.6, 260]]} col={d > 0.5 ? "rgba(60,80,150,0.5)" : "rgba(150,170,235,0.5)"} o={0.55} />
+    <GroundHaze t={b} layers={[[-36, 1.2, 140], [-58, 2.2, 190], [-84, 3.6, 260]]} col={d > 0.5 ? "rgba(60,80,150,0.5)" : "rgba(150,170,235,0.5)"} o={0.55} />
     {/* mid ground: varied Kenney trees, bushes, rocks, flowers, mushrooms, fence, sign */}
     <PaintedGround a="#23524f" b="#2f6a5e" c2="#1b4044" z={-30} r={95} />
-    <Props list={NF_PROPS} t={t} tint="#8fa0e0" lum={lum} glow={glow} />
-    <Props list={FENCE} t={t} tint="#9aa4d8" sway={0} />
-    <WoodSign p={[-6.2, 0, -3.2]} ry={0.5} s={1.3} t={t} text="→ MOON" />
-    <Grass t={t} area={[24, 11]} c={[0, 0, -5.6]} n={1500} colors={["#2a6470", "#357a80", "#1f5560", "#45908c", "#2c5f7a"]} h={0.4} lum={lum} glow={glow} />
-    <Grass t={t} area={[16, 3.2]} c={[0, 0, 1.5]} n={1400} colors={["#2a6470", "#357a80", "#1f5560", "#45908c"]} h={0.13} wd={0.4} lum={lum} glow={glow} /> {/* short lawn in front of the hero (never covers him) */}
-    {fireflies > 0 ? <FireflyTrails t={t} n={22} c={[0, 1.5, -3]} area={[12, 2.2, 8]} o={fireflies} size={0.045} trail={7} /> : null}
-    <Motes t={t} n={26} c={[0, 2, 0]} area={[8, 3, 5]} color="#cfdcff" o={0.35 * (1 - d)} />
+    <Props list={NF_PROPS} t={b} tint="#8fa0e0" lum={lum} glow={glow} />
+    <Props list={FENCE} t={b} tint="#9aa4d8" sway={0} />
+    <WoodSign p={[-6.2, 0, -3.2]} ry={0.5} s={1.3} t={b} text="→ MOON" />
+    <Grass t={b} area={[24, 11]} c={[0, 0, -5.6]} n={1500} colors={["#2a6470", "#357a80", "#1f5560", "#45908c", "#2c5f7a"]} h={0.4} lum={lum} glow={glow} />
+    <Grass t={b} area={[16, 3.2]} c={[0, 0, 1.5]} n={1400} colors={["#2a6470", "#357a80", "#1f5560", "#45908c"]} h={0.13} wd={0.4} lum={lum} glow={glow} /> {/* short lawn in front of the hero (never covers him) */}
+    {fireflies > 0 ? <FireflyTrails t={b} n={22} c={[0, 1.5, -3]} area={[12, 2.2, 8]} o={fireflies} size={0.045} trail={7} /> : null}
+    <Motes t={b} n={26} c={[0, 2, 0]} area={[8, 3, 5]} color="#cfdcff" o={0.35 * (1 - d)} />
     {/* bottom-edge foreground props (near the camera): rocks, mushrooms, flowers, grass tufts */}
-    {fore.map((q, i) => <KModel key={"f" + i} name={(["rock_smallC", "mushroom_redGroup", "flower_purpleA", "stone_smallA", "mushroom_red", "flower_redA", "flower_yellowA", "rock_smallA"] as const)[i % 8]} p={q} s={0.9 + rnd(i) * 0.5} ry={rnd(i * 3) * 6} tint="#8fa0e0" t={t} sway={1} />)}
+    {fore.map((q, i) => <KModel key={"f" + i} name={(["rock_smallC", "mushroom_redGroup", "flower_purpleA", "stone_smallA", "mushroom_red", "flower_redA", "flower_yellowA", "rock_smallA"] as const)[i % 8]} p={q} s={0.9 + rnd(i) * 0.5} ry={rnd(i * 3) * 6} tint="#8fa0e0" t={b} sway={1} />)}
     {children}
   </Lights>);
 };

@@ -135,7 +135,8 @@ export const GroundHaze: React.FC<{ t: number; layers: [number, number, number][
 };
 
 /* ---------------- fireflies drifting in lazy loops with glowing trails ---------------- */
-export const FireflyTrails: React.FC<{ t: number; n?: number; c?: V3; area?: V3; color?: string; o?: number; size?: number; trail?: number }> = ({ t, n = 18, c = [0, 1.4, -2], area = [8, 1.6, 5], color = "#d8ff7a", o = 1, size = 0.1, trail = 6 }) => {
+export const FireflyTrails: React.FC<{ t: number; n?: number; c?: V3; area?: V3; color?: string; o?: number; size?: number; trail?: number; period?: number }> = ({ t: tRaw, n = 18, c = [0, 1.4, -2], area = [8, 1.6, 5], color = "#d8ff7a", o = 1, size = 0.1, trail = 6, period }) => {
+  const t = period ? ((tRaw % period) + period) % period : tRaw; // wrapped so t=0 and t=period give identical positions (seamless loop)
   const P = (i: number, s: number): V3 => { const f = 0.25 + rnd(i * 3) * 0.3, ph = rnd(i) * TAU; return [c[0] + (rnd(i * 5) - 0.5) * area[0] + Math.sin(s * f + ph) * 0.9 + Math.sin(s * f * 2.3 + ph) * 0.3, c[1] + (rnd(i * 7) - 0.5) * area[1] + Math.sin(s * f * 1.7 + ph * 2) * 0.35, c[2] + (rnd(i * 11) - 0.5) * area[2] + Math.cos(s * f * 0.9 + ph) * 0.8]; };
   return <>{Array.from({ length: n }, (_, i) => { const pulse = 0.35 + 0.65 * Math.max(0, Math.sin(t * (1.6 + rnd(i * 13)) + i * 2.1)); return Array.from({ length: trail }, (_, k) => <SGlow key={i + "-" + k} p={P(i, t - k * 0.07)} r={size * (k ? 0.55 * (1 - k / trail) : 1.6) * (0.7 + 0.5 * pulse)} color={color} o={o * pulse * (k ? 0.45 * (1 - k / trail) : 1)} />); })}</>;
 };
@@ -196,12 +197,14 @@ export const ForeFrame: React.FC<{ t: number; kind?: ("grass" | "branchL" | "bra
   return <svg width={W} height={H} style={{ position: "absolute", inset: 0, filter: `blur(${blur}px)`, pointerEvents: "none", opacity: o }}>{el}</svg>;
 };
 /* film grain (neutral, very low) — changes every frame */
-export const Grain: React.FC<{ f: number; o?: number }> = ({ f, o = 0.07 }) => (
+export const Grain: React.FC<{ f: number; o?: number; loop?: number }> = ({ f, o = 0.07, loop }) => {
+  const fe = loop && f >= loop - 1 ? 0 : f; // last frame of a loop reuses frame 0's grain pattern exactly (seamless loop)
+  return (
   <svg width={1080} height={1920} style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: o, mixBlendMode: "overlay" }}>
-    <filter id={"gr" + (f % 7)}><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={2} seed={f % 97} stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
-    <rect width="100%" height="100%" filter={`url(#gr${f % 7})`} />
+    <filter id={"gr" + (fe % 7)}><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={2} seed={fe % 97} stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
+    <rect width="100%" height="100%" filter={`url(#gr${fe % 7})`} />
   </svg>
-);
+); };
 /* soft vignette with a per-scene tint (edges only, never over the character in the centre) */
 export const Vignette: React.FC<{ k?: number; col?: string }> = ({ k = 0.45, col = "5,8,30" }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: `radial-gradient(ellipse 75% 62% at 50% 40%, rgba(${col},0) 55%, rgba(${col},${k}) 100%)` }} />

@@ -68,12 +68,13 @@ const O7B = B({ yaw: -0.12, sx: 0.5, push: 0.96, drift: -0.04 });
 const G7: GKey[] = [{ t: wt("so", 32.5) + 0.04, g: "chin", in: 0.3, hold: 0.5 }, { t: wt("moon", 33) + 0.04, g: aim(screenDir(HP, SHO(PH), MOON_P) + 14), in: 0.3, hold: 0.35 },
   { t: wt("tonight", 33.9) + 0.04, g: "count", in: 0.25 }, { t: wt("would", 34.8) + 0.04, g: "palmUp" }, { t: wt("notice", 35.3) + 0.04, g: "shrug", hold: 0.9 }];
 const ACT7: AKey[] = [{ t: 32.7, turn: -0.1, tilt: 6 }, { t: 33.3, turn: 0.7, tilt: -8, d: 0.3 }, { t: 34.1, turn: 0.1, tilt: 2, d: 0.3 }, { t: 35.5, turn: -0.15, tilt: 7, dip: 0.3, d: 0.3 }, { t: 36.4, turn: 0.75, tilt: -9, dip: 0, d: 0.35 }, { t: 37.3, turn: 0.35, tilt: -6, d: 0.5 }];
-export const S7 = ({ t }: Ctx) => { const back = seg(t, 36.7, 37.4), ghost = sm(seg(t, 33.0, 35.8)) * (back > 0 ? 0 : 1), a = act(t, ACT7);
+export const S7 = ({ t }: Ctx) => { const back = seg(t, 36.7, 37.4), ghost = sm(seg(t, 33.0, 35.8)) * (back > 0 ? 0 : 1), a = act(t, ACT7, { swayT: t - 38 }); // continuous sway phase ends at ~0 to match S1 at t=0 (seamless loop)
   const end: Key[] = [{ ...framePose(PH, { ...HOOK_O, frac: CLOSE * 0.97 }, 0), t: 36.55 }, { ...HP, t: 37.55 }, { ...HP, t: 38.1 }];
   const cam = t < 34.9 ? frameShot(PH, 32.7, 34.9, O7A) : t < 36.55 ? frameShot(PH, 34.9, 36.55, O7B) : end;
   const lk = t > 37.0 ? HOOK_FACE : eyes(t, [[32.7, -0.2, -0.1], [33.4, 0.6, -0.8], [34.1, 0, 0], [36.35, 0.5, -0.8]]);
   const rig = t > 37.3 ? { ...a.rig, headTurn: 0.35, ...HOOK_FACE } : { ...a.rig, ...lk };
-  return (<NightField t={t} dark={1 - sm(back)} vanish={back > 0 ? 0 : 2} back={back} ghost={ghost} moonP={MOON_P} fireflies={1.4}>
+  const bgT = t < 37.55 ? t - 38 : 0; // ambient (Moon, clouds, haze, grass/prop sway, fireflies) phase ends at the t=0 state -> exact loop
+  return (<NightField t={t} bgT={bgT} dark={1 - sm(back)} vanish={back > 0 ? 0 : 2} back={back} ghost={ghost} moonP={MOON_P} fireflies={1.4}>
     <Cam t={t} keys={cam} />
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G7} face={faceAt(t, [[32.7, "think"], [35.0, "confused"], [36.7, "surprised"], [37.35, "smile"]])} rig={{ ...rig, ...(t > 36.9 ? { blink: 0 } : {}) }} />
     <DepthPass focus={6.6} blur={2.2} />

@@ -61,7 +61,7 @@ export const Ep09: React.FC = () => {
       <HookGrade t={t} />
       <SeasonWhip t={t} />
       {!QC ? <Vignette k={t >= 25 && t < 28.65 ? 0.5 : 0.36} col={t >= 25 && t < 28.65 ? "2,2,16" : "5,8,30"} /> : null}
-      {!QC ? <Grain f={f} o={0.05} /> : null}
+      {!QC ? <Grain f={f} o={0.05} loop={SECONDS * FPS} /> : null}
       <WhatIf t={t} />
       <WordCaptions data={CAP as CaptionData} from={0.25} until={37.2} size={96} fixed />
     </AbsoluteFill>

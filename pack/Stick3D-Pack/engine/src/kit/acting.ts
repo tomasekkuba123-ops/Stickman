@@ -14,7 +14,7 @@ const sm = (x: number) => { const u = Math.max(0, Math.min(1, x)); return u * u 
 /* overshoot ease for snappy moves (startle) */
 const os = (x: number) => { const u = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - u, 3) * Math.cos(u * 2.2); };
 
-export function act(t: number, keys: AKey[], o: { sway?: number; seed?: number } = {}) {
+export function act(t: number, keys: AKey[], o: { sway?: number; seed?: number; swayT?: number } = {}) {
   const v: Record<string, number> = {};
   for (const f of F) {
     let val = 0;
@@ -26,13 +26,13 @@ export function act(t: number, keys: AKey[], o: { sway?: number; seed?: number }
     }
     v[f] = val;
   }
-  const sd = o.seed ?? 0, sw = o.sway ?? 1;
+  const sd = o.seed ?? 0, sw = o.sway ?? 1, st = o.swayT ?? t; // swayT: override the phase of the continuous (unkeyed) sway only, so a scene that ends the loop can phase-match t=0
   // continuous weight shift (never a frozen statue) + knee dip as a lowered, squashed body
-  const shift = sw * (Math.sin(t * 0.47 + sd) * 7 + Math.sin(t * 1.13 + sd * 2) * 2.5);
-  const shv = v.shiver > 0 ? v.shiver * (Math.sin(t * 61) * 5 + Math.sin(t * 47 + 1) * 3) : 0;
+  const shift = sw * (Math.sin(st * 0.47 + sd) * 7 + Math.sin(st * 1.13 + sd * 2) * 2.5);
+  const shv = v.shiver > 0 ? v.shiver * (Math.sin(st * 61) * 5 + Math.sin(st * 47 + 1) * 3) : 0;
   const lift = v.lift;
   const rig: Partial<Rig> = {
-    headTurn: v.turn, headTilt: v.tilt + sw * Math.sin(t * 0.8 + sd) * 1.5, lean: v.lean + sw * Math.sin(t * 0.47 + sd + 0.6) * 1.2,
+    headTurn: v.turn, headTilt: v.tilt + sw * Math.sin(st * 0.8 + sd) * 1.5, lean: v.lean + sw * Math.sin(st * 0.47 + sd + 0.6) * 1.2,
     x: v.dx + shift + shv, y: v.dip * 34 + Math.abs(shv) * 0.4, squash: -0.04 * v.dip,
     ...(Math.abs(lift) > 0.02 ? { [lift > 0 ? "legR" : "legL"]: { a: lift > 0 ? 6 : -6, b: 28 * Math.abs(lift), lift: 70 * Math.abs(lift) } } : {}),
   };
