@@ -9,7 +9,7 @@ import * as S from "./ep10/scenes";
 import CAP from "../../public/ep10/captions.json";
 
 export const SECONDS = 39;
-export const CUTS = [0, 3.55, 4.75, 6.7, 9.6, 11.8, 15.4, 18.4, 21.6, 23.95, 25.55, 27.6, 29.4, 31.5, 33.9, 39];
+export const CUTS = [0, 3.55, 4.75, 6.7, 9.6, 11.8, 15.4, 18.4, 21.6, 23.95, 25.55, 27.6, 28.6, 31.5, 33.9, 39];
 const SC = [S.S1, S.S2, S.S3, S.S4, S.S5, S.S6, S.S7, S.S8, S.S9, S.S10, S.S11, S.S12, S.S13, S.S14, S.S15];
 const TR = ["cut", "cut", "cut", "cut", "whip2", "cut", "whip2", "cut", "cut", "cut", "whip2", "cut", "cut", "cut", "whip2"] as const;
 const seg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));

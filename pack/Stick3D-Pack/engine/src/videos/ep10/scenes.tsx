@@ -164,11 +164,11 @@ export const S3 = ({ t }: Ctx) => (<Town t={t}>
 
 /* ================= S4 6.7–9.6 "A soccer ball stopped one inch from a window." ================= */
 const P4a: V3 = [-9.6, SW, -6.0], P4b: V3 = [-8.15, SW, -6.05];
-export const S4 = ({ t }: Ctx) => { const k = sm(seg(t, 7.9, 8.75)), p = lerp3(P4a, P4b, k);
-  const cam: Key[] = t < 7.9 ? [K(6.7, [-4.15, 1.95, -5.75], [-6.75, 1.4, -6.9], 52), K(7.9, [-4.4, 1.85, -5.9], [-6.7, 1.42, -6.9], 46)]
-    : frameShot(P4b, 7.9, 9.65, { frac: FULL, fov: 42, yaw: -0.18, camY: 1.2, sx: 0.36, sy: 0.38, push: 0.94, drift: 0.05 });
+export const S4 = ({ t }: Ctx) => { const k = sm(seg(t, 7.5, 8.45)), p = lerp3(P4a, P4b, k);
+  const cam: Key[] = t < 7.5 ? [K(6.7, [-4.15, 1.95, -5.75], [-6.75, 1.4, -6.9], 52), K(7.5, [-4.3, 1.9, -5.85], [-6.7, 1.42, -6.9], 48)]
+    : frameShot(P4b, 7.5, 9.65, { frac: FULL, fov: 42, yaw: -0.18, camY: 1.2, sx: 0.36, sy: 0.38, push: 0.94, drift: 0.05 });
   return (<Town t={t}><Cam t={t} keys={cam} />
-    <Hero t={t} p={p} b={t < 8.75 ? { action: "tiptoe", t0: 7.9, face: "smirk" } : beats(t, [[8.75, "point", "surprised"], [9.25, "idle", "grin"]])} rig={{ lookX: 0.9, lookY: 0.1 }} />
+    <Hero t={t} p={p} b={t < 8.45 ? { action: "tiptoe", t0: 7.5, face: "smirk" } : beats(t, [[8.45, "point", "surprised"], [9.2, "idle", "grin"]])} rig={{ lookX: 0.9, lookY: 0.1 }} />
   </Town>); };
 
 /* ================= S5 9.6–11.8 "The whole world was on hold." (wide crane) ================= */
@@ -227,14 +227,14 @@ export const S11 = ({ t }: Ctx) => { const cam: Key[] = [K(25.55, [-5.5, 4.2, 6.
     <Hero t={t} b={beats(t, [[25.55, "freezeShock", "surprised"], [26.5, "idle", "worried"]])} extra={holdFry(t)} rig={{ lookX: -0.4 }} />
   </Town>); };
 
-/* ================= S12 27.6–29.4 "The ball smashed the window." ================= */
-export const S12 = ({ t }: Ctx) => { const cam: Key[] = [K(27.6, [-4.3, 1.5, -5.35], [-6.7, 1.3, -6.75], 46), K(29.45, [-4.0, 1.6, -5.1], [-6.8, 1.2, -6.75], 48)];
+/* ================= S12 27.6–28.6 "The ball smashed the window." ================= */
+export const S12 = ({ t }: Ctx) => { const cam: Key[] = [K(27.6, [-4.3, 1.5, -5.35], [-6.7, 1.3, -6.75], 46), K(28.65, [-4.1, 1.6, -5.2], [-6.8, 1.2, -6.75], 47)];
   return (<Town t={t}><Cam t={t} keys={cam} impacts={[[SMASH, 0.035]]} /></Town>); };
 
-/* ================= S13 29.4–31.5 "The pigeon hit a lamp post." ================= */
+/* ================= S13 28.6–31.5 "The pigeon hit a lamp post." ================= */
 export const S13 = ({ t }: Ctx) => (<Town t={t}>
-  <Cam t={t} keys={frameShot(H, 29.4, 31.55, { frac: FULL * 0.9, fov: 50, yaw: -0.3, camY: 1.9, sx: 0.7, sy: 0.46, push: 0.95, drift: 0.04 })} impacts={[[BONK, 0.012]]} />
-  <Hero t={t} b={beats(t, [[29.4, "idle", "worried"], [30.15, "freezeShock", "scared"], [30.8, "facepalm", "worried"]])} extra={fryInL} rig={{ lookX: -0.9, lookY: -0.5 }} />
+  <Cam t={t} keys={frameShot(H, 28.6, 31.55, { frac: FULL * 0.9, fov: 50, yaw: -0.3, camY: 1.9, sx: 0.7, sy: 0.46, push: 0.95, drift: 0.04 })} impacts={[[BONK, 0.012]]} />
+  <Hero t={t} b={beats(t, [[28.6, "freezeShock", "scared"], [29.3, "idle", "worried"], [30.15, "freezeShock", "scared"], [30.8, "facepalm", "worried"]])} extra={fryInL} rig={{ lookX: -0.9, lookY: -0.5 }} />
 </Town>);
 
 /* ================= S14 31.5–33.95 "And the dog wanted its fry back." ================= */
