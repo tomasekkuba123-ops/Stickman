@@ -61,7 +61,8 @@ def main():
         cost = {"low": 0.0, "high": 0.4}  # prefer low (classic position) when both are free
         for t, face, body in faces:
             if not (t0 <= t <= t1): continue
-            for b, (y0, y1) in BAND.items():
+            for b in cost:
+                y0, y1 = BAND[b]
                 if face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20: cost[b] += 10      # face: never
                 if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body/hands): avoid
         g["band"] = min(cost, key=cost.get)
