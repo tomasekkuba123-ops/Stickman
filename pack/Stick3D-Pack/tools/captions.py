@@ -62,11 +62,16 @@ def main():
         for t, face, body in faces:
             if not (t0 <= t <= t1): continue
             for b, (y0, y1) in BAND.items():
+                if b not in cost: continue
                 if face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20: cost[b] += 10      # face: never
                 if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body/hands): avoid
         g["band"] = min(cost, key=cost.get)
     if a.safe:
-        for g in G: g["band"] = "safe"
+        y0, y1 = BAND["safe"]; clash = 0
+        for g in G:
+            g["band"] = "safe"; t0, t1 = g["a"], min(g["e"] + 0.7, g["a"] + 3)
+            if any(t0 <= t <= t1 and face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20 for t, face, _ in faces): clash += 1
+        print(f"safe band: {clash} groups overlap a face")
     json.dump({"groups": G, "keywords": kw}, open(os.path.join(a.out, "captions.json"), "w"), indent=0)
     srt(G, os.path.join(a.out, "CAPTIONS.srt"))
     print(f"captions: {len(G)} groups, {sum(g['band'] == 'high' for g in G)} high / {sum(g['band'] == 'low' for g in G)} low, keywords: {', '.join(kw[:12])}...")
