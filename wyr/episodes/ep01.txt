@@ -1,0 +1,19 @@
+HOOK: "You only get ONE choice. Choose wisely."
+
+Q1: "Would you rather fly, but only one meter high... or be invisible, but only when nobody's looking?"
+A: Fly 1 meter high | B: Invisible when nobody looks
+Reaction: "Both are useless. Comment which useless power you picked."
+
+Q2: "Would you rather have free pizza forever... or free Wi-Fi everywhere forever?"
+A: Free pizza forever | B: Free Wi-Fi everywhere
+Reaction: "Pizza people, we see you."
+
+Q3: "Would you rather know when you'll die... or know how you'll die?"
+A: Know WHEN | B: Know HOW
+Reaction: "...we're moving on."
+
+Q4: "Would you rather talk to animals... or speak every human language?"
+A: Talk to animals | B: Speak every language
+Reaction: "Tell me in the comments: A or B?"
+
+OUTRO: "New choices every day. Follow so you don't miss tomorrow's."

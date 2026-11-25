@@ -1,0 +1,48 @@
+{
+  "voice": {
+    "name": "am_puck",
+    "speed": 1.12,
+    "model": "/opt/tools/kokoro-v1.0.int8.onnx",
+    "voices_file": "/opt/tools/voices-v1.0.bin"
+  },
+  "colors": {
+    "A": "#E63946",
+    "B": "#1D6FE0",
+    "caption_active": "#FFD23F"
+  },
+  "layout": {
+    "caption_y": 215,
+    "icon_y_A": 450,
+    "label_y_A": 770,
+    "icon_y_B": 1470,
+    "label_y_B": 1150,
+    "icon_size": 360,
+    "label_size": 92,
+    "label_max_w": 820,
+    "vs_radius": 84
+  },
+  "timing": {
+    "voice_delay": 0.22,
+    "before_countdown": 0.15,
+    "after_countdown": 0.05,
+    "tail": 0.25,
+    "outro_hold": 0.7
+  },
+  "countdown_text": "PICK ONE!",
+  "hook": {
+    "A": "",
+    "B": "",
+    "icons": [
+      "question",
+      "question"
+    ]
+  },
+  "outro": {
+    "A": "New choices daily",
+    "B": "Follow!",
+    "icons": [
+      "calendar",
+      "bell"
+    ]
+  }
+}
