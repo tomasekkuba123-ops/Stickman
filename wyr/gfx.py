@@ -90,6 +90,10 @@ def wrap(text, size, max_w, max_lines=2):
                 lines.append(cur); cur = wd
         lines.append(cur)
         if (len(lines) <= max_lines and all(text_width(l, size) <= max_w for l in lines)) or size < 40:
+            if len(lines) == 2:   # balance: pick the split with the narrowest widest line ("READ MINDS, / ALWAYS ON")
+                ws = text.split()
+                best = min((max(text_width(" ".join(ws[:i]), size), text_width(" ".join(ws[i:]), size)), i) for i in range(1, len(ws)))
+                lines = [" ".join(ws[:best[1]]), " ".join(ws[best[1]:])]
             return lines, size
         size -= 4
 

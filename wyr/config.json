@@ -1,7 +1,8 @@
 {
   "voice": {
     "name": "am_puck",
-    "speed": 1.12,
+    "speed": 1.2,
+    "max_pause": 0.12,
     "model": "/opt/tools/kokoro-v1.0.int8.onnx",
     "voices_file": "/opt/tools/voices-v1.0.bin"
   },
@@ -11,38 +12,73 @@
     "caption_active": "#FFD23F"
   },
   "layout": {
-    "caption_y": 215,
-    "icon_y_A": 450,
-    "label_y_A": 770,
-    "icon_y_B": 1470,
-    "label_y_B": 1150,
-    "icon_size": 360,
-    "label_size": 92,
-    "label_max_w": 820,
-    "vs_radius": 84
+    "badge_x": 40,
+    "badge_y": 60,
+    "header_y": 235,
+    "header_size": 70,
+    "pick_size": 100,
+    "header_max_w": 760,
+    "icon_y_A": 500,
+    "label_y_A": 740,
+    "icon_y_B": 1392,
+    "label_y_B": 1100,
+    "icon_size": 300,
+    "label_size": 70,
+    "label_max_w": 760,
+    "caption_y": 832,
+    "caption_size": 58,
+    "caption_max_w": 900,
+    "vs_radius": 80,
+    "mascot_x": 122,
+    "mascot_bottom": 1612,
+    "mascot_h": 330
   },
   "timing": {
-    "voice_delay": 0.22,
-    "before_countdown": 0.15,
-    "after_countdown": 0.05,
-    "tail": 0.25,
-    "outro_hold": 0.7
+    "hook_start": 0.0,
+    "hook_to_q1": 0.02,
+    "gap": 0.03,
+    "voice_delay": 0.1,
+    "b_after_a": 0.0,
+    "before_countdown": 0.04,
+    "after_countdown": 0.1,
+    "loop_tail": 0.0
   },
-  "countdown_text": "PICK ONE!",
-  "hook": {
-    "A": "",
-    "B": "",
-    "icons": [
-      "question",
-      "question"
-    ]
+  "sfx_gain": {
+    "whoosh": 0.4,
+    "tick": 0.5,
+    "ding": 0.4
   },
-  "outro": {
-    "A": "New choices daily",
-    "B": "Follow!",
-    "icons": [
-      "calendar",
-      "bell"
-    ]
+  "pick_text": "PICK ONE!",
+  "outro_header": "FOLLOW FOR DAILY CHOICES!",
+  "mascot": {
+    "poses": {
+      "hook": "excited",
+      "question": "happy",
+      "countdown": "thinking",
+      "outro": "thumbs"
+    },
+    "mood_keywords": {
+      "scared": [
+        "nightmare",
+        "scary",
+        "terrifying",
+        "creepy"
+      ],
+      "surprised": [
+        "impossible",
+        "shocked",
+        "no way",
+        "insane",
+        "wow"
+      ],
+      "laughing": [
+        "lying",
+        "lol",
+        "haha",
+        "we see you",
+        "math"
+      ]
+    },
+    "default_reaction": "laughing"
   }
 }

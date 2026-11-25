@@ -172,6 +172,101 @@ def icon_bell(ctx):
             ctx.new_path(); a0 = (-0.2 if s > 0 else 1.2) * math.pi
             ctx.arc(300, 270, r, a0 - 0.12 * math.pi, a0 + 0.12 * math.pi); ctx.stroke()
 
+def icon_phone(ctx):
+    rrect(ctx, 180, 50, 240, 480, 46); fill_stroke(ctx, "#2B2D42", 12)
+    rrect(ctx, 202, 100, 196, 360, 18); ctx.set_source_rgba(*hexc("#7FD1FF")); ctx.fill()
+    cols = ["#FF6B6B", "#FFD23F", "#80ED99", "#B388FF", "#FFFFFF", "#F4A261"]
+    for k, c in enumerate(cols):
+        x, y = 222 + (k % 3) * 58, 130 + (k // 3) * 62
+        rrect(ctx, x, y, 42, 42, 12); ctx.set_source_rgba(*hexc(c)); ctx.fill()
+    rrect(ctx, 225, 290, 150, 120, 16); ctx.set_source_rgba(1, 1, 1, 0.55); ctx.fill()
+    rrect(ctx, 260, 478, 80, 14, 7); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+    rrect(ctx, 265, 66, 70, 14, 7); ctx.set_source_rgba(*hexc("#4A4E6E")); ctx.fill()
+
+def icon_food(ctx):
+    ctx.move_to(110, 270); ctx.curve_to(110, 90, 490, 90, 490, 270); ctx.close_path(); fill_stroke(ctx, "#F4A261", 12)
+    ctx.set_source_rgb(1, 0.95, 0.8)
+    for (x, y) in ((220, 170), (300, 140), (380, 175), (260, 220), (345, 215)):
+        ctx.save(); ctx.translate(x, y); ctx.rotate(0.5); ctx.scale(14, 7); circle(ctx, 0, 0, 1); ctx.restore(); ctx.fill()
+    ctx.move_to(95, 300)
+    for k in range(9): ctx.line_to(95 + k * 51.25 + 25, 330 if k % 2 == 0 else 300)
+    ctx.line_to(505, 300); ctx.line_to(505, 285); ctx.line_to(95, 285); ctx.close_path(); fill_stroke(ctx, "#80ED99", 10)
+    ctx.move_to(110, 330); ctx.line_to(490, 330); ctx.line_to(440, 385); ctx.line_to(300, 335); ctx.line_to(160, 385); ctx.close_path()
+    fill_stroke(ctx, "#FFD23F", 10)
+    rrect(ctx, 105, 340, 390, 75, 36); fill_stroke(ctx, "#7B3F20", 12)
+    rrect(ctx, 115, 425, 370, 85, 40); fill_stroke(ctx, "#F4A261", 12)
+
+def icon_money_bag(ctx):
+    for (x, y) in ((140, 500), (460, 505), (470, 470)):
+        ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.45); circle(ctx, 0, 0, 55); ctx.restore(); fill_stroke(ctx, "#FFD23F", 9)
+    ctx.move_to(240, 170); ctx.curve_to(90, 260, 90, 530, 300, 530); ctx.curve_to(510, 530, 510, 260, 360, 170); ctx.close_path()
+    fill_stroke(ctx, "#C9A66B", 12)
+    ctx.move_to(240, 170); ctx.line_to(200, 80); ctx.curve_to(260, 110, 340, 110, 400, 80); ctx.line_to(360, 170); ctx.close_path()
+    fill_stroke(ctx, "#C9A66B", 12)
+    rrect(ctx, 225, 150, 150, 36, 18); fill_stroke(ctx, "#8D5524", 10)
+    _label(ctx, "$", 300, 360, 210, "#2E9E4F")
+
+def icon_money_month(ctx):
+    rrect(ctx, 90, 110, 380, 400, 40); fill_stroke(ctx, WHITE, 12)
+    ctx.save(); rrect(ctx, 90, 110, 380, 400, 40); ctx.clip()
+    ctx.rectangle(90, 110, 380, 105); ctx.set_source_rgba(*hexc("#2E9E4F")); ctx.fill(); ctx.restore()
+    rrect(ctx, 90, 110, 380, 400, 40); ctx.set_source_rgba(*hexc(DARK)); ctx.set_line_width(12); ctx.stroke()
+    for x in (180, 380): rrect(ctx, x - 16, 70, 32, 85, 16); fill_stroke(ctx, "#B0B7C6", 9)
+    ctx.set_source_rgba(*hexc("#D0D5DD"))
+    for r in range(3):
+        for c in range(5):
+            rrect(ctx, 118 + c * 68, 240 + r * 82, 52, 62, 10); ctx.fill()
+    _label(ctx, "$", 280, 370, 220, "#2E9E4F")
+    circle(ctx, 470, 470, 85); fill_stroke(ctx, YELLOW, 11)          # repeat badge
+    ctx.set_source_rgba(*hexc(DARK)); ctx.set_line_width(13); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.new_path(); ctx.arc(470, 470, 45, 0.15 * math.pi, 1.75 * math.pi); ctx.stroke()
+    ax, ay = 470 + 45 * math.cos(1.75 * math.pi), 470 + 45 * math.sin(1.75 * math.pi)
+    ctx.move_to(ax - 26, ay - 6); ctx.line_to(ax + 4, ay + 2); ctx.line_to(ax - 2, ay + 30); ctx.stroke()
+
+def icon_mind_read(ctx):
+    for s in (-1, 1):
+        for k, r in enumerate((190, 240)):
+            ctx.new_path(); a0 = (0 if s > 0 else 1) * math.pi
+            ctx.arc(300, 350, r, a0 - 0.16 * math.pi, a0 + 0.16 * math.pi)
+            for lw, col in ((28, hexc(DARK)), (14, hexc(YELLOW))):
+                ctx.set_line_width(lw); ctx.set_source_rgba(*col); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke_preserve()
+            ctx.new_path()
+    circle(ctx, 300, 360, 140); fill_stroke(ctx, SKIN)
+    ctx.set_source_rgba(*hexc(DARK)); ctx.set_line_width(9); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for ex in (-50, 50):
+        ctx.new_path(); ctx.arc(300 + ex, 350, 22, 0.15 * math.pi, 0.85 * math.pi); ctx.stroke()
+    ctx.new_path(); ctx.move_to(275, 425); ctx.line_to(325, 425); ctx.stroke()
+    for (x, y, r) in ((380, 205, 14), (410, 165, 20)): circle(ctx, x, y, r); fill_stroke(ctx, WHITE, 7)
+    for (x, y, r) in ((380, 95, 52), (450, 85, 58), (515, 110, 45), (440, 130, 50)):
+        circle(ctx, x, y, r); fill_stroke(ctx, WHITE, 9)
+    for (x, y, r) in ((380, 95, 46), (450, 85, 52), (515, 110, 39), (440, 130, 44)):
+        circle(ctx, x, y, r); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+    _label(ctx, "?!", 448, 105, 78, "#D7263D")
+
+def icon_crystal_ball(ctx):
+    ctx.move_to(170, 520); ctx.line_to(200, 430); ctx.line_to(400, 430); ctx.line_to(430, 520); ctx.close_path(); fill_stroke(ctx, "#C9A66B", 12)
+    rrect(ctx, 140, 505, 320, 50, 22); fill_stroke(ctx, "#8D5524", 12)
+    g = cairo.RadialGradient(250, 210, 20, 300, 280, 200)
+    g.add_color_stop_rgb(0, 0.85, 0.75, 1); g.add_color_stop_rgb(1, 0.45, 0.25, 0.8)
+    circle(ctx, 300, 270, 185); ctx.set_source(g); ctx.fill_preserve()
+    ctx.set_source_rgba(*hexc(DARK)); ctx.set_line_width(12); ctx.stroke()
+    ctx.set_source_rgba(1, 1, 1, 0.75); ctx.set_line_width(18); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.new_path(); ctx.arc(300, 270, 140, 1.1 * math.pi, 1.4 * math.pi); ctx.stroke()
+    for (sx, sy, r) in ((330, 230, 26), (240, 320, 16), (380, 330, 13)):
+        ctx.set_source_rgb(1, 0.95, 0.6); ctx.move_to(sx, sy - r * 2)
+        for k in range(1, 8):
+            a = k * math.pi / 4; rr = r * 2 if k % 2 == 0 else r * 0.6
+            ctx.line_to(sx + rr * math.sin(a), sy - rr * math.cos(a))
+        ctx.close_path(); ctx.fill()
+
+def ban_overlay(ctx):
+    for lw, col in ((70, hexc(DARK)), (48, hexc("#FF3B3B"))):
+        ctx.new_path(); circle(ctx, 300, 300, 255); ctx.set_line_width(lw); ctx.set_source_rgba(*col); ctx.stroke()
+        a = 0.25 * math.pi
+        ctx.move_to(300 - 255 * math.cos(a), 300 - 255 * math.sin(a)); ctx.line_to(300 + 255 * math.cos(a), 300 + 255 * math.sin(a))
+        ctx.set_line_cap(cairo.LINE_CAP_BUTT); ctx.stroke()
+
+
 def make_letter(letter):
     def icon(ctx):
         circle(ctx, 300, 300, 230); fill_stroke(ctx, WHITE, 14)
@@ -179,12 +274,18 @@ def make_letter(letter):
     return icon
 
 
-ICONS = {  # name: (draw fn, keywords matched against the option text)
+ICONS = {  # name: (draw fn, keywords matched against the option text); first match wins
     "question": (icon_question, ["?"]),
     "fly_low": (icon_fly_low, ["fly", "flying", "flight"]),
     "invisible": (icon_invisible, ["invisible", "invisibility"]),
     "pizza": (icon_pizza, ["pizza"]),
     "wifi": (icon_wifi, ["wi-fi", "wifi", "internet"]),
+    "phone": (icon_phone, ["phone", "phones", "smartphone", "social media", "tiktok"]),
+    "food": (icon_food, ["food", "burger", "eat", "eating", "meal"]),
+    "money_month": (icon_money_month, ["month", "monthly", "every month", "salary", "per month"]),
+    "money_bag": (icon_money_bag, ["$", "million", "money", "cash", "rich", "dollars"]),
+    "mind_read": (icon_mind_read, ["mind", "minds", "telepathy", "thoughts"]),
+    "crystal_ball": (icon_crystal_ball, ["future", "predict", "fortune"]),
     "hourglass": (icon_hourglass, ["when", "time", "date"]),
     "magnifier": (icon_magnifier, ["how", "why", "what", "find"]),
     "dog_talk": (icon_dog_talk, ["animal", "animals", "dog", "pet"]),
@@ -192,23 +293,28 @@ ICONS = {  # name: (draw fn, keywords matched against the option text)
     "calendar": (icon_calendar, ["daily", "every day", "tomorrow", "new"]),
     "bell": (icon_bell, ["follow", "subscribe", "notification"]),
 }
+NEGATIONS = ("no ", "never ", "without ", "zero ")
 
 
 def pick_icon(text, letter):
-    """first icon (in ICONS order) whose keyword appears as a whole word in the text"""
+    """first icon (in ICONS order) whose keyword appears in the text; '+ban' when the label starts with No/Never/Without"""
     import re
     low = text.lower(); toks = set(re.findall(r"[a-z0-9\-?]+", low))
+    ban = "+ban" if low.startswith(NEGATIONS) else ""
     for name, (_, kws) in ICONS.items():
-        if any(k in toks or (" " in k and k in low) for k in kws):
-            return name
+        if any(k in toks or (not k.isalnum() and k in low) for k in kws):
+            return name + ban
     return "letter_" + letter
 
 
 def render_icon(name, size):
-    fn = ICONS[name][0] if name in ICONS else make_letter(name.split("_", 1)[1] if name.startswith("letter_") else "?")
+    base, _, mod = name.partition("+")
+    fn = ICONS[base][0] if base in ICONS else make_letter(base.split("_", 1)[1] if base.startswith("letter_") else "?")
     pad = int(size * 0.12)
     surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, size + 2 * pad, size + 2 * pad)
     ctx = cairo.Context(surf)
     ctx.translate(pad, pad); ctx.scale(size / 600, size / 600)
     fn(ctx)
+    if mod == "ban":
+        ctx.save(); ctx.translate(300, 300); ctx.scale(0.92, 0.92); ctx.translate(-300, -300); ban_overlay(ctx); ctx.restore()
     return surf, size + 2 * pad, size + 2 * pad

@@ -1,19 +1,21 @@
-HOOK: "You only get ONE choice. Choose wisely."
+EPISODE: 1
+RESULTS_LINE:
+HOOK: "You won't survive these 4 choices. The last one is IMPOSSIBLE."
 
-Q1: "Would you rather fly, but only one meter high... or be invisible, but only when nobody's looking?"
-A: Fly 1 meter high | B: Invisible when nobody looks
-Reaction: "Both are useless. Comment which useless power you picked."
+Q1: "Would you rather never use your phone again... or never eat your favorite food again?"
+A: No phone forever | B: No favorite food forever
+Reaction: "Phone people... we know you're lying."
 
-Q2: "Would you rather have free pizza forever... or free Wi-Fi everywhere forever?"
-A: Free pizza forever | B: Free Wi-Fi everywhere
-Reaction: "Pizza people, we see you."
+Q2: "One million dollars now... or ten thousand a month, for life?"
+A: $1,000,000 now | B: $10,000 every month
+Reaction: "Do the math... then comment."
 
-Q3: "Would you rather know when you'll die... or know how you'll die?"
+Q3: "Read minds nonstop... or see the future, but never change it?"
+A: Read minds, always on | B: See the future, can't change it
+Reaction: "Both sound like a nightmare."
+
+Q4: "Know WHEN you'll die... or HOW you'll die?"
 A: Know WHEN | B: Know HOW
-Reaction: "...we're moving on."
+Reaction: "Told you. Impossible. A or B?"
 
-Q4: "Would you rather talk to animals... or speak every human language?"
-A: Talk to animals | B: Speak every language
-Reaction: "Tell me in the comments: A or B?"
-
-OUTRO: "New choices every day. Follow so you don't miss tomorrow's."
+OUTRO: "Follow for a new one every day... because..."
