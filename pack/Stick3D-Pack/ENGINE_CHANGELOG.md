@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## v19 — KIDS EP01 "What If Stickman Shrank?" (first standalone kids-channel episode, 40 s)
+**Learned**
+- `Ball ink` is an absolute outline offset, not relative: on tiny props (r 0.03-0.08) the default 0.06-0.14 made a black hull bigger than the prop (a black blob behind the little flower, seeds looked like black balls). Use ink about 15-25 % of r on small props.
+- The ride shots framed the ladybug only, so anything on the ground under the flight path (the sleeping snail) fell below the frame: rideTrack now takes a dy(t) dip for the beat that introduces it.
+- Puff rings and dust at tiny-world scale cover the hero quickly: keep r <= 1.5 and size <= 0.25 near him, and end them within 0.6 s (back-lit puffs read as dark stray sprites).
+- Background renders: the QC mask (270x480) of a dense grass world takes 1.5-2.5 h on 4 CPUs; do not run stills or other renders at the same time.
+- Whisper splits made-up words ("Achoo" -> "At you", "waterslide" -> "water slide"): map Whisper words onto script tokens and merge.
+**Changed**
+- kit/sets6.tsx (new): shared Day lighting, BigGarden (normal scale: hills, garden props, LittleFlower) and MiniGarden (ant scale: GrassBlades with ink edges, GiantFlower, LeafSlide + leafY, hanging Raindrop, instanced Dandelion with squash/lost seeds, FloatSeed, boulders, far flowers).
+- style/critters2.ts + kit/animals.tsx: HD vector ladybug (wing flicker, elytra open only via ruffle, front-leg wave, walk, blink) and sleeping snail (shell spiral, breathing, Zz).
+- tools/make_sfx_kids01.py (new): synth sneeze_burst, boing, flutter, tickle, shrink, grow in sfx/.
+- Shrink / grow beat: hero h 3 -> 0.08 and back with overshoot, cut to the tiny world on the pop; the hook and ending share hookHero / seedAt / hookKey (tau) for a seamless loop.
+
 ## v18 — EP09 round 3 (HD quality, richer environments, body acting)
 **Learned**
 - Transparent additive meshes (torch beam) do not write depth, so the DOF pass blurred them with the far background -> the beam vanished. Beam now writes depth.
