@@ -40,7 +40,7 @@
     "b_after_a": 0.0,
     "before_countdown": 0.04,
     "after_countdown": 0.1,
-    "loop_tail": 0.0
+    "outro_tail": 0.15
   },
   "sfx_gain": {
     "whoosh": 0.35,
@@ -49,7 +49,7 @@
     "heartbeat": 0.55
   },
   "pick_text": "PICK ONE!",
-  "outro_header": "FOLLOW FOR DAILY CHOICES!",
+  "outro_header": "SEE YOU TOMORROW",
   "mascot": {
     "poses": {
       "hook": "excited",
@@ -82,5 +82,6 @@
     "default_reaction": "laughing"
   },
   "countdown_s": 2.0,
-  "special_last": true
+  "special_last": true,
+  "max_seconds": 35
 }

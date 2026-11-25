@@ -21,6 +21,7 @@ import { Ep07 } from "./videos/Ep07";
 import { Ep08 } from "./videos/Ep08";
 import { Ep09 } from "./videos/Ep09";
 import { WyrScene } from "./videos/WyrScenes";
+import { WyrEndcard } from "./videos/WyrEndcard";
 // NEW EPISODES: register with <EpisodeCompositions id="EpXX" component={EpXX} seconds={60|100} /> (adds EpXXAnimatic for approval + QC mask).
 export const Root: React.FC = () => <>
   <Composition id="Main" component={Main} width={720} height={1280} fps={30} durationInFrames={60} />
@@ -42,5 +43,6 @@ export const Root: React.FC = () => <>
   <Composition id="Lab" component={Lab} width={1080} height={1920} fps={30} durationInFrames={30} />
   {/* Would You Rather option images (wyr/scenes3d.py renders them; frame = item) */}
   <Composition id="WyrScene" component={WyrScene} width={1350} height={1200} fps={30} durationInFrames={64} defaultProps={{ items: [{ name: "phone", side: "A", layer: "fg", ban: true }] }} />
+  <Composition id="WyrEndcard" component={WyrEndcard} width={1080} height={1920} fps={30} durationInFrames={45} />
   <Composition id="Showreel" component={Showreel} width={1080} height={1920} fps={30} durationInFrames={300} />
 </>;

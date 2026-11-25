@@ -19,6 +19,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CFG = json.load(open(os.path.join(HERE, "config.json")))
 L, T, C = CFG["layout"], CFG["timing"], CFG["colors"]
 FPS, SR = 30, 24000
+ENDCARD_MKV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "endcard", "endcard.mkv")
+ENDCARD_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "endcard", "endcard.wav")
+ENDCARD_FRAMES = 45
 COMP = "acompressor=threshold=-20dB:ratio=3:attack=5:release=120:makeup=2,"
 
 
@@ -210,15 +213,15 @@ def build(ep, cache):
         audio.append((r0, sfx("bass_hit"), G["bass_hit"]))
         header.append((r0, ("text", qq["reaction"]))); mascot.append((r0, M.get(qq["mood"], qq["mood"])))
         t, _ = voice(qq["reaction"], r0 + T["after_countdown"])
+    # outro: short line over the last question's images (calm: no pulse/shake), then the fixed end card is appended
     t += T["gap"]
-    audio.append((t - 0.38, sfx("whoosh"), G["whoosh"]))
-    scenes.append(dict(start=t, qi=0, countdown=None, reveal=None, special=False, outro=True))
+    last = scenes[-1]
+    scenes.append(dict(start=t, qi=last["qi"], countdown=None, reveal=None, special=False, outro=True))
     header.append((t, ("text", CFG["outro_header"]))); mascot.append((t, M["outro"]))
     oend, ow = voice(ep["outro"], t + T["voice_delay"])
-    lw = ow[-1]["s"] - 0.05      # loop word: header + mascot go back to the frame-0 state
-    header.append((lw, ("hook", hook_text))); mascot.append((lw, M["hook"]))
-    total = oend + T["loop_tail"]
+    total = oend + T["outro_tail"]
     for k, s in enumerate(scenes): s["end"] = scenes[k + 1]["start"] if k + 1 < len(scenes) else total
+    last["u1"] = total; scenes[-1]["u0"] = last["start"]; scenes[-1]["u1"] = total   # one continuous push-in under the outro
     return dict(scenes=scenes, header=header, mascot=mascot, caps=caps, audio=audio, total=total, episode=ep["episode"], ep=ep)
 
 
@@ -345,10 +348,8 @@ def mascot_img(pose):
 def draw_half(ctx, tl, imgs, sc_, side, t, per):
     y0 = 0 if side == "A" else HH
     bg, fg, bl = imgs[(sc_["qi"], side)]
-    dur = max(0.5, sc_["end"] - sc_["start"])
-    if sc_.get("outro"): u = 1 - smooth((t - sc_["start"]) / dur)          # pull back to the exact frame-0 framing
-    else: u = (t - sc_["start"]) / dur
-    u = max(0.0, u)
+    u0, u1 = sc_.get("u0", sc_["start"]), sc_.get("u1", sc_["end"])
+    u = max(0.0, (t - u0) / max(0.5, u1 - u0))
     base = HW / 1350.0
     kick = 0.0
     if sc_["reveal"] is not None and t >= sc_["reveal"]: kick = 0.025 * math.exp(-(t - sc_["reveal"]) * 5)
@@ -472,7 +473,7 @@ def draw_caption(ctx, tl, t):
         for i, p in enumerate(ph):
             t0 = p[0]["s"] - 0.06
             t1 = ph[i + 1][0]["s"] - 0.06 if i + 1 < len(ph) else p[-1]["e"] + 0.35
-            t1 = min(t1, total - 1.5 / FPS)
+            t1 = min(t1, total)
             if not (max(t0, 1.0 / FPS) <= t < t1): continue
             text = " ".join(w["w"] for w in p).replace(" ,", ",")
             text = text[0] + text[1:].lower() if text.isupper() else text
@@ -539,6 +540,9 @@ def mix_audio(tl, out):
     for at, clip, g in tl["audio"]:
         i0 = max(0, int(round(at * SR))); seg = clip[: len(mix) - i0] * g; mix[i0:i0 + len(seg)] += seg
     mix = mix[:n]
+    card, csr = sf.read(ENDCARD_WAV, dtype="float32"); assert csr == SR
+    w = sfx("whoosh") * CFG["sfx_gain"]["whoosh"]; i0 = n - int(0.3 * SR); mix[i0:] += w[: n - i0]
+    mix = np.concatenate([mix, card[: int(round(ENDCARD_FRAMES / FPS * SR))]])
     raw = os.path.join(out, "mix_raw.wav"); sf.write(raw, mix, SR)
     pre = os.path.join(out, "mix_pre.wav")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-af", COMP.rstrip(","), "-ar", "48000", "-ac", "2", pre], check=True)
@@ -561,10 +565,12 @@ def main():
     ep = parse_script(a.script)
     tl = build(ep, cache)
     nfr = int(round(tl["total"] * FPS)); tl["total"] = nfr / FPS
+    full = tl["total"] + ENDCARD_FRAMES / FPS
+    if full > CFG["max_seconds"] + 1e-6: print(f"WARNING: {full:.2f}s is over the {CFG['max_seconds']}s limit - shorten the script/outro")
     for s in tl["scenes"]: s["end"] = min(s["end"], tl["total"])
     json.dump({"duration": tl["total"], "header": tl["header"], "mascot": tl["mascot"], "scenes": tl["scenes"], "captions": tl["caps"]},
               open(os.path.join(out, "timeline.json"), "w"), indent=1)
-    print(f"duration {tl['total']:.2f}s ({nfr} frames)  scenes: " + ", ".join("/".join(q["icons"]) for q in ep["questions"])
+    print(f"duration {full:.2f}s = {tl['total']:.2f}s + {ENDCARD_FRAMES / FPS:.1f}s end card  scenes: " + ", ".join("/".join(q["icons"]) for q in ep["questions"])
           + "  moods: " + ", ".join(q["mood"] for q in ep["questions"]), flush=True)
     imgs = load_images(ep); ov = make_overlays()
     surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, W, H); ctx = cairo.Context(surf)
@@ -577,10 +583,14 @@ def main():
     final = os.path.join(out, "final.mp4")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgra", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                            "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p",
-                           "-c:a", "aac", "-b:a", "192k", "-t", f"{tl['total']:.3f}", "-movflags", "+faststart", final], stdin=subprocess.PIPE)
+                           "-c:a", "aac", "-b:a", "192k", "-t", f"{full:.3f}", "-movflags", "+faststart", final], stdin=subprocess.PIPE)
     for f in range(nfr):
         frame(ctx, tl, imgs, ov, f / FPS); surf.flush(); ff.stdin.write(surf.get_data())
         if f % 150 == 0: print(f"frame {f}/{nfr}", flush=True)
+    # fixed end card: the saved frames, byte-identical in every episode (never re-rendered here)
+    card = subprocess.run(["ffmpeg", "-v", "error", "-i", ENDCARD_MKV, "-f", "rawvideo", "-pix_fmt", "bgra", "-"], capture_output=True, check=True).stdout
+    assert len(card) == ENDCARD_FRAMES * W * H * 4, "end card asset has the wrong size"
+    ff.stdin.write(card)
     ff.stdin.close(); ff.wait()
     print("->", final)
 

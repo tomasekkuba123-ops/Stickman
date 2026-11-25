@@ -18,4 +18,4 @@ Q4: "Know WHEN you'll die... or HOW you'll die?"
 A: Know WHEN | B: Know HOW
 Reaction: "Told you. Impossible. A or B?"
 
-OUTRO: "Follow for a new one every day... because..."
+OUTRO: "That's all for today."

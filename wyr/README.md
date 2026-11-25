@@ -20,7 +20,7 @@ Reaction: "Line spoken after the countdown."
 Icons: pizza | wifi                # optional, otherwise picked from the label keywords
 Mood: laughing                     # optional mascot pose for the reaction (laughing/surprised/scared/wow/excited)
 
-OUTRO: "Follow for a new one every day... because..."   # ends mid-sentence -> loops into the hook
+OUTRO: "That's all for today."   # keep it short: the 1.5 s end card follows
 ```
 
 - ALL-CAPS words are spoken normally but drawn yellow in the header. Standalone "A"/"B" are spoken as letters; `$10,000` is read as "10000 dollars".
@@ -36,8 +36,10 @@ OUTRO: "Follow for a new one every day... because..."   # ends mid-sentence -> l
 - Both options pop in together on every new question.
 - Mascot (Stickman, mid-left, clear of the Shorts UI): excited (hook) → happy (question) → thinking (countdown) →
   laughing/surprised/scared (reaction, from `Mood:` or reaction keywords) → thumbs-up (outro).
-- Seamless loop: the outro returns to Q1, and on its last word the header + mascot switch back to the frame-0 state.
-  Idle motion is periodic over the video length, so the last frame flows into the first.
+- Outro: one short line over the last question's images, then the fixed **SUBSCRIBE end card** (1.5 s, `assets/endcard/`,
+  built once by `build_endcard.py` from the engine composition `WyrEndcard`: 3D Stickman pointing at SUBSCRIBE, button press ->
+  SUBSCRIBED, bell rings, voice "Subscribe for tomorrow's choice!"). It is appended unchanged to every episode; never rebuild it.
+  No seamless loop any more.
 
 ## v3 look (cinematic)
 - Each half is a full-bleed **toon-3D render** of the option, made with the Stickman engine (`pack/Stick3D-Pack/engine`,

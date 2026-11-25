@@ -1,6 +1,17 @@
 # Would You Rather channel — standing rules (user's instructions, apply to EVERY finished episode)
 
-Build: `python3 render.py episodes/epNN.txt` (see README.md). Max 35 s, -14 LUFS, check stills before the full render.
+Build: `python3 render.py episodes/epNN.txt` (see README.md). Max 35 s **including the end card**, -14 LUFS, check stills
+before the full render.
+
+## Subscribe end card rule (user's instruction, every episode)
+- Every episode ends with the fixed 1.5 s SUBSCRIBE end card: `wyr/assets/endcard/endcard.mkv` (45 frames, lossless) +
+  `endcard.wav` (voice "Subscribe for tomorrow's choice!", button click, bell). render.py appends both at the very end automatically.
+- The card must look identical in every episode: **never regenerate, edit or re-encode the asset**; always reuse the saved files.
+  `build_endcard.py` refuses to overwrite them; only run it with `--force` if the user explicitly asks for a NEW card.
+  endcard.mkv sha256 = `bf15fd6dc480531ee1f195c1479e5626e448cddff681730dd2e23a18f7daef1a` (check it if in doubt).
+- Total length (main part + 1.5 s card) max 35 s: keep the OUTRO line short (e.g. "That's all for today.") and shorten it
+  further if render.py prints the over-limit warning.
+- The seamless-loop requirement is dropped: the final frame is the end card, not a copy of frame 1.
 
 ## Branch rule (user's instruction, no exceptions)
 All videos are pushed to the branch **`claude/would-you-rather-short-ida19u`**, the same branch every time, even if a session
