@@ -201,3 +201,55 @@ export function drawDuck(c: C2, W: number, H: number, p: AnimalPose) {
   c.beginPath(); c.moveTo(-10, -250); c.quadraticCurveTo(-30, -280, -6, -292); ln(c, 7); c.beginPath(); c.moveTo(4, -252); c.quadraticCurveTo(10, -290, 30, -286); ln(c, 6); // head feather tufts
   c.restore(); c.restore(); c.restore();
 }
+
+/* ================= LADYBUG (design 640 x 480), side view facing right. wing 0..1 = elytra open + membrane wings buzzing; walk = leg cycle; claw 0..1 = front leg waves ================= */
+export function drawLadybug(c: C2, W: number, H: number, p: AnimalPose) {
+  c.clearRect(0, 0, W, H); c.save(); c.scale(W / 640, H / 480); if (p.flip) { c.translate(640, 0); c.scale(-1, 1); }
+  const t = p.t, wg = Math.max(0, Math.min(1, p.wing ?? 0)), ph = (p.walk ?? 0) * Math.PI * 2, wave = p.claw ?? 0, RED = "#e8262a", REDL = "#ff6a5a", REDD = "#a8141c";
+  const bob = wg > 0.3 ? Math.sin(t * 40) * 3 : 0; c.translate(0, bob);
+  // legs (six, three visible pairs), front one can wave
+  for (let i = 0; i < 3; i++) { const x = 230 + i * 90, sw = Math.sin(ph + i * 2.1) * 16, up = i === 2 ? wave : 0;
+    c.beginPath(); c.moveTo(x, 360); c.lineTo(x + 20 + sw, 410 - up * 90); c.lineTo(x + 40 + sw + up * 40, 452 - up * 200); ln(c, 16); }
+  // membrane wings (behind the shell when open): fast flicker
+  if (wg > 0.05) for (const s of [0, 1]) { const fl2 = Math.sin(t * 60 + s * 1.7) * 0.35;
+    c.save(); c.translate(300, 230); c.rotate(-0.9 - fl2 - s * 0.35); c.globalAlpha = 0.55 * wg;
+    c.beginPath(); c.ellipse(-150, 0, 170, 55, 0, 0, Math.PI * 2); c.fillStyle = "#dff2ff"; c.fill(); ln(c, 5, "rgba(26,26,26,0.6)");
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(-290, -5); ln(c, 3, "rgba(26,26,26,0.4)"); c.restore(); }
+  // head (black) + face
+  c.beginPath(); c.arc(470, 300, 78, 0, Math.PI * 2); fl(c, rg(c, 470, 300, 78, "#4a4a58", "#121218"), 9);
+  c.beginPath(); c.moveTo(450, 230); c.quadraticCurveTo(440, 160, 470, 140); ln(c, 7); c.beginPath(); c.arc(472, 136, 12, 0, Math.PI * 2); fl(c, INK, 0);
+  c.beginPath(); c.moveTo(495, 232); c.quadraticCurveTo(510, 170, 540, 158); ln(c, 7); c.beginPath(); c.arc(543, 155, 12, 0, Math.PI * 2); fl(c, INK, 0);
+  eye(c, 492, 290, 30, 0.5 + (p.look ?? 0), 0.1, p.blink ? 1 : 0);
+  c.beginPath(); c.arc(505, 335, 22, 0.15 * Math.PI, 0.85 * Math.PI); ln(c, 6, "#fff"); // smile
+  c.beginPath(); c.ellipse(530, 318, 14, 8, 0, 0, Math.PI * 2); c.fillStyle = "rgba(255,150,160,0.7)"; c.fill();
+  // elytra (shell): two halves; the near half lifts and rotates back when flying
+  const dome = (rot: number, dark: boolean) => { c.save(); c.translate(400, 250); c.rotate(rot); c.translate(-400, -250);
+    c.beginPath(); c.moveTo(410, 250); c.bezierCurveTo(400, 120, 140, 110, 90, 260); c.bezierCurveTo(80, 330, 140, 380, 260, 380); c.bezierCurveTo(360, 380, 420, 340, 410, 250); c.closePath();
+    fl(c, dark ? REDD : rg(c, 250, 230, 200, REDL, RED), 9);
+    if (!dark) { for (const [x, y, r] of [[200, 200, 34], [310, 190, 30], [150, 300, 30], [270, 300, 38], [360, 280, 24]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); fl(c, INK, 0); }
+      c.beginPath(); c.ellipse(220, 165, 70, 22, -0.3, 0, Math.PI * 2); c.fillStyle = "rgba(255,255,255,0.5)"; c.fill(); } c.restore(); };
+  if (wg > 0.05) dome(-0.55 * wg, true);
+  dome(-0.75 * wg, false);
+  c.restore();
+}
+
+/* ================= SNAIL (design 640 x 440), side view facing right, sleeping: breath (mouth 0..1) swells the shell, eyes shut, tiny smile ================= */
+export function drawSnail(c: C2, W: number, H: number, p: AnimalPose) {
+  c.clearRect(0, 0, W, H); c.save(); c.scale(W / 640, H / 440); if (p.flip) { c.translate(640, 0); c.scale(-1, 1); }
+  const br = 1 + 0.025 * Math.sin(p.t * 2.2), BODY = "#a8e07a", BODYD = "#6aa84a";
+  // body (foot) + head with eye stalks
+  c.beginPath(); c.moveTo(40, 400); c.quadraticCurveTo(80, 330, 260, 340); c.lineTo(470, 330); c.quadraticCurveTo(520, 250, 560, 230); c.quadraticCurveTo(620, 230, 610, 320); c.quadraticCurveTo(600, 400, 520, 410); c.lineTo(60, 415); c.closePath();
+  fl(c, lg(c, 0, 230, 0, 415, [[0, "#c8f5a0"], [0.6, BODY], [1, BODYD]]), 9);
+  for (const [x0, x1, y1] of [[555, 545, 150], [585, 600, 160]]) { c.beginPath(); c.moveTo(x0, 240); c.quadraticCurveTo((x0 + x1) / 2 - 10, 200, x1, y1 + Math.sin(p.t * 1.1 + x0) * 4); ln(c, 18, INK); c.beginPath(); c.moveTo(x0, 240); c.quadraticCurveTo((x0 + x1) / 2 - 10, 200, x1, y1); ln(c, 10, BODY);
+    c.beginPath(); c.arc(x1, y1, 18, 0, Math.PI * 2); fl(c, BODY, 7); c.beginPath(); c.arc(x1, y1 + 2, 10, 0.15 * Math.PI, 0.85 * Math.PI); ln(c, 5); } // closed eyes
+  c.beginPath(); c.arc(588, 300, 18, 0.2 * Math.PI, 0.8 * Math.PI); ln(c, 6); c.beginPath(); c.ellipse(560, 290, 14, 8, 0, 0, Math.PI * 2); c.fillStyle = "rgba(255,150,160,0.6)"; c.fill();
+  // shell spiral
+  c.save(); c.translate(280, 230); c.scale(br, br);
+  c.beginPath(); c.arc(0, 0, 165, 0, Math.PI * 2); fl(c, rg(c, 0, 0, 165, "#ffcf7a", "#c77a2a"), 10);
+  c.beginPath(); for (let a = 0; a < Math.PI * 6; a += 0.08) { const r = 150 * (1 - a / (Math.PI * 6.6)); c.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ln(c, 9, "#7a4214");
+  c.beginPath(); c.ellipse(-60, -90, 50, 18, -0.6, 0, Math.PI * 2); c.fillStyle = "rgba(255,255,255,0.45)"; c.fill(); c.restore();
+  // Zz
+  for (let i = 0; i < 3; i++) { const u = (p.t * 0.5 + i / 3) % 1, x = 600 + u * 30, y = 120 - u * 110, s = 20 + i * 4 + u * 10; c.globalAlpha = Math.sin(u * Math.PI);
+    c.font = `900 ${s * 2}px Inter, Arial`; c.lineWidth = 7; c.strokeStyle = INK; c.fillStyle = "#fff"; c.strokeText("z", x - 60, y + 40); c.fillText("z", x - 60, y + 40); }
+  c.restore();
+}

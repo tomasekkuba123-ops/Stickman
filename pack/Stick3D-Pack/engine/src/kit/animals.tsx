@@ -3,15 +3,15 @@ import React from "react";
 import { Billboard } from "../style/toon";
 import { V3 } from "../style/kit";
 import { SGlow } from "../style/sky";
-import { drawWolf2, drawOwl2, drawCrab2, drawFish, drawCoral, drawQ, drawDuck, AnimalPose } from "../style/critters2";
+import { drawWolf2, drawOwl2, drawCrab2, drawFish, drawCoral, drawQ, drawDuck, drawLadybug, drawSnail, AnimalPose } from "../style/critters2";
 import { QC } from "./qc";
 
-export type AnimalKind = "wolf" | "owl" | "crab" | "fish" | "coral" | "duck";
-const ASP: Record<AnimalKind, number> = { wolf: 760 / 800, owl: 760 / 600, crab: 440 / 640, fish: 0.5, coral: 520 / 640, duck: 560 / 600 };
-const FN = { wolf: drawWolf2, owl: drawOwl2, crab: drawCrab2, fish: drawFish, coral: drawCoral, duck: drawDuck } as const;
+export type AnimalKind = "wolf" | "owl" | "crab" | "fish" | "coral" | "duck" | "ladybug" | "snail";
+const ASP: Record<AnimalKind, number> = { wolf: 760 / 800, owl: 760 / 600, crab: 440 / 640, fish: 0.5, coral: 520 / 640, duck: 560 / 600, ladybug: 480 / 640, snail: 440 / 640 };
+const FN = { wolf: drawWolf2, owl: drawOwl2, crab: drawCrab2, fish: drawFish, coral: drawCoral, duck: drawDuck, ladybug: drawLadybug, snail: drawSnail } as const;
 export const Animal: React.FC<{ kind: AnimalKind; p: V3; h: number; t: number; res?: number; pose?: Partial<AnimalPose> & { hue?: number; glow?: number } }> = ({ kind, p, h, t, res, pose = {} }) => {
   const blink = (Math.floor(t * 30) + kind.length * 13) % 89 < 4;
-  const r = QC ? 256 : res ?? (kind === "fish" ? 384 : kind === "crab" || kind === "duck" ? 1280 : 2048);
+  const r = QC ? 256 : res ?? (kind === "fish" ? 384 : kind === "crab" || kind === "duck" || kind === "ladybug" || kind === "snail" ? 1280 : 2048);
   return <Billboard p={p} h={h} res={r} aspect={ASP[kind]} draw={(c, W, H) => (FN[kind] as (c: CanvasRenderingContext2D, W: number, H: number, p: AnimalPose) => void)(c, W, H, { t, blink, ...pose })} />;
 };
 /* "?" pop above a head: appears at t0 with overshoot, bobs, fades at t1 */

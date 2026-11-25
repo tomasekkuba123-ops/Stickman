@@ -1,0 +1,542 @@
+[
+ {
+  "word": "What",
+  "start": 0.3,
+  "end": 0.42
+ },
+ {
+  "word": "if",
+  "start": 0.42,
+  "end": 0.52
+ },
+ {
+  "word": "Stickman",
+  "start": 0.52,
+  "end": 0.92
+ },
+ {
+  "word": "shrank",
+  "start": 0.92,
+  "end": 1.26
+ },
+ {
+  "word": "to",
+  "start": 1.26,
+  "end": 1.4
+ },
+ {
+  "word": "the",
+  "start": 1.4,
+  "end": 1.48
+ },
+ {
+  "word": "size",
+  "start": 1.48,
+  "end": 1.72
+ },
+ {
+  "word": "of",
+  "start": 1.72,
+  "end": 1.98
+ },
+ {
+  "word": "an",
+  "start": 1.98,
+  "end": 2.08
+ },
+ {
+  "word": "ant?",
+  "start": 2.08,
+  "end": 2.34
+ },
+ {
+  "word": "Achoo!",
+  "start": 3.034,
+  "end": 3.334
+ },
+ {
+  "word": "One",
+  "start": 3.554,
+  "end": 3.674
+ },
+ {
+  "word": "big",
+  "start": 3.674,
+  "end": 3.894
+ },
+ {
+  "word": "sneeze,",
+  "start": 3.894,
+  "end": 4.434
+ },
+ {
+  "word": "and",
+  "start": 4.434,
+  "end": 4.534
+ },
+ {
+  "word": "pop!",
+  "start": 4.534,
+  "end": 4.794
+ },
+ {
+  "word": "He's",
+  "start": 5.114,
+  "end": 5.234
+ },
+ {
+  "word": "tiny!",
+  "start": 5.234,
+  "end": 5.494
+ },
+ {
+  "word": "Now",
+  "start": 6.197,
+  "end": 6.357
+ },
+ {
+  "word": "the",
+  "start": 6.357,
+  "end": 6.517
+ },
+ {
+  "word": "grass",
+  "start": 6.517,
+  "end": 6.757
+ },
+ {
+  "word": "is",
+  "start": 6.757,
+  "end": 6.997
+ },
+ {
+  "word": "taller",
+  "start": 6.997,
+  "end": 7.317
+ },
+ {
+  "word": "than",
+  "start": 7.317,
+  "end": 7.617
+ },
+ {
+  "word": "trees.",
+  "start": 7.617,
+  "end": 7.877
+ },
+ {
+  "word": "Buzz!",
+  "start": 8.757,
+  "end": 8.977
+ },
+ {
+  "word": "A",
+  "start": 9.377,
+  "end": 9.377
+ },
+ {
+  "word": "ladybug",
+  "start": 9.377,
+  "end": 9.877
+ },
+ {
+  "word": "lands",
+  "start": 9.877,
+  "end": 10.137
+ },
+ {
+  "word": "next",
+  "start": 10.137,
+  "end": 10.537
+ },
+ {
+  "word": "to",
+  "start": 10.537,
+  "end": 10.737
+ },
+ {
+  "word": "him.",
+  "start": 10.737,
+  "end": 10.897
+ },
+ {
+  "word": "Hi",
+  "start": 11.423,
+  "end": 11.623
+ },
+ {
+  "word": "there!",
+  "start": 11.623,
+  "end": 11.863
+ },
+ {
+  "word": "Can",
+  "start": 12.083,
+  "end": 12.143
+ },
+ {
+  "word": "I",
+  "start": 12.143,
+  "end": 12.283
+ },
+ {
+  "word": "ride",
+  "start": 12.283,
+  "end": 12.483
+ },
+ {
+  "word": "with",
+  "start": 12.483,
+  "end": 12.763
+ },
+ {
+  "word": "you?",
+  "start": 12.763,
+  "end": 12.943
+ },
+ {
+  "word": "He",
+  "start": 13.466,
+  "end": 13.526
+ },
+ {
+  "word": "climbs",
+  "start": 13.526,
+  "end": 13.766
+ },
+ {
+  "word": "on,",
+  "start": 13.766,
+  "end": 14.146
+ },
+ {
+  "word": "and",
+  "start": 14.146,
+  "end": 14.486
+ },
+ {
+  "word": "up",
+  "start": 14.486,
+  "end": 14.626
+ },
+ {
+  "word": "they",
+  "start": 14.626,
+  "end": 14.826
+ },
+ {
+  "word": "fly!",
+  "start": 14.826,
+  "end": 15.086
+ },
+ {
+  "word": "Over",
+  "start": 15.835,
+  "end": 16.015
+ },
+ {
+  "word": "a",
+  "start": 16.015,
+  "end": 16.075
+ },
+ {
+  "word": "giant",
+  "start": 16.075,
+  "end": 16.355
+ },
+ {
+  "word": "flower,",
+  "start": 16.355,
+  "end": 16.675
+ },
+ {
+  "word": "and",
+  "start": 16.675,
+  "end": 17.255
+ },
+ {
+  "word": "a",
+  "start": 17.255,
+  "end": 17.335
+ },
+ {
+  "word": "sleepy",
+  "start": 17.335,
+  "end": 17.595
+ },
+ {
+  "word": "snail.",
+  "start": 17.595,
+  "end": 18.135
+ },
+ {
+  "word": "Wait...",
+  "start": 18.839,
+  "end": 19.059
+ },
+ {
+  "word": "is",
+  "start": 19.059,
+  "end": 19.399
+ },
+ {
+  "word": "that",
+  "start": 19.399,
+  "end": 19.559
+ },
+ {
+  "word": "a",
+  "start": 19.559,
+  "end": 19.679
+ },
+ {
+  "word": "raindrop?",
+  "start": 19.679,
+  "end": 20.239
+ },
+ {
+  "word": "It's",
+  "start": 20.739,
+  "end": 20.959
+ },
+ {
+  "word": "as",
+  "start": 20.959,
+  "end": 21.019
+ },
+ {
+  "word": "big",
+  "start": 21.019,
+  "end": 21.259
+ },
+ {
+  "word": "as",
+  "start": 21.259,
+  "end": 21.419
+ },
+ {
+  "word": "a",
+  "start": 21.419,
+  "end": 21.519
+ },
+ {
+  "word": "beach",
+  "start": 21.519,
+  "end": 21.739
+ },
+ {
+  "word": "ball!",
+  "start": 21.739,
+  "end": 22.079
+ },
+ {
+  "word": "Splash!",
+  "start": 22.744,
+  "end": 23.064
+ },
+ {
+  "word": "He",
+  "start": 23.384,
+  "end": 23.424
+ },
+ {
+  "word": "slides",
+  "start": 23.424,
+  "end": 23.644
+ },
+ {
+  "word": "down",
+  "start": 23.644,
+  "end": 24.104
+ },
+ {
+  "word": "a",
+  "start": 24.104,
+  "end": 24.224
+ },
+ {
+  "word": "leaf",
+  "start": 24.224,
+  "end": 24.384
+ },
+ {
+  "word": "like",
+  "start": 24.384,
+  "end": 24.624
+ },
+ {
+  "word": "a",
+  "start": 24.624,
+  "end": 24.744
+ },
+ {
+  "word": "waterslide.",
+  "start": 24.744,
+  "end": 25.304
+ },
+ {
+  "word": "Wheee!",
+  "start": 25.924,
+  "end": 26.024
+ },
+ {
+  "word": "Boing!",
+  "start": 26.745,
+  "end": 26.965
+ },
+ {
+  "word": "He",
+  "start": 27.205,
+  "end": 27.425
+ },
+ {
+  "word": "lands",
+  "start": 27.425,
+  "end": 27.665
+ },
+ {
+  "word": "on",
+  "start": 27.665,
+  "end": 27.905
+ },
+ {
+  "word": "a",
+  "start": 27.905,
+  "end": 27.965
+ },
+ {
+  "word": "fluffy",
+  "start": 27.965,
+  "end": 28.205
+ },
+ {
+  "word": "dandelion.",
+  "start": 28.205,
+  "end": 28.965
+ },
+ {
+  "word": "His",
+  "start": 29.527,
+  "end": 29.627
+ },
+ {
+  "word": "nose",
+  "start": 29.627,
+  "end": 29.847
+ },
+ {
+  "word": "starts",
+  "start": 29.847,
+  "end": 30.307
+ },
+ {
+  "word": "to",
+  "start": 30.307,
+  "end": 30.547
+ },
+ {
+  "word": "tickle...",
+  "start": 30.547,
+  "end": 30.967
+ },
+ {
+  "word": "Achoo!",
+  "start": 31.534,
+  "end": 31.894
+ },
+ {
+  "word": "Pop!",
+  "start": 31.894,
+  "end": 32.094
+ },
+ {
+  "word": "He's",
+  "start": 32.374,
+  "end": 32.494
+ },
+ {
+  "word": "big",
+  "start": 32.494,
+  "end": 32.654
+ },
+ {
+  "word": "again!",
+  "start": 32.654,
+  "end": 32.914
+ },
+ {
+  "word": "The",
+  "start": 33.568,
+  "end": 33.628
+ },
+ {
+  "word": "ladybug",
+  "start": 33.628,
+  "end": 34.068
+ },
+ {
+  "word": "waves",
+  "start": 34.068,
+  "end": 34.368
+ },
+ {
+  "word": "goodbye.",
+  "start": 34.368,
+  "end": 34.768
+ },
+ {
+  "word": "Bye,",
+  "start": 34.768,
+  "end": 35.588
+ },
+ {
+  "word": "little",
+  "start": 35.588,
+  "end": 35.868
+ },
+ {
+  "word": "friend!",
+  "start": 35.868,
+  "end": 36.208
+ },
+ {
+  "word": "What",
+  "start": 36.901,
+  "end": 37.021
+ },
+ {
+  "word": "would",
+  "start": 37.021,
+  "end": 37.141
+ },
+ {
+  "word": "YOU",
+  "start": 37.141,
+  "end": 37.261
+ },
+ {
+  "word": "do",
+  "start": 37.261,
+  "end": 37.461
+ },
+ {
+  "word": "if",
+  "start": 37.461,
+  "end": 37.701
+ },
+ {
+  "word": "you",
+  "start": 37.701,
+  "end": 37.841
+ },
+ {
+  "word": "were",
+  "start": 37.841,
+  "end": 37.961
+ },
+ {
+  "word": "tiny?",
+  "start": 37.961,
+  "end": 38.321
+ }
+]
