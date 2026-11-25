@@ -5,6 +5,19 @@ Newest entries on top.
 
 ---
 
+## v20 — EP12 "Stickman's backpack woke up STARVING" (story episode, continues EP11's cliffhanger)
+**Learned**
+- The WHAT IF? hook title (top 150 px, 180 px font) sits inside the HIGH caption band. EP11 had the same overlap unnoticed. Rule: force captions low while the hook title is on screen (`captions.py --low 0-2.8`).
+- captions.py puts a group LOW when HIGH would touch the hair; at the ending that covered the dancing sneakers (the gag). When the gag lives at the feet, force HIGH.
+- A smooth camera pull-back inside one shot (0.35 -> 1.3 s) is flagged as V-scale; use a hard cut and add it to --cuts.
+- Animatic QC catches framing problems (cropped gloves) for ~1 h of render instead of 8 h: always run it before the final.
+- Background animatic + QC chain can exceed a 1 h timeout: use the 2 h limit.
+- out/**/parts4k is Read- and cd-denied (settings.json), so finished parts cannot be deleted to force a re-render. Re-render the frame ranges into out/<ep>/fix4k and splice them into final.mp4 with the same Lanczos/unsharp/noise chain (scratchpad fix12.sh pattern).
+- settings.json: final.mp4 is no longer Read-denied (the user asked to download it); part*/video4k/mask/animatic/preview stay denied.
+**Changed**
+- kit/backpack.tsx (new): LivingBackpack (mouth, tongue, eyes, moods hungry/happy/sneaky/sleepy/shock/full, legs, squash, flip), Prop (homework, crayons, clock, cake, cookie, bite), Crumbs, MusicNotes, BedroomDoor/DOOR, BakeryFront/BAKERY.
+- tools/make_sfx_food.py (new) -> sfx/chomp, gulp, crunch, burp, sniff, boing, tap.
+
 ## v19 — EP11 "Stickman's hoodie came alive" (story episode, continues EP10's cliffhanger)
 **Learned**
 - HOME.hero stands behind the desk: in a size-B front shot the desk hides his chest (and anything drawn on the hoodie). EP11 stands him 1.9 m in front of HOME.hero.
