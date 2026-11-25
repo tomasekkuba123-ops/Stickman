@@ -183,7 +183,7 @@ export const beamScreenX = (t: number) => (t >= 7 ? 540 : project(t < 5 ? P2A : 
 
 /* ================= S4 ANIMALS 16.4–25.0: owl close-up, wolf howling on its rock, tide pool (coral spawn, fish school, crabs), confusion, ecosystems shaken ================= */
 const P4: V3 = [0, 0, 1.2], P4C: V3 = [0, 0, 3.4];
-const O4A = A({ yaw: -0.05, sx: 0.49, drift: 0.04 });
+const O4A = A({ yaw: -0.05, sx: 0.56, drift: 0.04 });
 const O4B = A({ yaw: 0.12, sx: 0.59, drift: -0.03 });
 const O4C = A({ yaw: 0.05, camY: 1.15, sx: 0.57, drift: 0.02 });
 const O4D = A({ yaw: -0.08, camY: 1.15, sx: 0.4, drift: -0.02 });
