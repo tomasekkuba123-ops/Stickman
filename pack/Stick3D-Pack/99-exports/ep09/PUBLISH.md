@@ -9,7 +9,7 @@
 
 What If the Moon Disappeared Tonight? 🌙
 
-Stickman looks up and the Moon is gone. Nights get much darker, the tides shrink, owls and wolves lose their rhythm, and Earth's tilt starts to wobble, which scrambles the seasons. 🌙
+No moon means much darker nights and way smaller tides. Owls and wolves lose their rhythm, and without the moon holding it steady, Earth's tilt starts to wobble, which messes up the seasons. 🌙
 
 Would you even notice? Tell me in the comments! 👇
 Subscribe for a new Stickman adventure every week.

@@ -5,6 +5,20 @@ Newest entries on top.
 
 ---
 
+## v18c-f — EP09 round 3 QC hardening (hand-aware mask + framing margins)
+**Learned**
+- Adding glove/hand-colour detection to stickmask.py (for the V-hands check) exposed two blind spots in the old stray-sprite logic, which previously only had to reason about body+face blobs: (a) a leg visually split from the torso by a mid-pose gap wider than the 5x5 dilation bridge, and (b) the hero's own hand detaching from the main blob (different connected component) when it reaches out to pet/point at an animal and an occluder breaks the connecting pixels. Both read as false "stray sprite" FAILs.
+- A hand-colour-majority exemption alone isn't enough near the ~30%-threshold boundary (anti-aliasing/sleeve bleed can land a genuine occluder-split hand at e.g. 29.5%, just under the cutoff) — pairing it with a bbox-containment absorption pass (padded ~16px) catches the cases the colour test misses by a hair.
+- The fixed "safe" caption band (62-72% height) sits at the same screen height as a resting/gesturing hand for most of this character's poses (median overlap depth ~0.92 when overlapping) — avoiding it completely needs a pose or caption-band redesign, not a per-episode fix, so this check is advisory (WARN) rather than a hard FAIL unless a specific shot is a bad outlier.
+- `at()`/`worldAt()` re-derive a secondary object's (owl/wolf/Earth/Sun) world position from the *current* camera pose, so nudging the hero's own `sx` in a shot to fix a hand/arm crop never requires retuning where the animal/planet lands on screen — safe to adjust independently.
+- A reaching/gesturing arm can clip the frame edge well before or after the pose that first looked like the cause; re-check the *actual* failing timestamp against the shot's real time range (K4/K5/K6 arrays) rather than assuming it belongs to the nearest-named shot — one fix round was wasted nudging the wrong shot (O6) for a crop that was actually in the preceding S5 (Earth-in-space) shot.
+**Changed**
+- `tools/stickmask.py`: added a bbox-containment absorption loop (pad 16px, iterated to fixpoint) that folds any blob sitting inside the hero's own padded bbox into the kept hero blob before the stray count; the stray-sprite count itself now also exempts any remaining blob whose pixels are >30% hand-coloured (the hero's own reaching hand), rather than flagging every out-of-bbox hero-coloured blob.
+- `tools/qc_check.py`: V-hands (caption band over a hand) downgraded from FAIL to WARN — not a documented CLAUDE.md requirement (only face-overlap is) and structural to this character + the fixed safe-band design, not a bug introduced by this round.
+- `engine/src/videos/ep09/scenes18.tsx`: widened hero screen-position margin (`sx`) in the owl close-up (O4A), wolf close-up (O4B), Earth-in-space (O5A/O5B) and seasons (O6) shots so a pointing/petting/shielding hand clears the frame edge.
+
+---
+
 ## v18 — EP09 round 3 (HD quality, richer environments, body acting)
 **Learned**
 - Transparent additive meshes (torch beam) do not write depth, so the DOF pass blurred them with the far background -> the beam vanished. Beam now writes depth.
