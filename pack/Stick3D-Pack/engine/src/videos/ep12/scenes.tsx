@@ -62,7 +62,7 @@ export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), off = t >= POPOFF, h
   const growl = sm(seg(t, 0.85, 1.15)), wide = sm(seg(t, STARVE - 0.15, STARVE + 0.1));
   const bag: BagPose = { mouth: off ? 0.15 + 0.8 * wide + chew(t, 3.2, 0.5) : 0, tongue: wide * (0.7 + 0.3 * Math.sin(t * 9)), mood: "hungry", lookX: t < STARVE ? 0.6 : 0.2, lookY: -0.2, squash: h.sq + wide * 0.08 * Math.sin(t * 12), legs: h.legs, tilt: t < POPOFF + 0.45 ? 15 * Math.sin(seg(t, POPOFF, POPOFF + 0.45) * Math.PI) : 4 * Math.sin(t * 7) };
   return (<HomeSet t={t} preset="morning">
-    <Cam t={t} keys={[...frameShot(PH, 0, 0.35, HOOK_O), ...frameShot(PH, 1.3, 3.75, { ...HOOK_O, frac: 0.55, sx: 0.6, push: 0.98 })]} impacts={[[POPOFF + 0.45, 0.012]]} />
+    <Cam t={t} keys={[...frameShot(PH, 0, 0.35, HOOK_O), ...frameShot(PH, 1.3, 3.75, { ...HOOK_O, frac: 0.5, sx: 0.55, push: 0.98 })]} impacts={[[POPOFF + 0.45, 0.012]]} />
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G1} face={faceAt(t, [[0, "smile"], [0.95, "surprised"], [POPOFF, "scared"], [2.6, "surprised"]])}
       rig={{ ...a.rig, backpack: !off, bagFace: off ? 0 : growl, ...eyes(t, [[0, HOOK_LOOK.lookX, HOOK_LOOK.lookY], [0.95, -0.9, 0.1], [POPOFF + 0.3, -0.9, 0.3]]), ...(t < 0.75 ? { blink: 0 } : {}) }} />
     {off ? <LivingBackpack p={h.p} t={t} h={BAG_H} pose={bag} groundY={DESK_Y} shadow={t > POPOFF + 0.3} /> : null}
@@ -78,8 +78,8 @@ const flying = (t: number, i: number, bag: V3): { p: V3; s: number; rot: number 
   const [, from, tc] = EAT[i], t0 = tc - 0.35; if (t >= tc + 0.02) return null; if (t < t0) return { p: from, s: 1, rot: 0 };
   const u = seg(t, t0, tc), m = mouthAt(bag); const p = lerp3(from, m, eo(u)); p[1] += Math.sin(u * Math.PI) * 0.5; return { p, s: 1 - 0.55 * u, rot: u * 300 * (i % 2 ? -1 : 1) };
 };
-const O2A = A({ frac: 0.5, yaw: 0.25, sx: 0.66, camY: 1.35, drift: 0.04 });
-const O2B = A({ frac: 0.5, yaw: -0.35, sx: 0.64, camY: 1.5, push: 0.96, drift: -0.03 });
+const O2A = A({ frac: 0.48, yaw: 0.25, sx: 0.58, camY: 1.35, drift: 0.04 });
+const O2B = A({ frac: 0.47, yaw: -0.35, sx: 0.57, camY: 1.5, push: 0.96, drift: -0.03 });
 const G2: GKey[] = [{ t: 4.4, g: "whoa", in: 0.14, hold: 0.4 }, { t: 5.5, g: "reach", in: 0.2, hold: 0.5 }, { t: 6.6, g: "palmUp2", in: 0.2, hold: 0.4 }, { t: 7.2, g: "whoa", in: 0.14, hold: 0.5 }];
 const ACT2: AKey[] = [{ t: 3.7, turn: -0.7, tilt: 6, back: 0.1 }, { t: 4.65, turn: -0.8, lean: -8, dip: 0.5, back: 0.1, d: 0.12 }, { t: 5.4, turn: -0.6, lean: 8, lift: -0.5, back: 0.1, d: 0.2 }, { t: 6.7, turn: -0.7, tilt: -8, back: 0.1, d: 0.2 }, { t: 7.05, turn: -0.8, lean: -10, dip: 0.6, back: 0.1, d: 0.12 }];
 export const S2 = ({ t }: Ctx) => { const a = act(t, ACT2, { seed: 2 }), bag = BAGD;
@@ -98,7 +98,7 @@ export const S2 = ({ t }: Ctx) => { const a = act(t, ACT2, { seed: 2 }), bag = B
 const SNIFF = 8.55, HOP0 = 9.65, DOOR_OPEN = 10.0, OUT = 10.95;
 const FLOOR1: V3 = [-3.0, 0, -2.2], DOORP: V3 = [DOOR.p[0] + 0.5, 0, DOOR.p[2]], GONE: V3 = [DOOR.p[0] - 1.2, 0, DOOR.p[2]];
 const bag3 = (t: number) => t < HOP0 ? hop(t, BAGD, BAGD, 0, 1) : t < 10.15 ? hop(t, BAGD, FLOOR1, HOP0, 10.15, 0.6) : t < 10.6 ? hop(t, FLOOR1, DOORP, 10.15, 10.6, 0.5) : hop(t, DOORP, GONE, 10.6, OUT, 0.4);
-const O3 = A({ frac: 0.44, yaw: 0.75, sx: 0.7, camY: 1.6, push: 0.97, drift: 0.05 });
+const O3 = A({ frac: 0.44, yaw: 0.75, sx: 0.6, camY: 1.6, push: 0.97, drift: 0.05 });
 const G3: GKey[] = [{ t: 9.7, g: "whoa", in: 0.14, hold: 0.4 }, { t: 10.5, g: "reach", in: 0.2, hold: 0.7 }];
 const ACT3: AKey[] = [{ t: 8.1, turn: -0.6, tilt: 8, back: 0.1 }, { t: 9.0, turn: -0.4, tilt: -8, back: 0.1, d: 0.3 }, { t: 9.7, turn: -0.9, lean: -8, dip: 0.4, back: 0.1, d: 0.15 }, { t: 10.5, turn: -1, lean: 12, lift: -0.7, back: 0.1, d: 0.2 }];
 export const S3 = ({ t }: Ctx) => { const a = act(t, ACT3, { seed: 3 }), b = bag3(t), sniff = t > SNIFF && t < 9.4;
@@ -144,8 +144,8 @@ export const S4 = ({ t }: Ctx) => { const x = runX(t), stop = t >= RUN1, bx = ba
 const CAKE0: V3 = [BAKERY.table[0] + BAKERY.p[0], BAKERY.table[1] + 0.48, BAKERY.table[2]];
 const WIDE = wt("wide", 15.5), SWAL = 16.95;
 const bag5: V3 = [BAG_S[0], SW, BAG_S[2] + 0.25];
-const O5A = A({ yaw: 0.25, sx: 0.66, camY: 1.2, drift: 0.04 });
-const O5B = A({ frac: 0.5, yaw: -0.3, sx: 0.7, camY: 1.3, push: 0.96, drift: -0.03 });
+const O5A = A({ frac: 0.5, yaw: 0.25, sx: 0.58, camY: 1.2, drift: 0.04 });
+const O5B = A({ frac: 0.48, yaw: -0.3, sx: 0.59, camY: 1.3, push: 0.96, drift: -0.03 });
 const G5: GKey[] = [{ t: 15.3, g: "point", in: 0.2, hold: 0.5 }, { t: 16.4, g: "whoa", in: 0.14, hold: 0.5 }, { t: 17.7, g: "palmUp2", in: 0.2, hold: 0.6 }];
 const ACT5: AKey[] = [{ t: 14.9, turn: -0.7, tilt: 6 }, { t: 15.9, turn: -0.8, lean: -6, dip: 0.3, d: 0.2 }, { t: SWAL, turn: -0.9, lean: -12, dip: 0.6, lift: -0.5, d: 0.12 }, { t: 17.8, turn: -0.6, tilt: -10, d: 0.3 }];
 export const S5 = ({ t }: Ctx) => { const a = act(t, ACT5, { seed: 5 }), wide = sm(seg(t, WIDE - 0.3, WIDE + 0.2)), into = sm(seg(t, SWAL - 0.45, SWAL));
@@ -163,8 +163,8 @@ export const S5 = ({ t }: Ctx) => { const a = act(t, ACT5, { seed: 5 }), wide = 
 /* S6 18.6–22.6: he draws a giant cookie with the magic pencil; it turns real (stands on its edge) */
 const DRAW0 = 19.75, DRAW1 = 21.6, COOK_R = 0.82;
 const COOKIE: V3 = [PB[0] + 1.55, SW + COOK_R + 0.02, PB[2] - 0.5];
-const O6A = A({ yaw: 0.2, sx: 0.36, camY: 1.15, drift: 0.04 });
-const O6B = A({ frac: 0.5, yaw: -0.25, sx: 0.34, camY: 1.2, push: 0.96, drift: 0.03 });
+const O6A = A({ frac: 0.5, yaw: 0.2, sx: 0.43, camY: 1.15, drift: 0.04 });
+const O6B = A({ frac: 0.5, yaw: -0.25, sx: 0.41, camY: 1.2, push: 0.96, drift: 0.03 });
 const ACT6: AKey[] = [{ t: 18.6, turn: 0.5, tilt: -6 }, { t: 19.4, turn: 0.7, tilt: 8, lean: 4, d: 0.3 }, { t: DRAW1 + 0.1, turn: 0.3, lean: -6, dip: 0.3, d: 0.2 }];
 export const S6 = ({ t }: Ctx) => { const drawing = t >= DRAW0 - 0.2 && t < DRAW1 + 0.1, prog = sm(seg(t, DRAW0, DRAW1)), real = t >= DRAW1, a = act(t, ACT6, { seed: 6 });
   const pop = real ? 1 + 0.12 * Math.exp(-(t - DRAW1) * 7) * Math.sin((t - DRAW1) * 26) : 1;
@@ -183,8 +183,8 @@ export const S6 = ({ t }: Ctx) => { const drawing = t >= DRAW0 - 0.2 && t < DRAW
 /* S7 22.6–25.7: one bite — CRUNCH! crumbs burst */
 const LEAP0 = 23.45, BITE = 24.05, CRUNCH = wt("crunch", 24.5);
 const BAG7_0: V3 = [bag5[0] - 0.3, SW, bag5[2]], BAG7_1: V3 = [COOKIE[0] - 0.85, SW, COOKIE[2] + 0.35];
-const O7A = A({ frac: 0.5, yaw: 0.0, sx: 0.36, camY: 1.0, drift: 0.04 });
-const O7B = B({ frac: 0.6, yaw: 0.3, sx: 0.36, camY: 1.1, push: 0.95, drift: -0.03 });
+const O7A = A({ frac: 0.5, yaw: 0.0, sx: 0.41, camY: 1.0, drift: 0.04 });
+const O7B = B({ frac: 0.52, yaw: 0.3, sx: 0.43, camY: 1.1, push: 0.95, drift: -0.03 });
 const G7: GKey[] = [{ t: 23.0, g: "point", in: 0.2, hold: 0.5 }, { t: BITE, g: "whoa", in: 0.12, hold: 0.6 }];
 const ACT7: AKey[] = [{ t: 22.6, turn: 0.6, tilt: 8 }, { t: BITE + 0.05, turn: 0.8, lean: -10, dip: 0.6, back: 0.1, d: 0.12 }, { t: CRUNCH, turn: 0.5, tilt: -10, back: 0.1, d: 0.15 }];
 export const S7 = ({ t }: Ctx) => { const a = act(t, ACT7, { seed: 7 }), h = hop(t, BAG7_0, BAG7_1, LEAP0, BITE - 0.15, 0.6), into = sm(seg(t, BITE - 0.15, BITE + 0.1));
@@ -206,7 +206,7 @@ const BURP = 26.15, OUTS = [27.4, 28.25, 29.1], ONBACK = 29.6;
 const BAG8: V3 = [BAG7_1[0] - 0.15, SW, BAG7_1[2]];
 const ARMS: V3[] = [[PB[0] - 0.05, SW + 1.25, PB[2] + 0.35], [PB[0] + 0.14, SW + 1.42, PB[2] + 0.38], [PB[0] - 0.16, SW + 1.62, PB[2] + 0.42]];
 const KINDS: PropKind[] = ["homework", "crayons", "clock"];
-const O8A = A({ yaw: -0.15, sx: 0.36, camY: 1.1, drift: 0.04 });
+const O8A = A({ yaw: -0.15, sx: 0.41, camY: 1.1, drift: 0.04 });
 const O8B = A({ yaw: 0.25, sx: 0.44, camY: 1.15, push: 0.96, drift: -0.03 });
 const ACT8: AKey[] = [{ t: 25.7, turn: 0.6, tilt: -6 }, { t: BURP + 0.05, turn: 0.7, lean: -12, dip: 0.6, back: 0.1, d: 0.12 }, { t: 27.4, turn: 0.4, lean: 6, back: 0.1, d: 0.2 }, { t: 28.3, turn: 0.2, tilt: 8, back: 0.1, d: 0.2 }, { t: 29.2, turn: 0, tilt: -6, dip: 0.3, back: 0.1, d: 0.2 }];
 export const S8 = ({ t }: Ctx) => { const a = act(t, ACT8, { seed: 8 }), burpK = sm(seg(t, BURP - 0.1, BURP + 0.1)) * (1 - sm(seg(t, BURP + 0.8, BURP + 1.1)));
@@ -235,8 +235,8 @@ export const S9 = ({ t }: Ctx) => { const a = act(t, ACT9, { seed: 9 }), tapping
   return (<HomeSet t={t} preset="morning">
     <Cam t={t} keys={cam} impacts={tapping ? [[TAP0, 0.004]] : []} />
     <Stickman p={PH} t={t} action="idle" lips={LIPS} face={end ? "smile" : faceAt(t, [[30.1, "happy"], [31.5, "smile"], [TAP0, "surprised"], [32.9, "confused"], [33.9, "worried"], [34.2, "smile"]])}
-      rig={{ ...a.rig, ...legs, air: tapping ? lift * 12 : 0, ...(t < 31.4 ? SELFHUG : {}), ...(end ? { ...HOOK_LOOK, headTurn: 0, headTilt: 0 } : eyes(t, [[30.1, 0.2, 0.4], [31.2, 0.3, -0.1], [TAP0, 0, 1], [33.8, 0.2, 0]])), ...(t > 34.6 ? { blink: 0 } : {}) }} />
-    <MusicNotes c={[PH[0], 0.3, PH[2] + 0.3]} t={t} t0={TAP0} t1={TAP1} n={4} />
+      rig={{ ...a.rig, ...legs, air: tapping ? lift * 28 : 0, ...(t < 31.4 ? SELFHUG : {}), ...(end ? { ...HOOK_LOOK, headTurn: 0, headTilt: 0 } : eyes(t, [[30.1, 0.2, 0.4], [31.2, 0.3, -0.1], [TAP0, 0, 1], [33.8, 0.2, 0]])), ...(t > 34.6 ? { blink: 0 } : {}) }} />
+    <MusicNotes c={[PH[0], 0.3, PH[2] + 0.3]} t={t} t0={TAP0} t1={TAP1} n={5} h={0.62} />
     <DepthPass focus={6.6} blur={2.0} />
   </HomeSet>); };
 void HH; void SY_A; void SY_B;
