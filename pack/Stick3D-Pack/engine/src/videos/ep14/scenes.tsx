@@ -48,9 +48,9 @@ export const HOOK_O: FrameOpts = B({ frac: 0.52, yaw: -0.35, sx: 0.42, push: 0.9
 export const HOOK_LOOK = { lookX: 0.25, lookY: -0.15 };
 export const BEDP: V3 = [3.75, 0, 0.35]; // the living bed on his right, headboard (face) toward him
 const DESK_Y = 1.48;
-export const STAND: V3 = [0.45, 0, -0.9]; // nightstand on his left
+export const STAND: V3 = [0.2, 0, 0.95]; // nightstand on his left, in view
 export const CUP: V3 = [STAND[0], 1.0, STAND[2]];
-const Nightstand = () => (<group position={STAND}><Box p={[0, 0.48, 0]} s={[0.9, 0.96, 0.7]} color="#c08850" line={3} /><Box p={[0, 0.65, 0.36]} s={[0.6, 0.22, 0.04]} color="#d89a60" line={2} /><Box p={[0, 0.3, 0.36]} s={[0.6, 0.22, 0.04]} color="#d89a60" line={2} /></group>); // toothbrush cup on the desk, right of him
+const Nightstand = () => (<group position={STAND}><Box p={[0, 0.48, 0]} s={[0.6, 0.96, 0.6]} color="#c08850" line={3} /><Box p={[0, 0.65, 0.31]} s={[0.42, 0.22, 0.04]} color="#d89a60" line={2} /><Box p={[0, 0.3, 0.31]} s={[0.42, 0.22, 0.04]} color="#d89a60" line={2} /></group>); // toothbrush cup on the desk, right of him
 const SLEEP: BedPose = { mood: "asleep", blanket: 1 };
 const breathe = (t: number) => 0.02 * Math.sin(t * Math.PI * 2 / 2.5); // 2.5 s breath (35 / 2.5 = 14 -> loops)
 
@@ -110,9 +110,9 @@ export const P3: V3 = [-6.0, STAIR.top, 0.25];
 const RUN3 = 9.25, RV3 = 2.6 * RUN_STRIDE * U;
 const hero3 = (t: number): V3 => { const x = P3[0] + RV3 * Math.max(0, t - RUN3); return [x, stairY(x), P3[2]]; };
 const O3A = A({ frac: 0.46, yaw: 0.45, sx: 0.4, camY: 0.6, push: 0.97, drift: 0.05 });
-const O3B = A({ frac: 0.38, yaw: 0.25, sx: 0.5, camY: 0.4 });
+const O3B = A({ frac: 0.34, yaw: 0.25, sx: 0.32, camY: 0.4 });
 const K3B = (): Key[] => { const ks: Key[] = []; for (let t = 8.85; t <= 10.56; t += 1 / 30) { const h = hero3(t), b = bed3(t), k = sm(seg(t, 8.85, 9.4)) * 0.75;
-  ks.push({ ...framePose([lerp(h[0], b.p[0] - 1.2, k), lerp(h[1], b.p[1], k), P3[2]], O3B, 0), t }); } return ks; };
+  const dx = Math.max(-1.1, Math.min(1.1, (b.p[0] - 1.2 - h[0]) * k)); ks.push({ ...framePose([h[0] + dx, h[1] + 0.25 * k * (b.p[1] - h[1]), P3[2]], O3B, 0), t }); } return ks; };
 const KEYS3B = K3B();
 const G3: GKey[] = [{ t: 8.0, g: "whoa", in: 0.14, hold: 0.5 }, { t: 8.75, g: "reach", in: 0.2, hold: 0.45 }];
 const ACT3: AKey[] = [{ t: 7.55, turn: 0.6, tilt: 6 }, { t: 8.1, turn: 0.8, lean: -8, dip: 0.4, d: 0.15 }, { t: 8.75, turn: 0.9, lean: 12, d: 0.2 }];
@@ -270,7 +270,7 @@ export const S9 = ({ t }: Ctx) => { const a = act(t, ACT9, { seed: 9 }), singing
     <LivingBed p={BEDP} t={t} h={BEDH} pose={{ ...SLEEP, squash: breathe(t) }} groundY={0} />
     <Zzz c={[BEDP[0] - 1.6, BEDH * 0.9, BEDP[2]]} t={t} h={0.45} />
     <Nightstand />
-    <Toothbrush p={CUP} t={t} h={0.55} pose={{ rise, awake: rise, sing, sway: singing ? 14 * Math.sin((t - SING0) * 6) : 0 }} />
+    <Toothbrush p={CUP} t={t} h={0.75} pose={{ rise, awake: rise, sing, sway: singing ? 14 * Math.sin((t - SING0) * 6) : 0 }} />
     <MusicNotes c={[CUP[0], CUP[1] + 0.5, CUP[2] + 0.2]} t={t} t0={SING0 + 0.3} t1={SING1} n={4} h={0.36} />
     <Stickman p={PH} t={t} action="idle" lips={LIPS} face={end ? "smile" : faceAt(t, [[29.35, "happy"], [30.3, "smile"], [SING0, "surprised"], [32.6, "confused"], [33.9, "worried"], [34.2, "smile"]])}
       rig={{ ...a.rig, ...(end ? { ...HOOK_LOOK, headTurn: 0, headTilt: 0 } : eyes(t, [[29.35, 0.3, 0.3], [30.4, 0.2, -0.1], [SING0, -1, 0.4], [33.9, 0.3, 0]])), ...(t > 34.6 ? { blink: 0 } : {}) }} />
