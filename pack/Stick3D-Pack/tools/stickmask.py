@@ -36,6 +36,15 @@ def scan(v):
         nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.dilate(opn, np.ones((5, 5), np.uint8)), 8)
         keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
+        # v19: hero parts split off by an occluder in front of him (a prop, a puff, a thin arm lost at mask scale) are still the hero:
+        # merge blobs whose centre lies inside the figure envelope measured from the face disc (full height ~ 4.6 face heights)
+        fm = face & np.isin(lab, list(keep)) if keep else None
+        if fm is not None and fm.any():
+            ys, xs = np.nonzero(fm); D = ys.max() - ys.min() + 1; cx = xs.mean(); top = ys.min()
+            for k in range(1, nc):
+                if k in keep: continue
+                kx, ky = st[k, 0] + st[k, 2] / 2, st[k, 1] + st[k, 3] / 2
+                if abs(kx - cx) < 2.6 * D and top - 0.4 * D < ky < top + 4.8 * D: keep.add(k)
         allm = (np.isin(lab, list(keep)) & (opn > 0)) if keep else np.zeros_like(face)
         # v18 stray sprites: other hero-coloured blobs not connected to the hero (duplicate puppets, leftover billboards)
         stray = int(sum(1 for k in range(1, nc) if k not in keep and st[k, 4] > W * H * 0.002)) if nc > 1 else 0

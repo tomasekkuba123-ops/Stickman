@@ -1,0 +1,437 @@
+[
+{
+"word": "Stickman's",
+"start": 0.3,
+"end": 0.76
+},
+{
+"word": "hoodie",
+"start": 0.76,
+"end": 1.04
+},
+{
+"word": "just",
+"start": 1.04,
+"end": 1.24
+},
+{
+"word": "came",
+"start": 1.24,
+"end": 1.42
+},
+{
+"word": "alive...",
+"start": 1.42,
+"end": 1.74
+},
+{
+"word": "and",
+"start": 1.74,
+"end": 2.48
+},
+{
+"word": "ran",
+"start": 2.48,
+"end": 2.64
+},
+{
+"word": "away!",
+"start": 2.64,
+"end": 2.96
+},
+{
+"word": "It",
+"start": 3.9,
+"end": 4.04
+},
+{
+"word": "wriggled",
+"start": 4.04,
+"end": 4.4
+},
+{
+"word": "off",
+"start": 4.4,
+"end": 4.58
+},
+{
+"word": "his",
+"start": 4.58,
+"end": 4.76
+},
+{
+"word": "back",
+"start": 4.76,
+"end": 5.04
+},
+{
+"word": "and",
+"start": 5.04,
+"end": 5.32
+},
+{
+"word": "slipped",
+"start": 5.32,
+"end": 5.52
+},
+{
+"word": "out",
+"start": 5.52,
+"end": 5.78
+},
+{
+"word": "the",
+"start": 5.78,
+"end": 5.9
+},
+{
+"word": "window.",
+"start": 5.9,
+"end": 6.2
+},
+{
+"word": "Stickman",
+"start": 6.96,
+"end": 7.38
+},
+{
+"word": "chased",
+"start": 7.38,
+"end": 7.6
+},
+{
+"word": "it",
+"start": 7.6,
+"end": 7.92
+},
+{
+"word": "through",
+"start": 7.92,
+"end": 8.16
+},
+{
+"word": "the",
+"start": 8.16,
+"end": 8.34
+},
+{
+"word": "park",
+"start": 8.34,
+"end": 8.62
+},
+{
+"word": "in",
+"start": 8.62,
+"end": 8.88
+},
+{
+"word": "just",
+"start": 8.88,
+"end": 9.06
+},
+{
+"word": "his",
+"start": 9.06,
+"end": 9.28
+},
+{
+"word": "T-shirt.",
+"start": 9.28,
+"end": 9.74
+},
+{
+"word": "The",
+"start": 10.56,
+"end": 10.64
+},
+{
+"word": "hoodie",
+"start": 10.64,
+"end": 10.92
+},
+{
+"word": "grabbed",
+"start": 10.92,
+"end": 11.16
+},
+{
+"word": "a",
+"start": 11.16,
+"end": 11.38
+},
+{
+"word": "kite",
+"start": 11.38,
+"end": 11.68
+},
+{
+"word": "and",
+"start": 11.68,
+"end": 12.22
+},
+{
+"word": "floated",
+"start": 12.22,
+"end": 12.42
+},
+{
+"word": "over",
+"start": 12.42,
+"end": 12.76
+},
+{
+"word": "the",
+"start": 12.76,
+"end": 12.86
+},
+{
+"word": "rooftops!",
+"start": 12.86,
+"end": 13.34
+},
+{
+"word": "He",
+"start": 14.24,
+"end": 14.38
+},
+{
+"word": "drew",
+"start": 14.38,
+"end": 14.56
+},
+{
+"word": "a",
+"start": 14.56,
+"end": 14.68
+},
+{
+"word": "ladder",
+"start": 14.68,
+"end": 14.94
+},
+{
+"word": "with",
+"start": 14.94,
+"end": 15.24
+},
+{
+"word": "his",
+"start": 15.24,
+"end": 15.38
+},
+{
+"word": "magic",
+"start": 15.38,
+"end": 15.66
+},
+{
+"word": "pencil.",
+"start": 15.66,
+"end": 16.1
+},
+{
+"word": "Too",
+"start": 16.1,
+"end": 16.86
+},
+{
+"word": "short!",
+"start": 16.86,
+"end": 17.18
+},
+{
+"word": "Then",
+"start": 18.16,
+"end": 18.22
+},
+{
+"word": "a",
+"start": 18.22,
+"end": 18.3
+},
+{
+"word": "cold",
+"start": 18.3,
+"end": 18.56
+},
+{
+"word": "wind",
+"start": 18.56,
+"end": 18.88
+},
+{
+"word": "blew...",
+"start": 18.88,
+"end": 19.24
+},
+{
+"word": "and",
+"start": 19.24,
+"end": 19.92
+},
+{
+"word": "Stickman",
+"start": 19.92,
+"end": 20.28
+},
+{
+"word": "sneezed.",
+"start": 20.28,
+"end": 20.98
+},
+{
+"word": "ACHOO!",
+"start": 20.98,
+"end": 21.34
+},
+{
+"word": "The",
+"start": 22.18,
+"end": 22.28
+},
+{
+"word": "hoodie",
+"start": 22.28,
+"end": 22.5
+},
+{
+"word": "froze.",
+"start": 22.5,
+"end": 22.68
+},
+{
+"word": "It",
+"start": 23.52,
+"end": 23.62
+},
+{
+"word": "looked",
+"start": 23.62,
+"end": 23.76
+},
+{
+"word": "down",
+"start": 23.76,
+"end": 24.1
+},
+{
+"word": "at",
+"start": 24.1,
+"end": 24.34
+},
+{
+"word": "its",
+"start": 24.34,
+"end": 24.46
+},
+{
+"word": "shivering",
+"start": 24.46,
+"end": 24.78
+},
+{
+"word": "friend.",
+"start": 24.78,
+"end": 25.18
+},
+{
+"word": "It",
+"start": 25.89,
+"end": 26.2
+},
+{
+"word": "dove",
+"start": 26.2,
+"end": 26.44
+},
+{
+"word": "from",
+"start": 26.44,
+"end": 26.68
+},
+{
+"word": "the",
+"start": 26.68,
+"end": 26.82
+},
+{
+"word": "sky",
+"start": 26.82,
+"end": 27.08
+},
+{
+"word": "and",
+"start": 27.08,
+"end": 27.4
+},
+{
+"word": "wrapped",
+"start": 27.4,
+"end": 27.6
+},
+{
+"word": "him",
+"start": 27.6,
+"end": 27.82
+},
+{
+"word": "up",
+"start": 27.82,
+"end": 27.92
+},
+{
+"word": "tight.",
+"start": 27.92,
+"end": 28.26
+},
+{
+"word": "Warm",
+"start": 28.62,
+"end": 28.96
+},
+{
+"word": "again.",
+"start": 28.96,
+"end": 29.44
+},
+{
+"word": "Best",
+"start": 30.18,
+"end": 30.42
+},
+{
+"word": "friends...",
+"start": 30.42,
+"end": 30.84
+},
+{
+"word": "until",
+"start": 31.46,
+"end": 31.72
+},
+{
+"word": "his",
+"start": 31.72,
+"end": 31.92
+},
+{
+"word": "backpack",
+"start": 31.92,
+"end": 32.24
+},
+{
+"word": "started",
+"start": 32.24,
+"end": 32.76
+},
+{
+"word": "to",
+"start": 32.76,
+"end": 32.94
+},
+{
+"word": "growl.",
+"start": 32.94,
+"end": 33.48
+}
+]

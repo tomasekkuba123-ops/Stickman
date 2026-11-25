@@ -1,0 +1,432 @@
+[
+{
+"word": "Stickman's",
+"start": 0.3,
+"end": 0.76
+},
+{
+"word": "backpack",
+"start": 0.76,
+"end": 0.98
+},
+{
+"word": "just",
+"start": 0.98,
+"end": 1.42
+},
+{
+"word": "woke",
+"start": 1.42,
+"end": 1.56
+},
+{
+"word": "up...",
+"start": 1.56,
+"end": 1.88
+},
+{
+"word": "and",
+"start": 1.88,
+"end": 2.46
+},
+{
+"word": "it",
+"start": 2.46,
+"end": 2.56
+},
+{
+"word": "was",
+"start": 2.56,
+"end": 2.66
+},
+{
+"word": "STARVING!",
+"start": 2.66,
+"end": 2.96
+},
+{
+"word": "It",
+"start": 4.02,
+"end": 4.1
+},
+{
+"word": "gobbled",
+"start": 4.06,
+"end": 4.5
+},
+{
+"word": "his",
+"start": 4.5,
+"end": 4.66
+},
+{
+"word": "homework,",
+"start": 4.66,
+"end": 4.94
+},
+{
+"word": "his",
+"start": 5.66,
+"end": 5.74
+},
+{
+"word": "crayons,",
+"start": 5.7,
+"end": 6.32
+},
+{
+"word": "and",
+"start": 6.4,
+"end": 6.6
+},
+{
+"word": "his",
+"start": 6.6,
+"end": 6.74
+},
+{
+"word": "alarm",
+"start": 6.74,
+"end": 7.06
+},
+{
+"word": "clock.",
+"start": 7.06,
+"end": 7.44
+},
+{
+"word": "Then",
+"start": 8.44,
+"end": 8.52
+},
+{
+"word": "it",
+"start": 8.5,
+"end": 8.6
+},
+{
+"word": "sniffed",
+"start": 8.6,
+"end": 9.0
+},
+{
+"word": "the",
+"start": 9.0,
+"end": 9.08
+},
+{
+"word": "air",
+"start": 9.08,
+"end": 9.32
+},
+{
+"word": "and",
+"start": 9.32,
+"end": 9.68
+},
+{
+"word": "hopped",
+"start": 9.68,
+"end": 9.9
+},
+{
+"word": "right",
+"start": 9.9,
+"end": 10.3
+},
+{
+"word": "out",
+"start": 10.3,
+"end": 10.54
+},
+{
+"word": "the",
+"start": 10.54,
+"end": 10.7
+},
+{
+"word": "door!",
+"start": 10.7,
+"end": 10.98
+},
+{
+"word": "Stickman",
+"start": 11.8,
+"end": 12.14
+},
+{
+"word": "chased",
+"start": 12.14,
+"end": 12.4
+},
+{
+"word": "it",
+"start": 12.4,
+"end": 13.04
+},
+{
+"word": "all",
+"start": 13.04,
+"end": 13.28
+},
+{
+"word": "the",
+"start": 13.28,
+"end": 13.44
+},
+{
+"word": "way",
+"start": 13.44,
+"end": 13.58
+},
+{
+"word": "to",
+"start": 13.58,
+"end": 13.74
+},
+{
+"word": "the",
+"start": 13.74,
+"end": 13.84
+},
+{
+"word": "bakery.",
+"start": 13.84,
+"end": 14.04
+},
+{
+"word": "The",
+"start": 15.07,
+"end": 15.15
+},
+{
+"word": "backpack",
+"start": 15.14,
+"end": 15.4
+},
+{
+"word": "opened",
+"start": 15.4,
+"end": 15.9
+},
+{
+"word": "wide...",
+"start": 15.9,
+"end": 16.28
+},
+{
+"word": "and",
+"start": 16.28,
+"end": 16.96
+},
+{
+"word": "swallowed",
+"start": 16.96,
+"end": 17.22
+},
+{
+"word": "a",
+"start": 17.22,
+"end": 17.52
+},
+{
+"word": "whole",
+"start": 17.52,
+"end": 17.68
+},
+{
+"word": "cake!",
+"start": 17.68,
+"end": 18.0
+},
+{
+"word": "So",
+"start": 18.88,
+"end": 19.0
+},
+{
+"word": "Stickman",
+"start": 19.0,
+"end": 19.42
+},
+{
+"word": "drew",
+"start": 19.42,
+"end": 19.64
+},
+{
+"word": "a",
+"start": 19.64,
+"end": 19.84
+},
+{
+"word": "giant",
+"start": 19.84,
+"end": 20.22
+},
+{
+"word": "cookie",
+"start": 20.22,
+"end": 20.52
+},
+{
+"word": "with",
+"start": 20.52,
+"end": 21.06
+},
+{
+"word": "his",
+"start": 21.06,
+"end": 21.2
+},
+{
+"word": "magic",
+"start": 21.2,
+"end": 21.6
+},
+{
+"word": "pencil.",
+"start": 21.6,
+"end": 21.9
+},
+{
+"word": "The",
+"start": 22.88,
+"end": 22.96
+},
+{
+"word": "backpack",
+"start": 22.96,
+"end": 23.22
+},
+{
+"word": "ate",
+"start": 23.22,
+"end": 23.62
+},
+{
+"word": "it",
+"start": 23.62,
+"end": 23.76
+},
+{
+"word": "in",
+"start": 23.76,
+"end": 23.86
+},
+{
+"word": "one",
+"start": 23.86,
+"end": 24.04
+},
+{
+"word": "bite.",
+"start": 24.04,
+"end": 24.32
+},
+{
+"word": "CRUNCH!",
+"start": 24.8,
+"end": 24.9
+},
+{
+"word": "Then",
+"start": 25.97,
+"end": 26.1
+},
+{
+"word": "it",
+"start": 26.1,
+"end": 26.2
+},
+{
+"word": "burped...",
+"start": 26.2,
+"end": 26.72
+},
+{
+"word": "and",
+"start": 26.72,
+"end": 27.22
+},
+{
+"word": "out",
+"start": 27.22,
+"end": 27.4
+},
+{
+"word": "flew",
+"start": 27.4,
+"end": 27.62
+},
+{
+"word": "his",
+"start": 27.62,
+"end": 27.84
+},
+{
+"word": "homework,",
+"start": 27.84,
+"end": 28.26
+},
+{
+"word": "crayons,",
+"start": 28.26,
+"end": 28.92
+},
+{
+"word": "and",
+"start": 28.92,
+"end": 29.12
+},
+{
+"word": "clock!",
+"start": 29.12,
+"end": 29.38
+},
+{
+"word": "Peace",
+"start": 30.33,
+"end": 30.42
+},
+{
+"word": "at",
+"start": 30.42,
+"end": 30.68
+},
+{
+"word": "last...",
+"start": 30.68,
+"end": 30.86
+},
+{
+"word": "until",
+"start": 31.52,
+"end": 31.72
+},
+{
+"word": "his",
+"start": 31.72,
+"end": 31.88
+},
+{
+"word": "sneakers",
+"start": 31.88,
+"end": 32.32
+},
+{
+"word": "started",
+"start": 32.32,
+"end": 32.6
+},
+{
+"word": "to",
+"start": 32.6,
+"end": 32.86
+},
+{
+"word": "dance.",
+"start": 32.86,
+"end": 33.14
+}
+]

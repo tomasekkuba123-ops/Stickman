@@ -19,7 +19,9 @@ export type Rig = {
   handL?: HandPose | HandShape; handR?: HandPose | HandShape; handRotL?: number; handRotR?: number; /* deg */ ghostL?: Arm[]; ghostR?: Arm[]; /* v17 motion-blur trail of earlier arm angles (fast moves) */
   legL?: Leg; legR?: Leg; grounded?: boolean;
   hug?: (c: CanvasRenderingContext2D, x: number, y: number) => void; // drawn over the torso, under the hands (units)
-  mouth?: Mouth; /* lip-sync shape overrides the expression mouth */ backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean; /* draw arms after the head (hand on chin / face) */
+  mouth?: Mouth; /* lip-sync shape overrides the expression mouth */ backpack?: boolean; outfit?: Outfit; drag?: [number, number]; /* overlapping motion: lag of hair/strings/bag in units (opposite to the body velocity) */ zeroG?: number; /* 0..1: hair + drawstrings float upward */ handsOverHead?: boolean;
+  /* v19 (EP11): the hoodie's own face on the chest (open 0..1, wink 0..1 closes its left eye, look -1..1, mood) + the backpack's growl face (0..1) */
+  hoodieFace?: { open: number; wink?: number; lookX?: number; lookY?: number; mood?: "happy" | "sad" | "shock" | "sneaky" }; bagFace?: number; /* draw arms after the head (hand on chin / face) */
 };
 
 // MODEL v3 (assets/reference/STICKMAN_REFERENCE_SHEET_v3.png) — proportions fitted with tools/puppet_fit.py
@@ -28,9 +30,10 @@ const INK = "#1A1A1A"; let RED = "#D62828", RED_L = "#F05454", RED_D = "#A61E1E"
 const CHEEK = "#FFB8A8", SHOE = "#E53935";
 // v15 OUTFITS (townspeople): same rig, different hoodie colour + hat. Hoodie "#e2262c" = Stickman (default).
 export type Hat = "none" | "cap" | "chef" | "mail" | "beanie" | "bow";
-export type Outfit = { hoodie?: string; hat?: Hat; hatColor?: string };
+export type Outfit = { hoodie?: string; hat?: Hat; hatColor?: string; tee?: string /* v19: T-shirt in this colour (short sleeves, bare stick arms, no hood/strings/pocket) */ };
+let TEE = false;
 const shade = (hex: string, k: number) => { const n = parseInt(hex.slice(1), 16); const f = (v: number) => Math.max(0, Math.min(255, Math.round(k > 0 ? v + (255 - v) * k : v * (1 + k)))); return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => f(v).toString(16).padStart(2, "0")).join(""); };
-function setOutfit(o?: Outfit) { const h = o?.hoodie; if (!h || h.toLowerCase() === "#d62828" || h.toLowerCase() === "#e2262c") { RED = "#D62828"; RED_L = "#F05454"; RED_D = "#A61E1E"; RED_DD = "#7e1414"; return; } RED = h; RED_L = shade(h, 0.18); RED_D = shade(h, -0.2); RED_DD = shade(h, -0.37); }
+function setOutfit(o?: Outfit) { TEE = !!o?.tee; const h = o?.tee ?? o?.hoodie; if (!h || h.toLowerCase() === "#d62828" || h.toLowerCase() === "#e2262c") { RED = "#D62828"; RED_L = "#F05454"; RED_D = "#A61E1E"; RED_DD = "#7e1414"; return; } RED = h; RED_L = shade(h, 0.18); RED_D = shade(h, -0.2); RED_DD = shade(h, -0.37); }
 function drawHat(c: CanvasRenderingContext2D, hx: number, hy: number, o: Outfit | undefined, side: boolean) {
   const hat = o?.hat ?? "none"; if (hat === "none") return; const col = o?.hatColor ?? "#3a6fd8", R = HR;
   c.save(); c.lineJoin = "round";
@@ -311,6 +314,7 @@ function smoothArm(s: P, e: P, w: P, n = 12): P[] { // Catmull-Rom through shoul
   pts.push(w); return pts;
 }
 function sleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean, foldSide: number) {
+  if (TEE) { teeSleeve(c, s, e, w, dark); return; }
   const cuffStart: P = [e[0] + (w[0] - e[0]) * 0.8, e[1] + (w[1] - e[1]) * 0.8];
   const arm = smoothArm(s, e, cuffStart), aw = arm.map((_, i) => 74 - 18 * (i / (arm.length - 1)));
   tube(c, arm, aw);
@@ -330,6 +334,39 @@ function sleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean, fo
   c.beginPath(); c.roundRect(-4, -29, 32, 58, 10); fillStroke(c, dark ? RED_DD : RED_D, 7);
   for (let i = -18; i <= 18; i += 9) { c.beginPath(); c.moveTo(2, i); c.lineTo(24, i); stroke(c, 2.5, "rgba(0,0,0,0.25)"); }
   c.restore();
+}
+function teeSleeve(c: CanvasRenderingContext2D, s: P, e: P, w: P, dark: boolean) {
+  // bare stick arm (same ink as the legs) from inside the sleeve to the glove, then a short puffy sleeve over the shoulder
+  c.beginPath(); c.moveTo(s[0], s[1]); c.quadraticCurveTo(e[0], e[1], w[0], w[1]); stroke(c, MODEL.LEGW, dark ? "#05050a" : INK);
+  const m: P = [s[0] + (e[0] - s[0]) * 0.55, s[1] + (e[1] - s[1]) * 0.55];
+  tube(c, [s, [(s[0] + m[0]) / 2, (s[1] + m[1]) / 2], m], [80, 78, 74]);
+  const g = c.createLinearGradient(s[0] - 40, s[1], s[0] + 40, s[1]); g.addColorStop(0, dark ? RED_D : RED_L); g.addColorStop(1, dark ? RED_DD : RED); fillStroke(c, g, 8);
+  const a = Math.atan2(m[1] - s[1], m[0] - s[0]); c.save(); c.translate(m[0], m[1]); c.rotate(a); c.beginPath(); c.moveTo(-8, -32); c.lineTo(-8, 32); stroke(c, 4, RED_DD); c.restore();
+}
+/* v19 the hoodie's face on the chest (EP11): two big eyes + a grin above the pocket */
+function hoodieFaceDraw(c: CanvasRenderingContext2D, T: (p: P) => P, f: NonNullable<Rig["hoodieFace"]>, t: number) {
+  const o = Math.max(0, Math.min(1, f.open)); if (o <= 0.01) return; const lx = (f.lookX ?? 0) * 7, ly = (f.lookY ?? 0) * 6;
+  for (const sx of [-1, 1]) { const q = T([sx * 44, -214]), wink = sx < 0 ? (f.wink ?? 0) : 0, h = 30 * o * (1 - wink);
+    if (h < 3) { c.beginPath(); c.moveTo(q[0] - 22, q[1] + 2); c.quadraticCurveTo(q[0], q[1] - 14, q[0] + 22, q[1] + 2); stroke(c, 7); continue; }
+    c.beginPath(); c.ellipse(q[0], q[1], 22, h, 0, 0, Math.PI * 2); fillStroke(c, "#ffffff", 6);
+    c.save(); c.beginPath(); c.ellipse(q[0], q[1], 19, h - 3, 0, 0, Math.PI * 2); c.clip();
+    c.beginPath(); c.ellipse(q[0] + lx, q[1] + ly + 3, 12, 15, 0, 0, Math.PI * 2); c.fillStyle = INK; c.fill();
+    c.beginPath(); c.arc(q[0] + lx - 4, q[1] + ly - 4, 4.5, 0, Math.PI * 2); c.fillStyle = "#ffffff"; c.fill(); c.restore();
+    if (f.mood === "sad") { c.beginPath(); c.moveTo(q[0] - sx * 26, q[1] - h - 4); c.lineTo(q[0] + sx * 18, q[1] - h - 16); stroke(c, 7); }
+    if (f.mood === "sneaky") { c.beginPath(); c.moveTo(q[0] - 24, q[1] - h * 0.3); c.lineTo(q[0] + 24, q[1] - h * 0.3); stroke(c, 7, RED); c.beginPath(); c.moveTo(q[0] - 24, q[1] - h * 0.3); c.lineTo(q[0] + 24, q[1] - h * 0.3); stroke(c, 5); } }
+  const m0 = T([-34, -178]), m1 = T([34, -178]), mm = T([0, f.mood === "sad" ? -188 : f.mood === "shock" ? -170 : -160 - 6 * Math.sin(t * 0.3)]);
+  if (f.mood === "shock") { c.beginPath(); c.ellipse(mm[0], mm[1], 10 * o, 12 * o, 0, 0, Math.PI * 2); fillStroke(c, RED_DD, 5); return; }
+  c.beginPath(); c.moveTo(m0[0], m0[1]); c.quadraticCurveTo(mm[0], mm[1] + (f.mood === "sad" ? 0 : 16) * o, m1[0], m1[1]); stroke(c, 7);
+}
+/* v19 backpack growl face: glowing eyes + jagged teeth (front: on the visible strip of the bag; side: big, on the bag) */
+function bagFaceDraw(c: CanvasRenderingContext2D, k: number, eyes: [P, P], mouth: [P, P], r: number, t: number) {
+  if (k <= 0.01) return; c.save(); c.globalAlpha = Math.min(1, k * 1.4);
+  for (const q of eyes) { c.beginPath(); c.ellipse(q[0], q[1], r * 1.05, r * 0.7 * k, 0, 0, Math.PI * 2); c.fillStyle = "#ffe14a"; c.fill(); stroke(c, 5);
+    c.beginPath(); c.ellipse(q[0], q[1], r * 0.28, r * 0.6 * k, 0, 0, Math.PI * 2); c.fillStyle = INK; c.fill();
+    c.beginPath(); c.moveTo(q[0] - r * 1.3, q[1] - r * 1.15); c.lineTo(q[0] + r * 1.2, q[1] - r * 0.6); stroke(c, 8); }
+  const [a, b] = mouth, n = 5, jit = Math.sin(t * 2.3) * 2; c.beginPath(); c.moveTo(a[0], a[1]);
+  for (let i = 1; i <= n * 2; i++) { const u = i / (n * 2); c.lineTo(a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u + (i % 2 ? r * 0.55 * k : 0) + jit); }
+  stroke(c, 6, "#f4f4f8"); c.restore();
 }
 function hoodieFront(c: CanvasRenderingContext2D, T: (p: P) => P, back: boolean, breath: number) {
   const pts = (arr: P[]) => arr.map(T);
@@ -351,7 +388,7 @@ function hoodieFront(c: CanvasRenderingContext2D, T: (p: P) => P, back: boolean,
   c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); stroke(c, 5);
   // folds
   for (const [p0, p1, p2] of [[[-112, -180], [-92, -130], [-104, -84]], [[108, -190], [88, -140], [100, -96]], [[-50, -232], [-30, -214], [-12, -222]]] as [P, P, P][]) { const q0 = T(p0), q1 = T(p1), q2 = T(p2); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0], q1[1], q2[0], q2[1]); stroke(c, 4.5, RED_DD); }
-  if (!back) {
+  if (!back && !TEE) {
     // kangaroo pocket: patch with stitched top + bottom seams, curved side openings with a dark inner edge
     const p = pts([[-70, -166], [70, -166], [96, -50], [-96, -50]]);
     const pocket = () => { c.beginPath(); c.moveTo(p[0][0], p[0][1]); c.lineTo(p[1][0], p[1][1]); c.quadraticCurveTo(p[2][0] - 2, p[2][1] - 46, p[2][0], p[2][1]); c.lineTo(p[3][0], p[3][1]); c.quadraticCurveTo(p[3][0] + 2, p[3][1] - 46, p[0][0], p[0][1]); c.closePath(); };
@@ -407,11 +444,14 @@ function drawFront(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, 
   for (const [h, k, a, mir] of [[g.hipL, g.kneeL, g.ankL, true], [g.hipR, g.kneeR, g.ankR, false]] as [P, P, P, boolean][]) {
     legLine(c, h, k, a, false); c.save(); c.translate(a[0], a[1]); if (mir) c.scale(-1, 1); c.scale(MODEL.SHOE, MODEL.SHOE); c.translate(8, 0); shoeFront(c); c.restore();
   }
-  hoodFront(c, T, back);
+  if (!TEE) hoodFront(c, T, back);
   hoodieFront(c, T, back, breath);
-  if (!back) hoodCollar(c, T);
+  if (!back && !TEE) hoodCollar(c, T);
+  if (TEE && !back) { const n = T([0, -280]); c.beginPath(); c.ellipse(n[0], n[1] + 4, 58, 24, 0, 0, Math.PI); fillStroke(c, RED_D, 7); }
+  if (!back && !TEE && r.hoodieFace) hoodieFaceDraw(c, T, r.hoodieFace, r.t);
+  if (!back && r.bagFace) { const e1 = T([-170, -206]), e2 = T([-170, -150]); bagFaceDraw(c, r.bagFace, [e1, e2], [T([-182, -96]), T([-150, -60])], 16, r.t); }
   if (back && showBag) { const p = T([0, -232]); c.beginPath(); c.roundRect(p[0] - 104, p[1], 208, 230, 50); const gg = c.createLinearGradient(p[0] - 104, 0, p[0] + 104, 0); gg.addColorStop(0, BAG_L); gg.addColorStop(1, BAG); fillStroke(c, gg, LW); c.beginPath(); c.roundRect(p[0] - 70, p[1] + 110, 140, 90, 24); stroke(c, 6); }
-  if (!back) { strings(c, T, r.t, [-20, 20]); if (showBag) strapFront(c, T); }
+  if (!back) { if (!TEE) strings(c, T, r.t, [-20, 20]); if (showBag) strapFront(c, T); }
   if (r.hug) r.hug(c, T([0, -180])[0], T([0, -180])[1]);
   const arms = () => {
     // v17 motion blur: faint trail of the last arm positions on fast moves (drawn first, under the real arm)
@@ -442,7 +482,8 @@ function drawSide(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, l
   // backpack on the back
   if (r.backpack !== false) { const p = T([-118, -250]); c.save(); c.translate(p[0], p[1] + DY * 0.3); c.rotate(lean * 0.6 + DX * 0.0025);
     c.beginPath(); c.roundRect(-82, -4, 116, 250, 40); const gg = c.createLinearGradient(-82, 0, 34, 0); gg.addColorStop(0, BAG_L); gg.addColorStop(1, BAG); fillStroke(c, gg, LW);
-    c.beginPath(); c.roundRect(-98, 110, 40, 110, 16); fillStroke(c, BAG, 7); c.beginPath(); c.moveTo(-70, 60); c.lineTo(10, 60); stroke(c, 5, "rgba(255,255,255,0.18)"); c.restore(); }
+    c.beginPath(); c.roundRect(-98, 110, 40, 110, 16); fillStroke(c, BAG, 7); c.beginPath(); c.moveTo(-70, 60); c.lineTo(10, 60); stroke(c, 5, "rgba(255,255,255,0.18)");
+    if (r.bagFace) bagFaceDraw(c, r.bagFace, [[-52, 96], [-6, 96]], [[-64, 168], [10, 168]], 19, r.t); c.restore(); }
   // torso
   const pts = ([[-96, -270 - b], [-112, -150], [-104, 14], [104, 14], [112, -120], [86, -272 - b]] as P[]).map(T);
   c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.quadraticCurveTo(pts[1][0] - 10, pts[1][1], pts[2][0], pts[2][1]); c.lineTo(pts[3][0], pts[3][1]); c.quadraticCurveTo(pts[4][0] + 8, pts[4][1], pts[5][0], pts[5][1]); const tp = T([0, -300 - b]); c.quadraticCurveTo(tp[0], tp[1], pts[0][0], pts[0][1]); c.closePath();
@@ -451,14 +492,14 @@ function drawSide(c: CanvasRenderingContext2D, r: Rig, g: Geo, breath: number, l
   const h0 = T([-130, -36]), h1 = T([130, -36]); c.fillStyle = RED_D; c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); c.lineTo(h1[0], h1[1] + 70); c.lineTo(h0[0], h0[1] + 70); c.fill();
   for (let i = -110; i <= 110; i += 14) { const p0 = T([i, -32]), p1 = T([i, 10]); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); stroke(c, 2.5, "rgba(0,0,0,0.22)"); }
   c.beginPath(); c.moveTo(h0[0], h0[1]); c.lineTo(h1[0], h1[1]); stroke(c, 5);
-  const pk = ([[20, -150], [96, -150], [110, -48], [6, -48]] as P[]).map(T); c.beginPath(); c.moveTo(pk[0][0], pk[0][1]); c.lineTo(pk[1][0], pk[1][1]); c.lineTo(pk[2][0], pk[2][1]); c.lineTo(pk[3][0], pk[3][1]); c.quadraticCurveTo(pk[3][0] - 6, (pk[0][1] + pk[3][1]) / 2, pk[0][0], pk[0][1]); c.fillStyle = "rgba(255,90,90,0.25)"; c.fill(); stroke(c, 6);
+  if (!TEE) { const pk = ([[20, -150], [96, -150], [110, -48], [6, -48]] as P[]).map(T); c.beginPath(); c.moveTo(pk[0][0], pk[0][1]); c.lineTo(pk[1][0], pk[1][1]); c.lineTo(pk[2][0], pk[2][1]); c.lineTo(pk[3][0], pk[3][1]); c.quadraticCurveTo(pk[3][0] - 6, (pk[0][1] + pk[3][1]) / 2, pk[0][0], pk[0][1]); c.fillStyle = "rgba(255,90,90,0.25)"; c.fill(); stroke(c, 6); }
   for (const [p0, p1, p2] of [[[-70, -200], [-50, -150], [-66, -100]], [[-40, -70], [-20, -58], [0, -66]]] as [P, P, P][]) { const q0 = T(p0), q1 = T(p1), q2 = T(p2); c.beginPath(); c.moveTo(q0[0], q0[1]); c.quadraticCurveTo(q1[0], q1[1], q2[0], q2[1]); stroke(c, 4.5, RED_DD); }
   c.restore();
   c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); c.quadraticCurveTo(pts[1][0] - 10, pts[1][1], pts[2][0], pts[2][1]); c.lineTo(pts[3][0], pts[3][1]); c.quadraticCurveTo(pts[4][0] + 8, pts[4][1], pts[5][0], pts[5][1]); c.quadraticCurveTo(tp[0], tp[1], pts[0][0], pts[0][1]); c.closePath(); stroke(c, LW);
   // hood bump on the back of the neck
-  const hd = T([-58, -292]); c.beginPath(); c.ellipse(hd[0], hd[1], 70, 40, -0.25, 0, Math.PI * 2); const hg = c.createLinearGradient(hd[0], hd[1] - 30, hd[0], hd[1] + 30); hg.addColorStop(0, RED_L); hg.addColorStop(1, RED_D); fillStroke(c, hg, 8);
+  if (!TEE) { const hd = T([-58, -292]); c.beginPath(); c.ellipse(hd[0], hd[1], 70, 40, -0.25, 0, Math.PI * 2); const hg = c.createLinearGradient(hd[0], hd[1] - 30, hd[0], hd[1] + 30); hg.addColorStop(0, RED_L); hg.addColorStop(1, RED_D); fillStroke(c, hg, 8);
   c.beginPath(); c.ellipse(hd[0] + 22, hd[1] + 2, 34, 18, -0.25, 0, Math.PI * 2); fillStroke(c, RED_DD, 5);
-  strings(c, T, r.t, [74]);
+  strings(c, T, r.t, [74]); }
   // backpack strap over the shoulder
   { const a = T([-70, -280]), m = T([20, -300]), e = T([64, -160]); c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo(m[0], m[1], e[0], e[1]); stroke(c, 30); c.beginPath(); c.moveTo(a[0], a[1]); c.quadraticCurveTo(m[0], m[1], e[0], e[1]); stroke(c, 18, BAG); }
   if (r.hug) r.hug(c, T([90, -170])[0], T([90, -170])[1]);
