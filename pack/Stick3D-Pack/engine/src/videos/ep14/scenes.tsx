@@ -77,7 +77,7 @@ export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), awake = t >= WOKE;
 const BED2: V3 = [-2.6, 0, 0.6];
 const TOP2 = bedTop(BED2, BEDH); // mattress top
 const B1 = 4.35, L1 = 5.2, B2 = 5.95, HIT = 6.72, DROP = 7.02;
-const CEIL = 7.2, PEAK = CEIL - 3.0; // feet height when his head touches the ceiling
+const CEIL = 7.2, PEAK = CEIL - 3.65; // feet height when his head touches the ceiling
 const heroY2 = (t: number) => { if (t < B1) return TOP2; if (t < L1) { const u = seg(t, B1, L1); return TOP2 + 4 * 1.0 * u * (1 - u); } if (t < B2) return TOP2;
   if (t < HIT) { const u = seg(t, B2, HIT); return TOP2 + (PEAK - TOP2) * (1 - (1 - u) ** 2); } if (t < DROP) return PEAK; const u = (t - DROP); return PEAK - 4.9 * u * u; };
 const bedSq2 = (t: number) => { const crouch = (t0: number) => -0.2 * sm(seg(t, t0 - 0.3, t0)) * (t < t0 + 0.08 ? 1 : 0) + (t >= t0 && t < t0 + 0.4 ? 0.2 * Math.sin(seg(t, t0, t0 + 0.4) * Math.PI) : 0);
@@ -86,7 +86,7 @@ const O2 = A({ frac: 0.5, yaw: 0.15, sx: 0.5, camY: -0.2, push: 0.98, drift: 0.0
 const K2 = (): Key[] => { const ks: Key[] = []; for (let t = 3.85; t <= 7.6; t += 1 / 30) { const y = heroY2(Math.min(t, DROP + 0.1)); const sy = lerp(SY_A, 0.68, sm(seg(t, 6.0, 6.6))); ks.push({ ...framePose([BED2[0], y, BED2[2]], { ...O2, sy, frac: lerp(0.5, 0.45, sm(seg(t, 6.0, 6.6))) }, seg(t, 3.85, 7.6)), t }); } return ks; };
 const KEYS2 = K2();
 export const S2 = ({ t }: Ctx) => { const y = heroY2(t), air = y > TOP2 + 0.02, splat = t >= HIT && t < DROP + 0.15, quiltOff = t >= B1 + 0.05;
-  const qu = seg(t, B1 + 0.05, B1 + 0.9), qp: V3 = quiltOff ? [BED2[0] + 1.6 * qu, TOP2 + 1.3 + 2.6 * qu - 2.2 * qu * qu, BED2[2] + 0.5] : [BED2[0], TOP2 + 1.15, BED2[2] + 0.35];
+  const qu = seg(t, B1 + 0.05, B1 + 0.9), qp: V3 = quiltOff ? [BED2[0] + 1.6 * qu, TOP2 + 0.9 + 2.6 * qu - 2.2 * qu * qu, BED2[2] - 0.35] : [BED2[0], TOP2 - 0.7, BED2[2] + 0.35];
   const sq = splat ? -0.28 * (1 - seg(t, DROP, DROP + 0.15)) : air ? 0.08 : (t > L1 && t < L1 + 0.25 ? -0.15 * Math.sin(seg(t, L1, L1 + 0.25) * Math.PI) : 0);
   return (<HomeSet t={t} preset="morning" noBed>
     <Ceiling t={t} y={CEIL} swing={t > HIT ? Math.exp(-(t - HIT) * 2) : 0} />
@@ -95,7 +95,7 @@ export const S2 = ({ t }: Ctx) => { const y = heroY2(t), air = y > TOP2 + 0.02, 
     <Stickman p={[BED2[0] + 0.15, y, BED2[2] + 0.25]} t={t} action={air && !splat ? "float" : "idle"} t0={air ? (t < L1 ? B1 : B2) : 0} lips={LIPS} groundY={TOP2} shadow={false}
       face={faceAt(t, [[3.85, "confused"], [B1, "surprised"], [L1, "worried"], [B2, "scared"], [HIT, "scared"], [DROP, "surprised"]])}
       rig={{ squash: sq, zeroG: air ? 1 : 0, ...(splat ? { lookX: 0, lookY: -1, handsOverHead: true, ikL: [-180, 1080] as [number, number], ikR: [180, 1080] as [number, number], ikKL: 1, ikKR: 1, handL: "open" as const, handR: "open" as const } : eyes(t, [[3.85, 0.2, 0.5], [B2, 0, -1]])) }} />
-    <Quilt p={qp} t={t} w={2.4} h={1.7} flutter={quiltOff ? 1 : 0.15} rot={quiltOff ? qu * 160 : 0} o={1 - sm(seg(t, B1 + 0.75, B1 + 0.95))} />
+    <Quilt p={qp} t={t} w={2.4} h={quiltOff ? 1.7 : 0.85} flutter={quiltOff ? 1 : 0.15} rot={quiltOff ? qu * 160 : 0} o={1 - sm(seg(t, B1 + 0.75, B1 + 0.95))} />
     {splat ? <MagicSparkles t={t} c={[BED2[0] + 0.15, CEIL - 0.5, BED2[2] + 0.4]} area={[1.4, 0.3, 0.3]} n={12} color="#ffd23a" size={0.16} /> : null}
     <PuffRing c={[BED2[0] + 0.15, CEIL - 0.15, BED2[2] + 0.2]} t={t} t0={HIT} n={7} r={0.6} size={0.18} color="#ffffff" life={0.6} up={-0.3} />
     <DepthPass focus={6.0} blur={1.6} />
@@ -110,9 +110,9 @@ export const P3: V3 = [-6.0, STAIR.top, 0.25];
 const RUN3 = 9.25, RV3 = 2.6 * RUN_STRIDE * U;
 const hero3 = (t: number): V3 => { const x = P3[0] + RV3 * Math.max(0, t - RUN3); return [x, stairY(x), P3[2]]; };
 const O3A = A({ frac: 0.46, yaw: 0.45, sx: 0.4, camY: 0.6, push: 0.97, drift: 0.05 });
-const O3B = A({ frac: 0.34, yaw: 0.25, sx: 0.32, camY: 0.4 });
+const O3B = A({ frac: 0.46, yaw: 0.25, sx: 0.42, camY: 0.5 });
 const K3B = (): Key[] => { const ks: Key[] = []; for (let t = 8.85; t <= 10.56; t += 1 / 30) { const h = hero3(t), b = bed3(t), k = sm(seg(t, 8.85, 9.4)) * 0.75;
-  const dx = Math.max(-1.1, Math.min(1.1, (b.p[0] - 1.2 - h[0]) * k)); ks.push({ ...framePose([h[0] + dx, h[1] + 0.25 * k * (b.p[1] - h[1]), P3[2]], O3B, 0), t }); } return ks; };
+  const dx = Math.max(-0.6, Math.min(0.6, (b.p[0] - 1.2 - h[0]) * k)); ks.push({ ...framePose([h[0] + dx, h[1] + 0.25 * k * (b.p[1] - h[1]), P3[2]], O3B, 0), t }); } return ks; };
 const KEYS3B = K3B();
 const G3: GKey[] = [{ t: 8.0, g: "whoa", in: 0.14, hold: 0.5 }, { t: 8.75, g: "reach", in: 0.2, hold: 0.45 }];
 const ACT3: AKey[] = [{ t: 7.55, turn: 0.6, tilt: 6 }, { t: 8.1, turn: 0.8, lean: -8, dip: 0.4, d: 0.15 }, { t: 8.75, turn: 0.9, lean: 12, d: 0.2 }];
@@ -133,11 +133,12 @@ export const PB: V3 = [XB, 0, ZR];
 export const TR: V3 = [XB + 3.0, 0, -2.2]; // trampoline centre
 export const PIL: V3 = [XB + 2.2, 0, -1.4]; // giant pillow (drawn in S6)
 const PILW = 3.0, PILH = PILW * 0.42;
-const Playground: React.FC<{ t: number; preset?: "day" | "sunset"; dip?: number; children?: React.ReactNode }> = ({ t, preset = "day", dip = 0, children }) => (
+const Playground: React.FC<{ t: number; preset?: "day" | "sunset"; dip?: number; front?: boolean; children?: React.ReactNode }> = ({ t, preset = "day", dip = 0, front = false, children }) => (
   <World preset={preset} t={t}>
     <Terrain amp={0} color="#6ad05a" color2="#58c04e" />
     <Grass t={t} area={[40, 26]} c={[0, 0, -12]} n={2200} amp={0} />
     <Flowers t={t} area={[30, 14]} c={[0, 0, -9]} n={160} amp={0} />
+    {front ? <><Grass t={t} area={[30, 8]} c={[0, 0, 5.5]} n={1100} amp={0} h={0.45} /><Flowers t={t} area={[24, 6]} c={[0, 0, 5.2]} n={110} amp={0} /></> : null}
     <mesh position={[XB - 4, 0.012, ZR + 0.6]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[40, 1.6]} /><meshToonMaterial color="#e8d2a0" /></mesh>
     <Trampoline p={TR} r={1.7} dip={dip} />
     <Slide p={[XB - 6.5, 0, -4.5]} rotY={0.3} />
@@ -189,7 +190,7 @@ const O5B = A({ frac: 0.46, yaw: -0.15, sx: 0.4, camY: 0.6, push: 0.97, drift: -
 const G5: GKey[] = [{ t: 14.6, g: "point", in: 0.2, hold: 0.6 }, { t: 16.3, g: "whoa", in: 0.14, hold: 0.5 }, { t: 16.95, g: "palmUp2", in: 0.2, hold: 0.6 }];
 const ACT5: AKey[] = [{ t: 14.05, turn: 0.6, tilt: 6 }, { t: 15.2, turn: 0.7, tilt: -6, d: 0.3 }, { t: 16.3, turn: 0.7, lean: -6, dip: 0.3, d: 0.2 }, { t: 16.95, turn: 0.6, lean: -10, tilt: 10, d: 0.2 }];
 export const S5 = ({ t }: Ctx) => { const a = act(t, ACT5, { seed: 5 }), b = bedBounce(t);
-  return (<Playground t={t} dip={b.dip}>
+  return (<Playground t={t} dip={b.dip} front={t >= 16.1}>
     <Cam t={t} keys={t < 16.1 ? frameShot(PB, 14.05, 16.1, O5A) : frameShot(PB, 16.1, 17.8, O5B)} />
     <LivingBed p={b.p} t={t} h={BEDH} groundY={b.air || t > BOUNCES[0][0] ? TRAMP_TOP : 0} shadow={t < BOUNCES[0][0] + 0.3} pose={{ mood: t > 16.9 ? "wow" : "play", mouth: 0.5 + 0.2 * Math.sin(t * 9), lookX: -0.6, lookY: 0.4, blanket: 0, wag: 1, squash: b.sq, tuck: b.air ? 0.8 : 0, ear: b.air ? -0.8 : 0.5, flip: false }} />
     <Stickman p={PB} t={t} action="idle" lips={LIPS} gest={G5} face={faceAt(t, [[14.05, "surprised"], [15.2, "worried"], [16.3, "surprised"], [16.95, "scared"]])}
@@ -205,7 +206,7 @@ const O6B = A({ frac: 0.45, yaw: -0.2, sx: 0.4, camY: 1.2, push: 0.96, drift: 0.
 const ACT6: AKey[] = [{ t: 17.75, turn: 0.5, tilt: -8, lean: -6 }, { t: 18.6, turn: 0.4, tilt: 8, lean: 4, d: 0.3 }, { t: DRAW1 + 0.1, turn: 0.3, lean: -6, dip: 0.3, d: 0.2 }];
 export const S6 = ({ t }: Ctx) => { const drawing = t >= DRAW0 - 0.2 && t < DRAW1 + 0.1, prog = sm(seg(t, DRAW0, DRAW1)), real = t >= DRAW1, a = act(t, ACT6, { seed: 6 }), b = bedBounce(t);
   const pop = real ? 1 + 0.1 * Math.exp(-(t - DRAW1) * 7) * Math.sin((t - DRAW1) * 26) : 1;
-  return (<Playground t={t} dip={b.dip}>
+  return (<Playground t={t} dip={b.dip} front>
     <Cam t={t} keys={t < 19.6 ? frameShot(PB, 17.75, 19.6, O6A) : frameShot(PB, 19.6, 21.7, O6B)} />
     <LivingBed p={b.p} t={t} h={BEDH} groundY={TRAMP_TOP} shadow={false} pose={{ mood: "wow", mouth: 0.5, lookX: -0.5, lookY: 0.5, blanket: 0, wag: 1, squash: b.sq, tuck: 0.8, ear: -0.8 }} />
     {!real ? <DrawStrokes p={PILC} s={[PILW, PILW]} paths={PILLOW_PATH} prog={prog} t={t} style="magic" face /> : <GiantPillow p={PIL} t={t} w={PILW} pop={pop} />}
@@ -227,7 +228,7 @@ const O7B = A({ frac: 0.46, yaw: -0.3, sx: 0.4, camY: 1.1, push: 0.96, drift: -0
 const G7: GKey[] = [{ t: FLOP, g: "whoa", in: 0.12, hold: 0.6 }, { t: YAWN + 0.3, g: "chin", in: 0.25, hold: 0.9 }];
 const ACT7: AKey[] = [{ t: 21.65, turn: 0.5, tilt: -8, lean: -6 }, { t: FLOP, turn: 0.7, lean: -10, dip: 0.6, d: 0.12 }, { t: 23.0, turn: 0.6, tilt: 8, d: 0.3 }, { t: YAWN, turn: 0.6, tilt: -6, lean: 4, d: 0.3 }];
 export const S7 = ({ t }: Ctx) => { const a = act(t, ACT7, { seed: 7 }), b = bed7(t), y = sm(seg(t, YAWN - 0.2, YAWN + 0.3)) * (1 - sm(seg(t, YAWN + 0.9, YAWN + 1.3)));
-  return (<Playground t={t}>
+  return (<Playground t={t} front>
     <Cam t={t} keys={t < 23.4 ? frameShot(PB, 21.65, 23.4, O7A) : frameShot(PB, 23.4, 25.5, O7B)} impacts={[[FLOP, 0.02]]} />
     <GiantPillow p={PIL} t={t} w={PILW} squash={b.psq} />
     <LivingBed p={b.p} t={t} h={BEDH} groundY={PILH * 0.8} shadow={false} pose={{ mood: t < FLOP + 0.6 ? "wow" : y > 0.05 ? "yawn" : t > YAWN + 1.0 ? "sleepy" : "happy", mouth: t < FLOP ? 0.6 : y > 0.05 ? y : 0.1, lookX: -0.6, lookY: 0.2, blanket: 0, wag: t < YAWN ? 0.6 : 0.15, squash: b.sq + 0.08 * y, tilt: -6 * y, tuck: t < FLOP ? 0.8 : 0, ear: t < FLOP ? -0.9 : 0.4 }} />
@@ -246,7 +247,7 @@ const G8: GKey[] = [{ t: TUCK - 0.3, g: "present", in: 0.25, hold: 0.7 }];
 const ACT8: AKey[] = [{ t: 25.45, turn: 0.6, tilt: 6 }, { t: TUCK, turn: 0.7, lean: 10, d: 0.3 }, { t: 27.0, turn: 0.4, tilt: -6, d: 0.4 }, { t: ASLEEP - 0.3, turn: 0.3, tilt: 14, lean: 6, dip: 0.2, d: 0.6 }];
 export const S8 = ({ t }: Ctx) => { const a = act(t, ACT8, { seed: 8 }), q = seg(t, TUCK, TUCK + 0.7), tucked = t >= TUCK + 0.7, sleepy = t > 27.0, out = t > ASLEEP - 0.1;
   const qFrom: V3 = [PB8[0] + 1.3, 2.0, PB8[2] - 0.3], qTo: V3 = [BEDON[0] + 0.2, BEDON[1] + BEDH * 0.5, BEDON[2] + 0.2], qp = lerp3(qFrom, qTo, sm(q)); qp[1] += Math.sin(q * Math.PI) * 0.9;
-  return (<Playground t={t} preset="sunset">
+  return (<Playground t={t} preset="sunset" front>
     <Cam t={t} keys={t < 27.2 ? frameShot(PB8, 25.45, 27.2, O8A) : frameShot(PB8, 27.2, 29.4, O8B)} />
     <GiantPillow p={PIL} t={t} w={PILW} squash={0.25} />
     <LivingBed p={[BEDON[0], BEDON[1] - 0.35 * 0.25 + 0.1, BEDON[2]]} t={t} h={BEDH} groundY={PILH * 0.8} shadow={false} pose={{ mood: tucked ? (sleepy ? "asleep" : "sleepy") : "sleepy", blanket: tucked ? 1 : 0, lookX: -0.5, squash: breathe(t) * 1.5, ear: 0.4 }} />
