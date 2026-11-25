@@ -105,7 +105,7 @@ norm = lambda w: re.sub(r"[^a-z0-9]", "", w.lower())
 
 def align(text, ww, dur):
     """script words (as written) with start/end times from Whisper; unmatched words interpolated"""
-    disp = [w for w in text.replace("...", " ").replace("…", " ").split() if norm(w)]
+    disp = [w for w in text.replace("…", "...").split() if norm(w)]   # keep "word..." so the pause stays a phrase break
     tok, wtok = [norm(w) for w in disp], [norm(w["w"]) for w in ww]
     times = [None] * len(disp)
     for a, b, n in difflib.SequenceMatcher(None, tok, wtok, autojunk=False).get_matching_blocks():
@@ -146,6 +146,15 @@ def sfx(name):
         band = _lp(noise, cut) - _lp(noise, cut * 0.35)
         env = np.sin(np.pi * np.clip(t * 1.15, 0, 1)) ** 2 * (1 - t) ** 0.4
         out = band * env / (np.abs(band).max() + 1e-9) * 0.5
+    elif name == "tick":       # soft wood-block tick
+        n = int(0.09 * SR); t = np.arange(n) / SR
+        out = (np.sin(2 * np.pi * 1050 * t) * 0.7 + np.sin(2 * np.pi * 2300 * t) * 0.3) * np.exp(-t * 55) * 0.35
+    elif name == "pop":        # bubbly pop
+        n = int(0.12 * SR); t = np.arange(n) / SR; f = 380 + 700 * np.exp(-t * 45)
+        out = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 38) * 0.45
+    elif name == "ding":       # bright bell ding
+        n = int(0.9 * SR); t = np.arange(n) / SR
+        out = (np.sin(2 * np.pi * 1318.5 * t) + 0.45 * np.sin(2 * np.pi * 1975.5 * t) * np.exp(-t * 3) + 0.2 * np.sin(2 * np.pi * 2637 * t)) * np.minimum(1, t * 400) * np.exp(-t * 5) * 0.28
     elif name == "riser":        # rising tension over the countdown: sweeping filtered noise + pitch-rising drone + faster tremolo
         d = CFG["countdown_s"]; n = int(d * SR); t = np.arange(n) / SR; u = t / d
         noise = rng.standard_normal(n); cut = 250 + 3800 * u ** 2
@@ -198,12 +207,9 @@ def build(ep, cache):
         header.append((t, ("text", CFG["pick_text"])))
         qend, _ = voice(qq["text"], t)
         c0 = qend + T["before_countdown"]; r0 = c0 + CD
-        scenes[-1].update(countdown=c0, reveal=r0)
-        if special:   # heartbeat under the impossible question
-            hb = scenes[-1]["start"] + 0.2
-            while hb < r0 - 0.3: audio.append((hb, sfx("heartbeat"), G["heartbeat"])); hb += 0.83
-        audio.append((c0, sfx("riser"), G["riser"]))
-        audio.append((r0, sfx("bass_hit"), G["bass_hit"]))
+        scenes[-1].update(countdown=c0, reveal=r0, pick="AB"[i % 2])   # fun tap animation, alternates A/B (not a result)
+        for k in range(int(round(CD))): audio.append((c0 + k, sfx("tick"), G["tick"]))
+        audio.append((r0, sfx("pop"), G["pop"])); audio.append((r0 + 0.06, sfx("ding"), G["ding"]))
         header.append((r0, ("text", qq["reaction"])))
         t, _ = voice(qq["reaction"], r0 + T["after_countdown"])
     # outro: short line over the last question's images (calm: no pulse/shake), then the fixed end card is appended
@@ -243,7 +249,23 @@ def load_images(ep):
         for side, ic in zip("AB", q["icons"]):
             base, _, mod = ic.partition("+"); items.append(dict(name=base, side=side, ban=mod == "ban", dark=False))
     paths = scenes3d.ensure(items, comp="WyrTile", layers=("tile",), size=scenes3d.TILE)
-    return {(k // 2, it["side"]): pil_to_surface(Image.open(paths[k][0]).convert("RGBA")) for k, it in enumerate(items)}
+    return {(k // 2, it["side"]): pil_to_surface(stickerize(Image.open(paths[k][0]).convert("RGBA"))) for k, it in enumerate(items)}
+
+def stickerize(im, ow=16):
+    """logo-style sticker: thick dark outline around the silhouette + soft top-light gloss + a touch more saturation"""
+    import cv2
+    a = np.asarray(im).astype(np.float32) / 255; rgb, al = a[..., :3], a[..., 3]
+    hsv = cv2.cvtColor((rgb * 255).astype(np.uint8), cv2.COLOR_RGB2HSV).astype(np.float32); hsv[..., 1] = np.clip(hsv[..., 1] * 1.15, 0, 255)
+    rgb = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB).astype(np.float32) / 255
+    yy = np.linspace(0, 1, a.shape[0])[:, None]; ys, xs = np.nonzero(al > 0.5)
+    if len(ys):
+        y0, y1 = ys.min(), ys.max(); g = np.clip(1 - (np.arange(a.shape[0])[:, None] - y0) / max(1, (y1 - y0) * 0.55), 0, 1) ** 2
+        rgb = rgb + (1 - rgb) * 0.16 * g[..., None]
+    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * ow + 1, 2 * ow + 1))
+    ring = cv2.GaussianBlur(cv2.dilate((al > 0.35).astype(np.uint8) * 255, k), (5, 5), 0).astype(np.float32) / 255
+    ink = np.array(hexc(INK)[:3], np.float32)
+    out_rgb = rgb * al[..., None] + ink * (1 - al[..., None]); out_a = np.maximum(al, ring)
+    return Image.fromarray((np.dstack([out_rgb, out_a]) * 255).clip(0, 255).astype(np.uint8), "RGBA")
 
 # ---------- backgrounds
 def sunburst(ctx, cx, cy, y0, y1, c1, c2, glow, ang, n=22):
@@ -376,9 +398,79 @@ def draw_header(ctx, tl, t):
         ws = ln.split(); widths = [text_width(w, sz) for w in ws]; gap = sz * 0.28
         x = W / 2 - (sum(widths) + gap * (len(ws) - 1)) / 2
         for w_, wd in zip(ws, widths):
-            col = "#FFE14D" if emph[i] else "#FFFFFF"; i += 1
-            put(ctx, tsurf(w_, sz, col), W / 2 + (x + wd / 2 - W / 2) * k, L["header_y"] + (y - L["header_y"]) * k, scale=k); x += wd + gap
+            px, py = W / 2 + (x + wd / 2 - W / 2) * k, L["header_y"] + (y - L["header_y"]) * k
+            if emph[i]: pill(ctx, w_, sz, px, py, k)
+            else: put(ctx, tsurf(w_, sz, "#FFFFFF"), px, py, scale=k)
+            i += 1; x += wd + gap
         y += lh
+
+def pill(ctx, word, sz, cx, cy, k=1.0):
+    """highlighted word: dark text on a yellow pill with a dark outline (channel logo 'DAILY' style)"""
+    tw = text_width(word, sz); pw, ph = tw + sz * 0.7, sz * 1.18
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(k, k); ctx.rotate(-0.025)
+    rrect(ctx, -pw / 2 + 3, -ph / 2 + 8, pw, ph, ph * 0.32); ctx.set_source_rgba(0, 0, 0, 0.3); ctx.fill()
+    rrect(ctx, -pw / 2 - 6, -ph / 2 - 6, pw + 12, ph + 12, ph * 0.32 + 6); ctx.set_source_rgb(*hexc(INK)[:3]); ctx.fill()
+    g = cairo.LinearGradient(0, -ph / 2, 0, ph / 2); g.add_color_stop_rgb(0, *hexc("#FFE14D")[:3]); g.add_color_stop_rgb(1, *hexc("#FFB800")[:3])
+    rrect(ctx, -pw / 2, -ph / 2, pw, ph, ph * 0.32); ctx.set_source(g); ctx.fill()
+    put(ctx, tsurf(word, sz, INK, stroke=0, shadow=False), 0, 2); ctx.restore()
+
+def hand_path(ctx):
+    """white pointing hand (index finger up, tip at 0,0), as in the channel logo"""
+    rrect(ctx, -19, 0, 38, 120, 19)                                   # index finger
+    rrect(ctx, -46, 92, 112, 112, 40)                                 # palm
+    for i in range(3): rrect(ctx, 14 + i * 0, 92 + i * 30, 70, 34, 17)  # folded fingers
+    ctx.save(); ctx.translate(-46, 150); ctx.rotate(-0.7); rrect(ctx, -10, -18, 70, 36, 18); ctx.restore()   # thumb
+    rrect(ctx, -30, 196, 86, 34, 12)                                  # cuff
+
+def draw_hand(ctx, tipx, tipy, ang, sc):
+    ctx.save(); ctx.translate(tipx, tipy); ctx.rotate(ang); ctx.scale(sc, sc)
+    ctx.translate(8, 14); hand_path(ctx); ctx.set_source_rgba(0, 0, 0, 0.25); ctx.fill(); ctx.translate(-8, -14)
+    hand_path(ctx); ctx.set_source_rgb(*hexc(INK)[:3]); ctx.set_line_width(16); ctx.set_line_join(cairo.LINE_JOIN_ROUND); ctx.stroke()
+    hand_path(ctx); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+    ctx.set_source_rgb(*hexc(INK)[:3]); ctx.set_line_width(5); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    for yy in (122, 152, 182): ctx.move_to(22, yy); ctx.line_to(58, yy); ctx.stroke()
+    ctx.restore()
+
+def draw_check(ctx, cx, cy, k):
+    if k <= 0.01: return
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(k, k)
+    ctx.arc(0, 0, 62, 0, 2 * math.pi); ctx.set_source_rgb(*hexc(INK)[:3]); ctx.fill()
+    ctx.arc(0, 0, 55, 0, 2 * math.pi); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+    g = cairo.RadialGradient(-12, -16, 4, 0, 0, 48); g.add_color_stop_rgb(0, *hexc("#5BE36B")[:3]); g.add_color_stop_rgb(1, *hexc("#16A34A")[:3])
+    ctx.arc(0, 0, 46, 0, 2 * math.pi); ctx.set_source(g); ctx.fill()
+    for lw, col in ((22, hexc(INK)[:3]), (12, (1, 1, 1))):
+        ctx.move_to(-22, 2); ctx.line_to(-6, 18); ctx.line_to(24, -16); ctx.set_line_width(lw); ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ctx.set_line_join(cairo.LINE_JOIN_ROUND); ctx.set_source_rgb(*col); ctx.stroke()
+    ctx.restore()
+
+def draw_reveal(ctx, sc_, t):
+    """after the countdown the pointing hand taps one tile (alternating A/B) and a green check pops on it"""
+    if sc_.get("pick") is None or sc_["reveal"] is None: return
+    r0 = sc_["reveal"]; x, y, w, h = tile_rect(sc_["pick"])
+    tx, ty = x + w * 0.64, y + h * 0.40                                  # tap point (hand stays clear of the label banner)
+    a = t - (r0 - 0.35)
+    if a < 0: return
+    u = min(1.0, a / 0.35); e = 1 - (1 - u) ** 3
+    sx, sy = -120, ty + 420                                              # comes in from bottom-left
+    px, py = sx + (tx - sx) * e, sy + (ty - sy) * e
+    tap = math.exp(-((t - r0) / 0.06) ** 2) if t >= r0 - 0.1 else 0     # quick press
+    bob = 6 * math.sin((t - r0) * 4) if t > r0 + 0.2 else 0
+    if t >= r0:                                                          # tap ripple
+        q = (t - r0) / 0.4
+        if q < 1:
+            ctx.new_path(); ctx.arc(tx, ty, 30 + 90 * q, 0, 2 * math.pi); ctx.set_line_width(10 * (1 - q)); ctx.set_source_rgba(1, 1, 1, 0.9 * (1 - q)); ctx.stroke()
+    ck = ease_out_back(min(1, (t - r0 - 0.04) / 0.3)) if t >= r0 + 0.04 else 0
+    draw_check(ctx, x + 70, y + 66, ck)
+    if ck > 0: burst(ctx, x + 70 - 66, y + 66, -1, max(0, 1 - (t - r0) / 0.8), 0.9)
+    draw_hand(ctx, px + 4 * tap, py + 10 * tap + bob, -0.42, 0.9 - 0.08 * tap)
+
+def draw_question(ctx, sc_, t):
+    """the logo's big '?' bounces during the countdown"""
+    cd = sc_["countdown"]
+    if cd is None or not (cd <= t < sc_["reveal"]): return
+    u = t - cd; hop = abs(math.sin(u * math.pi * 2.2)); k = min(1, u / 0.15)
+    sq = 1 + 0.08 * (1 - hop)
+    put(ctx, tsurf("?", 190, "#FFFFFF", stroke=26), 150, 915 - 70 * hop, scale=k * sq, rot=-0.15 + 0.08 * math.sin(u * 7))
 
 def phrases(words):
     out, cur = [], []
@@ -388,7 +480,7 @@ def phrases(words):
     if cur: out.append(cur)
     res = []
     for p in out:
-        n = math.ceil(len(p) / 6); kk = math.ceil(len(p) / n); res += [p[i:i + kk] for i in range(0, len(p), kk)]
+        n = math.ceil(len(p) / 8); kk = math.ceil(len(p) / n); res += [p[i:i + kk] for i in range(0, len(p), kk)]
     return res
 
 def draw_caption(ctx, tl, t):
@@ -437,9 +529,11 @@ def frame(ctx, tl, imgs, t):
         beat = (t - sc_["start"]) % 0.83; pulse = math.exp(-beat * 6) + 0.6 * math.exp(-max(0, beat - 0.22) * 7) * (beat > 0.22)
         red_pulse(ctx, min(1, 0.2 + 0.4 * pulse))
     draw_vs(ctx, sc_, t)
+    draw_question(ctx, sc_, t)
     draw_header(ctx, tl, t)
     draw_badge(ctx, tl["episode"])
     draw_caption(ctx, tl, t)
+    draw_reveal(ctx, sc_, t)
     if rev > 0.05: ctx.set_source_rgba(1, 1, 1, min(0.35, rev * 0.3)); ctx.paint()
 
 

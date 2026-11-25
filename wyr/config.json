@@ -20,10 +20,10 @@
     "header_size": 58,
     "pick_size": 92,
     "header_max_w": 820,
-    "tile_w": 800,
-    "tile_h": 470,
-    "tile_cy_A": 512,
-    "tile_cy_B": 1392,
+    "tile_w": 830,
+    "tile_h": 490,
+    "tile_cy_A": 520,
+    "tile_cy_B": 1385,
     "label_size": 52,
     "label_max_w": 640,
     "caption_y": 888,
@@ -43,9 +43,9 @@
   },
   "sfx_gain": {
     "whoosh": 0.35,
-    "riser": 0.5,
-    "bass_hit": 0.8,
-    "heartbeat": 0.55
+    "tick": 0.55,
+    "pop": 0.6,
+    "ding": 0.6
   },
   "pick_text": "PICK ONE!",
   "outro_header": "SEE YOU TOMORROW!",
