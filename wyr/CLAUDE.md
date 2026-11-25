@@ -9,7 +9,8 @@ Build: `python3 render.py episodes/epNN.txt` (see README.md). Max 35 s, -14 LUFS
    Verify it before reporting it (HTTP 200, size matches the local file).
    The Drive connector only takes ~3.1 MB per file, so MP4s never go to Drive.
 2. **Text → Google Drive** folder "Would You Rather/ready" (folder id `1nZvbeFPkUnzpb-XPiAezSB70eUiejJy_`), file `EPNN.txt`
-   (plain text, no conversion; if it already exists, update it instead of creating a duplicate). Exact format:
+   (plain text, no conversion). The connector cannot edit file contents: to replace an existing EPNN.txt, upload the new one
+   first, then trash the old one, so the folder never holds duplicates. Exact format:
    ```
    VIDEO_URL: <url from step 1>
    TITLE: <max 100 characters>
