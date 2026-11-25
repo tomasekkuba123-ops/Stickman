@@ -5,6 +5,18 @@ Newest entries on top.
 
 ---
 
+## v21 — EP14 "Stickman's bed just woke up" (35 s, bedroom -> stairs -> playground -> bedroom loop)
+**Learned**
+- HomeSet bedroom: the built-in bed sits behind the desk, so a living bed placed near it is hidden. Turn the room bed off (`noBed`) and stand the hero on open floor with the story prop to one side.
+- A small prop (toothbrush in a cup) behind the hero is invisible in a size-B shot: put it in front of him, beside his hand, at the same depth (z of the hero + 0.15).
+- Chase shots on stairs: lerping the camera from the hero to a fast prop (k 0.75) throws the hero out of the frame. Track the hero and clamp the offset toward the prop to about +-1.1 m; let the prop run out of frame ahead of him.
+- Kokoro: one-word exclamations come out weak on their own; merge them with the next sentence.
+**Changed**
+- kit/bed.tsx (new): `LivingBed` (moods happy/sleepy/asleep/wow/play/yawn, gallop legs, tuck/squash/tilt/wag/ears/blanket/flip), `bedTop`, `Quilt`, `Zzz`, `Toothbrush` (rise/awake/sing/sway), `GiantPillow` + `PILLOW_PATH`, `Trampoline` + `TRAMP_TOP`, `Slide`, `SwingSet`, `Sandbox`, `PicketFence`, `StairHall` + `STAIR`/`stairY`, `Ceiling`.
+- style/set3d.tsx + kit/world.tsx: `Bedroom`/`HomeSet` take `noBed`.
+- tools/make_sfx_bed.py (new): sfx/snore, gallop, spring, sing, splat.
+- tools/tts.py: `--voice` / `--speed` flags (bm_/bf_ voices use en-gb).
+
 ## v19 — EP11 "Stickman's hoodie came alive" (story episode, continues EP10's cliffhanger)
 **Learned**
 - HOME.hero stands behind the desk: in a size-B front shot the desk hides his chest (and anything drawn on the hoodie). EP11 stands him 1.9 m in front of HOME.hero.
