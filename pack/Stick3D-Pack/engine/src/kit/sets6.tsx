@@ -36,8 +36,8 @@ export const LittleFlower: React.FC<{ p: V3; t: number }> = ({ p, t }) => {
   return (<group position={p} rotation={[0, 0, sw]} scale={[1.5, 1.5, 1.5]}>
     <Cyl p={[0, 0.29, 0]} rt={0.022} h={0.58} color="#3fae4a" line={1} />
     <mesh position={[0.07, 0.2, 0]} rotation={[0, 0, -0.9]} scale={[0.14, 0.05, 0.07]}><sphereGeometry args={[1, 12, 8]} /><meshToonMaterial color="#56c25a" gradientMap={toonRamp} /></mesh>
-    {Array.from({ length: 6 }, (_, i) => { const a = (i / 6) * Math.PI * 2; return <Ball key={i} p={[Math.cos(a) * 0.1, 0.58, Math.sin(a) * 0.1]} r={0.075} color={i % 2 ? "#ff8ac0" : "#ff6aa8"} s={[1.2, 0.45, 1.2]} ink={0.12} />; })}
-    <Ball p={[0, 0.6, 0]} r={0.06} color="#ffd23a" ink={0.14} />
+    {Array.from({ length: 6 }, (_, i) => { const a = (i / 6) * Math.PI * 2; return <Ball key={i} p={[Math.cos(a) * 0.1, 0.58, Math.sin(a) * 0.1]} r={0.075} color={i % 2 ? "#ff8ac0" : "#ff6aa8"} s={[1.2, 0.45, 1.2]} ink={0.012} />; })}
+    <Ball p={[0, 0.6, 0]} r={0.06} color="#ffd23a" ink={0.01} />
   </group>);
 };
 export const BigGarden: React.FC<{ t: number; bgT?: number; children?: React.ReactNode }> = ({ t, bgT, children }) => {
@@ -157,7 +157,7 @@ export const Dandelion: React.FC<{ t: number; squash?: number; lost?: number }> 
 export const FloatSeed: React.FC<{ p: V3; s?: number; rot?: number }> = ({ p, s = 1, rot = 0 }) => (
   <group position={p} scale={s} rotation={[0, 0, rot]}>
     <Cyl p={[0, -0.25, 0]} rt={0.012} h={0.5} color="#e8e2c8" line={0} />
-    <Ball p={[0, -0.52, 0]} r={0.035} color="#c8a878" ink={0.06} />
+    <Ball p={[0, -0.52, 0]} r={0.035} color="#c8a878" ink={0.008} />
     {Array.from({ length: 9 }, (_, i) => { const a = (i / 9) * Math.PI * 2; return <mesh key={i} position={[Math.cos(a) * 0.14, 0.06, Math.sin(a) * 0.14]} rotation={[Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9]}><cylinderGeometry args={[0.008, 0.008, 0.3, 4]} /><meshBasicMaterial color="#ffffff" /></mesh>; })}
     <SGlow p={[0, 0.06, 0]} r={0.22} color="#ffffff" o={0.5} />
   </group>

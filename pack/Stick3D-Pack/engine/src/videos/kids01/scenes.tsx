@@ -148,7 +148,9 @@ const span = (t0: number, t1: number, f: (t: number) => Key, n = 12): Key[] => A
 const still = (hero: V3, t0: number, t1: number, o: FrameOpts): Key[] => [{ ...framePose(hero, o, 0), t: t0 }, { ...framePose(hero, o, 1), t: t1 }];
 const smoothTrack = (t0: number, t1: number, o: FrameOpts, lagS = 0.15) => span(t0, t1, (t) => { const a = heroAt(t).p, b = heroAt(Math.max(t0, t - lagS)).p; return framePose(lerp3(a, b, 0.5), o, seg(t, t0, t1)); }, 24);
 const MID_BUG: V3 = [0.6, 0, -1.0];
-const rideTrack = (t0: number, t1: number, o: FrameOpts) => span(t0, t1, (t) => { const a = bugAt(t).p, b = bugAt(Math.max(t0, t - 0.2)).p; return framePose(lerp3(a, b, 0.5), o, seg(t, t0, t1)); }, 24);
+// dy(t): lower the framing anchor (e.g. to bring the sleeping snail under the flight path into frame)
+const rideTrack = (t0: number, t1: number, o: FrameOpts, dy: (t: number) => number = () => 0) => span(t0, t1, (t) => { const a = bugAt(t).p, b = bugAt(Math.max(t0, t - 0.2)).p, m = lerp3(a, b, 0.5); return framePose([m[0], m[1] - dy(t), m[2]], o, seg(t, t0, t1)); }, 24);
+const SNAIL_DIP = (t: number) => 2.0 * Math.sin(Math.PI * seg(t, 16.8, 18.4)) ** 2;
 export const CAMS: ((t: number) => Key[])[] = [
   () => span(0, 2.95, (t) => hookKey(t), 8),
   () => still(HP, 2.95, T.tiny, A({ yaw: 0.22, sx: 0.5, push: 0.93, drift: -0.05 })),
@@ -157,13 +159,13 @@ export const CAMS: ((t: number) => Key[])[] = [
   () => still(MID_BUG, 8.6, 11.3, A({ yaw: -0.42, sx: 0.5, push: 0.96, drift: 0.05, h: 4.4 })),
   () => still(MID_BUG, 11.3, 13.4, A({ yaw: 0.12, sx: 0.5, push: 0.95, drift: -0.05, h: 4.4 })),
   () => rideTrack(13.4, 15.8, A({ yaw: -0.3, sx: 0.5, drift: 0.06, h: 5.4, camY: 1.6 })),
-  () => rideTrack(15.8, 18.7, A({ yaw: 0.32, sx: 0.5, drift: 0.04, h: 5.4, camY: 1.2 })),
+  () => rideTrack(15.8, 18.7, A({ yaw: 0.32, sx: 0.5, drift: 0.04, h: 5.4, camY: 1.2 }), SNAIL_DIP),
   () => still(LS, 18.7, 22.7, A({ yaw: -0.22, sx: 0.4, push: 0.95, drift: 0.04 })),
   () => smoothTrack(22.7, 26.95, A({ yaw: 0.3, sx: 0.44, drift: 0.04 }), 0.2),
   () => still(DT, 26.95, T.tickle, A({ yaw: 0.14, sx: 0.5, push: 0.95, drift: -0.05 })),
   () => still(DT, T.tickle, T.big, A({ yaw: -0.18, sx: 0.48, push: 0.92, drift: 0.04 })),
   () => still(HP, T.big, 33.5, A({ yaw: 0.16, sx: 0.5, push: 0.95, drift: 0.05 })),
-  () => still(HP, 33.5, T.ask, A({ yaw: -0.36, sx: 0.4, push: 0.95, drift: 0.04 })),
+  () => still([HP[0] + 0.55, 0, HP[2]], 33.5, T.ask, A({ yaw: -0.2, sx: 0.5, push: 0.97, drift: 0.04, h: 3.6 })),
   () => [{ ...framePose(HP, A({ yaw: -0.22, sx: 0.44 }), 0), t: T.ask }, { ...framePose(HP, A({ yaw: -0.22, sx: 0.44, frac: (FULL + CLOSE) / 2 }), 0), t: 37.9 }, ...span(LEN - 1.3, LEN + 0.05, (t) => hookKey(t - LEN), 6)],
 ];
 export const IMPACTS: [number, number][] = [[T.achoo, 0.015], [T.land, 0.01], [T.splash, 0.02], [T.boing, 0.012], [T.achoo2, 0.015]];
@@ -191,13 +193,13 @@ export const Shot: React.FC<Ctx & { i: number }> = ({ t, i }) => {
   return (<MiniGarden t={t} wet={t > T.splash ? 1 - seg(t, 27, 29) : 0} squash={squash} lost={t > T.boing ? 0.06 : 0}>
     <Cam t={t} keys={keys} impacts={IMPACTS} />
     <GrassBlades list={DROP_BLADE} t={t} />
-    <Animal kind="snail" p={[MG.snail[0] + 1.2, 0, MG.snail[2] - 1.0]} h={2.6} t={t} />
+    <Animal kind="snail" p={[MG.snail[0] + 0.9, 0, MG.snail[2] + 0.8]} h={2.6} t={t} />
     {hero}{ladybug}
     {drop ? <Raindrop p={drop.p} r={drop.r} t={t} o={drop.o} /> : null}
     {t > T.splash && t < T.splash + 1.4 ? <Splash c={[DROP_X, leafY(DROP_X) + 0.1, 0]} t={t} t0={T.splash} n={22} color="#9fe0ff" s={1.5} /> : null}
-    <DustImpact c={[MG.land[0], 0, MG.land[2]]} t={t} t0={T.land} r={1.1} />
-    <DustImpact c={[MG.bug[0], 0, MG.bug[2]]} t={t} t0={T.bugLand} r={1.6} />
-    {t > T.tiny - 0.02 && t < T.tiny + 1.0 ? <PuffRing c={[0, 1.6, 0.3]} t={t} t0={T.tiny - 0.3} n={8} r={2.4} size={0.25} color="#ffffff" up={0.5} /> : null}
+    <DustImpact c={[MG.land[0], 0, MG.land[2]]} t={t} t0={T.land} r={0.6} />
+    <DustImpact c={[MG.bug[0], 0, MG.bug[2]]} t={t} t0={T.bugLand} r={0.9} />
+    {t > T.tiny - 0.02 && t < T.tiny + 0.6 ? <PuffRing c={[0, 1.2, 0.6]} t={t} t0={T.tiny - 0.3} n={8} r={1.5} size={0.25} color="#ffffff" up={0.5} /> : null}
     {t > T.pop2 - 0.05 && t < T.big ? <PuffRing c={[DT[0], DT[1] + 1.3, DT[2] + 0.3]} t={t} t0={T.pop2 - 0.05} n={8} r={1.2} size={0.25} color="#ffffff" up={0.4} /> : null}
     {t > T.boing && t < T.tickle + 0.6 ? BURST.map((b, j) => { const u = t - T.boing; return <FloatSeed key={j} p={[DT[0] + Math.cos(b.a + 1.57) * 0.9 + Math.sin(b.a) * b.v * u * 1.2, DT[1] - 0.6 + b.v * u * 0.9 + Math.sin(u * 2 + j) * 0.2, DT[2] - 0.5 + (j % 3) * 0.4]} s={b.s} rot={Math.sin(u * 1.5 + j) * 0.4} />; }) : null}
     {ts ? <FloatSeed p={ts} s={1.3} rot={Math.sin(t * 2) * 0.3} /> : null}
