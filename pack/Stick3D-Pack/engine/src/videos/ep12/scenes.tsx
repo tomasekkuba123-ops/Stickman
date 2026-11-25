@@ -62,7 +62,7 @@ export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), off = t >= POPOFF, h
   const growl = sm(seg(t, 0.85, 1.15)), wide = sm(seg(t, STARVE - 0.15, STARVE + 0.1));
   const bag: BagPose = { mouth: off ? 0.15 + 0.8 * wide + chew(t, 3.2, 0.5) : 0, tongue: wide * (0.7 + 0.3 * Math.sin(t * 9)), mood: "hungry", lookX: t < STARVE ? 0.6 : 0.2, lookY: -0.2, squash: h.sq + wide * 0.08 * Math.sin(t * 12), legs: h.legs, tilt: t < POPOFF + 0.45 ? 15 * Math.sin(seg(t, POPOFF, POPOFF + 0.45) * Math.PI) : 4 * Math.sin(t * 7) };
   return (<HomeSet t={t} preset="morning">
-    <Cam t={t} keys={[...frameShot(PH, 0, 0.35, HOOK_O), ...frameShot(PH, 1.3, 3.75, { ...HOOK_O, frac: 0.5, sx: 0.55, push: 0.98 })]} impacts={[[POPOFF + 0.45, 0.012]]} />
+    <Cam t={t} keys={t < 1.3 ? frameShot(PH, 0, 1.3, HOOK_O) : frameShot(PH, 1.3, 3.75, { ...HOOK_O, frac: 0.5, sx: 0.55, push: 0.98 })} impacts={[[POPOFF + 0.45, 0.012]]} />
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G1} face={faceAt(t, [[0, "smile"], [0.95, "surprised"], [POPOFF, "scared"], [2.6, "surprised"]])}
       rig={{ ...a.rig, backpack: !off, bagFace: off ? 0 : growl, ...eyes(t, [[0, HOOK_LOOK.lookX, HOOK_LOOK.lookY], [0.95, -0.9, 0.1], [POPOFF + 0.3, -0.9, 0.3]]), ...(t < 0.75 ? { blink: 0 } : {}) }} />
     {off ? <LivingBackpack p={h.p} t={t} h={BAG_H} pose={bag} groundY={DESK_Y} shadow={t > POPOFF + 0.3} /> : null}
