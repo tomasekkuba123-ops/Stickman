@@ -52,7 +52,7 @@ const ACT1: AKey[] = [{ t: 0, turn: 0.1 }, { t: 1.0, turn: 0, tilt: 10, dip: 0.3
 export const S1 = ({ t }: Ctx) => { const a = act(t, ACT1), wake = hoodieWake(t), wrig = t > 1.4 ? 0.6 + 0.4 * seg(t, 2.4, 2.7) : 0;
   const jit = wrig * (Math.sin(t * 38) * 7 + Math.sin(t * 23) * 4); // v19 QC: smaller wriggle so the gloves stay off the frame edge
   return (<HomeSet t={t} preset="morning">
-    <Cam t={t} keys={[...frameShot(PH, 0, 1.0, HOOK_O), ...frameShot(PH, 1.3, 3.7, { ...HOOK_O, frac: 0.59, push: 0.98 })]} impacts={[[1.47, 0.01]]} /> {/* v19 QC: eases back before the wriggle so the gloves stay in frame */}
+    <Cam t={t} keys={[...frameShot(PH, 0, 0.35, HOOK_O), ...frameShot(PH, 1.4, 3.7, { ...HOOK_O, frac: 0.59, push: 0.98 })]} impacts={[[1.47, 0.01]]} /> {/* v19 QC: eases back before the wriggle so the gloves stay in frame */}
     <Stickman p={PH} t={t} action="idle" lips={LIPS} gest={G1} face={faceAt(t, [[0, "smile"], [1.1, "surprised"], [2.0, "scared"]])}
       rig={{ ...a.rig, x: (a.rig.x ?? 0) + jit, squash: (a.rig.squash ?? 0) + wrig * 0.03 * Math.sin(t * 31), ...eyes(t, [[0, HOOK_LOOK.lookX, HOOK_LOOK.lookY], [1.0, 0, 0.9], [1.9, -0.3, 0.6], [2.5, 0.7, 0.2]]),
         hoodieFace: { open: wake, lookX: t < 1.9 ? 0 : Math.sin(t * 3), lookY: -0.6, mood: t > 2.4 ? "sneaky" : "happy" }, ...(t < 0.75 ? { blink: 0 } : {}) }} />
@@ -133,7 +133,7 @@ const hoodie4 = (t: number): { p: V3; pose: HoodiePose } => {
   return { p: [lerp(KID[0] - 0.1, k[0] - 0.4, hang * 0.5 + 0.5 * sm(seg(t, LIFT, 14))), y + Math.sin(t * 3) * 0.08, lerp(KID[2] + 0.2, k[2] + 1.0, sm(seg(t, GRAB, 14)))],
     pose: { armL: 20 + 20 * Math.sin(t * 4), armR: 172, bendR: -8, mood: "happy", lookX: -0.8, lookY: 0.8, tilt: 6 * Math.sin(t * 1.6), wiggle: 1 } };
 };
-const O4A = A({ frac: 0.5, yaw: 0.12, sx: 0.38, camY: 1.15, drift: 0.04 });
+const O4A = A({ frac: 0.46, yaw: 0.12, sx: 0.42, camY: 1.15, drift: 0.04 });
 const O4B = A({ yaw: -0.25, sx: 0.43, sy: 0.6, camY: 0.7, fov: 50, push: 0.96, drift: -0.04 });
 const P4B = framePose(PK, O4B, 0);
 const K4: [number, Key[]][] = [[10.25, frameShot(PK, 10.25, 11.95, O4A)], [11.95, frameShot(PK, 11.95, 14.1, O4B)]];
