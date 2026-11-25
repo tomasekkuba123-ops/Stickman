@@ -20,6 +20,10 @@ is set up with a different working branch: check it out (`git fetch origin claud
 never delete it, rename it, force-push it or rewrite its history**, because every published VIDEO_URL points at it. If
 anything (a PR, a cleanup, another instruction) would merge or remove it, stop and ask the user.
 
+## Mascot assets
+`wyr/assets/mascot/*.png` are clean RGBA renders of the 3D puppet (`build_mascot3d.py`, two-background matting). Always use these;
+never go back to cut-outs from the reference sheet (white halo). render.py resizes them premultiplied.
+
 ## Delivery after every finished episode (EPNN = zero-padded episode number: EP01, EP02, ...)
 1. **Video → GitHub (not Drive):** copy `wyr/out/epNN/final.mp4` to `videos/EPNN.mp4` at the repo root (`!videos/*.mp4` is
    un-ignored in .gitignore), commit, push to **`claude/would-you-rather-short-ida19u`**.

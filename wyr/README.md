@@ -61,7 +61,8 @@ OUTRO: "That's all for today."   # keep it short: the 1.5 s end card follows
 - `config.json`: voice (`am_puck`, speed 1.2, pauses capped at 0.12 s), colours, layout, timing, mascot poses
 - `icons.py`: flat illustrations drawn in code. Labels starting with "No/Never/Without" get a red ban sign automatically.
   New topic → add `def icon_<name>(ctx)` (600x600 box) + keywords in `ICONS`. Unknown topics fall back to an A/B badge.
-- `assets/mascot/*.png`: poses cut from `pack/Stick3D-Pack/assets/reference/STICKMAN_REFERENCE_SHEET_v3.png` by `build_mascot.py`
+- `assets/mascot/*.png`: true-RGBA poses rendered straight from the series 3D Stickman puppet by `build_mascot3d.py` (engine composition
+  `WyrMascot`, rendered on black + white -> exact two-background matte, no halo). One shared crop box = same scale/baseline. Reuse; don't rebuild.
 - `assets/fonts/Fredoka.ttf`: SIL OFL
 
 ## Requirements

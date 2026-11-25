@@ -340,8 +340,8 @@ MASCOT_CACHE = {}
 def mascot_img(pose):
     if pose not in MASCOT_CACHE:
         im = Image.open(os.path.join(HERE, "assets", "mascot", pose + ".png"))
-        sc = (L["mascot_h"] * (0.92 if pose == "thumbs" else 1.0)) / im.height
-        im = im.resize((round(im.width * sc), round(im.height * sc)), Image.LANCZOS)
+        sc = L["mascot_h"] / im.height        # all poses share one crop box (build_mascot3d.py) -> same scale + baseline
+        im = im.convert("RGBa").resize((round(im.width * sc), round(im.height * sc)), Image.LANCZOS).convert("RGBA")  # premultiplied resize: no edge fringe
         MASCOT_CACHE[pose] = (pil_to_surface(im), im.width, im.height)
     return MASCOT_CACHE[pose]
 
