@@ -1,6 +1,6 @@
 # Would You Rather — Shorts template (v3, cinematic)
 
-One command turns a script into a finished 1080x1920 / 30 fps MP4 (~25 s render on 4 CPUs):
+One command turns a script into a finished 1080x1920 / 30 fps MP4 (~1 min on 4 CPUs, + ~1.5 min the first time new 3D options are rendered):
 
 ```bash
 python3 render.py episodes/ep02.txt                     # -> out/ep02/final.mp4
@@ -31,10 +31,10 @@ OUTRO: "Follow for a new one every day... because..."   # ends mid-sentence -> l
 - Frame 1 = Q1 with both options + the hook as the header (no intro card). Hook voice plays over it.
 - Header (top): hook → `PICK ONE!` during each question and countdown → the reaction line. Word-by-word captions (dark pill)
   sit in the middle just above the VS circle.
-- 3-2-1 ring around the VS circle; soft tick each second, ding when the reaction appears, whoosh between questions
-  (all synthesized in code; there's no music and no downloaded audio). Mix = exactly -14 LUFS, true peak ≤ -1.4 dBFS.
+- 2-1 ring around the VS circle with a rising tension sound, bass hit when the reaction appears, whoosh between questions
+  (all synthesized in code; there's no music and no downloaded audio). Mix = exactly -14 LUFS.
 - Both options pop in together on every new question.
-- Mascot (Stickman, bottom-left, clear of the Shorts UI): excited (hook) → happy (question) → thinking (countdown) →
+- Mascot (Stickman, mid-left, clear of the Shorts UI): excited (hook) → happy (question) → thinking (countdown) →
   laughing/surprised/scared (reaction, from `Mood:` or reaction keywords) → thumbs-up (outro).
 - Seamless loop: the outro returns to Q1, and on its last word the header + mascot switch back to the frame-0 state.
   Idle motion is periodic over the video length, so the last frame flows into the first.
