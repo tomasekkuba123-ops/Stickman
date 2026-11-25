@@ -2,7 +2,7 @@
   "permissions": {
     "deny": [
       "Read(**/node_modules/**)",
-      "Read(**/*.mp4)",
+      "Read(pack/**/*.mp4)",
       "Read(**/*.wav)",
       "Read(**/*.zip)",
       "Read(pack/Stick3D-Pack/engine/out/**/parts/**)",
