@@ -13,3 +13,4 @@ ep04_src/
 pack/Stick3D-Pack/99-exports/*/*.wav
 __pycache__/
 wyr/out/
+!videos/*.mp4
