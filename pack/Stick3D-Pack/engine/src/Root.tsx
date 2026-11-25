@@ -21,6 +21,7 @@ import { Ep07 } from "./videos/Ep07";
 import { Ep08 } from "./videos/Ep08";
 import { Ep09 } from "./videos/Ep09";
 import { Ep11 } from "./videos/Ep11";
+import { Ep12 } from "./videos/Ep12";
 // NEW EPISODES: register with <EpisodeCompositions id="EpXX" component={EpXX} seconds={60|100} /> (adds EpXXAnimatic for approval + QC mask).
 export const Root: React.FC = () => <>
   <Composition id="Main" component={Main} width={720} height={1280} fps={30} durationInFrames={60} />
@@ -39,6 +40,7 @@ export const Root: React.FC = () => <>
   <EpisodeCompositions id="Ep08" component={Ep08} seconds={100} />
   <EpisodeCompositions id="Ep09" component={Ep09} seconds={38} />
   <EpisodeCompositions id="Ep11" component={Ep11} seconds={35} />
+  <EpisodeCompositions id="Ep12" component={Ep12} seconds={35} />
   <EpisodeCompositions id="ShowreelV13" component={ShowreelV13} seconds={12} />
   <Composition id="Lab" component={Lab} width={1080} height={1920} fps={30} durationInFrames={30} />
   <Composition id="Showreel" component={Showreel} width={1080} height={1920} fps={30} durationInFrames={300} />
