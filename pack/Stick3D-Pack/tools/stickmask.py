@@ -38,7 +38,7 @@ def scan(v):
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
         # absorb a blob whose box sits inside the hero's own bbox (a leg split from the torso by a mid-pose gap), not a stray sprite elsewhere in frame
         if keep and nc > 1:
-            pad, changed = 12, True
+            pad, changed = 16, True
             while changed:
                 changed = False
                 xs0 = min(st[k, 0] for k in keep); ys0 = min(st[k, 1] for k in keep)
