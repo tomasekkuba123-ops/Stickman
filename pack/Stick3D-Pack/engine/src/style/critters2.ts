@@ -228,8 +228,9 @@ export function drawLadybug(c: C2, W: number, H: number, p: AnimalPose) {
     fl(c, dark ? REDD : rg(c, 250, 230, 200, REDL, RED), 9);
     if (!dark) { for (const [x, y, r] of [[200, 200, 34], [310, 190, 30], [150, 300, 30], [270, 300, 38], [360, 280, 24]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); fl(c, INK, 0); }
       c.beginPath(); c.ellipse(220, 165, 70, 22, -0.3, 0, Math.PI * 2); c.fillStyle = "rgba(255,255,255,0.5)"; c.fill(); } c.restore(); };
-  if (wg > 0.05) dome(-0.55 * wg, true);
-  dome(-0.75 * wg, false);
+  const el = Math.max(0, Math.min(1, p.ruffle ?? 0));
+  if (el > 0.05) dome(-0.55 * el, true);
+  dome(-0.75 * el, false);
   c.restore();
 }
 

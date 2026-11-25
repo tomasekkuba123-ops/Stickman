@@ -35,7 +35,7 @@ export const T = {
   ball: 20.74, drop: 22.38, splash: 22.74, slide: 23.0, launch: 26.0, boing: 26.75, tickle: 29.4, sneeze2: 30.98, achoo2: 31.53, pop2: 31.89,
   big: 31.95, cheer: 32.3, bye: 34.77, ask: 36.8,
 };
-export const CUTS = [0, 2.95, 4.6, 6.1, 8.6, 11.3, 13.4, 15.8, 18.7, 22.7, 26.4, 29.4, 31.95, 33.5, 36.8, LEN];
+export const CUTS = [0, 2.95, 4.6, 6.1, 8.6, 11.3, 13.4, 15.8, 18.7, 22.7, 26.95, 29.4, 31.95, 33.5, 36.8, LEN];
 export const BIG = (t: number) => t < T.tiny || t >= T.big;
 /* the hero speaks only his own lines (the rest is the narrator) */
 const SPEAK: [number, number][] = [[11.38, 13.0], [25.88, 26.3], [34.72, 36.3], [36.86, 38.4]];
@@ -43,8 +43,8 @@ const LIPS: LipCue[] = (MOUTH as { mouthCues: LipCue[] }).mouthCues.map((c) => S
 
 /* ================= places ================= */
 export const HP: V3 = [0, 0, 0];                        // big world spot (hook + ending)
-const NOSE = (p: V3): V3 => [p[0] + 0.26, p[1] + 2.4, p[2] + 0.55];
-const BUG_BACK = (b: V3, flip: boolean): V3 => [b[0] + (flip ? 0.44 : -0.44), b[1] + 2.12, b[2] + 0.2];
+const NOSE = (p: V3): V3 => [p[0] + 0.04, p[1] + 2.08, p[2] + 0.18];
+const BUG_BACK = (b: V3, flip: boolean): V3 => [b[0] + (flip ? 0.44 : -0.44), b[1] + 1.5, b[2] + 0.2];
 export const LS: V3 = [39.6, leafY(39.6), 0.15];        // his spot on the leaf (high end)
 const DROP_X = 40.75, DROP_TIP = 10.25;                 // the drop hangs under this blade tip
 export const DT: V3 = [MG.dand[0], DAND_TOP, 0.12];      // on top of the dandelion puff
@@ -53,10 +53,10 @@ const slideX = (t: number) => lerp(LS[0], MG.leafX1, seg(t, T.slide, T.launch) *
 
 /* ================= ladybug ================= */
 type Bug = { p: V3; h: number; flip: boolean; wing: number; walk: number; claw: number; look: number; show: boolean };
-const FLIGHT: [number, V3][] = [[T.takeoff, [MG.bug[0], 0, MG.bug[2]]], [15.1, [4.6, 2.6, -1.0]], [15.8, [9.5, 5.2, -0.3]], [T.flower, [16.0, 6.6, 0]], [17.0, [21.5, 4.6, 0]], [T.snail, [27.5, 2.6, 0]], [18.15, [34.0, 6.6, 0]], [T.leafLand, [38.3, leafY(38.3), -0.35]]];
+const FLIGHT: [number, V3][] = [[T.takeoff, [MG.bug[0], 0, MG.bug[2]]], [15.1, [4.6, 2.6, -1.0]], [15.8, [9.5, 5.2, -0.3]], [T.flower, [16.0, 6.6, 0]], [17.0, [21.5, 4.6, 0]], [T.snail, [27.5, 1.6, 0]], [18.15, [34.0, 6.6, 0]], [T.leafLand, [38.3, leafY(38.3), -0.35]]];
 export function bugAt(t: number): Bug {
   if (BIG(t)) { const tau = t >= T.big ? t - LEN : t; const wave = t >= 33.85 && t < 36.6 ? 0.55 + 0.45 * Math.sin((t - 33.85) * 9) : 0;
-    return { p: [LF[0], LF_TOP - 0.01, LF[2] + 0.02], h: 0.24, flip: true, wing: (tau % 4 + 4) % 4 < 0.25 ? 0.6 : 0, walk: 0, claw: wave, look: -0.2, show: true }; }
+    return { p: [LF[0], LF_TOP - 0.01, LF[2] + 0.02], h: 0.42, flip: true, wing: (tau % 4 + 4) % 4 < 0.25 ? 0.6 : 0, walk: 0, claw: wave, look: -0.2, show: true }; }
   if (t < T.buzz) return { p: [20, 9, -5], h: 3, flip: true, wing: 1, walk: 0, claw: 0, look: 0, show: false };
   if (t < T.bugLand) { const p = path(t, [[T.buzz, [7.5, 7.5, -3.5]], [9.4, [3.2, 2.2, -2.4]], [T.bugLand, MG.bug]]); return { p, h: 3, flip: true, wing: 1, walk: 0, claw: 0, look: -0.3, show: true }; }
   if (t < T.takeoff) { const nod = t > T.ride + 0.5 && t < T.ride + 1.3 ? 0.5 * Math.sin((t - T.ride - 0.5) * 12) : 0;
@@ -147,19 +147,20 @@ const hookKey = (tau: number): Key => ({ ...framePose(HP, HOOK_O, (tau + 3.2) / 
 const span = (t0: number, t1: number, f: (t: number) => Key, n = 12): Key[] => Array.from({ length: n + 1 }, (_, i) => { const t = lerp(t0, t1, i / n); return { ...f(t), t }; });
 const still = (hero: V3, t0: number, t1: number, o: FrameOpts): Key[] => [{ ...framePose(hero, o, 0), t: t0 }, { ...framePose(hero, o, 1), t: t1 }];
 const smoothTrack = (t0: number, t1: number, o: FrameOpts, lagS = 0.15) => span(t0, t1, (t) => { const a = heroAt(t).p, b = heroAt(Math.max(t0, t - lagS)).p; return framePose(lerp3(a, b, 0.5), o, seg(t, t0, t1)); }, 24);
-const MID_BUG: V3 = [0.7, 0, -0.6];
+const MID_BUG: V3 = [0.6, 0, -1.0];
+const rideTrack = (t0: number, t1: number, o: FrameOpts) => span(t0, t1, (t) => { const a = bugAt(t).p, b = bugAt(Math.max(t0, t - 0.2)).p; return framePose(lerp3(a, b, 0.5), o, seg(t, t0, t1)); }, 24);
 export const CAMS: ((t: number) => Key[])[] = [
   () => span(0, 2.95, (t) => hookKey(t), 8),
   () => still(HP, 2.95, T.tiny, A({ yaw: 0.22, sx: 0.5, push: 0.93, drift: -0.05 })),
   () => still(MG.land, T.tiny, 6.1, A({ yaw: 0.12, sx: 0.5, push: 0.95, drift: 0.06 })),
   () => still(MG.land, 6.1, T.buzz - 0.1, A({ yaw: -0.28, sx: 0.5, camY: 0.25, fov: 46, push: 0.93, drift: 0.08 })),
-  () => still(MID_BUG, 8.6, 11.3, A({ yaw: -0.5, sx: 0.5, push: 0.96, drift: 0.05, h: 3.6 })),
-  () => still(MID_BUG, 11.3, 13.4, A({ yaw: 0.3, sx: 0.5, push: 0.95, drift: -0.05, h: 3.6 })),
-  () => smoothTrack(13.4, 15.8, A({ yaw: -0.3, sx: 0.46, drift: 0.06 }), 0.2),
-  () => smoothTrack(15.8, 18.7, A({ yaw: 0.32, sx: 0.46, drift: 0.04, camY: 0.6 }), 0.18),
+  () => still(MID_BUG, 8.6, 11.3, A({ yaw: -0.42, sx: 0.5, push: 0.96, drift: 0.05, h: 4.4 })),
+  () => still(MID_BUG, 11.3, 13.4, A({ yaw: 0.12, sx: 0.5, push: 0.95, drift: -0.05, h: 4.4 })),
+  () => rideTrack(13.4, 15.8, A({ yaw: -0.3, sx: 0.5, drift: 0.06, h: 5.4, camY: 1.6 })),
+  () => rideTrack(15.8, 18.7, A({ yaw: 0.32, sx: 0.5, drift: 0.04, h: 5.4, camY: 1.2 })),
   () => still(LS, 18.7, 22.7, A({ yaw: -0.22, sx: 0.4, push: 0.95, drift: 0.04 })),
-  () => smoothTrack(22.7, 26.4, A({ yaw: 0.3, sx: 0.44, drift: 0.04 }), 0.2),
-  () => still(DT, 26.4, T.tickle, A({ yaw: 0.14, sx: 0.5, push: 0.95, drift: -0.05 })),
+  () => smoothTrack(22.7, 26.95, A({ yaw: 0.3, sx: 0.44, drift: 0.04 }), 0.2),
+  () => still(DT, 26.95, T.tickle, A({ yaw: 0.14, sx: 0.5, push: 0.95, drift: -0.05 })),
   () => still(DT, T.tickle, T.big, A({ yaw: -0.18, sx: 0.48, push: 0.92, drift: 0.04 })),
   () => still(HP, T.big, 33.5, A({ yaw: 0.16, sx: 0.5, push: 0.95, drift: 0.05 })),
   () => still(HP, 33.5, T.ask, A({ yaw: -0.36, sx: 0.4, push: 0.95, drift: 0.04 })),
@@ -176,28 +177,28 @@ export const Shot: React.FC<Ctx & { i: number }> = ({ t, i }) => {
   const keys = CAMS[i](t); const k0 = keys[0];
   const focus = Math.hypot(k0.pos[0] - h.p[0], k0.pos[2] - h.p[2]);
   const hero = <Stickman p={h.p} t={t} h={h.h ?? H} action={h.action} t0={h.t0} face={h.face} dir={h.dir ?? 1} dur={h.dur} gest={h.gest} rig={h.rig ?? {}} move={false} groundY={h.p[1]} lips={LIPS} />;
-  const ladybug = bug.show ? <Animal kind="ladybug" p={bug.p} h={bug.h} t={t} pose={{ flip: bug.flip, wing: bug.wing, walk: bug.walk, claw: bug.claw, look: bug.look }} /> : null;
+  const ladybug = bug.show ? <Animal kind="ladybug" p={bug.p} h={bug.h} t={t} pose={{ flip: bug.flip, wing: bug.wing, ruffle: 0, walk: bug.walk, claw: bug.claw, look: bug.look }} /> : null;
   if (big) { const s = seedAt(tau);
     return (<BigGarden t={t} bgT={tau}>
       <Cam t={t} keys={keys} impacts={IMPACTS} />
       {hero}{ladybug}
       {s.show ? <FloatSeed p={s.p} s={0.42} rot={s.rot} /> : null}
-      {t > T.shrink - 0.05 && t < T.tiny ? <PuffRing c={[HP[0], 1.2, HP[2] + 0.3]} t={t} t0={T.shrink - 0.05} n={10} r={0.9} size={0.42} color="#ffffff" up={0.4} /> : null}
-      {t > T.big - 0.02 && t < T.big + 1.4 ? <PuffRing c={[HP[0], 1.3, HP[2] + 0.3]} t={t} t0={T.big - 0.02} n={12} r={1.6} size={0.45} color="#ffffff" up={0.5} /> : null}
+      {t > T.shrink - 0.05 && t < T.tiny ? <PuffRing c={[HP[0], 0.4, HP[2] + 0.3]} t={t} t0={T.shrink - 0.05} n={8} r={1.6} size={0.18} color="#ffffff" up={0.4} /> : null}
+      {t > T.big - 0.02 && t < T.big + 1.4 ? <PuffRing c={[HP[0], 0.4, HP[2] + 0.3]} t={t} t0={T.big - 0.02} n={10} r={2.1} size={0.18} color="#ffffff" up={0.5} /> : null}
       <DepthPass focus={focus} blur={2.0} />
     </BigGarden>); }
   const drop = dropAt(t), ts = tickleSeed(t), squash = t > T.boing ? Math.exp(-(t - T.boing) * 3) * Math.max(0, Math.sin((t - T.boing) * 13)) : 0;
   return (<MiniGarden t={t} wet={t > T.splash ? 1 - seg(t, 27, 29) : 0} squash={squash} lost={t > T.boing ? 0.06 : 0}>
     <Cam t={t} keys={keys} impacts={IMPACTS} />
     <GrassBlades list={DROP_BLADE} t={t} />
-    <Animal kind="snail" p={[MG.snail[0], 0, MG.snail[2] - 2.8]} h={2.6} t={t} />
+    <Animal kind="snail" p={[MG.snail[0] + 1.2, 0, MG.snail[2] - 1.0]} h={2.6} t={t} />
     {hero}{ladybug}
     {drop ? <Raindrop p={drop.p} r={drop.r} t={t} o={drop.o} /> : null}
     {t > T.splash && t < T.splash + 1.4 ? <Splash c={[DROP_X, leafY(DROP_X) + 0.1, 0]} t={t} t0={T.splash} n={22} color="#9fe0ff" s={1.5} /> : null}
     <DustImpact c={[MG.land[0], 0, MG.land[2]]} t={t} t0={T.land} r={1.1} />
     <DustImpact c={[MG.bug[0], 0, MG.bug[2]]} t={t} t0={T.bugLand} r={1.6} />
-    {t > T.tiny - 0.02 && t < T.tiny + 1.0 ? <PuffRing c={[0, 1.6, 0.3]} t={t} t0={T.tiny - 0.3} n={10} r={2.2} size={0.5} color="#ffffff" up={0.5} /> : null}
-    {t > T.pop2 - 0.05 && t < T.big ? <PuffRing c={[DT[0], DT[1] + 1.3, DT[2] + 0.3]} t={t} t0={T.pop2 - 0.05} n={10} r={1.2} size={0.5} color="#ffffff" up={0.4} /> : null}
+    {t > T.tiny - 0.02 && t < T.tiny + 1.0 ? <PuffRing c={[0, 1.6, 0.3]} t={t} t0={T.tiny - 0.3} n={8} r={2.4} size={0.25} color="#ffffff" up={0.5} /> : null}
+    {t > T.pop2 - 0.05 && t < T.big ? <PuffRing c={[DT[0], DT[1] + 1.3, DT[2] + 0.3]} t={t} t0={T.pop2 - 0.05} n={8} r={1.2} size={0.25} color="#ffffff" up={0.4} /> : null}
     {t > T.boing && t < T.tickle + 0.6 ? BURST.map((b, j) => { const u = t - T.boing; return <FloatSeed key={j} p={[DT[0] + Math.cos(b.a + 1.57) * 0.9 + Math.sin(b.a) * b.v * u * 1.2, DT[1] - 0.6 + b.v * u * 0.9 + Math.sin(u * 2 + j) * 0.2, DT[2] - 0.5 + (j % 3) * 0.4]} s={b.s} rot={Math.sin(u * 1.5 + j) * 0.4} />; }) : null}
     {ts ? <FloatSeed p={ts} s={1.3} rot={Math.sin(t * 2) * 0.3} /> : null}
     <DepthPass focus={focus} blur={2.0} />
