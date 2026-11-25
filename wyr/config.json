@@ -7,31 +7,30 @@
     "voices_file": "/opt/tools/voices-v1.0.bin"
   },
   "colors": {
-    "A": "#E63946",
-    "B": "#1D6FE0",
-    "caption_active": "#FFD23F"
+    "A": "#C8102E",
+    "B": "#1E5BFF",
+    "deep_A": "#3a0008",
+    "deep_B": "#000c33",
+    "gold": "#FFC94A"
   },
   "layout": {
-    "badge_x": 40,
-    "badge_y": 60,
-    "header_y": 235,
-    "header_size": 70,
-    "pick_size": 100,
-    "header_max_w": 760,
-    "icon_y_A": 500,
-    "label_y_A": 740,
-    "icon_y_B": 1392,
-    "label_y_B": 1100,
-    "icon_size": 300,
-    "label_size": 70,
-    "label_max_w": 760,
-    "caption_y": 832,
-    "caption_size": 58,
-    "caption_max_w": 900,
-    "vs_radius": 80,
-    "mascot_x": 122,
-    "mascot_bottom": 1612,
-    "mascot_h": 330
+    "badge_x": 36,
+    "badge_y": 64,
+    "header_y": 215,
+    "header_size": 62,
+    "pick_size": 74,
+    "header_max_w": 860,
+    "label_y_A": 798,
+    "label_y_B": 1122,
+    "label_size": 56,
+    "label_max_w": 700,
+    "caption_y": 866,
+    "caption_size": 42,
+    "caption_max_w": 860,
+    "vs_radius": 58,
+    "mascot_x": 112,
+    "mascot_bottom": 1272,
+    "mascot_h": 250
   },
   "timing": {
     "hook_start": 0.0,
@@ -44,9 +43,10 @@
     "loop_tail": 0.0
   },
   "sfx_gain": {
-    "whoosh": 0.4,
-    "tick": 0.5,
-    "ding": 0.4
+    "whoosh": 0.35,
+    "riser": 0.5,
+    "bass_hit": 0.8,
+    "heartbeat": 0.55
   },
   "pick_text": "PICK ONE!",
   "outro_header": "FOLLOW FOR DAILY CHOICES!",
@@ -80,5 +80,7 @@
       ]
     },
     "default_reaction": "laughing"
-  }
+  },
+  "countdown_s": 2.0,
+  "special_last": true
 }

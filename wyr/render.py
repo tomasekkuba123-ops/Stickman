@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Would You Rather Shorts — reusable template (v2).
+"""Would You Rather Shorts — reusable template (v3, cinematic: full-bleed toon-3D option renders).
 
 usage:
   python3 render.py episodes/<name>.txt                  # full render -> out/<name>/final.mp4
@@ -8,10 +8,12 @@ usage:
 Script format: see README.md.
 """
 import sys, os, re, json, math, hashlib, subprocess, argparse, difflib
+from functools import lru_cache
 import numpy as np, cairo, soundfile as sf
-from PIL import Image
-from gfx import W, H, hexc, ease_out_back, pop, text_surface, text_width, wrap, paint, circle, rrect, pil_to_surface
-from icons import render_icon, pick_icon
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from gfx import W, H, hexc, ease_out_back, paint, rrect, pil_to_surface
+from icons import pick_icon
+import scenes3d
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CFG = json.load(open(os.path.join(HERE, "config.json")))
@@ -130,37 +132,51 @@ def align(text, ww, dur):
     return out
 
 
-# ================================================================= sfx (synthesized in code)
+
+# ================================================================= sfx (synthesized in code, no samples)
 def _lp(x, cut):
-    y = np.empty_like(x); acc = 0.0; a = 1 - np.exp(-2 * np.pi * np.asarray(cut) / SR)
+    y = np.empty_like(x); acc = 0.0; a = 1 - np.exp(-2 * np.pi * np.asarray(cut) / SR) * np.ones_like(x)
     for i in range(len(x)): acc += a[i] * (x[i] - acc); y[i] = acc
     return y
 
+_SFX = {}
 def sfx(name):
+    if name in _SFX: return _SFX[name]
     rng = np.random.default_rng(7)
     if name == "whoosh":
         n = int(0.5 * SR); t = np.linspace(0, 1, n); noise = rng.standard_normal(n)
         cut = 300 + 2400 * np.sin(np.pi * t) ** 2
         band = _lp(noise, cut) - _lp(noise, cut * 0.35)
         env = np.sin(np.pi * np.clip(t * 1.15, 0, 1)) ** 2 * (1 - t) ** 0.4
-        return (band * env / (np.abs(band).max() + 1e-9) * 0.5).astype(np.float32)
-    if name == "tick":   # soft wood-block tick
-        n = int(0.09 * SR); t = np.arange(n) / SR
-        body = np.sin(2 * np.pi * 1050 * t) * 0.7 + np.sin(2 * np.pi * 2300 * t) * 0.3
-        return (body * np.exp(-t * 55) * 0.35).astype(np.float32)
-    if name == "ding":
-        n = int(0.9 * SR); t = np.arange(n) / SR
-        tone = np.sin(2 * np.pi * 1318.5 * t) + 0.45 * np.sin(2 * np.pi * 1975.5 * t) * np.exp(-t * 3) + 0.2 * np.sin(2 * np.pi * 2637 * t)
-        return (tone * np.minimum(1, t * 400) * np.exp(-t * 7) * 0.28).astype(np.float32)
-    raise KeyError(name)
+        out = band * env / (np.abs(band).max() + 1e-9) * 0.5
+    elif name == "riser":        # rising tension over the countdown: sweeping filtered noise + pitch-rising drone + faster tremolo
+        d = CFG["countdown_s"]; n = int(d * SR); t = np.arange(n) / SR; u = t / d
+        noise = rng.standard_normal(n); cut = 250 + 3800 * u ** 2
+        air = _lp(noise, cut) - _lp(noise, cut * 0.4); air /= np.abs(air).max() + 1e-9
+        f = 70 * 2 ** (2.2 * u ** 1.4); ph = 2 * np.pi * np.cumsum(f) / SR
+        drone = np.sin(ph) + 0.5 * np.sin(2 * ph + 0.3) + 0.25 * np.sin(3 * ph)
+        trem = 0.65 + 0.35 * np.sin(2 * np.pi * np.cumsum(3 + 14 * u ** 2) / SR)
+        out = (0.55 * air + 0.45 * drone / 1.75 * trem) * u ** 1.6 * 0.55
+        out[-int(0.01 * SR):] *= np.linspace(1, 0, int(0.01 * SR))
+    elif name == "bass_hit":     # sub drop + body + click transient
+        n = int(1.2 * SR); t = np.arange(n) / SR
+        f = 38 + 52 * np.exp(-t * 18); ph = 2 * np.pi * np.cumsum(f) / SR
+        sub = np.sin(ph) * np.exp(-t * 3.2); body = np.sin(2 * ph) * np.exp(-t * 9) * 0.4
+        click = rng.standard_normal(n) * np.exp(-t * 180) * 0.5
+        out = np.tanh(1.6 * (sub + body + click)) * 0.7
+    elif name == "heartbeat":    # lub-dub, used under the "impossible" question
+        n = int(0.6 * SR); t = np.arange(n) / SR
+        def thump(t0, a): tt = np.clip(t - t0, 0, None); return a * np.sin(2 * np.pi * (48 + 20 * np.exp(-tt * 30)) * tt) * np.exp(-tt * 16) * (t >= t0)
+        out = np.tanh(2 * (thump(0, 1) + thump(0.22, 0.7))) * 0.5
+    else:
+        raise KeyError(name)
+    _SFX[name] = out.astype(np.float32); return _SFX[name]
 
 
 # ================================================================= timeline
 def build(ep, cache):
-    """returns (scenes, events, audio, total). scenes = visual states; events = timed header/mascot changes"""
-    audio, scenes = [], []
-    header, mascot = [], []          # (t, value) step functions
-    caps = []                        # caption word lists (absolute times)
+    audio, scenes, header, mascot, caps = [], [], [], [], []
+    G = CFG["sfx_gain"]; CD = CFG["countdown_s"]
 
     def voice(text, at):
         a, key = tts(text, cache)
@@ -170,197 +186,346 @@ def build(ep, cache):
         return at + len(a) / SR, words
 
     hook_text = ep["results_line"] or ep["hook"]
-    qs = ep["questions"]
-    M = CFG["mascot"]["poses"]
+    qs = ep["questions"]; M = CFG["mascot"]["poses"]
     t = T["hook_start"]
     header.append((-1, ("hook", hook_text))); mascot.append((-1, M["hook"]))
-    scenes.append(dict(start=-1, q=qs[0], tA=-1, tB=-1, countdown=None))
+    scenes.append(dict(start=0.0, qi=0, countdown=None, reveal=None, special=False))
     t, _ = voice(hook_text, t)
     for i, qq in enumerate(qs):
+        special = CFG["special_last"] and i == len(qs) - 1
         if i > 0:
             t += T["gap"]
-            audio.append((t - 0.38, sfx("whoosh"), CFG["sfx_gain"]["whoosh"]))  # done before the voice starts
-            scenes.append(dict(start=t, q=qq, tA=t, tB=t + T["b_after_a"], countdown=None))
+            audio.append((t - 0.38, sfx("whoosh"), G["whoosh"]))
+            scenes.append(dict(start=t, qi=i, countdown=None, reveal=None, special=special))
         t += T["voice_delay"] if i > 0 else T["hook_to_q1"]
         header.append((t, ("text", CFG["pick_text"]))); mascot.append((t, M["question"]))
         qend, _ = voice(qq["text"], t)
-        c0 = qend + T["before_countdown"]
-        scenes[-1]["countdown"] = c0; mascot.append((c0, M["countdown"]))
-        for k in range(3): audio.append((c0 + k, sfx("tick"), CFG["sfx_gain"]["tick"]))
-        r0 = c0 + 3
-        audio.append((r0, sfx("ding"), CFG["sfx_gain"]["ding"]))
+        c0 = qend + T["before_countdown"]; r0 = c0 + CD
+        scenes[-1].update(countdown=c0, reveal=r0)
+        if special:   # heartbeat under the impossible question
+            hb = scenes[-1]["start"] + 0.2
+            while hb < r0 - 0.3: audio.append((hb, sfx("heartbeat"), G["heartbeat"])); hb += 0.83
+        mascot.append((c0, M["countdown"]))
+        audio.append((c0, sfx("riser"), G["riser"]))
+        audio.append((r0, sfx("bass_hit"), G["bass_hit"]))
         header.append((r0, ("text", qq["reaction"]))); mascot.append((r0, M.get(qq["mood"], qq["mood"])))
         t, _ = voice(qq["reaction"], r0 + T["after_countdown"])
-    # outro: back to Q1 so the last frame == the first frame
     t += T["gap"]
-    audio.append((t - 0.38, sfx("whoosh"), CFG["sfx_gain"]["whoosh"]))  # done before the voice starts
-    scenes.append(dict(start=t, q=qs[0], tA=t, tB=t + T["b_after_a"], countdown=None))
+    audio.append((t - 0.38, sfx("whoosh"), G["whoosh"]))
+    scenes.append(dict(start=t, qi=0, countdown=None, reveal=None, special=False, outro=True))
     header.append((t, ("text", CFG["outro_header"]))); mascot.append((t, M["outro"]))
     oend, ow = voice(ep["outro"], t + T["voice_delay"])
-    # the loop word: last word of the outro switches everything back to the frame-0 state
-    lw = ow[-1]["s"] - 0.05
+    lw = ow[-1]["s"] - 0.05      # loop word: header + mascot go back to the frame-0 state
     header.append((lw, ("hook", hook_text))); mascot.append((lw, M["hook"]))
     total = oend + T["loop_tail"]
-    return dict(scenes=scenes, header=header, mascot=mascot, caps=caps, audio=audio, total=total, episode=ep["episode"])
+    for k, s in enumerate(scenes): s["end"] = scenes[k + 1]["start"] if k + 1 < len(scenes) else total
+    return dict(scenes=scenes, header=header, mascot=mascot, caps=caps, audio=audio, total=total, episode=ep["episode"], ep=ep)
+
+
+# ================================================================= text (Inter Display: clean bold sans, no outlines)
+FONTS = {w: os.path.join(HERE, "assets", "fonts", f"InterDisplay-{w}.otf") for w in ("SemiBold", "Bold", "ExtraBold", "Black")}
+@lru_cache(maxsize=64)
+def ifont(size, weight="ExtraBold"): return ImageFont.truetype(FONTS[weight], size)
+def iwidth(text, size, weight="ExtraBold"): return ifont(size, weight).getlength(text)
+
+@lru_cache(maxsize=1024)
+def isurf(text, size, color="#FFFFFF", weight="ExtraBold", shadow=0.55, track=0.0):
+    """clean text with a soft drop shadow (no outline). returns (surface, w, h)"""
+    f = ifont(size, weight); pad = int(size * 0.5)
+    widths = [f.getlength(ch) for ch in text]; adv = sum(widths) + track * size * (len(text) - 1)
+    asc, desc = f.getmetrics(); w, h = int(adv + 2 * pad), int(asc + desc + 2 * pad)
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    def draw(im, fill, dy=0):
+        d = ImageDraw.Draw(im); x = pad
+        if track == 0: d.text((x, pad + dy), text, font=f, fill=fill)
+        else:
+            for ch, cw in zip(text, widths): d.text((x, pad + dy), ch, font=f, fill=fill); x += cw + track * size
+    if shadow:
+        sh = Image.new("RGBA", (w, h), (0, 0, 0, 0)); draw(sh, (0, 0, 0, int(255 * shadow)), dy=size * 0.05)
+        img = Image.alpha_composite(img, sh.filter(ImageFilter.GaussianBlur(size * 0.12)))
+    draw(img, color)
+    return pil_to_surface(img), w, h
+
+def iwrap(text, size, max_w, max_lines=2, weight="ExtraBold"):
+    while True:
+        words = text.split()
+        if max_lines == 2 and len(words) > 1 and iwidth(text, size, weight) > max_w:
+            best = min((max(iwidth(" ".join(words[:i]), size, weight), iwidth(" ".join(words[i:]), size, weight)), i) for i in range(1, len(words)))
+            lines = [" ".join(words[:best[1]]), " ".join(words[best[1]:])]
+        else:
+            lines, cur = [], ""
+            for wd in words:
+                test = (cur + " " + wd).strip()
+                if iwidth(test, size, weight) <= max_w or not cur: cur = test
+                else: lines.append(cur); cur = wd
+            lines.append(cur)
+        if (len(lines) <= max_lines and all(iwidth(l, size, weight) <= max_w for l in lines)) or size <= 30: return lines, size
+        size -= 2
+
+def put(ctx, surf, cx, cy, alpha=1.0, scale=1.0):
+    s, w, h = surf; paint(ctx, s, cx, cy, w, h, scale=scale, alpha=alpha)
+
+
+# ================================================================= images (3D option renders, graded once)
+TOP, BOT = hexc(C["A"]), hexc(C["B"])
+HW, HH = W, H // 2
+
+def grade(img, side, layer, dark):
+    """cinematic grade: lift blacks into the side colour, deepen, (Q4) darker + redder"""
+    a = np.asarray(img).astype(np.float32) / 255; rgb, al = a[..., :3], a[..., 3:]
+    tint = np.array(hexc(C["deep_" + side])[:3], np.float32)
+    if layer == "bg":
+        lum = rgb.mean(2, keepdims=True); rgb = rgb * 0.62 + tint * 0.22 * (1 - lum) + lum * tint * 0.25
+    else:
+        rgb = np.clip((rgb - 0.5) * 1.08 + 0.5, 0, 1) * 0.92 + tint * 0.06
+    if dark:   # the "impossible" question: background much darker, hero only slightly
+        k = 0.6 if layer == "bg" else 0.88
+        rgb = rgb * k; rgb[..., 0] = np.clip(rgb[..., 0] * 1.15 + 0.02, 0, 1)
+    return Image.fromarray((np.concatenate([np.clip(rgb, 0, 1), al], 2) * 255).astype(np.uint8), "RGBA")
+
+def bloom(fg):
+    a = np.asarray(fg).astype(np.float32) / 255; lum = (a[..., :3].max(2) * a[..., 3])
+    m = np.clip((lum - 0.62) / 0.38, 0, 1)[..., None] * a[..., :3]
+    b = Image.fromarray((m * 255).astype(np.uint8), "RGB").filter(ImageFilter.GaussianBlur(28))
+    arr = np.asarray(b).astype(np.float32) / 255 * 0.85
+    return Image.fromarray((np.concatenate([arr, arr.max(2, keepdims=True)], 2) * 255).astype(np.uint8), "RGBA")
+
+def load_images(ep):
+    items = []
+    for i, q in enumerate(ep["questions"]):
+        dark = CFG["special_last"] and i == len(ep["questions"]) - 1
+        for side, ic in zip("AB", q["icons"]):
+            base, _, mod = ic.partition("+")
+            items.append(dict(name=base, side=side, ban=mod == "ban", dark=dark))
+    paths = scenes3d.ensure(items); out = {}
+    for k, it in enumerate(items):
+        bgp, fgp = paths[k]
+        bg = grade(Image.open(bgp).convert("RGBA"), it["side"], "bg", it["dark"])
+        fg = grade(Image.open(fgp).convert("RGBA"), it["side"], "fg", it["dark"])
+        out[(k // 2, it["side"])] = tuple(pil_to_surface(x) for x in (bg, fg, bloom(fg)))
+    return out
+
+
+# ================================================================= overlays (built once)
+def make_overlays():
+    o = {}
+    # vignette
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32); d = np.sqrt(((xx - W / 2) / (W * 0.62)) ** 2 + ((yy - H / 2) / (H * 0.6)) ** 2)
+    v = np.clip((d - 0.55) / 0.6, 0, 1) ** 1.6 * 0.75
+    o["vignette"] = pil_to_surface(Image.fromarray((np.dstack([np.zeros_like(v)] * 3 + [v]) * 255).astype(np.uint8), "RGBA"))
+    # red pulse frame for the special question
+    r = np.clip((d - 0.45) / 0.55, 0, 1) ** 1.4
+    o["redpulse"] = pil_to_surface(Image.fromarray((np.dstack([r * 0.9, r * 0.05, r * 0.08, r]) * 255).astype(np.uint8), "RGBA"))
+    # readability scrims: top (header), around the centre line (labels + caption)
+    sc = np.zeros((H, W), np.float32); y = np.arange(H, dtype=np.float32)
+    sc += np.clip(1 - y / 430, 0, 1)[:, None] ** 1.3 * 0.82
+    sc += np.exp(-((y - 905) / 150) ** 2)[:, None] * 0.55 + np.exp(-((y - 1080) / 110) ** 2)[:, None] * 0.45
+    o["scrim"] = pil_to_surface(Image.fromarray((np.dstack([np.zeros_like(sc)] * 3 + [np.clip(sc, 0, 0.9)]) * 255).astype(np.uint8), "RGBA"))
+    return o
 
 
 # ================================================================= drawing
-TOP, BOT = hexc(C["A"]), hexc(C["B"])
-
 def step(seq, t):
     cur, t0 = seq[0][1], seq[0][0]
     for tt, v in seq:
         if tt <= t: cur, t0 = v, tt
     return cur, t0
 
-def background():
-    s = cairo.ImageSurface(cairo.FORMAT_ARGB32, W, H); c = cairo.Context(s)
-    for (y0, col, cy) in ((0, TOP, L["icon_y_A"]), (H / 2, BOT, L["icon_y_B"])):
-        g = cairo.RadialGradient(W / 2, cy, 50, W / 2, cy, 900)
-        g.add_color_stop_rgb(0, *[min(1, x * 1.18 + 0.04) for x in col[:3]]); g.add_color_stop_rgb(1, *[x * 0.78 for x in col[:3]])
-        c.rectangle(0, y0, W, H / 2); c.set_source(g); c.fill()
-    c.set_source_rgba(1, 1, 1, 0.035); c.set_line_width(46)
-    for x in range(-H, W + H, 140): c.move_to(x, 0); c.line_to(x + H, H); c.stroke()
-    c.rectangle(0, H / 2 - 5, W, 10); c.set_source_rgb(1, 1, 1); c.fill()
-    return s
+def smooth(x): x = min(1.0, max(0.0, x)); return x * x * (3 - 2 * x)
 
-ICON_CACHE, MASCOT_CACHE = {}, {}
-def icon(name):
-    if name not in ICON_CACHE: ICON_CACHE[name] = render_icon(name, L["icon_size"])
-    return ICON_CACHE[name]
-
+MASCOT_CACHE = {}
 def mascot_img(pose):
     if pose not in MASCOT_CACHE:
         im = Image.open(os.path.join(HERE, "assets", "mascot", pose + ".png"))
-        scale = (L["mascot_h"] if pose != "thumbs" else L["mascot_h"] * 0.92) / im.height
-        im = im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
+        sc = (L["mascot_h"] * (0.92 if pose == "thumbs" else 1.0)) / im.height
+        im = im.resize((round(im.width * sc), round(im.height * sc)), Image.LANCZOS)
         MASCOT_CACHE[pose] = (pil_to_surface(im), im.width, im.height)
     return MASCOT_CACHE[pose]
 
-def rich_lines(ctx, text, cx, cy, size, max_w, max_lines, base_col, emph_col, scale=1.0):
-    """wrapped header text; words written in ALL CAPS in the script are drawn in the emphasis colour"""
+def draw_half(ctx, tl, imgs, sc_, side, t, per):
+    y0 = 0 if side == "A" else HH
+    bg, fg, bl = imgs[(sc_["qi"], side)]
+    dur = max(0.5, sc_["end"] - sc_["start"])
+    if sc_.get("outro"): u = 1 - smooth((t - sc_["start"]) / dur)          # pull back to the exact frame-0 framing
+    else: u = (t - sc_["start"]) / dur
+    u = max(0.0, u)
+    base = HW / 1350.0
+    kick = 0.0
+    if sc_["reveal"] is not None and t >= sc_["reveal"]: kick = 0.025 * math.exp(-(t - sc_["reveal"]) * 5)
+    shake = (0, 0)
+    if sc_["special"] and t >= sc_["start"]:
+        k = 5.0 + (9.0 if sc_["countdown"] and sc_["countdown"] <= t < sc_["reveal"] + 0.3 else 0.0)
+        shake = (k * (math.sin(t * 37.1) * 0.6 + math.sin(t * 23.3 + 1) * 0.4), k * (math.sin(t * 29.7 + 2) * 0.6 + math.sin(t * 41.9) * 0.4))
+    dirx = -1 if side == "A" else 1
+    sway = math.sin(2 * math.pi * per * t + (0 if side == "A" else 1.3))
+    ctx.save(); ctx.rectangle(0, y0, HW, HH); ctx.clip()
+    for surf, zoom, px, py in ((bg, 1.0 + 0.045 * u, 10 * u * dirx + 6 * sway, 6 * sway),
+                               (fg, 1.0 + 0.10 * u + kick, -16 * u * dirx - 8 * sway, -10 * u - 4 * sway),
+                               (bl, 1.0 + 0.10 * u + kick, -16 * u * dirx - 8 * sway, -10 * u - 4 * sway)):
+        s = base * zoom
+        ctx.save(); ctx.translate(HW / 2 + px + shake[0], y0 + HH / 2 + py + shake[1]); ctx.scale(s, s)
+        ctx.set_source_surface(surf, -1350 / 2, -1200 / 2); ctx.get_source().set_filter(cairo.FILTER_GOOD)
+        if surf is bl: ctx.set_operator(cairo.OPERATOR_ADD)
+        ctx.paint(); ctx.restore()
+    ctx.restore()
+
+PARTS = None
+def draw_particles(ctx, t, total):
+    global PARTS
+    if PARTS is None:
+        rng = np.random.default_rng(3); PARTS = []
+        for i in range(70):
+            PARTS.append(dict(x=rng.uniform(0, W), y=rng.uniform(0, H), k=int(rng.integers(1, 4)), r=rng.uniform(1.5, 5.5),
+                              a=rng.uniform(0.15, 0.55), ph=rng.uniform(0, 6.28), sw=rng.uniform(8, 30)))
+    for p in PARTS:
+        y = (p["y"] - p["k"] * H * t / total) % H            # integer number of laps per video -> loops
+        x = p["x"] + p["sw"] * math.sin(2 * math.pi * p["k"] * t / total * 3 + p["ph"])
+        col = (1.0, 0.55, 0.45) if y < HH else (0.55, 0.75, 1.0)
+        a = p["a"] * (0.6 + 0.4 * math.sin(2 * math.pi * 7 * t / total + p["ph"]))
+        g = cairo.RadialGradient(x, y, 0, x, y, p["r"] * 3)
+        g.add_color_stop_rgba(0, *col, a); g.add_color_stop_rgba(1, *col, 0)
+        ctx.set_source(g); ctx.new_path(); ctx.arc(x, y, p["r"] * 3, 0, 2 * math.pi); ctx.fill()
+
+def draw_line(ctx, t, per, flash):
+    cy = HH; k = 0.85 + 0.15 * math.sin(2 * math.pi * per * 2 * t) + flash
+    for (c, sgn) in ((TOP, -1), (BOT, 1)):
+        g = cairo.LinearGradient(0, cy, 0, cy + sgn * 70)
+        g.add_color_stop_rgba(0, *[min(1, x * 1.4) for x in c[:3]], 0.75 * k); g.add_color_stop_rgba(1, *c[:3], 0)
+        ctx.set_source(g); ctx.rectangle(0, cy - 70 if sgn < 0 else cy, W, 70); ctx.fill()
+    g = cairo.LinearGradient(0, 0, W, 0)
+    for x, a in ((0, 0.25), (0.5, 1.0), (1, 0.25)): g.add_color_stop_rgba(x, 1, 1, 1, min(1, a * k))
+    ctx.set_source(g); ctx.rectangle(0, cy - 2, W, 4); ctx.fill()
+
+def draw_vs(ctx, sc_, t):
+    cx, cy, r = W / 2, HH, L["vs_radius"]; cd = sc_["countdown"]; CD = CFG["countdown_s"]
+    in_cd = cd is not None and cd <= t < cd + CD
+    g = cairo.RadialGradient(cx, cy, 0, cx, cy, r * 2.2)
+    g.add_color_stop_rgba(0, 1, 1, 1, 0.22 if not in_cd else 0.35); g.add_color_stop_rgba(1, 1, 1, 1, 0)
+    ctx.set_source(g); ctx.arc(cx, cy, r * 2.2, 0, 2 * math.pi); ctx.fill()
+    ctx.arc(cx, cy, r, 0, 2 * math.pi); ctx.set_source_rgba(0.04, 0.04, 0.08, 0.82); ctx.fill()
+    ring = cairo.LinearGradient(0, cy - r, 0, cy + r)
+    ring.add_color_stop_rgb(0, *[min(1, x * 1.3) for x in TOP[:3]]); ring.add_color_stop_rgb(1, *[min(1, x * 1.3) for x in BOT[:3]])
+    ctx.arc(cx, cy, r, 0, 2 * math.pi); ctx.set_source(ring); ctx.set_line_width(4); ctx.stroke()
+    if in_cd:
+        u = (t - cd) / CD; sec = int(t - cd)
+        ctx.new_path(); ctx.arc(cx, cy, r + 16, -math.pi / 2, -math.pi / 2 + 2 * math.pi * (1 - u))
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.set_line_width(9); ctx.set_source_rgba(*hexc(C["gold"])[:3], 1); ctx.stroke()
+        n = str(int(math.ceil(CD - (t - cd)))); ph = (t - cd) - sec
+        put(ctx, isurf(n, 76, "#FFFFFF", "Black", 0.4), cx, cy + 2, alpha=min(1, ph / 0.08 + 0.2), scale=1 + 0.18 * max(0, 1 - ph / 0.25))
+    else:
+        put(ctx, isurf("VS", 46, "#FFFFFF", "Black", 0.3, track=0.04), cx, cy + 2)
+
+def draw_header(ctx, tl, t):
+    (kind, text), t0 = step(tl["header"], t)
+    a = 1.0 if t0 < 0 else smooth((t - t0) / 0.25); dy = 0 if t0 < 0 else 14 * (1 - a)
+    if text == CFG["pick_text"]:
+        sz = L["pick_size"]; s = isurf(text, sz, C["gold"], "Black", 0.6, track=0.08)
+        glow = 0.5 + 0.5 * math.sin(2 * math.pi * 1.2 * t)
+        put(ctx, s, W / 2, L["header_y"] + dy, alpha=a * (0.9 + 0.1 * glow))
+        return
     words = text.split()
-    caps = [len(re.sub(r"[^A-Za-z]", "", w)) > 1 and re.sub(r"[^A-Za-z]", "", w).isupper() for w in words]
-    lines, size = wrap(text.upper(), size, max_w, max_lines)
-    gap = size * 0.28; lh = size * 1.08; k = 0
-    y = cy - (len(lines) - 1) * lh / 2
+    emph = [len(re.sub(r"[^A-Za-z]", "", w)) > 1 and re.sub(r"[^A-Za-z]", "", w).isupper() for w in words]
+    lines, sz = iwrap(text.upper(), L["header_size"], L["header_max_w"], 3, "Black")
+    lh = sz * 1.12; y = L["header_y"] - (len(lines) - 1) * lh / 2 + dy; k = 0
     for ln in lines:
-        ws = ln.split(); widths = [text_width(w, size) for w in ws]
+        ws = ln.split(); widths = [iwidth(w, sz, "Black") for w in ws]; gap = sz * 0.26
         x = W / 2 - (sum(widths) + gap * (len(ws) - 1)) / 2
         for w, wd in zip(ws, widths):
-            col = emph_col if caps[k] else base_col; k += 1
-            s, sw, sh = text_surface(w, size, col, stroke=int(size * 0.13))
-            paint(ctx, s, W / 2 + (x + wd / 2 - W / 2) * scale, cy + (y - cy) * scale, sw, sh, scale=scale)
-            x += wd + gap
+            put(ctx, isurf(w, sz, C["gold"] if emph[k] else "#FFFFFF", "Black", 0.6), x + wd / 2, y, alpha=a); x += wd + gap; k += 1
         y += lh
 
-def draw_header(tl, ctx, t):
-    (kind, text), t0 = step(tl["header"], t)
-    sc = 1.0 if t0 < 0 else 0.55 + 0.45 * ease_out_back((t - t0) / 0.28)
-    if kind == "text" and text == CFG["pick_text"]:
-        sc *= 1 + 0.025 * math.sin(2 * math.pi * 1.5 * t)
-        rich_lines(ctx, text, W / 2, L["header_y"], L["pick_size"], L["header_max_w"], 1, C["caption_active"], C["caption_active"], sc)
-    else:
-        rich_lines(ctx, text, W / 2, L["header_y"], L["header_size"], L["header_max_w"], 3, "#FFFFFF", C["caption_active"], sc)
+def draw_labels(ctx, tl, sc_, t):
+    q = tl["ep"]["questions"][sc_["qi"]]
+    a = 1.0 if sc_["start"] <= 0 else smooth((t - sc_["start"]) / 0.3)
+    for side in "AB":
+        col = TOP if side == "A" else BOT
+        lines, sz = iwrap(q[side].upper(), L["label_size"], L["label_max_w"], 2, "Black")
+        lh = sz * 1.08; tag = isurf(f"OPTION {side}", 30, "#FFFFFF", "Bold", 0.5, track=0.22)
+        if side == "A":
+            ys = [L["label_y_A"] - (len(lines) - 1 - i) * lh for i in range(len(lines))]; ty = ys[0] - sz * 0.62 - 20
+        else:
+            ys = [L["label_y_B"] + i * lh for i in range(len(lines))]; ty = ys[0] - sz * 0.62 - 20
+        dy = 18 * (1 - a) * (1 if side == "A" else -1)
+        tw = tag[1] - 30; ctx.save()
+        rrect(ctx, W / 2 - tw / 2 - 16, ty - 22 + dy, tw + 32, 44, 22); ctx.set_source_rgba(*[min(1, x * 1.15) for x in col[:3]], 0.85 * a); ctx.fill(); ctx.restore()
+        put(ctx, tag, W / 2, ty + dy, alpha=a)
+        for ln, y in zip(lines, ys): put(ctx, isurf(ln, sz, "#FFFFFF", "Black", 0.7), W / 2, y + dy, alpha=a)
+
+def phrases(words):
+    """full short phrases: break at punctuation; long runs split evenly into <= 6 words"""
+    out, cur = [], []
+    for w in words:
+        cur.append(w)
+        if w["brk"]: out.append(cur); cur = []
+    if cur: out.append(cur)
+    res = []
+    for p in out:
+        n = math.ceil(len(p) / 6); k = math.ceil(len(p) / n)
+        res += [p[i:i + k] for i in range(0, len(p), k)]
+    return res
+
+def draw_caption(ctx, tl, t):
+    total = tl["total"]
+    for words in tl["caps"]:
+        if not (words[0]["s"] - 0.1 <= t <= words[-1]["e"] + 0.4): continue
+        ph = phrases(words)
+        for i, p in enumerate(ph):
+            t0 = p[0]["s"] - 0.06
+            t1 = ph[i + 1][0]["s"] - 0.06 if i + 1 < len(ph) else p[-1]["e"] + 0.35
+            t1 = min(t1, total - 1.5 / FPS)
+            if not (max(t0, 1.0 / FPS) <= t < t1): continue
+            text = " ".join(w["w"] for w in p).replace(" ,", ",")
+            text = text[0] + text[1:].lower() if text.isupper() else text
+            text = re.sub(r"\bi\b", "I", text); text = re.sub(r"\ba or b\b", "A or B", text, flags=re.I)
+            sz = L["caption_size"]
+            while iwidth(text, sz, "SemiBold") > L["caption_max_w"]: sz -= 2
+            a = smooth((t - t0) / 0.12); s = isurf(text, sz, "#FFFFFF", "SemiBold", 0.0)
+            pw, phh = s[1] - sz * 0.6, sz * 1.75
+            ctx.save(); rrect(ctx, W / 2 - pw / 2, L["caption_y"] - phh / 2 + 6 * (1 - a), pw, phh, phh / 2)
+            ctx.set_source_rgba(0.03, 0.03, 0.07, 0.62 * a); ctx.fill(); ctx.restore()
+            put(ctx, s, W / 2, L["caption_y"] + 6 * (1 - a) - 2, alpha=a)
+            return
 
 def draw_badge(ctx, ep):
     if not ep: return
-    s, w, h = text_surface("#" + ep, 64, "#22223B", stroke=0, shadow=False)
-    bw = max(120, w - 10); x, y = L["badge_x"], L["badge_y"]
-    ctx.save(); rrect(ctx, x, y + 6, bw, 92, 30); ctx.set_source_rgba(0, 0, 0, 0.25); ctx.fill()
-    rrect(ctx, x, y, bw, 92, 30); ctx.set_source_rgb(1, 1, 1); ctx.fill(); ctx.restore()
-    paint(ctx, s, x + bw / 2, y + 48, w, h)
+    s = isurf("#" + ep, 34, "#FFFFFF", "Bold", 0.0); w = s[1] - 34
+    x, y = L["badge_x"], L["badge_y"]
+    rrect(ctx, x, y, w + 28, 54, 27); ctx.set_source_rgba(0, 0, 0, 0.45); ctx.fill()
+    rrect(ctx, x, y, w + 28, 54, 27); ctx.set_source_rgba(1, 1, 1, 0.35); ctx.set_line_width(1.5); ctx.stroke()
+    put(ctx, s, x + (w + 28) / 2, y + 27)
 
-def draw_half(ctx, sc_, side, t, bobf):
-    qq = sc_["q"]; cy_icon = L["icon_y_" + side]
-    t_in = sc_["tA"] if side == "A" else sc_["tB"]
-    k = 1.0 if t_in < 0 else (0.35 + 0.65 * ease_out_back((t - t_in) / 0.26) if t >= t_in else 0.0)
-    if k <= 0: return
-    bob = 8 * math.sin(2 * math.pi * bobf * t + (0 if side == "A" else 1.7))
-    x = W / 2
-    circle(ctx, x, cy_icon + bob, L["icon_size"] * 0.58 * k); ctx.set_source_rgba(1, 1, 1, 0.14); ctx.fill()
-    s, w, h = icon(qq["icons"][0 if side == "A" else 1])
-    paint(ctx, s, x, cy_icon + bob, w, h, scale=k, rot=0.03 * math.sin(2 * math.pi * bobf * t))
-    bs, bw, bh = text_surface(side, 60, "#FFFFFF", stroke=8)            # A/B sticker
-    bx, by = x - L["icon_size"] * 0.7, cy_icon + bob
-    circle(ctx, bx, by, 47 * k); ctx.set_source_rgba(*hexc("#22223B")); ctx.fill()
-    circle(ctx, bx, by, 40 * k); ctx.set_source_rgba(*(TOP if side == "A" else BOT)); ctx.fill()
-    paint(ctx, bs, bx, by + 2, bw, bh, scale=k * 0.9)
-    lines, size = wrap(qq[side].upper(), L["label_size"], L["label_max_w"])
-    lh = size * 1.02
-    for i, ln in enumerate(lines):   # A grows upward from its anchor, B downward (away from the centre)
-        y = L["label_y_A"] - (len(lines) - 1 - i) * lh if side == "A" else L["label_y_B"] + i * lh
-        s, sw, sh = text_surface(ln, size)
-        paint(ctx, s, x, y, sw, sh, scale=k)
-
-def draw_vs(ctx, cd, t):
-    cx, cy, r = W / 2, H / 2, L["vs_radius"]
-    in_cd = cd is not None and cd <= t < cd + 3
-    k = 1.0
-    if in_cd: sec = int(t - cd); k = 1 + 0.1 * max(0, 1 - (t - cd - sec) / 0.25)
-    circle(ctx, cx, cy + 8, r * k); ctx.set_source_rgba(0, 0, 0, 0.25); ctx.fill()
-    circle(ctx, cx, cy, r * k); ctx.set_source_rgb(1, 1, 1); ctx.fill()
-    if in_cd:
-        rr, lw = r * k + 22, 16
-        ctx.set_line_width(lw + 10); ctx.set_source_rgba(*hexc("#22223B", 0.55)); circle(ctx, cx, cy, rr); ctx.stroke()
-        ctx.new_path(); ctx.arc(cx, cy, rr, -math.pi / 2, -math.pi / 2 + 2 * math.pi * (1 - (t - cd) / 3))
-        ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.set_line_width(lw)
-        ctx.set_source_rgba(*hexc(C["caption_active"])); ctx.stroke()
-        s, w, h = text_surface(str(3 - sec), 112, "#22223B", stroke=0, shadow=False)
-        paint(ctx, s, cx, cy + 4, w, h, scale=pop(t - cd - sec, 0.2))
-    else:
-        s, w, h = text_surface("VS", 76, "#22223B", stroke=0, shadow=False)
-        paint(ctx, s, cx, cy + 3, w, h)
-
-def draw_caption(ctx, words, t, total):
-    chunks, cur = [], []
-    for w in words:
-        cur.append(w)
-        if len(cur) == 3 or w["brk"]: chunks.append(cur); cur = []
-    if cur: chunks.append(cur)
-    for ci, ch in enumerate(chunks):
-        t0 = ch[0]["s"] - 0.04
-        t1 = chunks[ci + 1][0]["s"] - 0.04 if ci + 1 < len(chunks) else ch[-1]["e"] + 0.3
-        t1 = min(t1, total - 1.5 / FPS)            # last frame stays caption-free like frame 0 (loop)
-        if not (max(t0, 1.0 / FPS) <= t < t1): continue   # frame 0 caption-free (loop seam)
-        size = L["caption_size"]
-        while sum(text_width(w["w"], size) for w in ch) + size * 0.3 * (len(ch) - 1) > L["caption_max_w"]: size -= 2
-        gap = size * 0.3; ws = [text_width(w["w"], size) for w in ch]
-        x = W / 2 - (sum(ws) + gap * (len(ws) - 1)) / 2
-        cs = 0.6 + 0.4 * ease_out_back((t - t0) / 0.18)
-        act = max((u for u in ch if u["s"] - 0.04 <= t), key=lambda u: u["s"], default=None)
-        pw, ph = (sum(ws) + gap * (len(ws) - 1) + size * 0.9) * cs, size * 1.35 * cs   # dark pill = clearly a caption
-        rrect(ctx, W / 2 - pw / 2, L["caption_y"] - ph / 2, pw, ph, ph / 2); ctx.set_source_rgba(0.08, 0.08, 0.18, 0.55); ctx.fill()
-        for w, wd in zip(ch, ws):
-            on = w is act
-            s, sw, sh = text_surface(w["w"], size, C["caption_active"] if on else "#FFFFFF", stroke=int(size * 0.14))
-            kk = 1 + 0.12 * max(0.0, 1 - (t - w["s"]) / 0.18) if on and t >= w["s"] else 1.0
-            paint(ctx, s, W / 2 + (x + wd / 2 - W / 2) * cs, L["caption_y"], sw, sh, scale=cs * kk)
-            x += wd + gap
-        return
-
-def draw_mascot(ctx, tl, t, bobf):
+def draw_mascot(ctx, tl, t, per):
     pose, t0 = step(tl["mascot"], t)
     s, w, h = mascot_img(pose)
-    k = 1.0 if t0 < 0 else 0.8 + 0.2 * ease_out_back((t - t0) / 0.25)
-    bob = 4 * math.sin(2 * math.pi * bobf * 2 * t)
+    a = 1.0 if t0 < 0 else 0.85 + 0.15 * ease_out_back((t - t0) / 0.25)
+    bob = 4 * math.sin(2 * math.pi * per * 2 * t)
     cx, by = L["mascot_x"], L["mascot_bottom"]
-    ctx.save(); ctx.translate(cx, by); ctx.scale(1, 0.25); circle(ctx, 0, 0, w * 0.42); ctx.restore()
-    ctx.set_source_rgba(0, 0, 0, 0.22); ctx.fill()
-    paint(ctx, s, cx, by - h * k / 2 + bob * 0.5, w, h, scale=k)
+    g = cairo.RadialGradient(cx, by, 0, cx, by, w * 0.7); g.add_color_stop_rgba(0, 0, 0, 0, 0.45); g.add_color_stop_rgba(1, 0, 0, 0, 0)
+    ctx.save(); ctx.translate(0, by); ctx.scale(1, 0.22); ctx.translate(0, -by); ctx.set_source(g); ctx.arc(cx, by, w * 0.7, 0, 2 * math.pi); ctx.fill(); ctx.restore()
+    paint(ctx, s, cx, by - h * a / 2 + bob * 0.5, w, h, scale=a)
 
-def frame(ctx, bg, tl, t):
-    total = tl["total"]
-    bobf = max(1, round(0.4 * total)) / total          # periodic over the whole video -> seamless loop
-    ctx.set_source_surface(bg, 0, 0); ctx.paint()
-    sc_ = [s for s in tl["scenes"] if s["start"] <= t][-1]
-    draw_half(ctx, sc_, "A", t, bobf); draw_half(ctx, sc_, "B", t, bobf)
-    draw_vs(ctx, sc_["countdown"], t)
-    draw_header(tl, ctx, t)
+def frame(ctx, tl, imgs, ov, t):
+    total = tl["total"]; per = max(1, round(0.12 * total)) / total      # slow sway, periodic over the video (loop)
+    ctx.set_source_rgb(0, 0, 0); ctx.paint()
+    sc_ = [s for s in tl["scenes"] if s["start"] <= t][-1] if t >= 0 else tl["scenes"][0]
+    draw_half(ctx, tl, imgs, sc_, "A", t, per); draw_half(ctx, tl, imgs, sc_, "B", t, per)
+    ctx.set_source_surface(ov["scrim"], 0, 0); ctx.paint()
+    draw_particles(ctx, t, total)
+    ctx.set_source_surface(ov["vignette"], 0, 0); ctx.paint()
+    if sc_["special"]:
+        beat = (t - sc_["start"]) % 0.83; pulse = math.exp(-beat * 6) + 0.6 * math.exp(-max(0, beat - 0.22) * 7) * (beat > 0.22)
+        ctx.set_source_surface(ov["redpulse"], 0, 0); ctx.paint_with_alpha(min(1, 0.25 + 0.45 * pulse))
+    flash = 0.0
+    if sc_["reveal"] is not None and t >= sc_["reveal"]: flash = 1.2 * math.exp(-(t - sc_["reveal"]) * 6)
+    draw_line(ctx, t, per, flash)
+    draw_labels(ctx, tl, sc_, t)
+    draw_vs(ctx, sc_, t)
+    draw_header(ctx, tl, t)
     draw_badge(ctx, tl["episode"])
-    for ln in tl["caps"]:
-        if ln[0]["s"] - 0.05 <= t <= ln[-1]["e"] + 0.35: draw_caption(ctx, ln, t, total)
-    draw_mascot(ctx, tl, t, bobf)
+    draw_caption(ctx, tl, t)
+    draw_mascot(ctx, tl, t, per)
+    if flash > 0.02:
+        ctx.set_source_rgba(1, 1, 1, min(0.35, flash * 0.25)); ctx.paint()
 
 
 # ================================================================= audio + encode
@@ -370,21 +535,18 @@ def loudness(path):
     return json.loads(r[r.rindex("{"): r.rindex("}") + 1])
 
 def mix_audio(tl, out):
-    n = int(round(tl["total"] * SR)); mix = np.zeros(n + SR, np.float32)
+    n = int(round(tl["total"] * SR)); mix = np.zeros(n + 2 * SR, np.float32)
     for at, clip, g in tl["audio"]:
         i0 = max(0, int(round(at * SR))); seg = clip[: len(mix) - i0] * g; mix[i0:i0 + len(seg)] += seg
     mix = mix[:n]
     raw = os.path.join(out, "mix_raw.wav"); sf.write(raw, mix, SR)
     pre = os.path.join(out, "mix_pre.wav")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-af", COMP.rstrip(","), "-ar", "48000", "-ac", "2", pre], check=True)
-    m = loudness(pre)
-    # exact -14 LUFS: linear gain to target, then a true-peak limiter for safety
-    gain = -14.0 - float(m["input_i"])
+    gain = -14.0 - float(loudness(pre)["input_i"])
     wav = os.path.join(out, "mix.wav")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", pre, "-af", f"volume={gain:.2f}dB,alimiter=limit=0.85:attack=2:release=40:level=false",
                     "-ar", "48000", "-ac", "2", wav], check=True)
-    m2 = loudness(wav)
-    fix = -14.0 - float(m2["input_i"])
+    fix = -14.0 - float(loudness(wav)["input_i"])
     if abs(fix) > 0.1:
         tmp = wav + ".tmp.wav"
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", wav, "-af", f"volume={fix:.2f}dB,alimiter=limit=0.89:level=false", tmp], check=True)
@@ -399,24 +561,26 @@ def main():
     ep = parse_script(a.script)
     tl = build(ep, cache)
     nfr = int(round(tl["total"] * FPS)); tl["total"] = nfr / FPS
-    json.dump({"duration": tl["total"], "header": tl["header"], "mascot": tl["mascot"],
-               "scenes": [{"start": s["start"], "countdown": s["countdown"], "A": s["q"]["A"], "B": s["q"]["B"], "icons": s["q"]["icons"]} for s in tl["scenes"]],
-               "captions": tl["caps"]}, open(os.path.join(out, "timeline.json"), "w"), indent=1)
-    print(f"duration {tl['total']:.2f}s ({nfr} frames)  icons: " + ", ".join("/".join(q["icons"]) for q in ep["questions"])
-          + "  moods: " + ", ".join(q["mood"] for q in ep["questions"]))
-    bg = background(); surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, W, H); ctx = cairo.Context(surf)
+    for s in tl["scenes"]: s["end"] = min(s["end"], tl["total"])
+    json.dump({"duration": tl["total"], "header": tl["header"], "mascot": tl["mascot"], "scenes": tl["scenes"], "captions": tl["caps"]},
+              open(os.path.join(out, "timeline.json"), "w"), indent=1)
+    print(f"duration {tl['total']:.2f}s ({nfr} frames)  scenes: " + ", ".join("/".join(q["icons"]) for q in ep["questions"])
+          + "  moods: " + ", ".join(q["mood"] for q in ep["questions"]), flush=True)
+    imgs = load_images(ep); ov = make_overlays()
+    surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, W, H); ctx = cairo.Context(surf)
     if a.stills:
         for ts in a.stills.split(","):
-            t = min(float(ts), (nfr - 1) / FPS) if ts != "last" else (nfr - 1) / FPS
-            frame(ctx, bg, tl, t); p = os.path.join(out, f"still_{t:05.2f}.png"); surf.write_to_png(p); print(p)
+            t = (nfr - 1) / FPS if ts == "last" else min(float(ts), (nfr - 1) / FPS)
+            frame(ctx, tl, imgs, ov, t); p = os.path.join(out, f"still_{t:05.2f}.png"); surf.write_to_png(p); print(p)
         return
     wav = mix_audio(tl, out)
     final = os.path.join(out, "final.mp4")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgra", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-                           "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
+                           "-i", wav, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p",
                            "-c:a", "aac", "-b:a", "192k", "-t", f"{tl['total']:.3f}", "-movflags", "+faststart", final], stdin=subprocess.PIPE)
     for f in range(nfr):
-        frame(ctx, bg, tl, f / FPS); surf.flush(); ff.stdin.write(surf.get_data())
+        frame(ctx, tl, imgs, ov, f / FPS); surf.flush(); ff.stdin.write(surf.get_data())
+        if f % 150 == 0: print(f"frame {f}/{nfr}", flush=True)
     ff.stdin.close(); ff.wait()
     print("->", final)
 

@@ -1,4 +1,4 @@
-# Would You Rather — Shorts template (v2)
+# Would You Rather — Shorts template (v3, cinematic)
 
 One command turns a script into a finished 1080x1920 / 30 fps MP4 (~25 s render on 4 CPUs):
 
@@ -38,6 +38,21 @@ OUTRO: "Follow for a new one every day... because..."   # ends mid-sentence -> l
   laughing/surprised/scared (reaction, from `Mood:` or reaction keywords) → thumbs-up (outro).
 - Seamless loop: the outro returns to Q1, and on its last word the header + mascot switch back to the frame-0 state.
   Idle motion is periodic over the video length, so the last frame flows into the first.
+
+## v3 look (cinematic)
+- Each half is a full-bleed **toon-3D render** of the option, made with the Stickman engine (`pack/Stick3D-Pack/engine`,
+  composition `WyrScene`, source `engine/src/videos/WyrScenes.tsx`): toon shading + ink outlines + rim light, the series' 3D style,
+  no external/AI images. `scenes3d.py` renders only missing options (cache: `out/_scenes3d/`), 2 layers each (studio bg + hero fg)
+  for parallax. 3D heroes so far: phone, food, money_bag, money_month, mind_read, crystal_ball, hourglass, magnifier
+  (+ automatic 3D ban sign for "No/Never/Without" labels). **New topic → add a hero component in WyrScenes.tsx** and a keyword in
+  `icons.py` ICONS; unknown topics fall back to a big A/B letter on the plinth.
+- Slow push-in + parallax on both layers, deep red vs deep blue grade with bloom, glowing light line between the halves,
+  drifting particles, vignette. The last question is the "impossible" one: darker, red heartbeat pulse, slight camera shake,
+  heartbeat sound (`special_last` in config.json).
+- Inter Display (clean bold sans, no outlines; `assets/fonts`, SIL OFL). Captions are full short phrases on a dark pill.
+- Countdown 2 s (`countdown_s`): rising tension sound, bass hit + flash when the reaction appears.
+- Mascot mid-left at ~53–66 % height (out of the bottom-left Shorts UI zone).
+- Engine deps once: `cd pack/Stick3D-Pack/engine && npm install`.
 
 ## Files
 - `render.py`: pipeline (parse → Kokoro TTS → Whisper word times → timeline → frames + audio → MP4)
