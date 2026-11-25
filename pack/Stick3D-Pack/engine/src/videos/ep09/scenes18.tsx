@@ -183,8 +183,8 @@ export const beamScreenX = (t: number) => (t >= 7 ? 540 : project(t < 5 ? P2A : 
 
 /* ================= S4 ANIMALS 16.4–25.0: owl close-up, wolf howling on its rock, tide pool (coral spawn, fish school, crabs), confusion, ecosystems shaken ================= */
 const P4: V3 = [0, 0, 1.2], P4C: V3 = [0, 0, 3.4];
-const O4A = A({ yaw: -0.05, sx: 0.37, drift: 0.04 });
-const O4B = A({ yaw: 0.12, sx: 0.67, drift: -0.03 });
+const O4A = A({ yaw: -0.05, sx: 0.44, drift: 0.04 });
+const O4B = A({ yaw: 0.12, sx: 0.59, drift: -0.03 });
 const O4C = A({ yaw: 0.05, camY: 1.15, sx: 0.57, drift: 0.02 });
 const O4D = A({ yaw: -0.08, camY: 1.15, sx: 0.4, drift: -0.02 });
 const O4E = A({ yaw: 0.0, camY: 1.3, sx: 0.5, push: 0.96, drift: 0.02 });
@@ -245,7 +245,7 @@ export const S4 = ({ t }: Ctx) => { const shake = t > 23.75 && t < 24.9, a = act
 
 /* ================= S6 SEASONS 28.65–32.7: one fixed spot, spring -> summer -> (snow in summer) -> autumn -> (lightning) -> winter ================= */
 const P6: V3 = [0, 0, 1.0];
-const O6 = A({ yaw: -0.12, sx: 0.49, push: 0.96, drift: 0.04 });
+const O6 = A({ yaw: -0.12, sx: 0.55, push: 0.96, drift: 0.04 });
 export const SEASON_CUTS: [number, number, number][] = [[28.65, 0, 0], [29.45, 1, 0], [30.0, 1, 1], [30.4, 2, 0], [31.0, 2, 2], [31.4, 3, 0]]; // [t, season, chaos 1 = snow in summer / 2 = storm]
 export const seasonAt = (t: number) => { let c = SEASON_CUTS[0]; for (const x of SEASON_CUTS) if (t >= x[0]) c = x; return c; };
 const G6: GKey[] = [{ t: 28.95, g: "palmUpL" }, { t: wt("making", 29.1) + 0.04, g: "wave", hold: 0.3 }, { t: wt("seasons", 29.6) + 0.04, g: "present" }, { t: wt("wild", 30) + 0.02, g: "pointUp", hold: 0.25 }, { t: 30.55, g: "reach", hold: 0.35 }, { t: 31.02, g: "whoa", in: 0.12, hold: 0.3 }];

@@ -36,9 +36,21 @@ def scan(v):
         nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.dilate(opn, np.ones((5, 5), np.uint8)), 8)
         keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
+        # absorb a blob whose box sits inside the hero's own bbox (a leg split from the torso by a mid-pose gap), not a stray sprite elsewhere in frame
+        if keep and nc > 1:
+            pad, changed = 12, True
+            while changed:
+                changed = False
+                xs0 = min(st[k, 0] for k in keep); ys0 = min(st[k, 1] for k in keep)
+                xs1 = max(st[k, 0] + st[k, 2] for k in keep); ys1 = max(st[k, 1] + st[k, 3] for k in keep)
+                for k in range(1, nc):
+                    if k in keep: continue
+                    x, y, w, h = st[k, 0], st[k, 1], st[k, 2], st[k, 3]
+                    if not (x + w < xs0 - pad or x > xs1 + pad or y + h < ys0 - pad or y > ys1 + pad): keep.add(k); changed = True
         allm = (np.isin(lab, list(keep)) & (opn > 0)) if keep else np.zeros_like(face)
-        # v18 stray sprites: other hero-coloured blobs not connected to the hero (duplicate puppets, leftover billboards)
-        stray = int(sum(1 for k in range(1, nc) if k not in keep and st[k, 4] > W * H * 0.002)) if nc > 1 else 0
+        # v18 stray sprites: other hero-coloured blobs outside the hero's own bbox (duplicate puppets, leftover billboards) --
+        # but not the hero's own hand reaching far from the torso (e.g. petting an animal) and visually split off by an occluder
+        stray = int(sum(1 for k in range(1, nc) if k not in keep and st[k, 4] > W * H * 0.002 and (hand & (lab == k)).sum() <= 0.3 * st[k, 4])) if nc > 1 else 0
         hand = hand & allm
         face = face & allm
         if face.any():  # keep only the largest face blob (the hero's head)
