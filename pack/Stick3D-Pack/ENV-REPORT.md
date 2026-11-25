@@ -1,9 +1,9 @@
-# ENV REPORT (2026-11-24T09:07:06Z)
+# ENV REPORT (2026-11-25T10:08:16Z)
 ## System
 cores: 4
-Mem:           16087         502       15129          12         675       15585
-/dev/vda        252G   11G   59G  15% /
-Linux 6.18.44-fc-v819
+Mem:           16087         474       15631          12         194       15612
+/dev/vda        252G   11G   58G  16% /
+Linux 6.18.44-fc-v880
 ## GPU
 no NVIDIA GPU detected -> assume CPU-only rendering
 ## Tools
