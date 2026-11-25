@@ -107,8 +107,8 @@ export const S3 = ({ t }: Ctx) => { const a = act(t, ACT3, { seed: 3 }), pose = 
 
 /* ================= S5 EARTH IN SPACE 25.0–28.65 (platform; shields his eyes from the Sun; stumbles when the Earth wobbles) ================= */
 const PLAT: V3 = [-1.6, -0.25, 1.6], ER = 1.45;
-const O5A = A({ fov: 50, yaw: -0.25, camY: 1.3, sx: 0.36, push: 0.95, drift: 0.06 });
-const O5B = A({ fov: 50, yaw: -0.2, camY: 1.2, sx: 0.36, push: 0.96, drift: -0.03 });
+const O5A = A({ fov: 50, yaw: -0.25, camY: 1.3, sx: 0.42, push: 0.95, drift: 0.06 });
+const O5B = A({ fov: 50, yaw: -0.2, camY: 1.2, sx: 0.42, push: 0.96, drift: -0.03 });
 const PB5: V3 = [PLAT[0], 0, PLAT[2]];
 const P5A = framePose(PB5, O5A, 0);
 const EARTH: V3 = worldAt(framePose(PB5, O5A, 0.5), 0.74, 0.3, 10.5), SUN: V3 = worldAt(P5A, 0.12, 0.08, 110);
@@ -183,7 +183,7 @@ export const beamScreenX = (t: number) => (t >= 7 ? 540 : project(t < 5 ? P2A : 
 
 /* ================= S4 ANIMALS 16.4–25.0: owl close-up, wolf howling on its rock, tide pool (coral spawn, fish school, crabs), confusion, ecosystems shaken ================= */
 const P4: V3 = [0, 0, 1.2], P4C: V3 = [0, 0, 3.4];
-const O4A = A({ yaw: -0.05, sx: 0.44, drift: 0.04 });
+const O4A = A({ yaw: -0.05, sx: 0.49, drift: 0.04 });
 const O4B = A({ yaw: 0.12, sx: 0.59, drift: -0.03 });
 const O4C = A({ yaw: 0.05, camY: 1.15, sx: 0.57, drift: 0.02 });
 const O4D = A({ yaw: -0.08, camY: 1.15, sx: 0.4, drift: -0.02 });
