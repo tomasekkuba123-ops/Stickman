@@ -106,7 +106,7 @@ export const Earth: React.FC<{ p: V3; r: number; rotY?: number; glow?: number }>
 
 /* ---------------- bedroom at sunset ---------------- */
 export const PAPER: V3 = [-0.6, 1.53, -2.85]; // centre of the drawing paper on the desk
-export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number; night?: boolean }> = ({ t, windowOpen = 0, shake = 0, night = false }) => {
+export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number; night?: boolean; noBed?: boolean }> = ({ t, windowOpen = 0, shake = 0, night = false, noBed = false }) => {
   const j = (k: number) => Math.sin(t * 40 + k) * 0.02 * shake;
   return (<>
     <ambientLight intensity={night ? 0.55 : 1.0} /><directionalLight position={[4, 6, 6]} intensity={night ? 0.45 : 1.1} color={night ? "#8a9aff" : "#ffd6a0"} /><directionalLight position={[-6, 3, 2]} intensity={0.45} color="#a0b0ff" />
@@ -147,7 +147,7 @@ export const Bedroom: React.FC<{ t: number; windowOpen?: number; shake?: number;
     <Ball p={[-6.2, 5.55, -1.0]} r={0.28} color="#3a8fe0" /><Cyl p={[-6.2, 4.3, -1.0]} rt={0.12} h={0.5} color="#e8303a" line={2} />
     <CanvasPlane p={[-2.6, 4.8, -5.94]} s={[1.6, 2.1]} px={[160, 210]} frame="#2b3350" draw={(c, W, H) => { c.fillStyle = "#1a1f50"; c.fillRect(0, 0, W, H); for (let i = 0; i < 30; i++) { c.fillStyle = "#fff"; c.fillRect(rnd(i) * W, rnd(i + 5) * H, 2, 2); } c.beginPath(); c.arc(W / 2, H * 0.62, 34, 0, TAU); c.fillStyle = "#ff8a3a"; c.fill(); c.font = "900 28px Inter"; c.fillStyle = "#ffd23a"; c.textAlign = "center"; c.fillText("SPACE", W / 2, 40); }} />
     <CanvasPlane p={[-6.42, 3.0, 1.2]} rot={[0, Math.PI / 2, 0]} s={[1.6, 1.2]} px={[160, 120]} frame="#2b3350" draw={(c, W, H) => { c.fillStyle = "#fff6d0"; c.fillRect(0, 0, W, H); c.strokeStyle = "#3a3a52"; c.lineWidth = 4; c.beginPath(); c.moveTo(W / 2, 20); c.lineTo(W / 2 + 22, 70); c.lineTo(W / 2 - 22, 70); c.closePath(); c.stroke(); c.beginPath(); c.arc(W / 2, 50, 7, 0, TAU); c.stroke(); }} />
-    <group position={[4.8, 0, -3.5]}><Box p={[0, 0.5, 0]} s={[3.0, 0.6, 4.0]} color="#7a54d6" /><Box p={[0, 0.9, 0]} s={[2.8, 0.3, 3.8]} color="#f4f6fb" /><Box p={[0, 1.15, -1.4]} s={[1.6, 0.3, 0.7]} color="#ffd23a" /><Box p={[0, 1.3, -1.95]} s={[3.0, 1.6, 0.2]} color="#5a3aa8" /></group>
+    {noBed ? null : <group position={[4.8, 0, -3.5]}><Box p={[0, 0.5, 0]} s={[3.0, 0.6, 4.0]} color="#7a54d6" /><Box p={[0, 0.9, 0]} s={[2.8, 0.3, 3.8]} color="#f4f6fb" /><Box p={[0, 1.15, -1.4]} s={[1.6, 0.3, 0.7]} color="#ffd23a" /><Box p={[0, 1.3, -1.95]} s={[3.0, 1.6, 0.2]} color="#5a3aa8" /></group>}
     <CanvasPlane p={[0.5, 0.02, 0.6]} rot={[-Math.PI / 2, 0, 0]} s={[5, 3.2]} px={[500, 320]} draw={(c, W, H) => { c.fillStyle = "#2fb87a"; c.fillRect(0, 0, W, H); c.strokeStyle = "#ffd23a"; c.lineWidth = 18; c.strokeRect(24, 24, W - 48, H - 48); c.strokeStyle = INK; c.lineWidth = 6; c.strokeRect(3, 3, W - 6, H - 6); c.fillStyle = "#ffd23a"; for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(80 + i * 70, H / 2, 14, 0, TAU); c.fill(); } }} />
     <group position={[-5.4, 0, 1.6]}><Cyl p={[0, 0.4, 0]} rt={0.45} rb={0.35} h={0.8} color="#e07a4a" />{[0, 1, 2, 3, 4].map((i) => <Ball key={i} p={[Math.cos(i * 1.3) * 0.3, 1.2 + (i % 2) * 0.3, Math.sin(i * 1.3) * 0.3]} r={0.38} color={i % 2 ? "#3fbf5a" : "#2fa04a"} />)}</group>
     <Cyl p={[3.4, 0.5, 1.6]} rt={0.0} rb={0.3} h={1.0} color="#ff8a3a" line={2} />

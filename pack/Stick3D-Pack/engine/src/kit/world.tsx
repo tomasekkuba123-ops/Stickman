@@ -168,9 +168,9 @@ export const Foreground: React.FC<{ t: number; kind?: "leaves" | "grass" | "boke
    Re-uses the EP03 bedroom: desk + drawing paper, window with city, curtains, shelves, lamp, rug, posters, bed, plant, light rays, dust motes.
    HOME.hero = where Stickman stands at the desk; HOME.paper = paper centre; HOME.cams = good camera keys (wide / desk / window). */
 export const HOME = { hero: [-0.55, 0, -3.65] as V3, heroSide: [-2.9, 0, -2.2] as V3, paper: PAPER, window: [2.4, 4.3, -5.8] as V3, bed: [4.8, 0, -3.5] as V3 };
-export const HomeSet: React.FC<{ t: number; preset?: SkyName; paper?: { body: number; fin1: number; fin2: number; win: number } | null; shake?: number; dress?: boolean; children?: React.ReactNode }> = ({ t, preset = "sunset", paper = null, shake = 0, dress = true, children }) => ( // preset "night" = moonlit window + lamp light
+export const HomeSet: React.FC<{ t: number; preset?: SkyName; paper?: { body: number; fin1: number; fin2: number; win: number } | null; shake?: number; dress?: boolean; children?: React.ReactNode; noBed?: boolean }> = ({ t, preset = "sunset", paper = null, shake = 0, noBed = false, dress = true, children }) => ( // preset "night" = moonlit window + lamp light
   <LookContext.Provider value={SKY[preset].look}>
-    <Bedroom t={t} shake={shake} night={preset === "night"} />
+    <Bedroom t={t} shake={shake} night={preset === "night"} noBed={noBed} />
     {paper ? <DrawingPaper t={t} parts={paper} /> : null}
     <DustMotes t={t} c={[0.5, 2.5, -3]} area={[6, 3, 4]} n={20} />
     {dress ? <SetDressing kind="room" anchor={HOME.hero} keep={2.6} bounds={[-6, 6, -5.4, 3.2]} n={26} seed={4} t={t} /> : null}
