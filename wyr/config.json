@@ -15,22 +15,21 @@
   },
   "layout": {
     "badge_x": 36,
-    "badge_y": 64,
-    "header_y": 215,
-    "header_size": 62,
-    "pick_size": 74,
-    "header_max_w": 860,
-    "label_y_A": 798,
-    "label_y_B": 1122,
-    "label_size": 56,
-    "label_max_w": 700,
-    "caption_y": 866,
-    "caption_size": 42,
-    "caption_max_w": 860,
-    "vs_radius": 58,
-    "mascot_x": 112,
-    "mascot_bottom": 1272,
-    "mascot_h": 300
+    "badge_y": 40,
+    "header_y": 150,
+    "header_size": 58,
+    "pick_size": 92,
+    "header_max_w": 820,
+    "tile_w": 800,
+    "tile_h": 470,
+    "tile_cy_A": 512,
+    "tile_cy_B": 1392,
+    "label_size": 52,
+    "label_max_w": 640,
+    "caption_y": 888,
+    "caption_size": 44,
+    "caption_max_w": 900,
+    "vs_radius": 56
   },
   "timing": {
     "hook_start": 0.0,
@@ -49,39 +48,36 @@
     "heartbeat": 0.55
   },
   "pick_text": "PICK ONE!",
-  "outro_header": "SEE YOU TOMORROW",
-  "mascot": {
-    "poses": {
-      "hook": "excited",
-      "question": "happy",
-      "countdown": "thinking",
-      "outro": "thumbs"
-    },
-    "mood_keywords": {
-      "scared": [
-        "nightmare",
-        "scary",
-        "terrifying",
-        "creepy"
-      ],
-      "surprised": [
-        "impossible",
-        "shocked",
-        "no way",
-        "insane",
-        "wow"
-      ],
-      "laughing": [
-        "lying",
-        "lol",
-        "haha",
-        "we see you",
-        "math"
-      ]
-    },
-    "default_reaction": "laughing"
-  },
+  "outro_header": "SEE YOU TOMORROW!",
   "countdown_s": 2.0,
   "special_last": true,
-  "max_seconds": 35
+  "max_seconds": 35,
+  "palette": {
+    "normal": {
+      "A1": "#FFB000",
+      "A2": "#FFC93C",
+      "Aglow": "#FFF1A8",
+      "B1": "#1677FF",
+      "B2": "#2A8CFF",
+      "Bglow": "#8FD0FF",
+      "swoosh": "#7A1FE0",
+      "tileA1": "#FF4A4A",
+      "tileA2": "#E5102C",
+      "tileB1": "#3DB2FF",
+      "tileB2": "#0E6BE6"
+    },
+    "special": {
+      "A1": "#B3261E",
+      "A2": "#C9362A",
+      "Aglow": "#FF8A5C",
+      "B1": "#3A1680",
+      "B2": "#4A1F9A",
+      "Bglow": "#B07CFF",
+      "swoosh": "#2A0A5A",
+      "tileA1": "#FF4A4A",
+      "tileA2": "#B80E24",
+      "tileB1": "#6E4CFF",
+      "tileB2": "#3A1FB0"
+    }
+  }
 }

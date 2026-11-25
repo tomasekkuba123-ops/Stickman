@@ -17,24 +17,27 @@ def item_key(it):
     return hashlib.sha1((json.dumps(it, sort_keys=True) + src).encode()).hexdigest()[:14]
 
 
-def ensure(items):
-    """items: [{name, side, ban, dark}] -> {index: (bg_path, fg_path)}; renders what is missing in ONE engine call"""
+TILE = (1140, 780)
+
+def ensure(items, comp="WyrScene", layers=("bg", "fg"), size=SIZE):
+    """items: [{name, side, ban, dark}] -> {index: tuple(path per layer)}; renders what is missing in ONE engine call.
+    comp="WyrTile", layers=("tile",), size=TILE -> bright v4 option tiles (hero only, transparent background)."""
     os.makedirs(CACHE, exist_ok=True)
     out, todo = {}, []
     for i, it in enumerate(items):
-        k = item_key(it); bg, fg = (os.path.join(CACHE, f"{k}_{l}.png") for l in ("bg", "fg"))
-        out[i] = (bg, fg)
-        if not (os.path.exists(bg) and os.path.exists(fg)):
-            todo += [(dict(it, layer="bg"), bg), (dict(it, layer="fg"), fg)]
+        k = item_key(dict(it, comp=comp)); paths = tuple(os.path.join(CACHE, f"{k}_{l}.png") for l in layers)
+        out[i] = paths
+        if not all(os.path.exists(p) for p in paths):
+            todo += [(dict(it, layer=l), p) for l, p in zip(layers, paths)]
     if todo:
         with tempfile.TemporaryDirectory() as td:
             pj = os.path.join(td, "props.json"); json.dump({"items": [t[0] for t in todo]}, open(pj, "w"))
             gl = open(os.path.join(ENGINE, "..", ".gl-flag")).read().strip() if os.path.exists(os.path.join(ENGINE, "..", ".gl-flag")) else "swangle"
             print(f"rendering {len(todo)} 3D layers with the engine ...", flush=True)
-            subprocess.run(["npx", "remotion", "render", "WyrScene", os.path.join(td, "seq"), "--sequence", "--image-format=png",
+            subprocess.run(["npx", "remotion", "render", comp, os.path.join(td, "seq"), "--sequence", "--image-format=png",
                             f"--frames=0-{len(todo) - 1}", f"--props={pj}", f"--gl={gl}", f"--scale={SS}", "--concurrency=4", "--log=error"],
                            cwd=ENGINE, check=True)
             files = sorted(os.listdir(os.path.join(td, "seq")))
             for (it, dst), fn in zip(todo, files):
-                Image.open(os.path.join(td, "seq", fn)).convert("RGBA").resize(SIZE, Image.LANCZOS).save(dst)
+                Image.open(os.path.join(td, "seq", fn)).convert("RGBa").resize(size, Image.LANCZOS).convert("RGBA").save(dst)
     return out

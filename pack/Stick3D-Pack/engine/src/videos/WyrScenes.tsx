@@ -12,7 +12,7 @@ import { Glow } from "../style/props";
 import { Cam } from "../style/extra";
 
 type V3 = [number, number, number];
-export type WyrItem = { name: string; side: "A" | "B"; layer: "bg" | "fg"; ban?: boolean; dark?: boolean };
+export type WyrItem = { name: string; side: "A" | "B"; layer: "bg" | "fg" | "tile"; ban?: boolean; dark?: boolean };
 const TAU = Math.PI * 2;
 const ramp = (() => { const d = new Uint8Array([95, 175, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
 const rnd = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
@@ -142,7 +142,22 @@ const SIDE = {
   B: { dome: [[0, "#01030a"], [0.42, "#04122e"], [0.55, "#0a2a66"], [0.7, "#03102a"], [1, "#010208"]] as [number, string][], rim: "#4aa8ff", glow: "rgba(60,140,255,.9)", ring: "#5ab4ff", bokeh: "rgba(110,180,255,.9)" },
 };
 
+// bright "tile" mode (WYR v4 look): hero only, no studio/plinth, bright even light, framed to fill a rounded option tile
+const TileStage: React.FC<{ it: WyrItem }> = ({ it }) => {
+  const H = HERO[it.name]; const h = HEIGHT[it.name] ?? 2.6; const ban = !!it.ban;
+  const oc = h * 0.5, span = Math.max(h, ban ? 3.7 : 2.4) * 1.18, dist = span / 2 / Math.tan((17 * Math.PI) / 180);
+  return (<>
+    <ambientLight intensity={0.95} />
+    <directionalLight position={[4, 7, 6]} intensity={1.15} color="#fffaf0" />
+    <directionalLight position={[-5, 3, 4]} intensity={0.45} color="#ffffff" />
+    <directionalLight position={[0, 4, -6]} intensity={0.8} color="#ffffff" />
+    <Cam t={0} keys={[{ t: 0, pos: [0, oc + dist * 0.12, dist], look: [0, oc, 0], fov: 34 }]} />
+    <group>{H ? <H /> : <Fallback label={it.side} />}{ban ? <Ban y={h * 0.5} R={Math.max(1.25, h * 0.56)} /> : null}</group>
+  </>);
+};
+
 const Stage: React.FC<{ it: WyrItem }> = ({ it }) => {
+  if (it.layer === "tile") return <TileStage it={it} />;
   const S = SIDE[it.side]; const H = HERO[it.name]; const h = HEIGHT[it.name] ?? 2.6;
   const dark = it.dark ? 0.8 : 1;
   const oc = 0.6 + h * 0.5, look = it.side === "A" ? oc + 0.8 : oc + 0.38;   // A: object low (header above); B: below the label, clear of the bottom UI
@@ -175,5 +190,14 @@ export const WyrScene: React.FC<{ items: WyrItem[] }> = ({ items }) => {
   return (<AbsoluteFill style={{ background: "transparent" }}>
     <ThreeCanvas width={width} height={height} flat gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }} camera={{ fov: 34, position: [0, 2.3, 10.5], near: 0.1, far: 200 }}>
       <Stage it={it} />
+    </ThreeCanvas></AbsoluteFill>);
+};
+
+// tiles: 1140x780 (rendered at --scale 1.5 by wyr/scenes3d.py)
+export const WyrTile: React.FC<{ items: WyrItem[] }> = ({ items }) => {
+  const f = useCurrentFrame(); const it = items[Math.min(f, items.length - 1)];
+  return (<AbsoluteFill style={{ background: "transparent" }}>
+    <ThreeCanvas width={1140} height={780} flat gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }} camera={{ fov: 34, position: [0, 2, 10], near: 0.1, far: 200 }}>
+      <Stage it={{ ...it, layer: "tile" }} />
     </ThreeCanvas></AbsoluteFill>);
 };

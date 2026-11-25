@@ -1,4 +1,4 @@
-# Would You Rather — Shorts template (v3, cinematic)
+# Would You Rather — Shorts template (v4, "PICK ONE DAILY" channel style)
 
 One command turns a script into a finished 1080x1920 / 30 fps MP4 (~1 min on 4 CPUs, + ~1.5 min the first time new 3D options are rendered):
 
@@ -18,7 +18,6 @@ Q1: "Would you rather X... or Y?"
 A: Short label A | B: Short label B
 Reaction: "Line spoken after the countdown."
 Icons: pizza | wifi                # optional, otherwise picked from the label keywords
-Mood: laughing                     # optional mascot pose for the reaction (laughing/surprised/scared/wow/excited)
 
 OUTRO: "That's all for today."   # keep it short: the 1.5 s end card follows
 ```
@@ -34,36 +33,29 @@ OUTRO: "That's all for today."   # keep it short: the 1.5 s end card follows
 - 2-1 ring around the VS circle with a rising tension sound, bass hit when the reaction appears, whoosh between questions
   (all synthesized in code; there's no music and no downloaded audio). Mix = exactly -14 LUFS.
 - Both options pop in together on every new question.
-- Mascot (Stickman, mid-left, clear of the Shorts UI): excited (hook) → happy (question) → thinking (countdown) →
-  laughing/surprised/scared (reaction, from `Mood:` or reaction keywords) → thumbs-up (outro).
 - Outro: one short line over the last question's images, then the fixed **SUBSCRIBE end card** (1.5 s, `assets/endcard/`,
-  built once by `build_endcard.py` from the engine composition `WyrEndcard`: 3D Stickman pointing at SUBSCRIBE, button press ->
-  SUBSCRIBED, bell rings, voice "Subscribe for tomorrow's choice!"). It is appended unchanged to every episode; never rebuild it.
+  built once by `build_endcard.py`: round channel logo, tagline, SUBSCRIBE press -> SUBSCRIBED, bell rings,
+  voice "Subscribe for tomorrow's choice!"). It is appended unchanged to every episode; never rebuild it.
   No seamless loop any more.
 
-## v3 look (cinematic)
-- Each half is a full-bleed **toon-3D render** of the option, made with the Stickman engine (`pack/Stick3D-Pack/engine`,
-  composition `WyrScene`, source `engine/src/videos/WyrScenes.tsx`): toon shading + ink outlines + rim light, the series' 3D style,
-  no external/AI images. `scenes3d.py` renders only missing options (cache: `out/_scenes3d/`), 2 layers each (studio bg + hero fg)
-  for parallax. 3D heroes so far: phone, food, money_bag, money_month, mind_read, crystal_ball, hourglass, magnifier
-  (+ automatic 3D ban sign for "No/Never/Without" labels). **New topic → add a hero component in WyrScenes.tsx** and a keyword in
-  `icons.py` ICONS; unknown topics fall back to a big A/B letter on the plinth.
-- Slow push-in + parallax on both layers, deep red vs deep blue grade with bloom, glowing light line between the halves,
-  drifting particles, vignette. The last question is the "impossible" one: darker, red heartbeat pulse, slight camera shake,
-  heartbeat sound (`special_last` in config.json).
-- Inter Display (clean bold sans, no outlines; `assets/fonts`, SIL OFL). Captions are full short phrases on a dark pill.
-- Countdown 2 s (`countdown_s`): rising tension sound, bass hit + flash when the reaction appears.
-- Mascot mid-left at ~53–66 % height (out of the bottom-left Shorts UI zone).
-- Engine deps once: `cd pack/Stick3D-Pack/engine && npm install`.
+## v4 look (channel art style, no mascot)
+- Bright cartoon style matching the channel logo (`assets/brand/`): yellow/orange sunburst (A) and blue sunburst (B) with a white
+  wave between them, purple swoosh at the bottom, yellow VS badge (becomes the 2-1 countdown ring).
+- Each option = a big rounded tile (red for A, blue for B; white border, dark outline, gloss) holding a **toon-3D hero render**
+  from the Stickman engine (composition `WyrTile`, source `engine/src/videos/WyrScenes.tsx`; cached in `out/_scenes3d/`).
+  Labels sit on yellow banners with an A/B chip. Heroes so far: phone, food, money_bag, money_month, mind_read, crystal_ball,
+  hourglass, magnifier (+ 3D ban sign for "No/Never/Without"). New topic -> add a hero in WyrScenes.tsx + a keyword in icons.py.
+- Fredoka with dark outlines for all text; captions are full short phrases. The last question is darker/redder with a pulse + shake.
+- Countdown 2 s with a rising tension sound, bass hit + flash on the reveal. Engine deps once: `cd pack/Stick3D-Pack/engine && npm install`.
+- No mascot on this channel.
 
 ## Files
 - `render.py`: pipeline (parse → Kokoro TTS → Whisper word times → timeline → frames + audio → MP4)
-- `config.json`: voice (`am_puck`, speed 1.2, pauses capped at 0.12 s), colours, layout, timing, mascot poses
+- `config.json`: voice (`am_puck`, speed 1.2, pauses capped at 0.12 s), colours, layout, timing, palettes
 - `icons.py`: flat illustrations drawn in code. Labels starting with "No/Never/Without" get a red ban sign automatically.
   New topic → add `def icon_<name>(ctx)` (600x600 box) + keywords in `ICONS`. Unknown topics fall back to an A/B badge.
-- `assets/mascot/*.png`: true-RGBA poses rendered straight from the series 3D Stickman puppet by `build_mascot3d.py` (engine composition
-  `WyrMascot`, rendered on black + white -> exact two-background matte, no halo). One shared crop box = same scale/baseline. Reuse; don't rebuild.
-- `assets/fonts/Fredoka.ttf`: SIL OFL
+- `assets/brand/`: channel logos (user art). `assets/endcard/`: the fixed end card.
+- `assets/fonts/Fredoka.ttf`: SIL OFL (all on-screen text)
 
 ## Requirements
 `bash ../pack/Stick3D-Pack/00-setup/install_v4_tools.sh` (Kokoro + faster-whisper), `pip install pycairo opencv-python-headless`, ffmpeg.
