@@ -236,7 +236,7 @@ export const S7 = ({ t }: Ctx) => { const a = act(t, ACT7, { seed: 7 }), b = bed
     <PuffRing c={[BEDON[0], PILH * 0.6, BEDON[2] - 0.5]} t={t} t0={FLOP} n={8} r={0.8} size={0.22} color="#fff6d0" life={0.7} up={0.2} />
     <Stickman p={PB} t={t} action="idle" lips={LIPS} gest={G7} face={faceAt(t, [[21.65, "worried"], [FLOP, "surprised"], [22.9, "laugh"], [YAWN, "happy"]])}
       rig={{ ...a.rig, ...eyes(t, [[21.65, 0.6, -0.7], [FLOP, 0.8, 0.1], [YAWN, 0.7, 0.1]]) }} />
-    <DepthPass focus={6.6} blur={1.8} />
+    <DepthPass focus={t < 23.4 ? 7.6 : 6.6} blur={t < 23.4 ? 0.8 : 1.8} />
   </Playground>); };
 
 /* S8 25.45–29.35 (sunset): he tucks it in with the blanket ... the bed falls asleep, and he dozes off standing next to it */
