@@ -133,7 +133,7 @@ export const PB: V3 = [XB, 0, ZR];
 export const TR: V3 = [XB + 3.0, 0, -2.2]; // trampoline centre
 export const PIL: V3 = [XB + 2.2, 0, -1.4]; // giant pillow (drawn in S6)
 const PILW = 3.0, PILH = PILW * 0.42;
-const PBM: V3 = [(PB[0] + PIL[0]) / 2, 0, (PB[2] + PIL[2]) / 2]; // frame hero + pillow together
+const PBM: V3 = [PB[0] + 0.32 * (PIL[0] - PB[0]), 0, PB[2] + 0.32 * (PIL[2] - PB[2])]; // frame hero + pillow together
 const Playground: React.FC<{ t: number; preset?: "day" | "sunset"; dip?: number; front?: boolean; children?: React.ReactNode }> = ({ t, preset = "day", dip = 0, front = false, children }) => (
   <World preset={preset} t={t}>
     <Terrain amp={0} color="#6ad05a" color2="#58c04e" />
