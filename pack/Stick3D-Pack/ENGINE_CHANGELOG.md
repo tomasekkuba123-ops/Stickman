@@ -11,6 +11,12 @@ Newest entries on top.
 - A small prop (toothbrush in a cup) behind the hero is invisible in a size-B shot: put it in front of him, beside his hand, at the same depth (z of the hero + 0.15).
 - Chase shots on stairs: lerping the camera from the hero to a fast prop (k 0.75) throws the hero out of the frame. Track the hero and clamp the offset toward the prop to about +-1.1 m; let the prop run out of frame ahead of him.
 - Kokoro: one-word exclamations come out weak on their own; merge them with the next sentence.
+- QC rounds (final PASS after 5 partial re-renders): the V-scale/stray/cropped checks read `out/<ep>/mask.json`. After ANY change to positions, framing or transitions re-run `pipeline/qcmask.sh` before qc_check, or it reports the old failures.
+- DepthPass focus is a fixed distance: when a shot is widened (lower frac) or the hero is tracked far from the camera, he drifts out of focus -> V-blur. Refocus or drop blur to <= 0.8 for that shot.
+- A `whip2` transition's first incoming frame sits exactly on the cut time; qc samples it and flags "hero touches the frame edge". Use a hard cut where the QC sample lands.
+- Captions + "WHAT IF?" hook: high captions overlap the hook title in 0-2.75 s. Always force `--low 0-2.8`.
+- Bottom 20 % empty in open fields: add near Grass + Flowers in front of the hero (z +2..+8) instead of re-framing.
+- Thumbnail: use a clean still (`npx remotion still <Id> 02-videos/<ep>/thumb.png --frame=N --props='{"clean":true}'`) so no caption leaks under the text.
 **Changed**
 - kit/bed.tsx (new): `LivingBed` (moods happy/sleepy/asleep/wow/play/yawn, gallop legs, tuck/squash/tilt/wag/ears/blanket/flip), `bedTop`, `Quilt`, `Zzz`, `Toothbrush` (rise/awake/sing/sway), `GiantPillow` + `PILLOW_PATH`, `Trampoline` + `TRAMP_TOP`, `Slide`, `SwingSet`, `Sandbox`, `PicketFence`, `StairHall` + `STAIR`/`stairY`, `Ceiling`.
 - style/set3d.tsx + kit/world.tsx: `Bedroom`/`HomeSet` take `noBed`.
