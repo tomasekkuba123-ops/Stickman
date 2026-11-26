@@ -98,7 +98,7 @@ export const S2 = ({ t }: Ctx) => { const y = heroY2(t), air = y > TOP2 + 0.02, 
     <Quilt p={qp} t={t} w={2.4} h={quiltOff ? 1.7 : 0.85} flutter={quiltOff ? 1 : 0.15} rot={quiltOff ? qu * 160 : 0} o={1 - sm(seg(t, B1 + 0.75, B1 + 0.95))} />
     {splat ? <MagicSparkles t={t} c={[BED2[0] + 0.15, CEIL - 0.5, BED2[2] + 0.4]} area={[1.4, 0.3, 0.3]} n={12} color="#ffd23a" size={0.16} /> : null}
     <PuffRing c={[BED2[0] + 0.15, CEIL - 0.15, BED2[2] + 0.2]} t={t} t0={HIT} n={7} r={0.6} size={0.18} color="#ffffff" life={0.6} up={-0.3} />
-    <DepthPass focus={6.0} blur={1.6} />
+    <DepthPass focus={6.0} blur={lerp(1.6, 0.4, sm(seg(t, 6.0, 6.5)))} />
   </HomeSet>); };
 
 /* ================= STAIR HALL (S3): the bed gallops down the stairs like a puppy; he shouts from the landing ================= */

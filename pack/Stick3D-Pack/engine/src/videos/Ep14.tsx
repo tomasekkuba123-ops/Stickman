@@ -18,7 +18,7 @@ if ((getInputProps() as { lowres?: boolean }).lowres) { setHeroRes(1024); setTex
 export const CUTS = [0, 3.85, 7.55, 10.5, 14.05, 17.75, 21.65, 25.45, 29.35, 35];
 const SC = [N.S1, N.S2, N.S3, N.S4, N.S5, N.S6, N.S7, N.S8, N.S9];
 const BG = ["#ffd9b8", "#ffd9b8", "#bfe2d0", "#8ccaff", "#8ccaff", "#8ccaff", "#8ccaff", "#ffb88a", "#ffd9b8"];
-const TR = ["cut", "cut", "cut", "whip2", "cut", "cut", "cut", "cut", "iris"] as const;
+const TR = ["cut", "cut", "cut", "cut", "cut", "cut", "cut", "cut", "iris"] as const;
 const seg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));
 /* HOOK text at frame 0 and again on the last frames (loop) */
 const WhatIf: React.FC<{ t: number }> = ({ t }) => {
