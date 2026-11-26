@@ -178,6 +178,9 @@ export const MiniGarden: React.FC<{ t: number; bgT?: number; wet?: number; squas
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[25, 0, -20]}><planeGeometry args={[220, 120]} /><meshToonMaterial color="#6cb84c" gradientMap={toonRamp} /></mesh>
     {/* soil patches + moss dots on the ground (ant scale texture) */}
     {Array.from({ length: 60 }, (_, i) => <mesh key={i} rotation={[-Math.PI / 2, 0, rnd(i) * 3]} position={[lerp(-14, 64, rnd(i * 3.3)), 0.01 + i * 0.0002, lerp(-10, 7, rnd(i * 5.1))]} scale={[0.6 + rnd(i * 7) * 1.6, 0.4 + rnd(i * 9) * 0.9, 1]}><circleGeometry args={[1, 14]} /><meshToonMaterial color={i % 3 ? "#5aa83e" : "#8a6a42"} gradientMap={toonRamp} /></mesh>)}
+    {/* v19: sand grains / pebbles in the foreground (ant scale) so the bottom of low shots is never a flat green */}
+    {Array.from({ length: 110 }, (_, i) => { const r = 0.08 + rnd(i * 2.7 + 1) ** 2 * 0.3; return <mesh key={"pb" + i} position={[lerp(-8, 30, rnd(i * 4.1 + 2)), r * 0.35, lerp(0.8, 7.5, rnd(i * 6.3 + 3))]} rotation={[0, rnd(i) * 6, 0]} scale={[1, 0.55, 0.8]}><sphereGeometry args={[r, 10, 7]} /><meshToonMaterial color={["#b89a6a", "#9c8058", "#d2b98a", "#7f6a4c"][i % 4]} gradientMap={toonRamp} /></mesh>; })}
+    {Array.from({ length: 40 }, (_, i) => <mesh key={"ms" + i} rotation={[-Math.PI / 2, 0, rnd(i * 1.7) * 3]} position={[lerp(-8, 30, rnd(i * 8.9 + 5)), 0.012, lerp(0.5, 7.5, rnd(i * 3.7 + 9))]} scale={[0.3 + rnd(i * 2.2) * 0.7, 0.2 + rnd(i * 5.5) * 0.4, 1]}><circleGeometry args={[1, 12]} /><meshToonMaterial color={i % 2 ? "#3f8f30" : "#8fcf5a"} gradientMap={toonRamp} /></mesh>)}
     <Props list={FAR_FLOWERS} t={b} sway={0} />
     <GrassBlades list={back} t={b} />
     <Props list={BOULDERS} t={b} sway={0} />

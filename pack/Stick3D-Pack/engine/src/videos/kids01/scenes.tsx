@@ -35,7 +35,7 @@ export const T = {
   ball: 20.74, drop: 22.38, splash: 22.74, slide: 23.0, launch: 26.0, boing: 26.75, tickle: 29.4, sneeze2: 30.98, achoo2: 31.53, pop2: 31.89,
   big: 31.95, cheer: 32.3, bye: 34.77, ask: 36.8,
 };
-export const CUTS = [0, 2.95, 4.6, 6.1, 8.6, 11.3, 13.4, 15.8, 18.7, 22.7, 26.95, 29.4, 31.95, 33.5, 36.8, LEN];
+export const CUTS = [0, 2.95, 4.6, 6.1, 8.6, 11.3, 13.4, 15.8, 19.3, 22.7, 26.95, 29.4, 31.95, 33.5, 36.8, LEN];
 export const BIG = (t: number) => t < T.tiny || t >= T.big;
 /* the hero speaks only his own lines (the rest is the narrator) */
 const SPEAK: [number, number][] = [[11.38, 13.0], [25.88, 26.3], [34.72, 36.3], [36.86, 38.4]];
@@ -110,7 +110,8 @@ const G_FLUFF: GKey[] = [{ t: 27.9, g: "open2", in: 0.3, hold: 0.9 }];
 const G_BYE: GKey[] = [{ t: T.bye - 0.05, g: "wave", in: 0.2, hold: 1.2 }];
 export function heroAt(t: number): HeroState {
   if (t < T.sneeze0) return hookHero(t);
-  if (t >= T.ask) return hookHero(t - LEN);
+  // the puppet evaluates gestures / idle at its absolute t, so the ending shifts the hook's tau keys by LEN (last frame = first frame)
+  if (t >= T.ask) { const h = hookHero(t - LEN); return { ...h, t0: (h.t0 ?? 0) + LEN, gest: (h.gest ?? []).map((g) => ({ ...g, t: g.t + LEN })) }; }
   // big world: sneeze, then shrink into the puff
   if (t < T.tiny) { const k = seg(t, T.shrink, T.tiny); return { p: HP, action: t < 4.2 ? "sneezeReact" : "idle", t0: T.sneeze0, face: t < 4.2 ? "surprised" : "confused", h: H * lerp(1, 0.08, sm(k)), rig: t >= 4.2 ? { ...act(t, [{ t: 4.25, tilt: 8, turn: -0.3 }]).rig } : undefined }; }
   // tiny world
@@ -142,7 +143,7 @@ export function heroAt(t: number): HeroState {
 /* ================= cameras (size A = 58 %, size B = 68 % only for the hook + ending) ================= */
 const A = (o: FrameOpts): FrameOpts => ({ frac: FULL, sy: SY_A, fov: 42, camY: 1.0, ...o });
 const B = (o: FrameOpts): FrameOpts => ({ frac: CLOSE, sy: SY_B, fov: 42, camY: 1.05, ...o });
-export const HOOK_O = B({ yaw: -0.22, sx: 0.44, push: 0.95, drift: 0.05 });
+export const HOOK_O = B({ yaw: -0.22, sx: 0.5, push: 0.95, drift: 0.05, frac: CLOSE * 0.94 });
 const hookKey = (tau: number): Key => ({ ...framePose(HP, HOOK_O, (tau + 3.2) / 6.2), t: 0 });
 const span = (t0: number, t1: number, f: (t: number) => Key, n = 12): Key[] => Array.from({ length: n + 1 }, (_, i) => { const t = lerp(t0, t1, i / n); return { ...f(t), t }; });
 const still = (hero: V3, t0: number, t1: number, o: FrameOpts): Key[] => [{ ...framePose(hero, o, 0), t: t0 }, { ...framePose(hero, o, 1), t: t1 }];
@@ -153,20 +154,20 @@ const rideTrack = (t0: number, t1: number, o: FrameOpts, dy: (t: number) => numb
 const SNAIL_DIP = (t: number) => 2.0 * Math.sin(Math.PI * seg(t, 16.8, 18.4)) ** 2;
 export const CAMS: ((t: number) => Key[])[] = [
   () => span(0, 2.95, (t) => hookKey(t), 8),
-  () => still(HP, 2.95, T.tiny, A({ yaw: 0.22, sx: 0.5, push: 0.93, drift: -0.05 })),
+  () => still(HP, 2.95, T.tiny, A({ yaw: 0.22, sx: 0.5, push: 0.93, drift: -0.05, frac: FULL * 0.92 })),
   () => still(MG.land, T.tiny, 6.1, A({ yaw: 0.12, sx: 0.5, push: 0.95, drift: 0.06 })),
   () => still(MG.land, 6.1, T.buzz - 0.1, A({ yaw: -0.28, sx: 0.5, camY: 0.25, fov: 46, push: 0.93, drift: 0.08 })),
   () => still(MID_BUG, 8.6, 11.3, A({ yaw: -0.42, sx: 0.5, push: 0.96, drift: 0.05, h: 4.4 })),
   () => still(MID_BUG, 11.3, 13.4, A({ yaw: 0.12, sx: 0.5, push: 0.95, drift: -0.05, h: 4.4 })),
   () => rideTrack(13.4, 15.8, A({ yaw: -0.3, sx: 0.5, drift: 0.06, h: 5.4, camY: 1.6 })),
-  () => rideTrack(15.8, 18.7, A({ yaw: 0.32, sx: 0.5, drift: 0.04, h: 5.4, camY: 1.2 }), SNAIL_DIP),
-  () => still(LS, 18.7, 22.7, A({ yaw: -0.22, sx: 0.4, push: 0.95, drift: 0.04 })),
-  () => smoothTrack(22.7, 26.95, A({ yaw: 0.3, sx: 0.44, drift: 0.04 }), 0.2),
+  () => rideTrack(15.8, 19.3, A({ yaw: 0.32, sx: 0.5, drift: 0.04, h: 5.4, camY: 1.2 }), SNAIL_DIP),
+  () => still(LS, 19.3, 22.7, A({ yaw: -0.22, sx: 0.5, push: 0.95, drift: 0.04 })),
+  () => smoothTrack(22.7, 26.95, A({ yaw: 0.3, sx: 0.5, drift: 0.04 }), 0.2),
   () => still(DT, 26.95, T.tickle, A({ yaw: 0.14, sx: 0.5, push: 0.95, drift: -0.05 })),
   () => still(DT, T.tickle, T.big, A({ yaw: -0.18, sx: 0.48, push: 0.92, drift: 0.04 })),
   () => still(HP, T.big, 33.5, A({ yaw: 0.16, sx: 0.5, push: 0.95, drift: 0.05 })),
-  () => still([HP[0] + 0.55, 0, HP[2]], 33.5, T.ask, A({ yaw: -0.2, sx: 0.5, push: 0.97, drift: 0.04, h: 3.6 })),
-  () => [{ ...framePose(HP, A({ yaw: -0.22, sx: 0.44 }), 0), t: T.ask }, { ...framePose(HP, A({ yaw: -0.22, sx: 0.44, frac: (FULL + CLOSE) / 2 }), 0), t: 37.9 }, ...span(LEN - 1.3, LEN + 0.05, (t) => hookKey(t - LEN), 6)],
+  () => still(HP, 33.5, T.ask, A({ yaw: -0.36, sx: 0.36, push: 0.97, drift: 0.04, frac: FULL * 0.9 })),
+  () => [{ ...framePose(HP, A({ yaw: -0.22, sx: 0.5 }), 0), t: T.ask }, { ...framePose(HP, A({ yaw: -0.22, sx: 0.5, frac: (FULL + CLOSE * 0.94) / 2 }), 0), t: 37.9 }, ...span(LEN - 1.3, LEN + 0.05, (t) => hookKey(t - LEN), 6)],
 ];
 export const IMPACTS: [number, number][] = [[T.achoo, 0.015], [T.land, 0.01], [T.splash, 0.02], [T.boing, 0.012], [T.achoo2, 0.015]];
 

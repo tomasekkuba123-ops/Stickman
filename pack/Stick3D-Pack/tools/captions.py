@@ -50,7 +50,7 @@ def main():
     kw = [k.strip().upper() for k in a.keywords.split(",") if k.strip()] or auto_keywords(toks)
     faces = []
     if a.mask and os.path.exists(a.mask):
-        M = json.load(open(a.mask)); faces = [(f["t"], f.get("face"), f.get("body")) for f in M["frames"] if f["vis"]]
+        M = json.load(open(a.mask)); faces = [(f["t"], f.get("face"), f.get("body"), f.get("hands", [])) for f in M["frames"] if f["vis"]]
     force = lambda spec: [tuple(map(float, r.split("-"))) for r in spec.split(",") if r]
     hi, lo = force(a.high), force(a.low)
     for g in G:
@@ -58,14 +58,17 @@ def main():
         t0, t1 = g["a"], min(g["e"] + 0.7, g["a"] + 3)
         if any(x <= t0 < y for x, y in hi): g["band"] = "high"; continue
         if any(x <= t0 < y for x, y in lo): g["band"] = "low"; continue
-        cost = {"low": 0.0, "high": 0.4}  # prefer low (classic position) when both are free
-        for t, face, body in faces:
+        # v19: with --safe the safe band is preferred but a group moves to low/high when the safe band would cover a hand
+        cost = {"safe": 0.0, "low": 0.3, "high": 0.6} if a.safe else {"low": 0.0, "high": 0.4}
+        for t, face, body, hands in faces:
             if not (t0 <= t <= t1): continue
-            for b, (y0, y1) in BAND.items():
+            for b in cost:
+                y0, y1 = BAND[b][0], BAND[b][0] + 230
                 if face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20: cost[b] += 10      # face: never
-                if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body/hands): avoid
+                if any(h[3] * 1920 > y0 + 15 and h[1] * 1920 < y1 - 15 for h in hands): cost[b] += 3  # hands: avoid
+                if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body): avoid
         g["band"] = min(cost, key=cost.get)
-    if a.safe:
+    if a.safe and not faces:
         for g in G: g["band"] = "safe"
     json.dump({"groups": G, "keywords": kw}, open(os.path.join(a.out, "captions.json"), "w"), indent=0)
     srt(G, os.path.join(a.out, "CAPTIONS.srt"))

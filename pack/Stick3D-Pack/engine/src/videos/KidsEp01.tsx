@@ -19,7 +19,7 @@ const seg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a)
 const Title: React.FC<{ t: number }> = ({ t }) => {
   if (QC) return null; const tau = t > LEN - 2 ? t - LEN : t; if (tau < -0.6 || tau > 2.8) return null;
   const k = tau < 0 ? seg(tau, -0.6, -0.3) : 1 - seg(tau, 2.45, 2.8);
-  const pop = tau < 0 ? interpolate(tau, [-0.6, -0.4, -0.3], [0.6, 1.08, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1 + 0.05 * Math.sin((tau + 0.3) * 6);
+  const pop = tau < -0.3 ? interpolate(tau, [-0.6, -0.4, -0.3], [0.6, 1.08, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 1 + 0.05 * Math.sin((tau + 0.3) * 6);
   return <div style={{ position: "absolute", top: 150, left: 0, right: 0, textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: 150, lineHeight: 0.98, color: "#ffd23a", WebkitTextStroke: "22px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${pop}) rotate(-4deg)`, opacity: k, textShadow: "0 16px 0 rgba(0,0,0,.4)" }}>WHAT IF<br /><span style={{ color: "#7ee86a" }}>I SHRANK?</span></div>;
 };
 /* pop flash at the shrink / grow moments (edges only) */

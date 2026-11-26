@@ -36,6 +36,13 @@ def scan(v):
         nc, lab, st, _ = cv2.connectedComponentsWithStats(cv2.dilate(opn, np.ones((5, 5), np.uint8)), 8)
         keep = set(np.unique(lab[face & (lab > 0)]).tolist()) - {0}
         if not keep and nc > 1: keep = {int(np.argmax(st[1:, 4])) + 1}
+        if keep:  # v19: pieces of the SAME hero split off by thin legs / grass in front (shoes, a hand) are not strays
+            kx0 = min(st[k, 0] for k in keep); ky0 = min(st[k, 1] for k in keep)
+            kx1 = max(st[k, 0] + st[k, 2] for k in keep); ky1 = max(st[k, 1] + st[k, 3] for k in keep); kh = ky1 - ky0
+            for k in range(1, nc):
+                if k in keep: continue
+                x0, y0, x1, y1 = st[k, 0], st[k, 1], st[k, 0] + st[k, 2], st[k, 1] + st[k, 3]
+                if x1 > kx0 - 0.15 * kh and x0 < kx1 + 0.15 * kh and y0 >= ky0 and y0 < ky1 + 0.35 * kh: keep.add(k)
         allm = (np.isin(lab, list(keep)) & (opn > 0)) if keep else np.zeros_like(face)
         # v18 stray sprites: other hero-coloured blobs not connected to the hero (duplicate puppets, leftover billboards)
         stray = int(sum(1 for k in range(1, nc) if k not in keep and st[k, 4] > W * H * 0.002)) if nc > 1 else 0
