@@ -1,0 +1,12 @@
+QC PASS  /home/user/Stickman/pack/Stick3D-Pack/engine/out/ep10v2/final.mp4  (target 39.8 s)
+WARN D: longest stretch without a hard cut 12.7 s (rule: new angle/action every 2-3 s)
+WARN V-hands: caption band over a hand in 56 % of caption time (first 0.0s)
+
+A_duration: {"frames": 1194, "expected": 1194, "duration": 39.8, "size": "1080x1920", "fps": "30/1"}
+B_visible: {"percent": 100.0, "gaps": []}
+C_size: {"big_enough": 87.9, "median_height": 0.562, "in_40_60_band": 78.2, "fully_in_frame": 100.0, "too_small_ranges": [], "too_big_ranges": []}
+E_captions: {"face_overlap_times": []}
+H_face_white: {"white_percent": 99.6, "tinted_at": []}
+D_motion: {"cuts": 6, "static_over_3s": [], "longest_shot_s": 12.7, "mean_shot_s": 5.67}
+F_audio: {"lufs": -14.1, "true_peak": -1.2}
+contact sheet: /home/user/Stickman/pack/Stick3D-Pack/engine/out/ep10v2/qc/contact_sheet.png
