@@ -59,14 +59,15 @@ def main():
         if any(x <= t0 < y for x, y in hi): g["band"] = "high"; continue
         if any(x <= t0 < y for x, y in lo): g["band"] = "low"; continue
         # v19: with --safe the safe band is preferred but a group moves to low/high when the safe band would cover a hand
-        cost = {"safe": 0.0, "low": 0.3, "high": 0.6} if a.safe else {"low": 0.0, "high": 0.4}
+        cost = {"safe": 0.0, "low": 0.3, "high": 1.5} if a.safe else {"low": 0.0, "high": 0.4}  # keep captions centre-lower: high only as a last resort
+        per = {"safe": 0.0, "low": 0.5, "high": 1.0} if a.safe else {"low": 0.0, "high": 0.0}  # per-frame preference (same scale as the per-frame penalties)
         for t, face, body, hands in faces:
             if not (t0 <= t <= t1): continue
             for b in cost:
-                y0, y1 = BAND[b][0], BAND[b][0] + 230
+                cost[b] += per[b]; y0, y1 = BAND[b][0], BAND[b][0] + 230
                 if face and face[3] * 1920 > y0 + 20 and face[1] * 1920 < y1 - 20: cost[b] += 10      # face: never
                 if any(h[3] * 1920 > y0 + 15 and h[1] * 1920 < y1 - 15 for h in hands): cost[b] += 3  # hands: avoid
-                if body and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 1                 # key action (body): avoid
+                if body and b != "safe" and body[3] * 1920 > y0 and body[1] * 1920 < y1: cost[b] += 0.3  # key action (legs/feet): avoid (the safe band sits over the torso by design)
         g["band"] = min(cost, key=cost.get)
     if a.safe and not faces:
         for g in G: g["band"] = "safe"

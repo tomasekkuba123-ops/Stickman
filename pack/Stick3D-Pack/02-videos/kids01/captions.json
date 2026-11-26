@@ -3,11 +3,10 @@
 {
 "words": [
 "WHAT",
-"IF",
-"STICKMAN"
+"IF"
 ],
 "a": 0.3,
-"e": 0.92,
+"e": 0.52,
 "ts": [
 [
 0.3,
@@ -16,32 +15,45 @@
 [
 0.42,
 0.52
-],
-[
-0.52,
-0.92
 ]
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
-"SHRANK",
-"TO",
-"THE"
+"STICKMAN",
+"SHRANK"
 ],
-"a": 0.92,
-"e": 1.48,
+"a": 0.52,
+"e": 1.26,
 "ts": [
+[
+0.52,
+0.92
+],
 [
 0.92,
 1.26
+]
 ],
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TO",
+"THE"
+],
+"a": 1.26,
+"e": 1.48,
+"ts": [
 [
 1.26,
 1.4
@@ -53,19 +65,17 @@ false
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "SIZE",
-"OF",
-"AN"
+"OF"
 ],
 "a": 1.48,
-"e": 2.08,
+"e": 1.98,
 "ts": [
 [
 1.48,
@@ -74,35 +84,36 @@ false
 [
 1.72,
 1.98
-],
-[
-1.98,
-2.08
 ]
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
+"AN",
 "ANT"
 ],
-"a": 2.08,
+"a": 1.98,
 "e": 2.34,
 "ts": [
+[
+1.98,
+2.08
+],
 [
 2.08,
 2.34
 ]
 ],
 "key": [
+false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -124,11 +135,10 @@ true
 {
 "words": [
 "ONE",
-"BIG",
-"SNEEZE"
+"BIG"
 ],
 "a": 3.554,
-"e": 4.434,
+"e": 3.894,
 "ts": [
 [
 3.554,
@@ -137,18 +147,30 @@ true
 [
 3.674,
 3.894
+]
 ],
+"key": [
+false,
+true
+],
+"band": "low"
+},
+{
+"words": [
+"SNEEZE"
+],
+"a": 3.894,
+"e": 4.434,
+"ts": [
 [
 3.894,
 4.434
 ]
 ],
 "key": [
-false,
-true,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -171,7 +193,7 @@ false
 false,
 true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -194,16 +216,15 @@ true
 false,
 true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "NOW",
-"THE",
-"GRASS"
+"THE"
 ],
 "a": 6.197,
-"e": 6.757,
+"e": 6.517,
 "ts": [
 [
 6.197,
@@ -212,14 +233,9 @@ true
 [
 6.357,
 6.517
-],
-[
-6.517,
-6.757
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -227,17 +243,35 @@ false
 },
 {
 "words": [
-"IS",
-"TALLER",
-"THAN"
+"GRASS",
+"IS"
 ],
-"a": 6.757,
-"e": 7.617,
+"a": 6.517,
+"e": 6.997,
 "ts": [
+[
+6.517,
+6.757
+],
 [
 6.757,
 6.997
+]
 ],
+"key": [
+false,
+false
+],
+"band": "safe"
+},
+{
+"words": [
+"TALLER",
+"THAN"
+],
+"a": 6.997,
+"e": 7.617,
+"ts": [
 [
 6.997,
 7.317
@@ -248,7 +282,6 @@ false
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -269,7 +302,7 @@ false
 "key": [
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -286,16 +319,15 @@ false
 "key": [
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "A",
-"LADYBUG",
-"LANDS"
+"LADYBUG"
 ],
 "a": 9.377,
-"e": 10.137,
+"e": 9.877,
 "ts": [
 [
 9.377,
@@ -304,32 +336,45 @@ false
 [
 9.377,
 9.877
-],
-[
-9.877,
-10.137
 ]
 ],
 "key": [
 false,
-true,
-false
+true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
-"NEXT",
-"TO",
-"HIM"
+"LANDS",
+"NEXT"
 ],
-"a": 10.137,
-"e": 10.897,
+"a": 9.877,
+"e": 10.537,
 "ts": [
+[
+9.877,
+10.137
+],
 [
 10.137,
 10.537
+]
 ],
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TO",
+"HIM"
+],
+"a": 10.537,
+"e": 10.897,
+"ts": [
 [
 10.537,
 10.737
@@ -341,10 +386,9 @@ false
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -367,16 +411,15 @@ false
 false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "CAN",
-"I",
-"RIDE"
+"I"
 ],
 "a": 12.083,
-"e": 12.483,
+"e": 12.283,
 "ts": [
 [
 12.083,
@@ -385,50 +428,61 @@ false
 [
 12.143,
 12.283
-],
-[
-12.283,
-12.483
 ]
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
-"WITH",
-"YOU"
+"RIDE",
+"WITH"
 ],
-"a": 12.483,
-"e": 12.943,
+"a": 12.283,
+"e": 12.763,
 "ts": [
+[
+12.283,
+12.483
+],
 [
 12.483,
 12.763
+]
 ],
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"YOU"
+],
+"a": 12.763,
+"e": 12.943,
+"ts": [
 [
 12.763,
 12.943
 ]
 ],
 "key": [
-false,
 true
 ],
-"band": "safe"
+"band": "high"
 },
 {
 "words": [
 "HE",
-"CLIMBS",
-"ON"
+"CLIMBS"
 ],
 "a": 13.466,
-"e": 14.146,
+"e": 13.766,
 "ts": [
 [
 13.466,
@@ -437,14 +491,9 @@ true
 [
 13.526,
 13.766
-],
-[
-13.766,
-14.146
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -452,12 +501,28 @@ false
 },
 {
 "words": [
+"ON"
+],
+"a": 13.766,
+"e": 14.146,
+"ts": [
+[
+13.766,
+14.146
+]
+],
+"key": [
+false
+],
+"band": "safe"
+},
+{
+"words": [
 "AND",
-"UP",
-"THEY"
+"UP"
 ],
 "a": 14.146,
-"e": 14.826,
+"e": 14.626,
 "ts": [
 [
 14.146,
@@ -466,14 +531,9 @@ false
 [
 14.486,
 14.626
-],
-[
-14.626,
-14.826
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -481,17 +541,23 @@ false
 },
 {
 "words": [
+"THEY",
 "FLY"
 ],
-"a": 14.826,
+"a": 14.626,
 "e": 15.086,
 "ts": [
+[
+14.626,
+14.826
+],
 [
 14.826,
 15.086
 ]
 ],
 "key": [
+false,
 false
 ],
 "band": "safe"
@@ -499,11 +565,10 @@ false
 {
 "words": [
 "OVER",
-"A",
-"GIANT"
+"A"
 ],
 "a": 15.835,
-"e": 16.355,
+"e": 16.075,
 "ts": [
 [
 15.835,
@@ -512,14 +577,9 @@ false
 [
 16.015,
 16.075
-],
-[
-16.075,
-16.355
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -527,17 +587,23 @@ false
 },
 {
 "words": [
+"GIANT",
 "FLOWER"
 ],
-"a": 16.355,
+"a": 16.075,
 "e": 16.675,
 "ts": [
+[
+16.075,
+16.355
+],
 [
 16.355,
 16.675
 ]
 ],
 "key": [
+false,
 false
 ],
 "band": "safe"
@@ -545,11 +611,10 @@ false
 {
 "words": [
 "AND",
-"A",
-"SLEEPY"
+"A"
 ],
 "a": 16.675,
-"e": 17.595,
+"e": 17.335,
 "ts": [
 [
 16.675,
@@ -558,14 +623,9 @@ false
 [
 17.255,
 17.335
-],
-[
-17.335,
-17.595
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -573,17 +633,23 @@ false
 },
 {
 "words": [
+"SLEEPY",
 "SNAIL"
 ],
-"a": 17.595,
+"a": 17.335,
 "e": 18.135,
 "ts": [
+[
+17.335,
+17.595
+],
 [
 17.595,
 18.135
 ]
 ],
 "key": [
+false,
 false
 ],
 "band": "safe"
@@ -603,16 +669,15 @@ false
 "key": [
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "IS",
-"THAT",
-"A"
+"THAT"
 ],
 "a": 19.059,
-"e": 19.679,
+"e": 19.559,
 "ts": [
 [
 19.059,
@@ -621,44 +686,44 @@ false
 [
 19.399,
 19.559
-],
-[
-19.559,
-19.679
 ]
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
+"A",
 "RAINDROP"
 ],
-"a": 19.679,
+"a": 19.559,
 "e": 20.239,
 "ts": [
+[
+19.559,
+19.679
+],
 [
 19.679,
 20.239
 ]
 ],
 "key": [
+false,
 true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "IT'S",
-"AS",
-"BIG"
+"AS"
 ],
 "a": 20.739,
-"e": 21.259,
+"e": 21.019,
 "ts": [
 [
 20.739,
@@ -667,32 +732,45 @@ true
 [
 20.959,
 21.019
-],
-[
-21.019,
-21.259
 ]
 ],
 "key": [
 false,
-false,
-true
+false
 ],
 "band": "safe"
 },
 {
 "words": [
-"AS",
-"A",
-"BEACH"
+"BIG",
+"AS"
 ],
-"a": 21.259,
-"e": 21.739,
+"a": 21.019,
+"e": 21.419,
 "ts": [
+[
+21.019,
+21.259
+],
 [
 21.259,
 21.419
+]
 ],
+"key": [
+true,
+false
+],
+"band": "safe"
+},
+{
+"words": [
+"A",
+"BEACH"
+],
+"a": 21.419,
+"e": 21.739,
+"ts": [
 [
 21.419,
 21.519
@@ -703,7 +781,6 @@ true
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -746,11 +823,10 @@ true
 {
 "words": [
 "HE",
-"SLIDES",
-"DOWN"
+"SLIDES"
 ],
 "a": 23.384,
-"e": 24.104,
+"e": 23.644,
 "ts": [
 [
 23.384,
@@ -759,14 +835,9 @@ true
 [
 23.424,
 23.644
-],
-[
-23.644,
-24.104
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -774,17 +845,35 @@ false
 },
 {
 "words": [
-"A",
-"LEAF",
-"LIKE"
+"DOWN",
+"A"
 ],
-"a": 24.104,
-"e": 24.624,
+"a": 23.644,
+"e": 24.224,
 "ts": [
+[
+23.644,
+24.104
+],
 [
 24.104,
 24.224
+]
 ],
+"key": [
+false,
+false
+],
+"band": "safe"
+},
+{
+"words": [
+"LEAF",
+"LIKE"
+],
+"a": 24.224,
+"e": 24.624,
+"ts": [
 [
 24.224,
 24.384
@@ -795,7 +884,6 @@ false
 ]
 ],
 "key": [
-false,
 false,
 false
 ],
@@ -856,16 +944,15 @@ true
 "key": [
 true
 ],
-"band": "safe"
+"band": "high"
 },
 {
 "words": [
 "HE",
-"LANDS",
-"ON"
+"LANDS"
 ],
 "a": 27.205,
-"e": 27.905,
+"e": 27.665,
 "ts": [
 [
 27.205,
@@ -874,14 +961,32 @@ true
 [
 27.425,
 27.665
-],
-[
-27.665,
-27.905
 ]
 ],
 "key": [
 false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"ON",
+"A"
+],
+"a": 27.665,
+"e": 27.965,
+"ts": [
+[
+27.665,
+27.905
+],
+[
+27.905,
+27.965
+]
+],
+"key": [
 false,
 false
 ],
@@ -889,17 +994,12 @@ false
 },
 {
 "words": [
-"A",
 "FLUFFY",
 "DANDELION"
 ],
-"a": 27.905,
+"a": 27.965,
 "e": 28.965,
 "ts": [
-[
-27.905,
-27.965
-],
 [
 27.965,
 28.205
@@ -911,19 +1011,17 @@ false
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "HIS",
-"NOSE",
-"STARTS"
+"NOSE"
 ],
 "a": 29.527,
-"e": 30.307,
+"e": 29.847,
 "ts": [
 [
 29.527,
@@ -932,41 +1030,53 @@ false
 [
 29.627,
 29.847
-],
-[
-29.847,
-30.307
 ]
 ],
 "key": [
 false,
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
-"TO",
-"TICKLE"
+"STARTS",
+"TO"
 ],
-"a": 30.307,
-"e": 30.967,
+"a": 29.847,
+"e": 30.547,
 "ts": [
+[
+29.847,
+30.307
+],
 [
 30.307,
 30.547
+]
 ],
+"key": [
+false,
+false
+],
+"band": "low"
+},
+{
+"words": [
+"TICKLE"
+],
+"a": 30.547,
+"e": 30.967,
+"ts": [
 [
 30.547,
 30.967
 ]
 ],
 "key": [
-false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -1005,11 +1115,10 @@ true
 {
 "words": [
 "HE'S",
-"BIG",
-"AGAIN"
+"BIG"
 ],
 "a": 32.374,
-"e": 32.914,
+"e": 32.654,
 "ts": [
 [
 32.374,
@@ -1018,15 +1127,27 @@ true
 [
 32.494,
 32.654
+]
 ],
+"key": [
+false,
+true
+],
+"band": "safe"
+},
+{
+"words": [
+"AGAIN"
+],
+"a": 32.654,
+"e": 32.914,
+"ts": [
 [
 32.654,
 32.914
 ]
 ],
 "key": [
-false,
-true,
 false
 ],
 "band": "safe"
@@ -1034,11 +1155,10 @@ false
 {
 "words": [
 "THE",
-"LADYBUG",
-"WAVES"
+"LADYBUG"
 ],
 "a": 33.568,
-"e": 34.368,
+"e": 34.068,
 "ts": [
 [
 33.568,
@@ -1047,35 +1167,36 @@ false
 [
 33.628,
 34.068
-],
-[
-34.068,
-34.368
 ]
 ],
 "key": [
 false,
-true,
-false
+true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
+"WAVES",
 "GOODBYE"
 ],
-"a": 34.368,
+"a": 34.068,
 "e": 34.768,
 "ts": [
+[
+34.068,
+34.368
+],
 [
 34.368,
 34.768
 ]
 ],
 "key": [
+false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -1092,7 +1213,7 @@ false
 "key": [
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -1115,16 +1236,15 @@ false
 false,
 false
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
 "WHAT",
-"WOULD",
-"YOU"
+"WOULD"
 ],
 "a": 36.901,
-"e": 37.261,
+"e": 37.141,
 "ts": [
 [
 36.901,
@@ -1133,32 +1253,45 @@ false
 [
 37.021,
 37.141
-],
-[
-37.141,
-37.261
 ]
 ],
 "key": [
 false,
-false,
-true
+false
 ],
 "band": "safe"
 },
 {
 "words": [
-"DO",
-"IF",
-"YOU"
+"YOU",
+"DO"
 ],
-"a": 37.261,
-"e": 37.841,
+"a": 37.141,
+"e": 37.461,
 "ts": [
+[
+37.141,
+37.261
+],
 [
 37.261,
 37.461
+]
 ],
+"key": [
+true,
+false
+],
+"band": "safe"
+},
+{
+"words": [
+"IF",
+"YOU"
+],
+"a": 37.461,
+"e": 37.841,
+"ts": [
 [
 37.461,
 37.701
@@ -1170,10 +1303,9 @@ true
 ],
 "key": [
 false,
-false,
 true
 ],
-"band": "safe"
+"band": "low"
 },
 {
 "words": [
@@ -1196,7 +1328,7 @@ true
 false,
 true
 ],
-"band": "safe"
+"band": "low"
 }
 ],
 "keywords": [
