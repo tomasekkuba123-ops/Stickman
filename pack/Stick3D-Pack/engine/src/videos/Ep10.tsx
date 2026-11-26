@@ -24,6 +24,14 @@ const WhatIf: React.FC<{ t: number }> = ({ t }) => { if (QC) return null;
   const k = t < 2.8 ? 1 - seg(t, 2.2, 2.65) : seg(t, 37.55, 38.0); if (k <= 0) return null;
   const pop = t < 2.8 ? 1 + 0.06 * Math.sin(t * 7) : interpolate(t, [37.55, 37.85, 38.0], [0.6, 1.08, 1], { extrapolateRight: "clamp" });
   return <div style={{ position: "absolute", top: 150, left: 0, right: 0, textAlign: "center", fontFamily: "Inter, Arial", fontWeight: 900, fontSize: 170, lineHeight: 1, color: "#ffd23a", WebkitTextStroke: "24px #0b0d1a", paintOrder: "stroke fill", transform: `scale(${pop}) rotate(-4deg)`, opacity: k, textShadow: "0 18px 0 rgba(0,0,0,.4)" }}>WHAT IF?</div>; };
+/* crash dust: a quick ground-level puff + white flash so the landing impact actually reads */
+const CrashDust: React.FC<{ t: number }> = ({ t }) => { if (QC || t < 33.3 || t > 34.6) return null;
+  const flash = Math.max(0, 1 - (t - 33.5) / 0.15) * (t >= 33.5 ? 1 : 0);
+  const puff = seg(t, 33.45, 34.6), scale = 0.6 + puff * 1.6, op = 1 - seg(t, 33.9, 34.6);
+  return (<>
+    {flash > 0 ? <div style={{ position: "absolute", inset: 0, background: `rgba(255,255,255,${0.45 * flash})`, pointerEvents: "none" }} /> : null}
+    <div style={{ position: "absolute", left: "50%", bottom: "26%", width: 520, height: 160, marginLeft: -260, transform: `scale(${scale})`, opacity: op * 0.55, pointerEvents: "none", background: "radial-gradient(ellipse at center, rgba(210,180,120,0.9) 0%, rgba(210,180,120,0.5) 40%, rgba(210,180,120,0) 75%)", filter: "blur(2px)" }} />
+  </>); };
 
 export const Ep10: React.FC = () => {
   const f = useCurrentFrame(), t = f / FPS;
@@ -35,6 +43,7 @@ export const Ep10: React.FC = () => {
       {!QC ? <Vignette k={0.34} col="30,20,8" /> : null}
       {!QC ? <Grain f={f} o={0.05} loop={SECONDS * FPS} /> : null}
       <WhatIf t={t} />
+      <CrashDust t={t} />
       <WordCaptions data={CAP as CaptionData} from={0.25} until={39.0} size={96} fixed />
     </AbsoluteFill>
   );

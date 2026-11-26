@@ -38,14 +38,16 @@ const HP = framePose(PH, HOOK_O, 0);
 const OB = A({ yaw: 0.14, sx: 0.46, push: 0.96, drift: 0.04 });
 const OC = A({ yaw: -0.1, sx: 0.57, push: 0.96, drift: -0.03 });
 const OD = A({ yaw: 0.08, camY: 1.25, sx: 0.5, push: 0.97, drift: 0.03 });
-const OE = A({ frac: FULL * 0.82, yaw: -0.08, camY: 1.1, sx: 0.44, push: 0.94, drift: -0.05 });
-const OF = A({ frac: FULL * 0.88, yaw: 0.05, sx: 0.5, push: 0.96, drift: 0.02 });
+const OE = A({ frac: FULL * 0.68, sy: SY_A + 0.09, yaw: -0.08, camY: 1.1, sx: 0.44, push: 0.94, drift: -0.05 });
+const OF = A({ frac: FULL * 0.78, sy: SY_A + 0.07, yaw: 0.05, sx: 0.5, push: 0.96, drift: 0.02 });
 
-/* zero-g lift: 0 at rest, rises 7.06s (first "float" line) -> peak at the snap (30.68s), eases back down by the landing (33.5s) */
+/* zero-g lift: 0 at rest, rises 7.06s (first "float" line) -> peak at the snap (30.68s), eases back down by the landing (33.5s)
+   — the camera for OE/OF is intentionally NOT tracking this (stays anchored to ground level like every other shot): the whole
+   point is that the audience SEES him rise away from / crash back into a static frame, not a camera that chases him up. */
 export const floatY = (t: number): number => {
   if (t < 7.06) return 0;
-  if (t < 30.68) return sm((t - 7.06) / (30.68 - 7.06)) * 1.6;
-  if (t < 33.5) return 1.6 * (1 - sm((t - 30.68) / (33.5 - 30.68)));
+  if (t < 30.68) return sm((t - 7.06) / (30.68 - 7.06)) * 0.95;
+  if (t < 33.5) return 0.95 * (1 - sm((t - 30.68) / (33.5 - 30.68)));
   return 0;
 };
 const zeroG = (t: number) => Math.max(0, Math.min(1, floatY(t) / 1.1));
@@ -106,26 +108,22 @@ const ACT: AKey[] = [
   { t: 28.3, turn: -0.2, tilt: 5, d: 0.4 },
   { t: 30.68, lean: -6, d: 0.1 },
   { t: 31.3, lean: 10, dip: 0.3, d: 0.15 },
-  { t: 33.5, lean: 0, dip: 0.6, d: 0.15 },
+  { t: 33.5, lean: 0, dip: 0.85, d: 0.1 },
   { t: 34.3, dip: 0.1, turn: 0, tilt: 0, d: 0.4 },
   { t: 37.0, turn: 0.1, tilt: -3, d: 0.5 },
 ];
 const EY: [number, number, number][] = [[0, 0.3, -0.3], [2.6, 0.1, -0.5], [4.6, -0.3, 0.3], [9.0, 0.4, 0.2], [14.04, 0, 0.4], [21.7, 0.2, -0.2], [30.68, -0.1, -0.6], [34.0, 0, 0], [37.0, 0.3, -0.3]];
 const FACE: [number, Face][] = [[0, "happy"], [2.6, "surprised"], [4.6, "laugh"], [9.0, "happy"], [14.04, "worried"], [17.94, "worried"], [21.7, "laugh"], [28.34, "surprised"], [30.68, "scared"], [33.6, "surprised"], [34.9, "happy"]];
 
-/* camera keeps the hero framed while he rises off the ground: sample several keys across the shot with his CURRENT float height baked in
-   (frameShot alone only samples the start/end hero position, so a shot spanning most of the rise/fall would crop his head at the peak) */
-const trackedShot = (t0: number, t1: number, o: FrameOpts, n = 8): Key[] => Array.from({ length: n }, (_, i) => {
-  const tt = t0 + (i / (n - 1)) * (t1 - t0), hero: V3 = [PH[0], PH[1] + floatY(tt), PH[2]];
-  return { ...framePose(hero, o, i / (n - 1)), t: tt };
-});
+/* OE/OF deliberately do NOT track the hero's rise (ground-anchored like every other shot): that is what makes the
+   float/crash actually visible against a static frame. frac/sy give enough headroom at the float's peak (see floatY). */
 const K: [number, Key[]][] = [
   [0, frameShot(PH, 0, 2.6, HOOK_O)],
   [2.6, frameShot(PH, 2.6, 9.0, OB)],
   [9.0, frameShot(PH, 9.0, 14.04, OC)],
   [14.04, frameShot(PH, 14.04, 21.7, OD)],
-  [21.7, trackedShot(21.7, 30.68, OE)],
-  [30.68, trackedShot(30.68, 34.74, OF)],
+  [21.7, frameShot(PH, 21.7, 30.68, OE)],
+  [30.68, frameShot(PH, 30.68, 34.74, OF)],
   [34.74, [{ ...framePose(PH, { ...HOOK_O, frac: CLOSE * 0.97 }, 0), t: 37.0 }, { ...HP, t: 38.2 }, { ...HP, t: SECONDS }]],
 ];
 
@@ -134,7 +132,7 @@ export const Ep10Scene = ({ t }: Ctx) => {
   const fy = floatY(t), p: V3 = [PH[0], PH[1] + fy, PH[2]];
   const afterLanding = t > 34.3;
   return (<SeasonHill t={t} season={2} chaos={0}>
-    <Cam t={t} keys={shot(t, K)} />
+    <Cam t={t} keys={shot(t, K)} impacts={[[33.5, 0.03]]} />
     <FloatProps t={t} />
     <FloatLeaves t={t} />
     <Stickman p={p} t={t} action="idle" lips={LIPS} gest={G}

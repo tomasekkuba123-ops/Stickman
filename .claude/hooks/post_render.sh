@@ -19,7 +19,7 @@ for f in $files; do
     ffmpeg -v error -y -i "$f" -map 0 -c:v copy -af loudnorm=I=-14:TP=-1.5:LRA=11 -c:a aac -b:a 192k -ar 48000 -movflags +faststart "${f%.mp4}.ln.mp4" && mv "${f%.mp4}.ln.mp4" "$f"
     msg+="LOUDNESS: $f was $I LUFS -> re-normalised to -14 LUFS. "
   fi
-  dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" | python3 -c "import sys; print(round(float(sys.stdin.read())))")
+  dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" | python3 -c "import sys; print(round(float(sys.stdin.read()),1))")
   ep=$(printf '%s' "$f" | grep -oE 'ep[0-9]+' | head -1); cap=$ENG/public/$ep/captions.json; cuts=$(cat "$(dirname "$f")/cuts.txt" 2>/dev/null)
   (cd "$PACK" && python3 tools/qc_check.py "$f" --duration "$dur" ${ep:+--captions "$cap"} ${cuts:+--cuts "$cuts"} --fit assets/character/fit.json >/dev/null 2>&1)
   rep="$(dirname "$f")/qc/report.txt"; [ -f "$rep" ] && msg+="QC for $f: $(head -c 1500 "$rep" | tr '\n' ' ') "
