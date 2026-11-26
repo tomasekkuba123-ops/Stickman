@@ -224,7 +224,7 @@ const FLOP = wt("flopped", 21.8) + 0.15, YAWN = wt("yawn", 24) - 0.45;
 const BEDON: V3 = [PIL[0], PILH * 0.82, PIL[2] + 0.05];
 const bed7 = (t: number): { p: V3; sq: number; psq: number } => { if (t < FLOP) { const u = seg(t, 21.65, FLOP); return { p: [lerp(TR[0] - 0.2, BEDON[0], u), lerp(7.5, BEDON[1], u * u), lerp(TR[2], BEDON[2], u)], sq: 0.12, psq: 0 }; }
   const k = t - FLOP, psq = Math.exp(-k * 4) * Math.cos(k * 14) * 0.6 + 0.25; return { p: [BEDON[0], BEDON[1] - 0.35 * psq + 0.1, BEDON[2]], sq: -0.2 * Math.exp(-k * 6) * Math.cos(k * 20), psq: Math.max(0, psq) }; };
-const O7A = A({ frac: 0.42, yaw: 0.1, sx: 0.5, camY: 1.4, drift: 0.04 });
+const O7A = A({ frac: 0.38, yaw: 0.1, sx: 0.54, camY: 1.4, drift: 0.04 });
 const O7B = A({ frac: 0.42, yaw: -0.3, sx: 0.5, camY: 1.1, push: 0.96, drift: -0.03 });
 const G7: GKey[] = [{ t: FLOP, g: "whoa", in: 0.12, hold: 0.6 }, { t: YAWN + 0.3, g: "chin", in: 0.25, hold: 0.9 }];
 const ACT7: AKey[] = [{ t: 21.65, turn: 0.5, tilt: -8, lean: -6 }, { t: FLOP, turn: 0.7, lean: -10, dip: 0.6, d: 0.12 }, { t: 23.0, turn: 0.6, tilt: 8, d: 0.3 }, { t: YAWN, turn: 0.6, tilt: -6, lean: 4, d: 0.3 }];
